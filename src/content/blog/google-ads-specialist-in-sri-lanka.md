@@ -1,0 +1,22 @@
+---
+title: "Google Ads specialist in sri lanka"
+description: "Are You Finding Professional Google ads Specialist in Sri lanka ? I am Paul Gomes who is Google Ads Specialist in Sri lanka. Google ads is a model of online marketing in which advertisers pay a fee..."
+pubDate: 2023-02-07
+heroImage: "../../assets/posts/library/cropped-paul-gomes-alphaville-1.webp"
+---
+
+Are You Finding Professional Google ads Specialist in Sri lanka ?  
+I am Paul Gomes who is Google Ads Specialist in Sri lanka. Google ads is a model of online marketing in which advertisers pay a fee for every click, impression, or Engagement of their ads. Advertisers can buy visits to a website or video views via Google advertising.
+
+**There are different types of google ads.**
+
+Search Network campaigns – This is text form and Google ads can show on Google Search results pages when anyone searches keywords for a product or service that’s similar to your products.  
+Display Network campaigns – This is image form and Google ads appear on websites or apps that when your customers visit them.  
+Video campaigns – Those are usually 6 or 15-second videos and ads show in YouTube content.  
+And also, there are some advanced campaign types, including Shopping campaigns, App Campaigns, and more.
+
+https://www.youtube.com/watch?v=cOTMWqwUXPU
+
+Do you remember before you clicked on my web page, there some pages with the “Ad” mark? Those were PPC (Search Network campaigns) advertisements. PPC also referred to as Paid Search ads, is one of the best ways of Search Engine Marketing (SEM).
+
+SEM provides advertisers the ability to bid on ad placement in a search engine’s sponsored ads. I can place an advertisement when someone searches a keyword related to the business, product, or service. However, these keywords must “win” the bid to show up for specific searches.

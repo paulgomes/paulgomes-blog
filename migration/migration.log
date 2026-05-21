@@ -1,0 +1,54 @@
+2026-05-21 16:31:54,527 | INFO    | ============================================================
+2026-05-21 16:31:54,528 | INFO    | Iniciando migracao WordPress -> Astro
+2026-05-21 16:31:54,528 | INFO    | ============================================================
+2026-05-21 16:31:54,529 | INFO    | Lendo XML: C:\Users\Paul\Desktop\PAULGOMES-BLOG\paulgomes-blog\migration\wordpress-export.xml
+2026-05-21 16:31:54,708 | INFO    | 115 posts publicados
+2026-05-21 16:31:54,709 | INFO    | 517 attachments
+2026-05-21 16:31:54,718 | INFO    | Baixando imagens (pode demorar)...
+2026-05-21 16:31:54,722 | INFO    |   554 arquivos pra baixar
+2026-05-21 16:32:00,986 | WARNING |   Falhou https://paulgomes.com.br/wp-content/uploads/2020/10/image.png: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/image.png
+2026-05-21 16:32:01,014 | WARNING |   Falhou https://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-1-1.jpg: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-1-1.jpg
+2026-05-21 16:32:01,032 | WARNING |   Falhou https://paulgomes.com.br/wp-content/uploads/2020/10/wys.png: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/wys.png
+2026-05-21 16:32:01,036 | WARNING |   Falhou https://paulgomes.com.br/wp-content/uploads/2020/10/shutterstock_1171379914-scaled.jpg: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/shutterstock_1171379914-scaled.jpg
+2026-05-21 16:32:01,053 | WARNING |   Falhou https://paulgomes.com.br/wp-content/uploads/2020/10/shutterstock_227449552.jpg: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/shutterstock_227449552.jpg
+2026-05-21 16:32:01,162 | WARNING |   Falhou https://paulgomes.com.br/wp-content/uploads/2020/10/copiashutterstock_765415624-scaled.jpg: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/copiashutterstock_765415624-scaled.jpg
+2026-05-21 16:32:01,270 | WARNING |   Falhou https://paulgomes.com.br/wp-content/uploads/2020/10/shutterstock_1041718081-scaled.jpg: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/shutterstock_1041718081-scaled.jpg
+2026-05-21 16:32:01,966 | WARNING |   Falhou https://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-1-2.jpg: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-1-2.jpg
+2026-05-21 16:32:02,094 | WARNING |   Falhou https://paulgomes.com.br/wp-content/uploads/2020/10/chatt.jpg: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/chatt.jpg
+2026-05-21 16:32:04,837 | INFO    |   progresso: 50/554
+2026-05-21 16:32:08,572 | WARNING |   Otimizacao falhou https://paulgomes.com.br/wp-content/uploads/2022/10/qi-addons-for-elementor-placeholder.png: cannot identify image file <_io.BytesIO object at 0x0000022F106CCDB0>
+2026-05-21 16:32:15,459 | INFO    |   progresso: 100/554
+2026-05-21 16:32:24,091 | INFO    |   progresso: 150/554
+2026-05-21 16:32:33,730 | INFO    |   progresso: 200/554
+2026-05-21 16:32:40,833 | INFO    |   progresso: 250/554
+2026-05-21 16:32:47,496 | INFO    |   progresso: 300/554
+2026-05-21 16:32:58,638 | INFO    |   progresso: 350/554
+2026-05-21 16:33:08,965 | INFO    |   progresso: 400/554
+2026-05-21 16:33:20,193 | INFO    |   progresso: 450/554
+2026-05-21 16:33:37,539 | INFO    |   progresso: 500/554
+2026-05-21 16:33:41,969 | WARNING |   Falhou http://paulgomes.com.br/wp-content/uploads/2023/02/paulgomes-1160x767.png: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2023/02/paulgomes-1160x767.png
+2026-05-21 16:33:42,131 | WARNING |   Falhou http://paulgomes.com.br/wp-content/uploads/2023/08/paul-gomes-fundador-da-agencia-wys.png: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2023/08/paul-gomes-fundador-da-agencia-wys.png
+2026-05-21 16:33:42,181 | WARNING |   Falhou http://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-1-1.jpg: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-1-1.jpg
+2026-05-21 16:33:42,253 | WARNING |   Falhou https://blog.agenciawys.com.br/wp-content/uploads/2021/11/MARKETING-5-0-768x507-1.png: HTTPSConnectionPool(host='blog.agenciawys.com.br', port=443): Max retries exceeded with url: /wp-content/uploads/2021/11/MARKETING-5-0-768x507-1.png (Caused by NameResolutionError("HTTPSConnection(host='blog.agenciawys.com.br', port=443): Failed to resolve 'blog.agenciawys.com.br' ([Errno 11001] getaddrinfo failed)"))
+2026-05-21 16:33:42,365 | WARNING |   Falhou https://coworking648.com.br/assets/images/648-black.svg: HTTPSConnectionPool(host='coworking648.com.br', port=443): Max retries exceeded with url: /assets/images/648-black.svg (Caused by NameResolutionError("HTTPSConnection(host='coworking648.com.br', port=443): Failed to resolve 'coworking648.com.br' ([Errno 11001] getaddrinfo failed)"))
+2026-05-21 16:33:44,501 | WARNING |   Falhou http://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-1-2.jpg: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-1-2.jpg
+2026-05-21 16:33:44,682 | WARNING |   Falhou http://paulgomes.com.br/wp-content/uploads/2020/10/image.png: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/image.png
+2026-05-21 16:33:44,922 | INFO    |   progresso: 550/554
+2026-05-21 16:33:45,512 | WARNING |   Falhou http://paulgomes.com.br/wp-content/uploads/2023/04/Alan-Turing-1-1160x771.png: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2023/04/Alan-Turing-1-1160x771.png
+2026-05-21 16:33:45,584 | WARNING |   Falhou http://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-.jpg: 404 Client Error: Not Found for url: https://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-.jpg
+2026-05-21 16:33:47,437 | WARNING |   Falhou https://www.jornalcruzeiro.com.br/wp-content/uploads/2020/10/paul-gomes-revista-exame-530x353-1.jpg: 403 Client Error: Forbidden for url: https://www.jornalcruzeiro.com.br/wp-content/uploads/2020/10/paul-gomes-revista-exame-530x353-1.jpg
+2026-05-21 16:33:47,441 | INFO    | Imagens: 535 ok, 19 falhas
+2026-05-21 16:33:47,455 | INFO    | Gerando Markdown...
+2026-05-21 16:33:47,591 | INFO    |   progresso: 25/115
+2026-05-21 16:33:47,722 | INFO    |   progresso: 50/115
+2026-05-21 16:33:47,877 | INFO    |   progresso: 75/115
+2026-05-21 16:33:48,013 | INFO    |   progresso: 100/115
+2026-05-21 16:33:48,099 | INFO    | 115 posts gerados em C:\Users\Paul\Desktop\PAULGOMES-BLOG\paulgomes-blog\src\content\blog
+2026-05-21 16:33:48,101 | INFO    | Redirects: C:\Users\Paul\Desktop\PAULGOMES-BLOG\paulgomes-blog\public\_redirects
+2026-05-21 16:33:48,102 | INFO    | Relatorio: C:\Users\Paul\Desktop\PAULGOMES-BLOG\paulgomes-blog\migration\migration-report.md
+2026-05-21 16:33:48,103 | INFO    | ============================================================
+2026-05-21 16:33:48,103 | INFO    | Concluido em 113.6s
+2026-05-21 16:33:48,103 | INFO    |   Posts:   115
+2026-05-21 16:33:48,104 | INFO    |   Imagens: 535
+2026-05-21 16:33:48,104 | INFO    |   Veja:    migration-report.md
+2026-05-21 16:33:48,104 | INFO    | ============================================================

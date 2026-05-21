@@ -1,0 +1,22 @@
+---
+title: "Campanhas de Dia das Mães para você se inspirar"
+description: "Datas comemorativas oferecem excelentes oportunidades para criar campanhas publicitárias e promocionais. Uma estratégia de marketing bem planejada para o Dia das Mães, por exemplo, pode aumentar..."
+pubDate: 2023-05-05
+heroImage: "../../assets/posts/library/sem-titulo-1aaa.webp"
+---
+
+Datas comemorativas oferecem excelentes oportunidades para criar campanhas publicitárias e promocionais. Uma estratégia de marketing bem planejada para o Dia das Mães, por exemplo, pode aumentar significativamente a percepção de valor de uma marca, estimular o engajamento do público e impulsionar as vendas. Com uma abordagem cuidadosa e criativa, as empresas podem aproveitar a emoção e o significado das datas comemorativas para estabelecer conexões mais fortes com seus clientes e alcançar resultados impressionantes em suas campanhas publicitárias.
+
+Então, que tal conferir alguns exemplos de campanhas de Dia das Mães? Faz toda a diferença pesquisar pelos trabalhos de outros profissionais para se inspirar e criar peças publicitárias encantadoras e totalmente fora do lugar-comum. Confira!
+
+**Procter & Gamble (2016)**
+
+https://www.youtube.com/watch?v=ZKnZUmtWkzA
+
+**Campanhas de Dia das Mães emocionantes Google - #HeyMom, thank you**
+
+https://youtu.be/xS\_yA4MtoAs
+
+Bilhetinhos - Dia das Mães
+
+https://youtu.be/FvTLjLlxqWQ

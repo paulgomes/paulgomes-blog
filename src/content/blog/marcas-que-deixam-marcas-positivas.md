@@ -1,0 +1,30 @@
+---
+title: "Marcas que deixam marcas positivas"
+description: "Impactos positivos no mundo estão no centro das estratégias do Grupo Heineken Cada vez mais anunciantes buscam propósitos que vão além da essência do seu negócio, sejam impactos sociais, econômicos,..."
+pubDate: 2022-11-13
+heroImage: "../../assets/posts/library/screenshot-14.webp"
+---
+
+Impactos positivos no mundo estão no centro das estratégias do Grupo Heineken
+
+Cada vez mais anunciantes buscam propósitos que vão além da essência do seu negócio, sejam impactos sociais, econômicos, ambientais ou culturais. E embora algumas marcas possam se arriscar nesses assuntos de forma superficial e pontual, algumas tornam isso parte de sua essência. E é aí que as discussões deixam de ser apenas sobre cases e passam a ser sobre legados.
+
+Um dos maiores exemplos disso é o Grupo Heineken, que já entende que o seu negócio está além da venda de bebidas há muitos anos. Mais do que um compromisso corporativo, deixar impactos positivos no mundo é um pensamento levado para cada iniciativa de suas marcas.
+
+Com Amstel, por exemplo, o Grupo Heineken lançou campanhas que trouxeram mais visibilidade para movimentos LGBTQIAP+, investindo em empreendedores dessas comunidades.
+
+Com Devassa, o grupo marca presença em diversos festivais regionais pelo Brasil, dando palco e representatividade a novos talentos e vozes brasileiras fora do eixo.
+
+A própria cerveja Heineken, que da nome ao grupo, tem foco na sustentabilidade , com investimento e geração de energia verde para suas fábricas, bares e até residências. Um dos exemplos mais recentes disso é a usina de energia solar que criou para alimentar seu palco no Rock in Rio 2022 e que agora ficou como legado para a cidade do Rio de Janeiro.
+
+Cases como esses mostram que cuidar do mundo é, sim, um bom negócio. O Grupo Heineken cresce todos os anos. E junto do resultado positivo para os números, vem também o reconhecimento do público e da indústria: o Grupo Heineken foi indicado ao prêmio Caboré, na categoria Anunciante do Ano, em 2022.
+
+Isso vem para coroar um grande ano, em que a empresa mostrou que tão importante quanto investir em suas marcas, é cuidar das marcas positivas que elas vão deixar no mundo.
+
+O anunciante pensa, hoje, nas iniciativas que vão continuar sendo relevantes para as pessoas amanhã. Assim, mais do que torcer pelo Caboré 2022, torce para um mundo cada vez melhor, com muitas outras edições do Caboré lá na frente.
+
+E você, já votou hoje no anunciante que está cuidando do amanhã? Vote Grupo Heineken para Anunciante do Ano no Caboré.
+
+https://www.youtube.com/watch?v=WrDR0lBhPdQ
+
+Fonte meio mensam:https://www.meioemensagem.com.br/home/patrocinado/heineken/2022/11/07/marcas-que-deixam-marcas-positivas.html
