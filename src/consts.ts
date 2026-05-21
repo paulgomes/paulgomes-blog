@@ -1,5 +1,7 @@
-// Place any global data in this file.
-// You can import this data from anywhere in your site by using the `import` keyword.
-
-export const SITE_TITLE = 'Astro Blog';
-export const SITE_DESCRIPTION = 'Welcome to my website!';
+export const SITE_TITLE = 'Paul Gomes';
+export const SITE_DESCRIPTION = 'Branding, tecnologia e o futuro dos negócios. Ensaios e ideias de Paul Gomes.';
+export const SITE_AUTHOR = 'Paul Gomes';
+export const SITE_LANG = 'pt-BR';
+export const SITE_LOCALE = 'pt_BR';
+export const SOCIAL_LINKEDIN = 'https://www.linkedin.com/in/paulgomeswys/';
+export const SOCIAL_EMAIL = 'mailto:paulgomes@wys.com.br';

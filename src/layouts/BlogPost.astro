@@ -1,86 +1,64 @@
 ---
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
+import { Image } from 'astro:assets';
+import { SITE_AUTHOR } from '../consts';
 
 type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+<html lang="pt-BR">
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <article>
+        <header class="container-prose pt-16 pb-12 md:pt-24">
+          <div class="text-xs uppercase tracking-widest" style="color: var(--color-muted)">
+            <FormattedDate date={pubDate} />
+            {updatedDate && (
+              <span class="ml-3">— atualizado em <FormattedDate date={updatedDate} /></span>
+            )}
+          </div>
+          <h1 class="mt-4 font-display text-4xl font-bold leading-[1.1] md:text-6xl">
+            {title}
+          </h1>
+          {description && (
+            <p class="mt-6 text-xl leading-relaxed" style="color: var(--color-muted)">
+              {description}
+            </p>
+          )}
+          <div class="mt-8 flex items-center gap-3 text-sm">
+            <div class="h-9 w-9 rounded-full" style="background-color: var(--color-subtle)"></div>
+            <div>
+              <p class="font-medium">{SITE_AUTHOR}</p>
+              <p class="text-xs" style="color: var(--color-muted)">Autor</p>
+            </div>
+          </div>
+        </header>
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
+        {heroImage && (
+          <div class="container-wide pb-12 md:pb-16">
+            <div class="overflow-hidden rounded-lg" style="background-color: var(--color-subtle)">
+              <Image src={heroImage} alt={title} width={1280} height={720} class="w-full" />
+            </div>
+          </div>
+        )}
+
+        <div class="container-prose pb-24">
+          <div class="text-lg leading-relaxed [&>p]:mb-6 [&>h2]:font-display [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:mt-12 [&>h2]:mb-4 [&>h3]:font-display [&>h3]:text-2xl [&>h3]:font-bold [&>h3]:mt-10 [&>h3]:mb-4 [&>blockquote]:border-l-2 [&>blockquote]:pl-6 [&>blockquote]:my-8 [&>blockquote]:italic [&>blockquote]:text-xl [&>blockquote]:font-display [&>ul]:mb-6 [&>ul]:pl-6 [&>ol]:mb-6 [&>ol]:pl-6 [&>li]:mb-2 [&>img]:rounded-lg [&>img]:my-8 [&>a]:underline [&>a]:underline-offset-4">
+            <slot />
+          </div>
+        </div>
+      </article>
+    </main>
+    <Footer />
+  </body>
 </html>
