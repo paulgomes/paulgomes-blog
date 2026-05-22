@@ -17,8 +17,8 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
         <Image
           src={authorPhoto}
           alt="Paul Gomes"
-          width={1440}
-          widths={[720, 1080, 1440]}
+          width={1520}
+          widths={[760, 1140, 1520]}
           class="photo-img"
           loading="eager"
           fetchpriority="high"
@@ -76,7 +76,6 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     overflow: hidden;
     isolation: isolate;
     border-bottom: 1px solid var(--color-border);
-    min-height: 80vh;
     display: flex;
     align-items: stretch;
   }
@@ -105,20 +104,20 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     width: 100%;
     max-width: 1280px;
     margin: 0 auto;
-    padding: 4rem 1.5rem 0;
+    padding: 1.5rem 1.5rem 0;
     display: flex;
     flex-direction: column;
   }
 
   @media (min-width: 768px) {
     .cinematic-inner {
-      padding: 5rem 2rem 0;
+      padding: 2rem 2rem 0;
     }
   }
 
   @media (min-width: 1280px) {
     .cinematic-inner {
-      padding: 6rem 3rem 0;
+      padding: 2.5rem 3rem 0;
     }
   }
 
@@ -126,13 +125,13 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     flex: 1;
     display: grid;
     gap: 2.5rem;
-    align-items: center;
+    align-items: start;
     grid-template-columns: 1fr;
   }
 
   @media (min-width: 1024px) {
     .cinematic-grid {
-      grid-template-columns: 1fr 1.1fr;
+      grid-template-columns: 1.15fr 1fr;
       gap: 4rem;
     }
   }
@@ -150,7 +149,7 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
   .photo-img {
     width: 100%;
     height: auto;
-    max-width: 540px;
+    max-width: 580px;
     margin: 0 auto;
     display: block;
     filter:
@@ -160,13 +159,13 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
 
   @media (min-width: 1024px) {
     .photo-img {
-      max-width: 620px;
+      max-width: 680px;
     }
   }
 
   @media (min-width: 1280px) {
     .photo-img {
-      max-width: 680px;
+      max-width: 760px;
     }
   }
 
