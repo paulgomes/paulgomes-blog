@@ -52,17 +52,17 @@ const pageIndices = Array.from({ length: totalPages }, (_, i) => i);
     </div>
 
     {totalPages > 1 && (
-      <div class="trending-dots" role="tablist" aria-label="Paginação dos insights">
-        {pageIndices.map((pageIdx) => (
-          <button
-            type="button"
-            class:list={['trending-dot', { active: pageIdx === 0 }]}
-            data-target={pageIdx}
-            aria-label={`Página ${pageIdx + 1} de ${totalPages}`}
-            aria-current={pageIdx === 0 ? 'page' : 'false'}
-          ></button>
-        ))}
-      </div>
+      <nav class="trending-pagination" aria-label="Paginação dos insights">
+        <button type="button" class="pagination-btn" data-action="prev" disabled aria-label="Página anterior">
+          ← Anterior
+        </button>
+        <span class="pagination-count" aria-live="polite">
+          <span data-current>1</span> <span class="pagination-sep">/</span> {totalPages}
+        </span>
+        <button type="button" class="pagination-btn" data-action="next" aria-label="Próxima página">
+          Próximo →
+        </button>
+      </nav>
     )}
 
     <div class="trending-cta-wrap">
@@ -206,33 +206,55 @@ const pageIndices = Array.from({ length: totalPages }, (_, i) => i);
     margin: 0;
   }
 
-  /* Paginação por dots */
-  .trending-dots {
+  /* Paginação prev/next */
+  .trending-pagination {
     display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    margin-top: 2.5rem;
+    gap: 1.25rem;
+    margin-top: 3rem;
+    flex-wrap: wrap;
   }
 
-  .trending-dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    border: none;
-    padding: 0;
-    background-color: var(--color-border);
+  .pagination-btn {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    padding: 0.7rem 1.4rem;
+    border-radius: 9999px;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
 
-  .trending-dot:hover {
-    background-color: var(--color-muted);
-    transform: scale(1.15);
-  }
-
-  .trending-dot.active {
+  .pagination-btn:hover:not(:disabled) {
     background-color: var(--color-ink);
-    transform: scale(1.2);
+    color: var(--color-paper);
+    border-color: var(--color-ink);
+  }
+
+  .pagination-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .pagination-count {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--color-muted);
+    min-width: 3rem;
+    text-align: center;
+  }
+
+  .pagination-sep {
+    opacity: 0.5;
+    margin: 0 0.2em;
   }
 
   /* CTA "Ver todos os insights" */
@@ -271,7 +293,7 @@ const pageIndices = Array.from({ length: totalPages }, (_, i) => i);
     .trending-card,
     .trending-img,
     .trending-hover,
-    .trending-dot,
+    .pagination-btn,
     .trending-cta {
       transition: none;
     }
@@ -286,24 +308,33 @@ const pageIndices = Array.from({ length: totalPages }, (_, i) => i);
 </style>
 
 <script>
-  const root = document.querySelector<HTMLElement>('.trending-pages');
-  const dotsContainer = document.querySelector<HTMLElement>('.trending-dots');
-  if (root && dotsContainer) {
-    const pages = root.querySelectorAll<HTMLElement>('.trending-grid');
-    const dots = dotsContainer.querySelectorAll<HTMLButtonElement>('.trending-dot');
+  const section = document.querySelector<HTMLElement>('.trending');
+  if (section) {
+    const pages = section.querySelectorAll<HTMLElement>('.trending-grid');
+    const prevBtn = section.querySelector<HTMLButtonElement>('[data-action="prev"]');
+    const nextBtn = section.querySelector<HTMLButtonElement>('[data-action="next"]');
+    const counter = section.querySelector<HTMLElement>('[data-current]');
 
-    dots.forEach((dot) => {
-      dot.addEventListener('click', () => {
-        const target = parseInt(dot.dataset.target ?? '0', 10);
+    if (pages.length > 1 && prevBtn && nextBtn && counter) {
+      const total = pages.length;
+      let current = 0;
+
+      const render = (idx: number) => {
         pages.forEach((p, i) => {
-          p.hidden = i !== target;
+          p.hidden = i !== idx;
         });
-        dots.forEach((d, i) => {
-          const isActive = i === target;
-          d.classList.toggle('active', isActive);
-          d.setAttribute('aria-current', isActive ? 'page' : 'false');
-        });
+        prevBtn.disabled = idx === 0;
+        nextBtn.disabled = idx === total - 1;
+        counter.textContent = String(idx + 1);
+        current = idx;
+      };
+
+      prevBtn.addEventListener('click', () => {
+        if (current > 0) render(current - 1);
       });
-    });
+      nextBtn.addEventListener('click', () => {
+        if (current < total - 1) render(current + 1);
+      });
+    }
   }
 </script>
