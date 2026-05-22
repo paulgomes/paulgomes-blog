@@ -19,22 +19,243 @@ import logo from '../assets/brand/logo-paulgomes.webp';
       />
     </a>
 
-    <nav class="flex items-center gap-5 text-sm font-medium">
-      <HeaderLink href="/" class="hidden md:inline-block">Home</HeaderLink>
+    <!-- Desktop nav (md+) -->
+    <nav class="hidden md:flex items-center gap-5 text-sm font-medium">
+      <HeaderLink href="/" class="hidden lg:inline-block">Home</HeaderLink>
       <HeaderLink href="/about">Sobre</HeaderLink>
       <HeaderLink href="/blog">Insights</HeaderLink>
-      <HeaderLink href="/parceiros" class="hidden sm:inline-block">Parceiros</HeaderLink>
-      <HeaderLink href="/contato" class="hidden sm:inline-block">Contato</HeaderLink>
+      <HeaderLink href="/parceiros">Parceiros</HeaderLink>
+      <HeaderLink href="/contato">Contato</HeaderLink>
       <span class="mx-1 hidden h-5 w-px lg:inline-block" style="background-color: var(--color-border)"></span>
       <HeaderSocial />
       <span class="mx-1 hidden h-5 w-px sm:inline-block" style="background-color: var(--color-border)"></span>
       <ThemeToggle />
     </nav>
+
+    <!-- Hamburger (mobile only) -->
+    <button
+      type="button"
+      class="hamburger md:hidden"
+      aria-label="Abrir menu"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      data-menu-toggle
+    >
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
   </div>
 </header>
+
+<!-- Mobile menu overlay -->
+<div
+  id="mobile-menu"
+  class="mobile-menu md:hidden"
+  aria-hidden="true"
+  data-mobile-menu
+>
+  <nav class="mobile-menu-nav" aria-label="Menu principal">
+    <a href="/" data-menu-link>Home</a>
+    <a href="/about" data-menu-link>Sobre</a>
+    <a href="/blog" data-menu-link>Insights</a>
+    <a href="/parceiros" data-menu-link>Parceiros</a>
+    <a href="/contato" data-menu-link>Contato</a>
+  </nav>
+
+  <div class="mobile-menu-footer">
+    <HeaderSocial />
+    <ThemeToggle />
+  </div>
+</div>
 
 <style>
   :global(.dark) .logo-img {
     filter: invert(1);
   }
+
+  /* === HAMBURGER === */
+  .hamburger {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    z-index: 60;
+  }
+
+  .hamburger-line {
+    display: block;
+    width: 24px;
+    height: 1.5px;
+    margin: 0 auto;
+    background-color: var(--color-ink);
+    border-radius: 1px;
+    transition:
+      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.25s ease,
+      width 0.3s ease;
+    transform-origin: center;
+  }
+
+  .hamburger[aria-expanded='true'] .hamburger-line:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  .hamburger[aria-expanded='true'] .hamburger-line:nth-child(2) {
+    opacity: 0;
+    width: 0;
+  }
+  .hamburger[aria-expanded='true'] .hamburger-line:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  /* === MOBILE MENU OVERLAY === */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background-color: color-mix(in srgb, var(--color-paper) 97%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 6rem 2rem 3rem;
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
+    transition:
+      opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mobile-menu.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Nav items */
+  .mobile-menu-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .mobile-menu-nav a {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 8vw, 3rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    color: var(--color-ink);
+    text-decoration: none;
+    opacity: 0;
+    transform: translateX(-24px);
+    transition:
+      opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      color 0.2s ease;
+  }
+
+  .mobile-menu-nav a:hover,
+  .mobile-menu-nav a:focus-visible {
+    color: #00b4d8;
+  }
+
+  .mobile-menu.open .mobile-menu-nav a {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .mobile-menu.open .mobile-menu-nav a:nth-child(1) { transition-delay: 0.08s; }
+  .mobile-menu.open .mobile-menu-nav a:nth-child(2) { transition-delay: 0.14s; }
+  .mobile-menu.open .mobile-menu-nav a:nth-child(3) { transition-delay: 0.20s; }
+  .mobile-menu.open .mobile-menu-nav a:nth-child(4) { transition-delay: 0.26s; }
+  .mobile-menu.open .mobile-menu-nav a:nth-child(5) { transition-delay: 0.32s; }
+
+  /* Footer com social + tema */
+  .mobile-menu-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 0.45s ease,
+      transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: 0s;
+  }
+
+  .mobile-menu.open .mobile-menu-footer {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.45s;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu,
+    .mobile-menu-nav a,
+    .mobile-menu-footer,
+    .hamburger-line {
+      transition: none;
+    }
+  }
 </style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLDivElement>('[data-mobile-menu]');
+
+  if (toggle && menu) {
+    const closeMenu = () => {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Abrir menu');
+      menu.classList.remove('open');
+      menu.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+
+    const openMenu = () => {
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Fechar menu');
+      menu.classList.add('open');
+      menu.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    };
+
+    toggle.addEventListener('click', () => {
+      if (toggle.getAttribute('aria-expanded') === 'true') closeMenu();
+      else openMenu();
+    });
+
+    // Fecha ao clicar em link
+    menu.querySelectorAll<HTMLAnchorElement>('[data-menu-link]').forEach((link) => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Fecha com ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        closeMenu();
+      }
+    });
+
+    // Fecha se viewport crescer pra desktop (evita estado inconsistente)
+    const mql = window.matchMedia('(min-width: 768px)');
+    mql.addEventListener('change', (e) => {
+      if (e.matches && toggle.getAttribute('aria-expanded') === 'true') closeMenu();
+    });
+  }
+</script>
