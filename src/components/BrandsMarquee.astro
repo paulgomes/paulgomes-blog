@@ -5,9 +5,9 @@ import { BRANDS } from '../consts';
 const doubled = [...BRANDS, ...BRANDS];
 ---
 
-<section class="marquee-section border-t" style="border-color: var(--color-border)">
-  <div class="container-wide py-16 md:py-20">
-    <p class="mb-10 text-center text-xs font-semibold uppercase tracking-[0.3em]" style="color: var(--color-muted)">
+<section class="marquee-section" style="border-color: var(--color-border)">
+  <div class="container-wide pt-6 pb-4 md:pt-8 md:pb-5">
+    <p class="text-center text-[0.65rem] font-semibold uppercase tracking-[0.3em]" style="color: var(--color-muted)">
       ◆ Marcas que passaram por aqui
     </p>
   </div>
@@ -26,7 +26,7 @@ const doubled = [...BRANDS, ...BRANDS];
     {BRANDS.map((brand) => <li>{brand}</li>)}
   </ul>
 
-  <div class="container-wide pt-16 md:pt-20"></div>
+  <div class="container-wide pb-6 md:pb-8"></div>
 </section>
 
 <style>
