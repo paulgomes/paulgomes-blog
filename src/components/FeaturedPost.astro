@@ -13,41 +13,61 @@ const { title, pubDate, heroImage } = post.data;
 const href = `/blog/${post.id}/`;
 ---
 
-<a href={href} class="featured-banner" aria-label={`Ler ensaio: ${title}`}>
-  {heroImage ? (
-    <Image
-      src={heroImage}
-      alt=""
-      width={1920}
-      widths={[800, 1200, 1920]}
-      class="banner-bg"
-      loading="lazy"
-    />
-  ) : (
-    <div class="banner-bg banner-bg-fallback" aria-hidden="true"></div>
-  )}
-  <div class="banner-overlay" aria-hidden="true"></div>
-  <div class="banner-content">
-    <p class="banner-eyebrow">Em destaque</p>
-    <h2 class="banner-title">{title}</h2>
-    <p class="banner-meta">
-      {SITE_AUTHOR}<span class="meta-sep"> · </span><FormattedDate date={pubDate} />
-    </p>
-    <span class="banner-cta">Ler ensaio →</span>
+<div class="featured-wrap">
+  <div class="container-wide">
+    <a href={href} class="featured-banner" aria-label={`Ler ensaio: ${title}`}>
+      {heroImage ? (
+        <Image
+          src={heroImage}
+          alt=""
+          width={1920}
+          widths={[800, 1200, 1920]}
+          class="banner-bg"
+          loading="lazy"
+        />
+      ) : (
+        <div class="banner-bg banner-bg-fallback" aria-hidden="true"></div>
+      )}
+
+      <div class="banner-overlay" aria-hidden="true"></div>
+
+      <div class="banner-content">
+        <p class="banner-eyebrow">Em destaque</p>
+        <h2 class="banner-title">{title}</h2>
+        <p class="banner-meta">
+          {SITE_AUTHOR}<span class="meta-sep"> · </span><FormattedDate date={pubDate} />
+        </p>
+      </div>
+
+      <div class="banner-hover" aria-hidden="true">
+        <span class="banner-hover-text">Ler ensaio →</span>
+      </div>
+    </a>
   </div>
-</a>
+</div>
 
 <style>
+  .featured-wrap {
+    padding: 3rem 0;
+  }
+
+  @media (min-width: 768px) {
+    .featured-wrap {
+      padding: 4rem 0;
+    }
+  }
+
   .featured-banner {
     position: relative;
     display: block;
     overflow: hidden;
-    aspect-ratio: 16 / 7;
+    aspect-ratio: 16 / 8;
     width: 100%;
     background-color: var(--color-ink);
     isolation: isolate;
     text-decoration: none;
     color: #fff;
+    border-radius: 12px;
   }
 
   .banner-bg {
@@ -75,8 +95,8 @@ const href = `/blog/${post.id}/`;
     background: linear-gradient(
       180deg,
       rgba(0, 0, 0, 0.35) 0%,
-      rgba(0, 0, 0, 0.25) 40%,
-      rgba(0, 0, 0, 0.65) 100%
+      rgba(0, 0, 0, 0.30) 50%,
+      rgba(0, 0, 0, 0.55) 100%
     );
   }
 
@@ -99,7 +119,7 @@ const href = `/blog/${post.id}/`;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.3em;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.9);
     margin: 0;
   }
 
@@ -108,7 +128,7 @@ const href = `/blog/${post.id}/`;
     font-weight: 700;
     line-height: 1.15;
     letter-spacing: -0.02em;
-    font-size: clamp(1.6rem, 4.2vw, 3.6rem);
+    font-size: clamp(1.6rem, 4vw, 3.2rem);
     margin: 0;
     max-width: 900px;
     color: #fff;
@@ -121,36 +141,44 @@ const href = `/blog/${post.id}/`;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: rgba(255, 255, 255, 0.85);
-    margin: 0.4rem 0 0.6rem;
+    margin: 0.4rem 0 0;
   }
 
   .meta-sep {
     opacity: 0.55;
   }
 
-  .banner-cta {
-    display: inline-block;
+  /* Hover: overlay escuro com CTA "Ler ensaio →" */
+  .banner-hover {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
     background: rgba(0, 0, 0, 0.55);
-    color: #fff;
-    padding: 0.85rem 2rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    transition: background 0.25s ease, transform 0.25s ease;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
   }
 
-  .featured-banner:hover .banner-cta {
-    background: #00b4d8;
-    transform: translateY(-2px);
+  .featured-banner:hover .banner-hover {
+    opacity: 1;
+  }
+
+  .banner-hover-text {
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
   }
 
   @media (max-width: 768px) {
     .featured-banner {
       aspect-ratio: 4 / 5;
+      border-radius: 8px;
     }
     .banner-content {
       padding: 2rem 1.5rem;
@@ -160,7 +188,7 @@ const href = `/blog/${post.id}/`;
 
   @media (prefers-reduced-motion: reduce) {
     .banner-bg,
-    .banner-cta {
+    .banner-hover {
       transition: none;
     }
     .featured-banner:hover .banner-bg {
