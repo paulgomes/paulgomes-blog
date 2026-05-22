@@ -17,8 +17,8 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
         <Image
           src={authorPhoto}
           alt="Paul Gomes"
-          width={1200}
-          widths={[600, 900, 1200]}
+          width={1440}
+          widths={[720, 1080, 1440]}
           class="photo-img"
           loading="eager"
           fetchpriority="high"
@@ -79,7 +79,7 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     border-bottom: 1px solid var(--color-border);
     min-height: 80vh;
     display: flex;
-    align-items: center;
+    align-items: stretch;
   }
 
   .cinematic-matrix {
@@ -96,9 +96,7 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     position: absolute;
     inset: 0;
     z-index: 2;
-    background:
-      radial-gradient(ellipse 70% 50% at center, transparent 30%, var(--color-paper) 95%),
-      linear-gradient(180deg, transparent 0%, transparent 70%, var(--color-paper) 100%);
+    background: radial-gradient(ellipse 70% 50% at center, transparent 30%, var(--color-paper) 95%);
     pointer-events: none;
   }
 
@@ -108,22 +106,25 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     width: 100%;
     max-width: 1280px;
     margin: 0 auto;
-    padding: 4rem 1.5rem 2rem;
+    padding: 4rem 1.5rem 0;
+    display: flex;
+    flex-direction: column;
   }
 
   @media (min-width: 768px) {
     .cinematic-inner {
-      padding: 5rem 2rem 2.5rem;
+      padding: 5rem 2rem 0;
     }
   }
 
   @media (min-width: 1280px) {
     .cinematic-inner {
-      padding: 6rem 3rem 3rem;
+      padding: 6rem 3rem 0;
     }
   }
 
   .cinematic-grid {
+    flex: 1;
     display: grid;
     gap: 2.5rem;
     align-items: center;
@@ -137,37 +138,36 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     }
   }
 
-  /* === FOTO MENOR E EQUILIBRADA === */
+  /* === FOTO: sólida, sem mask, encosta no rodapé === */
   .cinematic-photo {
     position: relative;
     width: 100%;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
+    align-self: end;
   }
 
   .photo-img {
     width: 100%;
     height: auto;
-    max-width: 460px;
+    max-width: 500px;
     margin: 0 auto;
     display: block;
-    filter:
-      drop-shadow(0 24px 48px rgba(0, 0, 0, 0.12))
-      drop-shadow(0 8px 16px rgba(0, 0, 0, 0.06));
-    -webkit-mask-image: linear-gradient(to bottom, #000 90%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 90%, transparent 100%);
+    object-fit: contain;
+    object-position: bottom center;
+    filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.10));
   }
 
   @media (min-width: 1024px) {
     .photo-img {
-      max-width: 540px;
+      max-width: 620px;
     }
   }
 
   @media (min-width: 1280px) {
     .photo-img {
-      max-width: 600px;
+      max-width: 720px;
     }
   }
 
@@ -304,9 +304,7 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
   }
 
   :global(.dark) .cinematic-overlay {
-    background:
-      radial-gradient(ellipse 70% 50% at center, transparent 30%, #020202 95%),
-      linear-gradient(180deg, transparent 0%, transparent 70%, #020202 100%);
+    background: radial-gradient(ellipse 70% 50% at center, transparent 30%, #020202 95%);
   }
 
   :global(.dark) .cinematic-headline {
