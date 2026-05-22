@@ -290,15 +290,24 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     box-shadow: 0 12px 28px rgba(0, 180, 216, 0.35);
   }
 
-  /* === MOBILE: foto antes do texto === */
+  /* === MOBILE: foto antes do texto, conteúdo compactado, breathing room final === */
   @media (max-width: 1023px) {
-    .author-cinematic {
-      min-height: auto;
+    .cinematic-inner {
+      padding-bottom: 2rem;
+    }
+    .cinematic-grid {
+      gap: 1.5rem;
     }
     .cinematic-photo {
       order: -1;
-      max-width: 340px;
+      max-width: 360px;
       margin: 0 auto;
+    }
+    .cinematic-bio {
+      margin-top: 1.25rem;
+    }
+    .cinematic-form {
+      margin-top: 1.5rem;
     }
   }
 
