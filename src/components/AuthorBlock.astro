@@ -32,9 +32,10 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
           <span class="eyebrow-dot">◆</span> Sobre o autor
         </p>
 
-        <h1 class="cinematic-headline">
-          Paul Gomes —<br />
-          <span class="forward-cyan">Thinking Forward</span>.
+        <h1 class="cinematic-headline-stacked">
+          <span class="name-line">Paul Gomes</span>
+          <span class="divider-line" aria-hidden="true">—</span>
+          <span class="forward-line forward-cyan">Thinking Forward<span class="forward-dot">.</span></span>
         </h1>
 
         <div class="cinematic-bio">
@@ -93,7 +94,7 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     width: 100%;
     height: 100%;
     z-index: 1;
-    opacity: 0.7;
+    opacity: 0.5;
     pointer-events: none;
   }
 
@@ -154,10 +155,12 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     max-width: 600px;
     margin: 0 auto;
     display: block;
-    /* Drop-shadow cinematográfico */
+    /* Drop-shadow editorial duplo + máscara pra fundir no bottom */
     filter:
-      drop-shadow(0 30px 60px rgba(0, 0, 0, 0.18))
-      drop-shadow(0 10px 20px rgba(0, 0, 0, 0.08));
+      drop-shadow(0 20px 40px rgba(0, 0, 0, 0.12))
+      drop-shadow(0 6px 12px rgba(0, 0, 0, 0.06));
+    -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
   }
 
   @media (min-width: 1024px) {
@@ -207,6 +210,50 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 30px rgba(0, 180, 216, 0.18);
+  }
+
+  .cinematic-headline-stacked {
+    font-family: var(--font-display);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    line-height: 1;
+  }
+
+  .cinematic-headline-stacked .name-line {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--color-ink);
+    line-height: 1.05;
+  }
+
+  .cinematic-headline-stacked .divider-line {
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--color-muted);
+    font-weight: 400;
+    line-height: 1;
+    margin: 0.2em 0;
+  }
+
+  .cinematic-headline-stacked .forward-line {
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+
+  .cinematic-headline-stacked .forward-dot {
+    color: var(--color-ink);
+  }
+
+  :global(.dark) .cinematic-headline-stacked .name-line {
+    color: #fff;
+  }
+
+  :global(.dark) .cinematic-headline-stacked .forward-dot {
+    color: #fff;
   }
 
   .cinematic-bio {
@@ -405,8 +452,8 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
           const char = CHARS[Math.floor(Math.random() * CHARS.length)];
           // Cor varia com tema, opacidade varia por drop pra dar profundidade
           const color = dark
-            ? `rgba(0, 210, 211, ${drop.opacity * 0.9})`
-            : `rgba(0, 180, 216, ${drop.opacity * 0.45})`;
+            ? `rgba(0, 210, 211, ${drop.opacity * 0.7})`
+            : `rgba(0, 180, 216, ${drop.opacity * 0.22})`;  // mais sutil que antes (era 0.45)
           ctx.fillStyle = color;
           ctx.fillText(char, drop.x, drop.y);
 
