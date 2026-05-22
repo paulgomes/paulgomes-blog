@@ -9,8 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
-    "optimize-intro": "node scripts/optimize-intro.mjs"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",

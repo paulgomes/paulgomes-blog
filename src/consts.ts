@@ -1,10 +1,9 @@
 export const SITE_TITLE = 'Paul Gomes';
 export const SITE_TAGLINE = 'Branding · Tecnologia · Negócios';
-export const SITE_SIGNATURE = 'Thinking Forward · Made by Human';
-export const SITE_THESIS = 'Pensar adiante não é prever o futuro.\nÉ construí-lo um ensaio por vez.';
 export const SITE_DESCRIPTION = 'Branding, tecnologia e o futuro dos negócios. Ensaios e ideias de Paul Gomes.';
 export const SITE_AUTHOR = 'Paul Gomes';
 export const SITE_AUTHOR_BIO = 'Fundador da WYS. Escrevo sobre marcas, tecnologia e o futuro dos negócios.';
+export const SITE_SIGNATURE = 'Thinking Forward · Made by Human';
 export const SITE_LANG = 'pt-BR';
 export const SITE_LOCALE = 'pt_BR';
 

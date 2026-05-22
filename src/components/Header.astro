@@ -1,21 +1,21 @@
 ---
+import { Image } from 'astro:assets';
 import HeaderLink from './HeaderLink.astro';
 import ThemeToggle from './ThemeToggle.astro';
-import { SITE_TITLE, SITE_TAGLINE } from '../consts';
+import logo from '../assets/brand/logo-paulgomes.webp';
 ---
 
-<header class="border-b sticky top-0 z-50 backdrop-blur" style="border-color: var(--color-border); background-color: color-mix(in srgb, var(--color-paper) 85%, transparent);">
+<header class="border-b sticky top-0 z-50 backdrop-blur" style="border-color: var(--color-border); background-color: color-mix(in srgb, var(--color-paper) 88%, transparent);">
   <div class="container-wide flex h-20 items-center justify-between gap-6">
-    <a href="/" class="group flex items-center gap-3 transition-opacity hover:opacity-80" aria-label="Paul Gomes — Página inicial">
-      <span class="flex h-10 w-10 items-center justify-center rounded-sm font-display text-lg font-bold tracking-tighter" style="background-color: var(--color-ink); color: var(--color-paper);">
-        PG
-      </span>
-      <span class="flex flex-col leading-none">
-        <span class="font-display text-xl font-bold tracking-tight">{SITE_TITLE}</span>
-        <span class="mt-1 hidden text-[10px] font-medium uppercase tracking-[0.18em] sm:block" style="color: var(--color-muted)">
-          {SITE_TAGLINE}
-        </span>
-      </span>
+    <a href="/" class="flex items-center transition-opacity hover:opacity-70" aria-label="Paul Gomes — Página inicial">
+      <Image
+        src={logo}
+        alt="Paul Gomes"
+        width={180}
+        height={56}
+        class="logo-img h-12 w-auto"
+        loading="eager"
+      />
     </a>
 
     <nav class="flex items-center gap-7 text-sm font-medium">
@@ -27,3 +27,9 @@ import { SITE_TITLE, SITE_TAGLINE } from '../consts';
     </nav>
   </div>
 </header>
+
+<style>
+  .dark .logo-img {
+    filter: invert(1);
+  }
+</style>
