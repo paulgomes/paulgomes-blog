@@ -301,13 +301,13 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     display: none;
   }
 
-  /* === MOBILE: foto → GEO → texto centralizado, breathing room final === */
+  /* === MOBILE: foto → GEO → texto centralizado, sem gaps esquisitos === */
   @media (max-width: 1023px) {
     .cinematic-inner {
-      padding: 1.5rem 0 2rem;
+      padding: 1.5rem 0 1.5rem;
     }
     .cinematic-grid {
-      gap: 1.5rem;
+      gap: 0;
     }
     .cinematic-photo {
       order: -1;
@@ -320,6 +320,7 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     }
     .cinematic-text {
       padding: 0 1.5rem;
+      margin-top: 1.75rem;
       text-align: center;
     }
     .cinematic-eyebrow {
@@ -331,8 +332,13 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
       margin-right: auto;
     }
     .cinematic-form {
-      margin: 1.5rem auto 0;
-      align-items: center;
+      width: 100%;
+      max-width: 360px;
+      margin: 1.75rem auto 0;
+      align-items: stretch;
+    }
+    .cinematic-btn {
+      width: 100%;
     }
   }
 
