@@ -1,0 +1,59 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <BaseHead title={`Política de Privacidade — ${SITE_TITLE}`} description="Política de privacidade do site de Paul Gomes." />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <section class="container-prose pt-16 pb-24 md:pt-24">
+        <h1 class="font-display text-4xl font-bold tracking-tight md:text-5xl">Política de Privacidade</h1>
+
+        <div class="mt-10 space-y-6 text-base leading-relaxed" style="color: var(--color-muted)">
+          <p>
+            Este documento descreve como o site <strong>paulgomes.com.br</strong> trata informações de seus visitantes. Última atualização: {new Date().getFullYear()}.
+          </p>
+
+          <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Coleta de dados</h2>
+          <p>
+            Este site é uma publicação editorial estática. Não coletamos nem armazenamos dados pessoais identificáveis dos visitantes diretamente. Não utilizamos cookies de rastreamento próprios.
+          </p>
+
+          <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Análise de tráfego</h2>
+          <p>
+            Podemos utilizar ferramentas de análise (como Cloudflare Web Analytics ou similares) que coletam métricas agregadas e anônimas sobre o uso do site — número de visitas, páginas mais lidas, origem geográfica genérica — sem identificar visitantes individualmente.
+          </p>
+
+          <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Newsletter</h2>
+          <p>
+            Caso você se inscreva voluntariamente em nossa newsletter, seu endereço de e-mail será utilizado exclusivamente para envio dos próximos ensaios. Você pode cancelar a inscrição a qualquer momento. Não compartilhamos seu e-mail com terceiros.
+          </p>
+
+          <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Links externos</h2>
+          <p>
+            Este site contém links para serviços de terceiros (LinkedIn, Instagram, YouTube, ChatGPT, Claude, Perplexity, etc). Ao clicar nesses links, você passa a estar sujeito às políticas de privacidade desses serviços.
+          </p>
+
+          <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Seus direitos</h2>
+          <p>
+            Em conformidade com a LGPD (Lei nº 13.709/2018), você tem o direito de solicitar informações sobre quaisquer dados eventualmente associados a você, bem como solicitar correção ou remoção.
+          </p>
+
+          <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Contato</h2>
+          <p>
+            Para dúvidas sobre esta política ou solicitações relacionadas aos seus dados:
+            <a href="mailto:paulgomes@wys.com.br" class="underline underline-offset-4">paulgomes@wys.com.br</a>.
+          </p>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>

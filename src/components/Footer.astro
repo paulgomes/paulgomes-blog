@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import SocialIcons from './SocialIcons.astro';
-import { SITE_TITLE, SITE_AUTHOR_BIO, SITE_SIGNATURE } from '../consts';
+import { SITE_SIGNATURE } from '../consts';
 import authorPhoto from '../assets/brand/paul-gomes.webp';
 import signature from '../assets/brand/signature-paul-gomes.webp';
 
@@ -20,11 +20,14 @@ const year = new Date().getFullYear();
           class="h-20 w-20 flex-none rounded-full object-cover"
         />
         <div>
-          <p class="font-display text-2xl font-bold leading-tight">{SITE_TITLE}</p>
-          <p class="mt-2 max-w-md text-base" style="color: var(--color-muted)">
-            {SITE_AUTHOR_BIO}
+          <p class="font-display text-2xl font-bold leading-tight">Paul Gomes - Thinking Forward</p>
+          <p class="mt-3 max-w-xl text-base" style="color: var(--color-muted)">
+            Escrevo sobre inteligência artificial, GEO, SEO, arquitetura digital e as transformações que redefinem negócios, marcas e comportamento.
           </p>
-          <p class="mt-3 text-xs font-medium uppercase tracking-[0.2em]" style="color: var(--color-muted)">
+          <p class="mt-3 max-w-xl text-base" style="color: var(--color-muted)">
+            Pra quem quer pensar adiante, e não apenas correr atrás.
+          </p>
+          <p class="mt-4 text-xs font-medium uppercase tracking-[0.2em]" style="color: var(--color-muted)">
             {SITE_SIGNATURE}
           </p>
           <div class="mt-5">
@@ -48,20 +51,22 @@ const year = new Date().getFullYear();
 
     <div class="flex flex-col items-start gap-4 text-sm md:flex-row md:items-center md:justify-between">
       <nav class="flex flex-wrap gap-6">
-        <a href="/" class="transition-opacity hover:opacity-60">Início</a>
-        <a href="/blog" class="transition-opacity hover:opacity-60">Ensaios</a>
+        <a href="/" class="transition-opacity hover:opacity-60">Home</a>
         <a href="/about" class="transition-opacity hover:opacity-60">Sobre</a>
-        <a href="/rss.xml" class="transition-opacity hover:opacity-60">RSS</a>
+        <a href="/blog" class="transition-opacity hover:opacity-60">Insights</a>
+        <a href="/parceiros" class="transition-opacity hover:opacity-60">Parceiros</a>
+        <a href="/contato" class="transition-opacity hover:opacity-60">Contato</a>
       </nav>
-      <p style="color: var(--color-muted)">
-        © {year} Paul Gomes · Construído em <a href="https://astro.build" class="underline underline-offset-4">Astro</a>
-      </p>
+      <div class="flex flex-col gap-1 md:items-end" style="color: var(--color-muted)">
+        <p>© {year} Paul Gomes · Construído em <a href="https://astro.build" class="underline underline-offset-4">Astro</a></p>
+        <a href="/privacidade" class="underline underline-offset-4 transition-opacity hover:opacity-60">Política de Privacidade</a>
+      </div>
     </div>
   </div>
 </footer>
 
 <style>
-  .dark .signature-img {
+  :global(.dark) .signature-img {
     filter: invert(1);
   }
 </style>

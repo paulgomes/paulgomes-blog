@@ -1,0 +1,31 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SOCIAL } from '../consts';
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <BaseHead title={`Contato — ${SITE_TITLE}`} description="Entre em contato com Paul Gomes." />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <section class="container-prose pt-16 pb-24 md:pt-24">
+        <h1 class="font-display text-5xl font-bold tracking-tight md:text-6xl">Contato</h1>
+        <div class="mt-10 space-y-6 text-lg leading-relaxed">
+          <p>Para conversar sobre projetos, parcerias, palestras ou apenas trocar ideias:</p>
+          <p>
+            <a href={SOCIAL.email} class="underline underline-offset-4">paulgomes@wys.com.br</a>
+          </p>
+          <p style="color: var(--color-muted)">
+            Também respondo no <a href={SOCIAL.linkedin} target="_blank" rel="noopener" class="underline underline-offset-4">LinkedIn</a> e <a href={SOCIAL.instagram} target="_blank" rel="noopener" class="underline underline-offset-4">Instagram</a>.
+          </p>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>
