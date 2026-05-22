@@ -32,8 +32,7 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
         </p>
 
         <h1 class="cinematic-headline">
-          Paul Gomes —<br />
-          <span class="forward-cyan">Thinking Forward</span>.
+          Paul Gomes — <span class="forward-cyan">Thinking Forward</span>.
         </h1>
 
         <div class="cinematic-bio">
@@ -189,21 +188,27 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     font-size: 0.7em;
   }
 
+  /* Texto column: previne blowout do grid quando headline tem nowrap */
+  .cinematic-text {
+    min-width: 0;
+  }
+
   /* === HEADLINE BALANCEADA === */
   .cinematic-headline {
     font-family: var(--font-display);
     font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.025em;
-    font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-size: clamp(0.9rem, 4vw, 1.4rem);
     margin: 0;
     color: var(--color-ink);
     text-align: left;
+    white-space: nowrap;
   }
 
   @media (min-width: 1024px) {
     .cinematic-headline {
-      font-size: clamp(1.8rem, 2.6vw, 2.6rem);
+      font-size: clamp(1.1rem, 1.8vw, 1.6rem);
     }
   }
 
