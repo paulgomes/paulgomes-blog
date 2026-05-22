@@ -20,3 +20,17 @@ export const FEATURED_THEME = {
   description: 'Como a inteligência artificial está reescrevendo as regras dos negócios, do marketing e do trabalho criativo.',
   keywords: ['inteligencia artificial', 'tecnologia', 'ia', 'gpt', 'chatgpt', 'futuro', 'inovacao'],
 };
+
+// Marcas que passaram pela WYS — placeholder em texto, substituir por logos quando estiverem prontos
+export const BRANDS = [
+  'Disney',
+  'Hummel',
+  'Celmar',
+  'Cidade Sorocaba',
+  'Peptpure',
+  'Panine',
+  'Pescfacil',
+  '15K',
+  'Spotbook',
+  'ScrumBoards',
+];

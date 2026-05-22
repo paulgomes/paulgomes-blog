@@ -1,0 +1,104 @@
+---
+import { BRANDS } from '../consts';
+
+// Duplica a lista pra criar loop infinito sem corte
+const doubled = [...BRANDS, ...BRANDS];
+---
+
+<section class="marquee-section border-t" style="border-color: var(--color-border)">
+  <div class="container-wide py-16 md:py-20">
+    <p class="mb-10 text-center text-xs font-semibold uppercase tracking-[0.3em]" style="color: var(--color-muted)">
+      ◆ Marcas que passaram por aqui
+    </p>
+  </div>
+
+  <!-- Marquee em scroll horizontal infinito -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      {doubled.map((brand) => (
+        <span class="marquee-item">{brand}</span>
+      ))}
+    </div>
+  </div>
+
+  <!-- Versão acessível pra leitores de tela -->
+  <ul class="sr-only">
+    {BRANDS.map((brand) => <li>{brand}</li>)}
+  </ul>
+
+  <div class="container-wide pt-16 md:pt-20"></div>
+</section>
+
+<style>
+  .marquee-section {
+    background-color: var(--color-subtle);
+    overflow: hidden;
+  }
+
+  .marquee {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+  }
+
+  .marquee-track {
+    display: inline-flex;
+    align-items: center;
+    gap: 4rem;
+    padding: 0 2rem;
+    white-space: nowrap;
+    animation: marquee-scroll 40s linear infinite;
+    will-change: transform;
+  }
+
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .marquee-item {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+  }
+
+  .marquee-item:hover {
+    opacity: 1;
+  }
+
+  /* Separador "·" entre marcas */
+  .marquee-item:not(:last-child)::after {
+    content: '·';
+    margin-left: 4rem;
+    color: var(--color-muted);
+    opacity: 0.4;
+  }
+
+  @keyframes marquee-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+    }
+  }
+</style>

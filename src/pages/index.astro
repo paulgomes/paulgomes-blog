@@ -5,6 +5,9 @@ import Footer from '../components/Footer.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import FeaturedPost from '../components/FeaturedPost.astro';
 import PostCard from '../components/PostCard.astro';
+import AuthorBlock from '../components/AuthorBlock.astro';
+import BrandsMarquee from '../components/BrandsMarquee.astro';
+import NewsletterBlock from '../components/NewsletterBlock.astro';
 import { SITE_TITLE, SITE_DESCRIPTION, SITE_TAGLINE, FEATURED_THEME } from '../consts';
 import { getCollection } from 'astro:content';
 
@@ -36,7 +39,7 @@ const firstYear = allPosts.length
   <body>
     <Header />
     <main>
-      <!-- HERO EDITORIAL: título + tagline + descrição -->
+      <!-- HERO -->
       <section class="container-wide pt-20 pb-16 md:pt-32 md:pb-24">
         <div class="max-w-4xl">
           <p class="mb-6 text-xs font-semibold uppercase tracking-[0.3em]" style="color: var(--color-muted)">
@@ -56,10 +59,7 @@ const firstYear = allPosts.length
       <!-- EM DESTAQUE -->
       {featured && (
         <section class="container-wide py-16 md:py-20 border-t" style="border-color: var(--color-border)">
-          <SectionHeader
-            eyebrow="Em destaque"
-            title="O ensaio do momento"
-          />
+          <SectionHeader eyebrow="Em destaque" title="O ensaio do momento" />
           <FeaturedPost post={featured} />
         </section>
       )}
@@ -79,6 +79,12 @@ const firstYear = allPosts.length
         </section>
       )}
 
+      <!-- 🆕 SOBRE O AUTOR -->
+      <AuthorBlock />
+
+      <!-- 🆕 MARCAS QUE PASSARAM POR AQUI -->
+      <BrandsMarquee />
+
       <!-- TEMA DO MÊS -->
       {themePosts.length > 0 && (
         <section class="theme-section border-t" style="border-color: var(--color-border)">
@@ -94,6 +100,9 @@ const firstYear = allPosts.length
           </div>
         </section>
       )}
+
+      <!-- 🆕 NEWSLETTER -->
+      <NewsletterBlock />
 
       <!-- ARQUIVO -->
       <section class="container-wide py-16 md:py-24 border-t" style="border-color: var(--color-border)">
