@@ -79,33 +79,6 @@ const firstYear = allPosts.length
         </section>
       )}
 
-      <!-- ARQUIVO -->
-      <section class="container-wide py-16 md:py-24 border-t" style="border-color: var(--color-border)">
-        <div class="grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
-          <div class="max-w-2xl">
-            <p class="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style="color: var(--color-muted)">
-              ◆ Arquivo
-            </p>
-            <h2 class="font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">
-              <span class="block">{totalEnsaios} ensaios</span>
-              <span class="block" style="color: var(--color-muted)">desde {firstYear}.</span>
-            </h2>
-            <p class="mt-6 text-lg leading-relaxed" style="color: var(--color-muted)">
-              Todo o pensamento publicado aqui — do mais recente ao primeiro registro. Explore por ano, tema ou palavra-chave.
-            </p>
-          </div>
-          <div class="flex flex-col gap-3">
-            <a href="/blog" class="inline-flex items-center gap-3 self-start rounded-full px-6 py-3 text-sm font-medium transition-opacity hover:opacity-80" style="background-color: var(--color-ink); color: var(--color-paper);">
-              Explorar arquivo
-              <span aria-hidden="true">→</span>
-            </a>
-            <a href="/rss.xml" class="inline-flex items-center gap-3 self-start text-sm underline underline-offset-4 transition-opacity hover:opacity-60">
-              Assinar RSS
-              <span aria-hidden="true">↗</span>
-            </a>
-          </div>
-        </div>
-      </section>
     </main>
     <Footer />
 
