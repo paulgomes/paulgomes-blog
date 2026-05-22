@@ -1,15 +1,21 @@
 ---
 import { Image } from 'astro:assets';
 import SocialIcons from './SocialIcons.astro';
-import authorPhoto from '../assets/brand/paul-gomes-hero.png';
+import authorPhoto from '../assets/brand/paul-avatar.png';
 ---
 
-<section class="border-t" style="border-color: var(--color-border)">
-  <div class="container-wide py-20 md:py-28">
+<section class="author-matrix">
+  <!-- Canvas do matrix (preenchido via JS) -->
+  <canvas class="matrix-canvas" aria-hidden="true"></canvas>
+
+  <!-- Overlay radial suave pra dar profundidade -->
+  <div class="matrix-overlay" aria-hidden="true"></div>
+
+  <div class="container-wide py-24 md:py-32 relative z-10">
     <div class="grid gap-12 lg:grid-cols-[5fr_6fr] lg:gap-20 items-center">
-      <!-- Foto à esquerda -->
-      <div class="relative">
-        <div class="overflow-hidden rounded-sm" style="background-color: var(--color-subtle)">
+      <!-- Foto à esquerda com borda ciano -->
+      <div class="photo-wrap">
+        <div class="photo-frame">
           <Image
             src={authorPhoto}
             alt="Paul Gomes"
@@ -23,14 +29,14 @@ import authorPhoto from '../assets/brand/paul-gomes-hero.png';
 
       <!-- Texto à direita -->
       <div>
-        <p class="mb-4 text-xs font-semibold uppercase tracking-[0.3em]" style="color: var(--color-muted)">
+        <p class="mb-4 text-xs font-semibold uppercase tracking-[0.3em] eyebrow-cyan">
           ◆ Sobre o autor
         </p>
-        <h2 class="font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-5xl lg:text-6xl">
+        <h2 class="font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-5xl lg:text-6xl text-white">
           Paul Gomes,<br />
-          fundador da WYS.
+          fundador da <span class="brand-cyan">WYS</span>.
         </h2>
-        <div class="mt-8 space-y-5 text-lg leading-relaxed" style="color: var(--color-muted)">
+        <div class="mt-8 space-y-5 text-lg leading-relaxed text-zinc-300">
           <p>
             Há mais de uma década construindo marcas, produtos digitais e estratégias para empresas que querem crescer com clareza.
           </p>
@@ -41,14 +47,217 @@ import authorPhoto from '../assets/brand/paul-gomes-hero.png';
             Pra quem quer pensar adiante, e não apenas correr atrás.
           </p>
         </div>
-        <div class="mt-10 flex flex-wrap items-center gap-6">
-          <a href="/about" class="inline-flex items-center gap-3 rounded-full px-6 py-3 text-sm font-medium transition-opacity hover:opacity-80" style="background-color: var(--color-ink); color: var(--color-paper);">
-            Saiba mais sobre mim
-            <span aria-hidden="true">→</span>
-          </a>
+
+        <!-- Newsletter inline -->
+        <div class="mt-10">
+          <p class="text-sm uppercase tracking-[0.25em] font-semibold mb-4 brand-cyan">
+            Receba os próximos ensaios
+          </p>
+          <form
+            action="#"
+            method="post"
+            class="flex flex-col gap-3 sm:flex-row max-w-lg"
+            onsubmit="event.preventDefault(); alert('Newsletter em breve! Me siga no LinkedIn ou Instagram.');"
+          >
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="seu@email.com"
+              aria-label="Seu e-mail"
+              class="newsletter-input-dark flex-1 rounded-full px-6 py-4 text-base outline-none"
+            />
+            <button
+              type="submit"
+              class="newsletter-btn-cyan rounded-full px-7 py-4 text-sm font-bold"
+            >
+              Inscrever →
+            </button>
+          </form>
+        </div>
+
+        <!-- Redes sociais -->
+        <div class="mt-8 social-light">
           <SocialIcons size={22} />
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  .author-matrix {
+    position: relative;
+    background-color: #020202;
+    color: #fff;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .matrix-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .matrix-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 20%,
+      #020202 100%
+    );
+    pointer-events: none;
+  }
+
+  .brand-cyan {
+    color: #00d2d3;
+    text-shadow: 0 0 25px rgba(0, 210, 211, 0.45);
+  }
+
+  .eyebrow-cyan {
+    color: #00d2d3;
+    opacity: 0.85;
+  }
+
+  .photo-wrap {
+    position: relative;
+  }
+
+  .photo-frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 210, 211, 0.35);
+    box-shadow:
+      0 0 40px rgba(0, 210, 211, 0.18),
+      0 30px 60px -20px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Newsletter dark */
+  .newsletter-input-dark {
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(0, 210, 211, 0.3);
+    color: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .newsletter-input-dark::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .newsletter-input-dark:focus {
+    border-color: #00d2d3;
+    box-shadow: 0 0 0 3px rgba(0, 210, 211, 0.2);
+  }
+
+  .newsletter-btn-cyan {
+    background: linear-gradient(45deg, #00d2d3, #009e9f);
+    color: #000;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    border: none;
+  }
+
+  .newsletter-btn-cyan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 210, 211, 0.45);
+  }
+
+  /* Redes sociais ficam claras nesse fundo escuro */
+  .social-light :global(svg) {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.2s ease;
+  }
+
+  .social-light :global(a:hover svg) {
+    color: #00d2d3;
+  }
+</style>
+
+<script>
+  // Matrix rain — caracteres caindo no fundo
+  (function () {
+    const section = document.querySelector<HTMLElement>('.author-matrix');
+    const canvas = section?.querySelector<HTMLCanvasElement>('.matrix-canvas');
+    if (!section || !canvas) return;
+
+    // Respeitar prefers-reduced-motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    // Desligar no mobile (economia de bateria)
+    if (window.matchMedia('(max-width: 768px)').matches) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const CHARS = 'PAULGOMESWYSMARKETING01THINKINGFORWARD◆';
+    const FONT_SIZE = 16;
+    let drops: number[] = [];
+    let rafId = 0;
+
+    function resize() {
+      if (!canvas || !section) return;
+      canvas.width = section.offsetWidth;
+      canvas.height = section.offsetHeight;
+      const columns = Math.floor(canvas.width / FONT_SIZE);
+      drops = new Array(columns).fill(0).map(() => Math.random() * -50);
+    }
+
+    let lastFrame = 0;
+    const FRAME_INTERVAL = 50; // ms entre frames
+
+    function draw(now: number) {
+      if (!canvas || !ctx) return;
+      if (now - lastFrame >= FRAME_INTERVAL) {
+        lastFrame = now;
+
+        // Fade do frame anterior (deixa rastro)
+        ctx.fillStyle = 'rgba(2, 2, 2, 0.12)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#00d2d3';
+        ctx.font = `${FONT_SIZE}px ui-monospace, "Courier New", monospace`;
+
+        for (let i = 0; i < drops.length; i++) {
+          const char = CHARS[Math.floor(Math.random() * CHARS.length)];
+          ctx.fillText(char, i * FONT_SIZE, drops[i] * FONT_SIZE);
+          if (drops[i] * FONT_SIZE > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+      }
+      rafId = requestAnimationFrame(draw);
+    }
+
+    function start() {
+      resize();
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(draw);
+    }
+
+    // Inicia quando a seção entra na viewport (economia)
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            start();
+          } else {
+            cancelAnimationFrame(rafId);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    io.observe(section);
+    window.addEventListener('resize', resize);
+  })();
+</script>
