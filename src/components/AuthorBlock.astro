@@ -4,39 +4,37 @@ import SocialIcons from './SocialIcons.astro';
 import authorPhoto from '../assets/brand/paul-avatar.png';
 ---
 
-<section class="author-matrix">
-  <!-- Canvas do matrix (preenchido via JS) -->
-  <canvas class="matrix-canvas" aria-hidden="true"></canvas>
+<section class="author-light author-as-hero">
+  <!-- Canvas do matrix sutil em ciano claro -->
+  <canvas class="matrix-canvas-light" aria-hidden="true"></canvas>
 
-  <!-- Overlay radial suave pra dar profundidade -->
-  <div class="matrix-overlay" aria-hidden="true"></div>
+  <!-- Overlay branco suave nas bordas pra fundir -->
+  <div class="matrix-overlay-light" aria-hidden="true"></div>
 
-  <div class="container-wide py-24 md:py-32 relative z-10">
-    <div class="grid gap-12 lg:grid-cols-[5fr_6fr] lg:gap-20 items-center">
-      <!-- Foto à esquerda com borda ciano -->
-      <div class="photo-wrap">
-        <div class="photo-frame">
-          <Image
-            src={authorPhoto}
-            alt="Paul Gomes"
-            width={900}
-            widths={[480, 720, 900]}
-            class="w-full h-auto aspect-[4/5] object-cover"
-            loading="lazy"
-          />
-        </div>
+  <div class="container-wide relative z-10">
+    <div class="grid gap-8 lg:grid-cols-[5fr_6fr] lg:gap-16 items-center">
+      <!-- Foto à esquerda — sem moldura, integra com o fundo -->
+      <div class="photo-wrap-light">
+        <Image
+          src={authorPhoto}
+          alt="Paul Gomes"
+          width={900}
+          widths={[480, 720, 900]}
+          class="photo-light w-full h-auto"
+          loading="lazy"
+        />
       </div>
 
       <!-- Texto à direita -->
       <div>
-        <p class="mb-4 text-xs font-semibold uppercase tracking-[0.3em] eyebrow-cyan">
+        <p class="mb-4 text-xs font-semibold uppercase tracking-[0.3em] eyebrow-light">
           ◆ Sobre o autor
         </p>
-        <h2 class="font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-5xl lg:text-6xl text-white">
+        <h2 class="font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-5xl lg:text-6xl">
           Paul Gomes —<br />
-          <span class="brand-cyan">Thinking Forward</span>.
+          <span class="brand-cyan-light">Thinking Forward</span>.
         </h2>
-        <div class="mt-8 space-y-5 text-lg leading-relaxed text-zinc-300">
+        <div class="mt-8 space-y-5 text-lg leading-relaxed" style="color: var(--color-muted)">
           <p>
             Escrevo sobre inteligência artificial, GEO, SEO, arquitetura digital e as transformações que redefinem negócios, marcas e comportamento.
           </p>
@@ -47,9 +45,6 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
 
         <!-- Newsletter inline -->
         <div class="mt-10">
-          <p class="text-sm uppercase tracking-[0.25em] font-semibold mb-4 brand-cyan">
-            Receba os próximos ensaios
-          </p>
           <form
             action="#"
             method="post"
@@ -62,11 +57,11 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
               required
               placeholder="seu@email.com"
               aria-label="Seu e-mail"
-              class="newsletter-input-dark flex-1 rounded-full px-6 py-4 text-base outline-none"
+              class="newsletter-input-light flex-1 rounded-full px-6 py-4 text-base outline-none"
             />
             <button
               type="submit"
-              class="newsletter-btn-cyan rounded-full px-7 py-4 text-sm font-bold"
+              class="newsletter-btn-cyan-light rounded-full px-7 py-4 text-sm font-bold"
             >
               Inscrever →
             </button>
@@ -74,7 +69,7 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
         </div>
 
         <!-- Redes sociais -->
-        <div class="mt-8 social-light">
+        <div class="mt-8 social-dark">
           <SocialIcons size={22} />
         </div>
       </div>
@@ -83,15 +78,29 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
 </section>
 
 <style>
-  .author-matrix {
+  .author-light {
     position: relative;
-    background-color: #020202;
-    color: #fff;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
     overflow: hidden;
     isolation: isolate;
+    border-bottom: 1px solid var(--color-border);
   }
 
-  .matrix-canvas {
+  .author-as-hero {
+    margin-top: 0;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  @media (min-width: 768px) {
+    .author-as-hero {
+      padding-top: 6rem;
+      padding-bottom: 6rem;
+    }
+  }
+
+  .matrix-canvas-light {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -101,88 +110,114 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     pointer-events: none;
   }
 
-  .matrix-overlay {
+  /* Overlay branco que fade nas bordas */
+  .matrix-overlay-light {
     position: absolute;
     inset: 0;
     z-index: 2;
     background: radial-gradient(
       ellipse at center,
-      transparent 20%,
-      #020202 100%
+      transparent 40%,
+      var(--color-paper) 95%
     );
     pointer-events: none;
   }
 
-  .brand-cyan {
-    color: #00d2d3;
-    text-shadow: 0 0 25px rgba(0, 210, 211, 0.45);
+  /* Forward em ciano vibrante */
+  .brand-cyan-light {
+    color: #00b4d8;
+    text-shadow: 0 0 22px rgba(0, 180, 216, 0.15);
   }
 
-  .eyebrow-cyan {
-    color: #00d2d3;
+  .eyebrow-light {
+    color: #00b4d8;
     opacity: 0.85;
   }
 
-  .photo-wrap {
+  /* Foto integra com o fundo (sem moldura) */
+  .photo-wrap-light {
     position: relative;
   }
 
-  .photo-frame {
-    position: relative;
-    overflow: hidden;
-    border-radius: 6px;
-    border: 1px solid rgba(0, 210, 211, 0.35);
-    box-shadow:
-      0 0 40px rgba(0, 210, 211, 0.18),
-      0 30px 60px -20px rgba(0, 0, 0, 0.8);
+  .photo-light {
+    /* Não tem aspect-ratio fixo — deixa a foto natural */
+    max-width: 100%;
+    object-fit: contain;
+    object-position: bottom;
+    /* Sombra suave abaixo pra dar profundidade */
+    filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.12));
   }
 
-  /* Newsletter dark */
-  .newsletter-input-dark {
-    background-color: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(0, 210, 211, 0.3);
-    color: #fff;
+  /* Newsletter clara */
+  .newsletter-input-light {
+    background-color: var(--color-paper);
+    border: 1px solid var(--color-border);
+    color: var(--color-ink);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .newsletter-input-dark::placeholder {
-    color: rgba(255, 255, 255, 0.45);
+  .newsletter-input-light::placeholder {
+    color: var(--color-muted);
   }
 
-  .newsletter-input-dark:focus {
-    border-color: #00d2d3;
-    box-shadow: 0 0 0 3px rgba(0, 210, 211, 0.2);
+  .newsletter-input-light:focus {
+    border-color: #00b4d8;
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
   }
 
-  .newsletter-btn-cyan {
-    background: linear-gradient(45deg, #00d2d3, #009e9f);
-    color: #000;
+  .newsletter-btn-cyan-light {
+    background: linear-gradient(45deg, #00b4d8, #0096b8);
+    color: #fff;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
     border: none;
   }
 
-  .newsletter-btn-cyan:hover {
+  .newsletter-btn-cyan-light:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 210, 211, 0.45);
+    box-shadow: 0 10px 25px rgba(0, 180, 216, 0.35);
   }
 
-  /* Redes sociais ficam claras nesse fundo escuro */
-  .social-light :global(svg) {
-    color: rgba(255, 255, 255, 0.7);
-    transition: color 0.2s ease;
+  /* Redes sociais escuras (sobre fundo claro) */
+  .social-dark :global(svg) {
+    color: var(--color-ink);
+    opacity: 0.65;
+    transition: opacity 0.2s ease, color 0.2s ease;
   }
 
-  .social-light :global(a:hover svg) {
-    color: #00d2d3;
+  .social-dark :global(a:hover svg) {
+    color: #00b4d8;
+    opacity: 1;
+  }
+
+  /* DARK MODE: inverte tudo */
+  :global(.dark) .author-light {
+    background-color: #020202;
+    color: #fff;
+  }
+
+  :global(.dark) .matrix-overlay-light {
+    background: radial-gradient(
+      ellipse at center,
+      transparent 30%,
+      #020202 95%
+    );
+  }
+
+  :global(.dark) .author-light h2 {
+    color: #fff;
+  }
+
+  :global(.dark) .author-light p {
+    color: rgba(255, 255, 255, 0.7) !important;
   }
 </style>
 
 <script>
-  // Matrix rain — caracteres caindo no fundo
+  // Matrix rain CLARO — caracteres ciano sutis sobre fundo branco
   (function () {
-    const section = document.querySelector<HTMLElement>('.author-matrix');
-    const canvas = section?.querySelector<HTMLCanvasElement>('.matrix-canvas');
+    const section = document.querySelector<HTMLElement>('.author-light');
+    const canvas = section?.querySelector<HTMLCanvasElement>('.matrix-canvas-light');
     if (!section || !canvas) return;
 
     // Respeitar prefers-reduced-motion
@@ -195,9 +230,13 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     if (!ctx) return;
 
     const CHARS = 'PAULGOMESWYSMARKETING01THINKINGFORWARD◆';
-    const FONT_SIZE = 16;
+    const FONT_SIZE = 18;
     let drops: number[] = [];
     let rafId = 0;
+
+    function isDark(): boolean {
+      return document.documentElement.classList.contains('dark');
+    }
 
     function resize() {
       if (!canvas || !section) return;
@@ -208,18 +247,22 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     }
 
     let lastFrame = 0;
-    const FRAME_INTERVAL = 50; // ms entre frames
+    const FRAME_INTERVAL = 60; // ms entre frames (mais sutil que a versão escura)
 
     function draw(now: number) {
       if (!canvas || !ctx) return;
       if (now - lastFrame >= FRAME_INTERVAL) {
         lastFrame = now;
 
-        // Fade do frame anterior (deixa rastro)
-        ctx.fillStyle = 'rgba(2, 2, 2, 0.12)';
+        const dark = isDark();
+        // Cor de fundo do fade (varia com tema)
+        ctx.fillStyle = dark ? 'rgba(2, 2, 2, 0.10)' : 'rgba(255, 255, 255, 0.10)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = '#00d2d3';
+        // Cor dos caracteres: ciano sempre, mas mais opaco no dark
+        ctx.fillStyle = dark
+          ? 'rgba(0, 210, 211, 0.85)'
+          : 'rgba(0, 180, 216, 0.42)';
         ctx.font = `${FONT_SIZE}px ui-monospace, "Courier New", monospace`;
 
         for (let i = 0; i < drops.length; i++) {
@@ -240,7 +283,7 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
       rafId = requestAnimationFrame(draw);
     }
 
-    // Inicia quando a seção entra na viewport (economia)
+    // Inicia quando a seção entra na viewport
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
