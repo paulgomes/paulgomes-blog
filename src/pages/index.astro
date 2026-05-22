@@ -25,11 +25,6 @@ const themePosts = allPosts
     return FEATURED_THEME.keywords.some((kw) => haystack.includes(kw));
   })
   .slice(0, 4);
-
-const totalEnsaios = allPosts.length;
-const firstYear = allPosts.length
-  ? Math.min(...allPosts.map((p) => p.data.pubDate.getFullYear()))
-  : new Date().getFullYear();
 ---
 
 <!doctype html>
