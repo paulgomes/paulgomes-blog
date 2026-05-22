@@ -42,6 +42,13 @@ const { posts, title = 'Em alta' } = Astro.props;
         </a>
       ))}
     </div>
+
+    <div class="trending-cta-wrap">
+      <a href="/blog" class="trending-cta">
+        Ver todos os insights
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -172,6 +179,38 @@ const { posts, title = 'Em alta' } = Astro.props;
     color: var(--color-muted);
     text-align: center;
     margin: 0;
+  }
+
+  /* CTA "Ver todos os insights" */
+  .trending-cta-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+  }
+
+  .trending-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 2rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  }
+
+  .trending-cta:hover {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    border-color: var(--color-ink);
+    transform: translateY(-2px);
   }
 
   @media (prefers-reduced-motion: reduce) {

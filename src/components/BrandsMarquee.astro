@@ -58,8 +58,8 @@ const doubled = [...BRANDS, ...BRANDS];
   .marquee-track {
     display: inline-flex;
     align-items: center;
-    gap: 4rem;
-    padding: 0 2rem;
+    gap: 2.5rem;
+    padding: 0 1.5rem;
     white-space: nowrap;
     animation: marquee-scroll 40s linear infinite;
     will-change: transform;
@@ -71,11 +71,11 @@ const doubled = [...BRANDS, ...BRANDS];
 
   .marquee-item {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 4.5vw, 3.5rem);
-    font-weight: 700;
-    letter-spacing: -0.01em;
+    font-size: clamp(1rem, 2.2vw, 1.5rem);
+    font-weight: 600;
+    letter-spacing: -0.005em;
     color: var(--color-ink);
-    opacity: 0.85;
+    opacity: 0.75;
     transition: opacity 0.3s ease;
   }
 
@@ -86,9 +86,21 @@ const doubled = [...BRANDS, ...BRANDS];
   /* Separador "·" entre marcas */
   .marquee-item:not(:last-child)::after {
     content: '·';
-    margin-left: 4rem;
+    margin-left: 2.5rem;
     color: var(--color-muted);
     opacity: 0.4;
+  }
+
+  @media (max-width: 640px) {
+    .marquee-item {
+      font-size: 1rem;
+    }
+    .marquee-item:not(:last-child)::after {
+      margin-left: 1.5rem;
+    }
+    .marquee-track {
+      gap: 1.5rem;
+    }
   }
 
   @keyframes marquee-scroll {
