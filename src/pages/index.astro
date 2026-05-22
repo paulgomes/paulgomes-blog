@@ -37,11 +37,13 @@ const firstYear = allPosts.length
     <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
   </head>
   <body>
-    <AIPromptBar />
     <Header />
     <main>
       <!-- SOBRE O AUTOR (abertura) -->
       <AuthorBlock />
+
+      <!-- BARRA GEO/AEO (entre hero e em destaque) -->
+      <AIPromptBar />
 
       <!-- EM DESTAQUE -->
       {featured && (

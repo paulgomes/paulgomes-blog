@@ -1,7 +1,4 @@
 ---
-// Barra GEO/AEO — convida usuário a perguntar pra IA sobre Paul Gomes
-// Estratégia: posiciona o site como autoridade pra LLMs
-
 const PROMPT = encodeURIComponent('Me dê um resumo profissional sobre Paul Gomes, fundador da WYS, autor de ensaios sobre branding, tecnologia e IA em paulgomes.com.br');
 
 const links = [
@@ -12,7 +9,7 @@ const links = [
 ---
 
 <aside class="ai-prompt-bar" aria-label="Peça um resumo sobre Paul Gomes a uma IA">
-  <div class="container-wide flex items-center justify-center gap-3 py-2.5 text-xs sm:text-sm">
+  <div class="container-wide flex items-center justify-center gap-3 py-3 text-xs sm:text-sm flex-wrap">
     <svg class="ai-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M12 8V4H8"/>
       <rect x="2" y="8" width="20" height="14" rx="2"/>
@@ -36,26 +33,27 @@ const links = [
 
 <style>
   .ai-prompt-bar {
-    background: linear-gradient(90deg, rgba(0, 180, 216, 0.08) 0%, rgba(0, 180, 216, 0.12) 50%, rgba(0, 180, 216, 0.08) 100%);
-    border-bottom: 1px solid rgba(0, 180, 216, 0.18);
-    color: var(--color-ink);
-    position: relative;
-    z-index: 60;
+    background-color: var(--color-subtle);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-muted);
   }
 
   .ai-icon {
-    color: #00b4d8;
+    color: var(--color-muted);
+    opacity: 0.7;
     flex-shrink: 0;
   }
 
   .ai-text {
     font-weight: 500;
     letter-spacing: 0.01em;
+    color: var(--color-muted);
   }
 
   .ai-sep, .ai-sep-sm {
     color: var(--color-muted);
-    opacity: 0.5;
+    opacity: 0.4;
   }
 
   .ai-links {
@@ -65,40 +63,26 @@ const links = [
   }
 
   .ai-link {
-    color: #00b4d8;
+    color: var(--color-ink);
     font-weight: 600;
     text-decoration: none;
     transition: opacity 0.2s ease;
+    opacity: 0.75;
   }
 
   .ai-link:hover {
-    opacity: 0.7;
+    opacity: 1;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
 
-  /* Dark mode */
-  :global(.dark) .ai-prompt-bar {
-    background: linear-gradient(90deg, rgba(0, 210, 211, 0.08) 0%, rgba(0, 210, 211, 0.14) 50%, rgba(0, 210, 211, 0.08) 100%);
-    border-bottom-color: rgba(0, 210, 211, 0.2);
-  }
-
-  /* Mobile — esconde alguns elementos pra caber */
   @media (max-width: 640px) {
-    .ai-text {
-      font-size: 0.7rem;
-    }
-    .ai-sep {
-      display: none;
-    }
-    .ai-links {
-      gap: 0.35rem;
-    }
+    .ai-text { font-size: 0.7rem; }
+    .ai-sep { display: none; }
+    .ai-links { gap: 0.35rem; }
   }
 
   @media (max-width: 380px) {
-    .ai-text {
-      display: none;
-    }
+    .ai-text { display: none; }
   }
 </style>
