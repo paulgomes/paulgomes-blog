@@ -44,6 +44,9 @@ const themePosts = allPosts
         <AIPromptBar />
       </div>
 
+      <!-- MARCAS QUE PASSARAM POR AQUI -->
+      <BrandsMarquee />
+
       <!-- EM DESTAQUE (banner com cantos arredondados) -->
       {featured && (
         <section style="border-color: var(--color-border)">
@@ -55,9 +58,6 @@ const themePosts = allPosts
       {latest.length > 0 && (
         <TrendingPosts posts={latest.slice(0, 12)} title="Em alta" />
       )}
-
-      <!-- MARCAS QUE PASSARAM POR AQUI -->
-      <BrandsMarquee />
 
       <!-- TEMA DO MÊS (com paginação) -->
       {themePosts.length > 0 && (
