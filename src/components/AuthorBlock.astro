@@ -1,6 +1,5 @@
 ---
 import { Image } from 'astro:assets';
-import SocialIcons from './SocialIcons.astro';
 import authorPhoto from '../assets/brand/paul-avatar.png';
 ---
 
@@ -46,12 +45,7 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
           </p>
         </div>
 
-        <!-- REDES SOCIAIS PRIMEIRO -->
-        <div class="cinematic-social">
-          <SocialIcons size={22} />
-        </div>
-
-        <!-- NEWSLETTER POR ÚLTIMO -->
+        <!-- NEWSLETTER -->
         <form
           action="#"
           method="post"
@@ -225,25 +219,9 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     margin: 0;
   }
 
-  /* === REDES SOCIAIS — ANTES DO FORM === */
-  .cinematic-social {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  .cinematic-social :global(svg) {
-    color: var(--color-ink);
-    opacity: 0.55;
-    transition: opacity 0.2s ease, color 0.2s ease;
-  }
-
-  .cinematic-social :global(a:hover svg) {
-    color: #00b4d8;
-    opacity: 1;
-  }
-
   /* === FORM NEWSLETTER === */
   .cinematic-form {
+    margin-top: 2rem;
     display: flex;
     gap: 0.75rem;
     max-width: 460px;
@@ -334,10 +312,6 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
 
   :global(.dark) .cinematic-input::placeholder {
     color: rgba(255, 255, 255, 0.4);
-  }
-
-  :global(.dark) .cinematic-social :global(svg) {
-    color: rgba(255, 255, 255, 0.6);
   }
 </style>
 

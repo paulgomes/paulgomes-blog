@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import HeaderLink from './HeaderLink.astro';
 import ThemeToggle from './ThemeToggle.astro';
+import HeaderSocial from './HeaderSocial.astro';
 import logo from '../assets/brand/logo-paulgomes.webp';
 ---
 
@@ -22,6 +23,8 @@ import logo from '../assets/brand/logo-paulgomes.webp';
       <HeaderLink href="/" class="hidden sm:inline-block">Início</HeaderLink>
       <HeaderLink href="/blog">Ensaios</HeaderLink>
       <HeaderLink href="/about">Sobre</HeaderLink>
+      <span class="mx-1 hidden h-5 w-px sm:inline-block" style="background-color: var(--color-border)"></span>
+      <HeaderSocial />
       <span class="mx-1 hidden h-5 w-px sm:inline-block" style="background-color: var(--color-border)"></span>
       <ThemeToggle />
     </nav>
