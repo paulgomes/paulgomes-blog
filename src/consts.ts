@@ -1,5 +1,7 @@
 export const SITE_TITLE = 'Paul Gomes';
 export const SITE_TAGLINE = 'Branding · Tecnologia · Negócios';
+export const SITE_SIGNATURE = 'Thinking Forward · Made by Human';
+export const SITE_THESIS = 'Pensar adiante não é prever o futuro.\nÉ construí-lo um ensaio por vez.';
 export const SITE_DESCRIPTION = 'Branding, tecnologia e o futuro dos negócios. Ensaios e ideias de Paul Gomes.';
 export const SITE_AUTHOR = 'Paul Gomes';
 export const SITE_AUTHOR_BIO = 'Fundador da WYS. Escrevo sobre marcas, tecnologia e o futuro dos negócios.';
@@ -11,4 +13,11 @@ export const SOCIAL = {
   instagram: 'https://www.instagram.com/paulgomes/',
   youtube: 'https://www.youtube.com/@paulgomesx',
   email: 'mailto:paulgomes@wys.com.br',
+};
+
+export const FEATURED_THEME = {
+  label: 'Tecnologia & IA',
+  slug: 'tecnologia',
+  description: 'Como a inteligência artificial está reescrevendo as regras dos negócios, do marketing e do trabalho criativo.',
+  keywords: ['inteligencia artificial', 'tecnologia', 'ia', 'gpt', 'chatgpt', 'futuro', 'inovacao'],
 };

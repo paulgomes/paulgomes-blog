@@ -58,3 +58,9 @@
   .container-prose { @apply mx-auto w-full max-w-2xl px-5; }
   .container-wide { @apply mx-auto w-full max-w-6xl px-5; }
 }
+
+@layer base {
+  :root {
+    --header-height: 5rem;
+  }
+}

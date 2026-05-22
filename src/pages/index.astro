@@ -2,16 +2,41 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import CinematicIntro from '../components/CinematicIntro.astro';
+import ManifestoAct from '../components/ManifestoAct.astro';
+import SectionHeader from '../components/SectionHeader.astro';
 import FeaturedPost from '../components/FeaturedPost.astro';
 import PostCard from '../components/PostCard.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { SITE_TITLE, SITE_DESCRIPTION, FEATURED_THEME } from '../consts';
 import { getCollection } from 'astro:content';
 
-const posts = (await getCollection('blog')).sort(
+// Todos os posts, mais recentes primeiro
+const allPosts = (await getCollection('blog')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
-const featured = posts[0];
-const rest = posts.slice(1);
+
+// Post em destaque: o mais recente com hero image
+const featured = allPosts.find((p) => p.data.heroImage) || allPosts[0];
+
+// Últimos: próximos 6 após o featured
+const latest = allPosts
+  .filter((p) => p.id !== featured?.id)
+  .slice(0, 6);
+
+// Tema do mês: filtra por keywords
+const themePosts = allPosts
+  .filter((p) => p.id !== featured?.id)
+  .filter((post) => {
+    const haystack = `${post.data.title} ${post.data.description || ''} ${post.id}`.toLowerCase();
+    return FEATURED_THEME.keywords.some((kw) => haystack.includes(kw));
+  })
+  .slice(0, 4);
+
+// Stats pro bloco arquivo
+const totalEnsaios = allPosts.length;
+const firstYear = allPosts.length
+  ? Math.min(...allPosts.map((p) => p.data.pubDate.getFullYear()))
+  : new Date().getFullYear();
 ---
 
 <!doctype html>
@@ -22,36 +47,88 @@ const rest = posts.slice(1);
   <body>
     <Header />
     <main>
-      <section class="container-wide pt-16 pb-12 md:pt-24 md:pb-16">
-        <h1 class="font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-          Branding, tecnologia<br />
-          e o futuro dos negócios.
-        </h1>
-        <p class="mt-6 max-w-2xl text-lg md:text-xl" style="color: var(--color-muted)">
-          Ensaios e ideias de Paul Gomes sobre como marcas, produtos e pessoas se constroem na era da inteligência artificial.
-        </p>
-      </section>
+      <!-- ATO 1: Cinematic Intro -->
+      <CinematicIntro />
 
+      <!-- ATO 2: Manifesto -->
+      <ManifestoAct />
+
+      <!-- SEÇÃO: Em destaque -->
       {featured && (
-        <section class="container-wide py-12 md:py-16 border-t" style="border-color: var(--color-border)">
+        <section class="container-wide py-20 md:py-28 border-t" style="border-color: var(--color-border)">
+          <SectionHeader
+            eyebrow="Em destaque"
+            title="O ensaio do momento"
+          />
           <FeaturedPost post={featured} />
         </section>
       )}
 
-      {rest.length > 0 && (
-        <section class="container-wide py-12 md:py-16 border-t" style="border-color: var(--color-border)">
-          <div class="mb-10 flex items-baseline justify-between">
-            <h2 class="font-display text-2xl font-bold md:text-3xl">Últimos ensaios</h2>
-            <a href="/blog" class="text-sm underline underline-offset-4 transition-opacity hover:opacity-60">
-              Ver todos →
-            </a>
-          </div>
+      <!-- SEÇÃO: Últimos ensaios -->
+      {latest.length > 0 && (
+        <section class="container-wide py-20 md:py-28 border-t" style="border-color: var(--color-border)">
+          <SectionHeader
+            eyebrow="Últimos ensaios"
+            title="Publicados recentemente"
+            href="/blog"
+            hrefLabel="Ver arquivo completo →"
+          />
           <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
-            {rest.map((post) => <PostCard post={post} />)}
+            {latest.map((post) => <PostCard post={post} />)}
           </div>
         </section>
       )}
+
+      <!-- SEÇÃO: Tema do mês -->
+      {themePosts.length > 0 && (
+        <section class="theme-section border-t" style="border-color: var(--color-border)">
+          <div class="container-wide py-20 md:py-28">
+            <SectionHeader
+              eyebrow={`Tema do mês · ${FEATURED_THEME.label}`}
+              title="O que ler agora sobre IA e tecnologia"
+              description={FEATURED_THEME.description}
+            />
+            <div class="grid gap-10 md:grid-cols-2">
+              {themePosts.map((post) => <PostCard post={post} />)}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <!-- SEÇÃO: Arquivo -->
+      <section class="container-wide py-20 md:py-28 border-t" style="border-color: var(--color-border)">
+        <div class="grid gap-12 md:grid-cols-[1fr_auto] md:items-end">
+          <div class="max-w-2xl">
+            <p class="mb-3 text-xs font-semibold uppercase tracking-[0.25em]" style="color: var(--color-muted)">
+              ◆ Arquivo
+            </p>
+            <h2 class="font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">
+              <span class="block">{totalEnsaios} ensaios</span>
+              <span class="block" style="color: var(--color-muted)">desde {firstYear}.</span>
+            </h2>
+            <p class="mt-6 text-lg leading-relaxed" style="color: var(--color-muted)">
+              Todo o pensamento publicado aqui — do mais recente ao primeiro registro. Explore por ano, tema ou palavra-chave.
+            </p>
+          </div>
+          <div class="flex flex-col gap-3">
+            <a href="/blog" class="inline-flex items-center gap-3 self-start rounded-full px-6 py-3 text-sm font-medium transition-opacity hover:opacity-80" style="background-color: var(--color-ink); color: var(--color-paper);">
+              Explorar arquivo
+              <span aria-hidden="true">→</span>
+            </a>
+            <a href="/rss.xml" class="inline-flex items-center gap-3 self-start text-sm underline underline-offset-4 transition-opacity hover:opacity-60">
+              Assinar RSS
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+      </section>
     </main>
     <Footer />
+
+    <style>
+      .theme-section {
+        background-color: var(--color-subtle);
+      }
+    </style>
   </body>
 </html>
