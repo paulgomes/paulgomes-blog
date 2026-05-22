@@ -55,7 +55,6 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
           action="#"
           method="post"
           class="cinematic-form"
-          onsubmit="event.preventDefault(); alert('Newsletter em breve! Me siga no LinkedIn ou Instagram.');"
         >
           <input
             type="email"
@@ -528,4 +527,10 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
       setTimeout(start, 100);
     });
   })();
+
+  // Newsletter placeholder handler — substitui o onsubmit inline pra evitar dep do global `event`
+  document.querySelector<HTMLFormElement>('.cinematic-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert('Newsletter em breve! Me siga no LinkedIn ou Instagram.');
+  });
 </script>
