@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import { Image } from 'astro:assets';
 import { SITE_AUTHOR } from '../consts';
+import authorPhoto from '../assets/brand/paul-gomes.webp';
 
 type Props = CollectionEntry<'blog'>['data'];
 
@@ -36,7 +37,13 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
             </p>
           )}
           <div class="mt-8 flex items-center gap-3 text-sm">
-            <div class="h-9 w-9 rounded-full" style="background-color: var(--color-subtle)"></div>
+            <Image
+              src={authorPhoto}
+              alt={SITE_AUTHOR}
+              width={48}
+              height={48}
+              class="h-10 w-10 rounded-full object-cover"
+            />
             <div>
               <p class="font-medium">{SITE_AUTHOR}</p>
               <p class="text-xs" style="color: var(--color-muted)">Autor</p>

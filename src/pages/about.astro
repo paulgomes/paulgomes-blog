@@ -2,7 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SOCIAL_LINKEDIN, SOCIAL_EMAIL } from '../consts';
+import { SITE_TITLE, SOCIAL } from '../consts';
 ---
 
 <!doctype html>
@@ -28,8 +28,8 @@ import { SITE_TITLE, SOCIAL_LINKEDIN, SOCIAL_EMAIL } from '../consts';
         </div>
 
         <div class="mt-12 flex gap-6 text-sm">
-          <a href={SOCIAL_LINKEDIN} target="_blank" rel="noopener" class="underline underline-offset-4 transition-opacity hover:opacity-60">LinkedIn →</a>
-          <a href={SOCIAL_EMAIL} class="underline underline-offset-4 transition-opacity hover:opacity-60">E-mail →</a>
+          <a href={SOCIAL.linkedin} target="_blank" rel="noopener" class="underline underline-offset-4 transition-opacity hover:opacity-60">LinkedIn →</a>
+          <a href={SOCIAL.email} class="underline underline-offset-4 transition-opacity hover:opacity-60">E-mail →</a>
         </div>
       </section>
     </main>

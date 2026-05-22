@@ -1,20 +1,64 @@
 ---
-import { SITE_TITLE, SOCIAL_LINKEDIN, SOCIAL_EMAIL } from '../consts';
-const today = new Date();
+import { Image } from 'astro:assets';
+import SocialIcons from './SocialIcons.astro';
+import { SITE_TITLE, SITE_AUTHOR_BIO } from '../consts';
+import authorPhoto from '../assets/brand/paul-gomes.webp';
+import signature from '../assets/brand/signature-paul-gomes.webp';
+
+const year = new Date().getFullYear();
 ---
 
-<footer class="mt-24 border-t py-12" style="border-color: var(--color-border)">
-  <div class="container-wide flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
-    <div>
-      <p class="font-display text-lg font-bold">{SITE_TITLE}</p>
-      <p class="mt-1 text-sm" style="color: var(--color-muted)">
-        © {today.getFullYear()} — Todos os direitos reservados.
-      </p>
+<footer class="mt-24 border-t" style="border-color: var(--color-border)">
+  <div class="container-wide py-16">
+    <div class="grid gap-12 md:grid-cols-[1fr_auto] md:items-start">
+      <div class="flex items-start gap-5">
+        <Image
+          src={authorPhoto}
+          alt="Paul Gomes"
+          width={96}
+          height={96}
+          class="h-20 w-20 flex-none rounded-full object-cover"
+        />
+        <div>
+          <p class="font-display text-2xl font-bold leading-tight">{SITE_TITLE}</p>
+          <p class="mt-2 max-w-md text-base" style="color: var(--color-muted)">
+            {SITE_AUTHOR_BIO}
+          </p>
+          <div class="mt-5">
+            <SocialIcons size={22} />
+          </div>
+        </div>
+      </div>
+
+      <div class="hidden md:block">
+        <Image
+          src={signature}
+          alt="Assinatura de Paul Gomes"
+          width={180}
+          height={60}
+          class="signature-img h-auto w-44 opacity-80"
+        />
+      </div>
     </div>
-    <div class="flex items-center gap-6 text-sm">
-      <a href={SOCIAL_LINKEDIN} target="_blank" rel="noopener" class="transition-opacity hover:opacity-60">LinkedIn</a>
-      <a href={SOCIAL_EMAIL} class="transition-opacity hover:opacity-60">E-mail</a>
-      <a href="/rss.xml" class="transition-opacity hover:opacity-60">RSS</a>
+
+    <hr class="my-10 border-0 border-t" style="border-color: var(--color-border)" />
+
+    <div class="flex flex-col items-start gap-4 text-sm md:flex-row md:items-center md:justify-between">
+      <nav class="flex flex-wrap gap-6">
+        <a href="/" class="transition-opacity hover:opacity-60">Início</a>
+        <a href="/blog" class="transition-opacity hover:opacity-60">Ensaios</a>
+        <a href="/about" class="transition-opacity hover:opacity-60">Sobre</a>
+        <a href="/rss.xml" class="transition-opacity hover:opacity-60">RSS</a>
+      </nav>
+      <p style="color: var(--color-muted)">
+        © {year} Paul Gomes · Construído em <a href="https://astro.build" class="underline underline-offset-4">Astro</a>
+      </p>
     </div>
   </div>
 </footer>
+
+<style>
+  .dark .signature-img {
+    filter: invert(1);
+  }
+</style>

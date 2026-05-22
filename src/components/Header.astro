@@ -1,18 +1,28 @@
 ---
 import HeaderLink from './HeaderLink.astro';
 import ThemeToggle from './ThemeToggle.astro';
-import { SITE_TITLE } from '../consts';
+import { SITE_TITLE, SITE_TAGLINE } from '../consts';
 ---
 
-<header class="border-b" style="border-color: var(--color-border)">
-  <div class="container-wide flex h-16 items-center justify-between">
-    <a href="/" class="font-display text-xl font-bold tracking-tight transition-opacity hover:opacity-60">
-      {SITE_TITLE}
+<header class="border-b sticky top-0 z-50 backdrop-blur" style="border-color: var(--color-border); background-color: color-mix(in srgb, var(--color-paper) 85%, transparent);">
+  <div class="container-wide flex h-20 items-center justify-between gap-6">
+    <a href="/" class="group flex items-center gap-3 transition-opacity hover:opacity-80" aria-label="Paul Gomes — Página inicial">
+      <span class="flex h-10 w-10 items-center justify-center rounded-sm font-display text-lg font-bold tracking-tighter" style="background-color: var(--color-ink); color: var(--color-paper);">
+        PG
+      </span>
+      <span class="flex flex-col leading-none">
+        <span class="font-display text-xl font-bold tracking-tight">{SITE_TITLE}</span>
+        <span class="mt-1 hidden text-[10px] font-medium uppercase tracking-[0.18em] sm:block" style="color: var(--color-muted)">
+          {SITE_TAGLINE}
+        </span>
+      </span>
     </a>
-    <nav class="flex items-center gap-8 text-sm font-medium">
-      <HeaderLink href="/">Início</HeaderLink>
+
+    <nav class="flex items-center gap-7 text-sm font-medium">
+      <HeaderLink href="/" class="hidden sm:inline-block">Início</HeaderLink>
       <HeaderLink href="/blog">Ensaios</HeaderLink>
       <HeaderLink href="/about">Sobre</HeaderLink>
+      <span class="mx-1 hidden h-5 w-px sm:inline-block" style="background-color: var(--color-border)"></span>
       <ThemeToggle />
     </nav>
   </div>
