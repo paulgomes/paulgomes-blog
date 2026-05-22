@@ -1,0 +1,120 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PostCard from './PostCard.astro';
+import SectionHeader from './SectionHeader.astro';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  eyebrow: string;
+  title: string;
+  description?: string;
+  perPage?: number;
+}
+
+const { posts, eyebrow, title, description, perPage = 4 } = Astro.props;
+const totalPages = Math.max(1, Math.ceil(posts.length / perPage));
+const pageIndices = Array.from({ length: totalPages }, (_, i) => i);
+---
+
+<section class="theme-section border-t" style="border-color: var(--color-border)">
+  <div class="container-wide py-16 md:py-20">
+    <SectionHeader eyebrow={eyebrow} title={title} description={description} />
+
+    <div class="theme-pages">
+      {pageIndices.map((pageIdx) => (
+        <div class="theme-page" data-page={pageIdx} hidden={pageIdx !== 0}>
+          {posts.slice(pageIdx * perPage, (pageIdx + 1) * perPage).map((post) => <PostCard post={post} />)}
+        </div>
+      ))}
+    </div>
+
+    {totalPages > 1 && (
+      <div class="theme-dots" role="tablist" aria-label="Paginação do tema do mês">
+        {pageIndices.map((pageIdx) => (
+          <button
+            type="button"
+            class:list={['theme-dot', { active: pageIdx === 0 }]}
+            data-target={pageIdx}
+            aria-label={`Página ${pageIdx + 1} de ${totalPages}`}
+            aria-current={pageIdx === 0 ? 'page' : 'false'}
+          ></button>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .theme-section {
+    background-color: var(--color-subtle);
+  }
+
+  .theme-page {
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .theme-page {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .theme-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-top: 3rem;
+  }
+
+  .theme-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background-color: var(--color-border);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .theme-dot:hover {
+    background-color: var(--color-muted);
+    transform: scale(1.15);
+  }
+
+  .theme-dot.active {
+    background-color: var(--color-ink);
+    transform: scale(1.2);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .theme-dot {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.theme-pages');
+  const dotsContainer = document.querySelector<HTMLElement>('.theme-dots');
+  if (root && dotsContainer) {
+    const pages = root.querySelectorAll<HTMLElement>('.theme-page');
+    const dots = dotsContainer.querySelectorAll<HTMLButtonElement>('.theme-dot');
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const target = parseInt(dot.dataset.target ?? '0', 10);
+        pages.forEach((p, i) => {
+          p.hidden = i !== target;
+        });
+        dots.forEach((d, i) => {
+          const isActive = i === target;
+          d.classList.toggle('active', isActive);
+          d.setAttribute('aria-current', isActive ? 'page' : 'false');
+        });
+      });
+    });
+  }
+</script>

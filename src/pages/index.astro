@@ -7,6 +7,7 @@ import SectionHeader from '../components/SectionHeader.astro';
 import FeaturedPost from '../components/FeaturedPost.astro';
 import PostCard from '../components/PostCard.astro';
 import TrendingPosts from '../components/TrendingPosts.astro';
+import ThemePosts from '../components/ThemePosts.astro';
 import AuthorBlock from '../components/AuthorBlock.astro';
 import BrandsMarquee from '../components/BrandsMarquee.astro';
 import { SITE_TITLE, SITE_DESCRIPTION, FEATURED_THEME } from '../consts';
@@ -24,7 +25,7 @@ const themePosts = allPosts
     const haystack = `${post.data.title} ${post.data.description || ''} ${post.id}`.toLowerCase();
     return FEATURED_THEME.keywords.some((kw) => haystack.includes(kw));
   })
-  .slice(0, 4);
+  .slice(0, 8);
 ---
 
 <!doctype html>
@@ -58,30 +59,20 @@ const themePosts = allPosts
       <!-- MARCAS QUE PASSARAM POR AQUI -->
       <BrandsMarquee />
 
-      <!-- TEMA DO MÊS -->
+      <!-- TEMA DO MÊS (com paginação) -->
       {themePosts.length > 0 && (
-        <section class="theme-section border-t" style="border-color: var(--color-border)">
-          <div class="container-wide py-16 md:py-20">
-            <SectionHeader
-              eyebrow={`Tema do mês · ${FEATURED_THEME.label}`}
-              title="O que ler agora sobre IA e tecnologia"
-              description={FEATURED_THEME.description}
-            />
-            <div class="grid gap-10 md:grid-cols-2">
-              {themePosts.map((post) => <PostCard post={post} />)}
-            </div>
-          </div>
-        </section>
+        <ThemePosts
+          posts={themePosts}
+          eyebrow={`Tema do mês · ${FEATURED_THEME.label}`}
+          title="O que ler agora sobre IA e tecnologia"
+          description={FEATURED_THEME.description}
+        />
       )}
 
     </main>
     <Footer />
 
     <style>
-      .theme-section {
-        background-color: var(--color-subtle);
-      }
-
       /* No mobile a barra GEO aparece dentro do AuthorBlock (entre foto e texto) */
       @media (max-width: 1023px) {
         .geo-desktop {
