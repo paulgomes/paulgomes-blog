@@ -1,5 +1,10 @@
 # Redirects WordPress -> Astro
 
+# URL amigavel PT
+/about /sobre 301
+/about/ /sobre 301
+
+
 /tecnologia-2026-tendencias-que-transformarao-negocios /blog/tecnologia-2026-tendencias-que-transformarao-negocios 301
 /tecnologia-2026-tendencias-que-transformarao-negocios/ /blog/tecnologia-2026-tendencias-que-transformarao-negocios 301
 /principais-tendencias-tecnologicas-2025-2030 /blog/principais-tendencias-tecnologicas-2025-2030 301

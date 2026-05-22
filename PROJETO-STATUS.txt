@@ -1,0 +1,403 @@
+================================================================================
+PAUL GOMES — BLOG EDITORIAL
+Status do Projeto · Documentação para a equipe
+================================================================================
+
+Última atualização: 22/05/2026
+Branch ativa: main
+Total de commits no histórico: 58
+Último commit publicado: ccdd192 (menu hamburguer mobile)
+
+
+================================================================================
+1. VISÃO GERAL
+================================================================================
+
+Blog editorial pessoal do Paul Gomes (paulgomes.com.br), publicado como site
+estático. O conteúdo são ensaios sobre branding, tecnologia, IA, GEO, SEO e
+arquitetura digital. Atualmente são 115+ ensaios migrados do blog antigo.
+
+Posicionamento da marca:
+  - Nome: Paul Gomes — Thinking Forward
+  - Tagline: Branding · Tecnologia · Negócios
+  - Voz: editorial, autoral, sem fórmula
+  - Cor de destaque: ciano #00b4d8 (light) / #00d2d3 (dark)
+
+
+================================================================================
+2. STACK TÉCNICA
+================================================================================
+
+Framework:       Astro 6.3 (output: static, build em /dist)
+CSS:             Tailwind CSS 4.3 via @tailwindcss/vite
+Tipografia:      Montserrat (todos os pesos 100-900 + italic 400/700)
+                 via @fontsource/montserrat
+Conteúdo:        MDX (@astrojs/mdx)
+Sitemap:         @astrojs/sitemap (gera /sitemap-index.xml)
+RSS:             @astrojs/rss (feed em /rss.xml)
+Imagens:         sharp ^0.34.3 (otimização automática Astro Image)
+Node:            >=22.12.0
+Repositório:     github.com/paulgomes/paulgomes-blog
+Hospedagem:      Cloudflare Pages (deploy automático em push pra main)
+Domínio:         paulgomes.com.br
+
+
+================================================================================
+3. ARQUITETURA DE PASTAS
+================================================================================
+
+paulgomes-blog/
+├── public/                      Arquivos estáticos copiados pro build
+│   ├── _redirects               Redirects 301 do blog antigo
+│   ├── favicon.ico              Favicon legacy (fallback)
+│   ├── favicon-32.png           Favicon moderno (32x32)
+│   ├── favicon-64.png           Favicon moderno (64x64)
+│   ├── apple-touch-icon.png     iOS home screen (180x180)
+│   ├── icon-192.png             PWA (192x192)
+│   └── icon-512.png             PWA (512x512)
+│
+├── scripts/
+│   └── generate-favicons.mjs    Script sharp pra regerar favicons
+│                                (npm run favicons)
+│
+├── src/
+│   ├── assets/
+│   │   ├── brand/               Logo, avatar, signature do Paul
+│   │   │   ├── logo-paulgomes.webp
+│   │   │   ├── paul-avatar.png  (foto cinematográfica)
+│   │   │   ├── paul-gomes-hero.png
+│   │   │   ├── paul-gomes.webp  (avatar footer — não mais usado)
+│   │   │   └── signature-paul-gomes.webp
+│   │   ├── posts/               Imagens hero dos ensaios
+│   │   └── blog-placeholder-*   Fallbacks
+│   │
+│   ├── components/              17 componentes Astro
+│   │   ├── BaseHead.astro       <head> compartilhado (meta, og, favicons,
+│   │   │                        adsense, google-site-verification, theme JS)
+│   │   ├── Header.astro         Header sticky + menu hamburguer mobile
+│   │   ├── HeaderLink.astro     Link de nav (estado ativo automático)
+│   │   ├── HeaderSocial.astro   3 ícones sociais (LinkedIn, Insta, YT)
+│   │   ├── ThemeToggle.astro    Botão sol/lua (data-attribute,
+│   │   │                        múltiplas instâncias)
+│   │   ├── Footer.astro         Footer enxuto: título, bio, signature,
+│   │   │                        social, nav, copyright Agência WYS
+│   │   ├── AuthorBlock.astro    Hero da home — foto Paul + matrix canvas
+│   │   │                        + headline + bio + newsletter
+│   │   ├── AIPromptBar.astro    Barra GEO/AEO ("Peça à IA um resumo…"
+│   │   │                        com links pra ChatGPT/Claude/Perplexity)
+│   │   ├── BrandsMarquee.astro  Carrossel horizontal de marcas
+│   │   │                        (fade lateral, animação infinita)
+│   │   ├── FeaturedPost.astro   Banner cinematográfico full-bleed
+│   │   │                        com imagem + título + hover overlay
+│   │   ├── TrendingPosts.astro  "Em alta" — 12 posts em 3 páginas de 4
+│   │   │                        com paginação Anterior/Próximo
+│   │   ├── ThemePosts.astro     "Tema do mês" — 8 posts em 2 páginas
+│   │   │                        de 4 com paginação Anterior/Próximo
+│   │   ├── SectionHeader.astro  Header de seção centralizado
+│   │   │                        (eyebrow + título + descrição)
+│   │   ├── PostCard.astro       Card de post (usado dentro de ThemePosts)
+│   │   ├── SocialIcons.astro    3 ícones grandes (footer)
+│   │   ├── NewsletterBlock.astro  Bloco standalone (atualmente não usado;
+│   │   │                          newsletter está dentro do AuthorBlock)
+│   │   └── FormattedDate.astro    Data em pt-BR
+│   │
+│   ├── layouts/
+│   │   └── BlogPost.astro       Layout dos ensaios individuais
+│   │
+│   ├── pages/
+│   │   ├── index.astro          Home
+│   │   ├── about.astro          /about — Sobre
+│   │   ├── blog/                /blog — listagem + posts
+│   │   ├── parceiros.astro      /parceiros — placeholder
+│   │   ├── contato.astro        /contato — email + LinkedIn + Instagram
+│   │   ├── privacidade.astro    /privacidade — LGPD completa
+│   │   └── rss.xml.js           Feed RSS
+│   │
+│   ├── styles/
+│   │   └── global.css           Tokens de tema + tipografia + utilitários
+│   │
+│   ├── content/                 Coleção MDX dos ensaios (Astro Content)
+│   └── consts.ts                Constantes da marca (SITE_TITLE, SOCIAL,
+│                                FEATURED_THEME, BRANDS, etc)
+│
+├── astro.config.mjs             site, output static, integrations
+├── package.json                 Dependências
+└── PROJETO-STATUS.txt           Este arquivo
+
+
+================================================================================
+4. PÁGINAS PUBLICADAS (121 no total)
+================================================================================
+
+  /                 Home com hero do autor + curadoria de ensaios
+  /about            Sobre o autor (bio longa, links sociais)
+  /blog             Listagem de todos os ensaios
+  /blog/<slug>      Cada um dos 115 ensaios individuais
+  /parceiros        Placeholder "em construção"
+  /contato          Contato (email + LinkedIn + Instagram)
+  /privacidade      Política de Privacidade (LGPD completa)
+  /rss.xml          Feed RSS
+  /sitemap-index.xml  Sitemap automático
+
+
+================================================================================
+5. ESTRUTURA DA HOME (ordem atual)
+================================================================================
+
+  1. Header sticky (logo + menu + tema + social)
+
+  2. AuthorBlock                    Hero principal
+     ↳ Foto do Paul (sem máscara, encosta no rodapé da seção)
+     ↳ Matrix rain canvas atrás (chars PAULGOMESWYS...IA...GEO,
+        opacidade variável por drop, IntersectionObserver liga/desliga,
+        ativo em desktop e mobile, respeita prefers-reduced-motion)
+     ↳ Headline: "Paul Gomes - Thinking Forward" (uma linha, nowrap)
+     ↳ Bio curta (IA, GEO, SEO, arquitetura digital)
+     ↳ Form newsletter (placeholder — alert no submit)
+
+  3. AIPromptBar                    Barra GEO/AEO
+     ↳ "Peça à IA um resumo sobre Paul Gomes"
+     ↳ Links: ChatGPT · Claude · Perplexity
+     ↳ Prompt encodado: "Me dê um resumo profissional sobre Paul Gomes,
+        paulgomes.com.br"
+     ↳ No mobile aparece DENTRO do AuthorBlock (entre foto e texto)
+
+  4. BrandsMarquee                  "Marcas que passaram por aqui"
+     ↳ Lista: Disney, Hummel, Celmar, Cidade Sorocaba, Peptpure,
+        panini brasil, Pesca Facil, 15K, Spotbook, ScrumBoards
+     ↳ Marquee horizontal infinito (50s), pausa no hover
+     ↳ Mask lateral gradiente (só 40% central visível em desktop,
+        60% no mobile)
+     ↳ Cor muted, font menor — propositalmente discreto
+
+  5. FeaturedPost (banner cinematográfico)
+     ↳ Post mais recente com hero image
+     ↳ Aspect 16/8 desktop, 4/5 mobile
+     ↳ Cantos arredondados, overlay gradiente vertical
+     ↳ Hover: imagem dá scale 1.04, overlay escuro + "LER ENSAIO →"
+
+  6. AdSlot (Google AdSense)
+     ↳ Único slot manual da home, entre banner e Em alta
+     ↳ data-ad-slot ainda vazio — aguarda ID do AdSense
+
+  7. TrendingPosts "Em alta"
+     ↳ 12 posts mais recentes (após o featured)
+     ↳ Grid 4 colunas em lg, 2 em sm, 1 em mobile
+     ↳ Imagens 4/3, hover com overlay "Ler →"
+     ↳ Paginação: ← Anterior | 1/3 | Próximo → (3 páginas de 4)
+     ↳ CTA "Ver todos os insights →" abaixo
+
+  8. ThemePosts "Tema do mês · Tecnologia & IA"
+     ↳ 8 posts filtrados por keywords (IA, GEO, SEO, GPT, futuro…)
+     ↳ Grid 2 colunas via PostCard
+     ↳ Paginação: ← Anterior | 1/2 | Próximo → (2 páginas de 4)
+     ↳ Fundo subtle (cinza claro / preto suave no dark)
+
+  9. Footer
+     ↳ Título "Paul Gomes - Thinking Forward"
+     ↳ Bio + signature do Paul (imagem)
+     ↳ Social (3 ícones)
+     ↳ Nav: Home · Sobre · Insights · Parceiros · Contato
+     ↳ Copyright: "© 2026 Paul Gomes · Feito com 💜 por Agência WYS"
+        (backlink dofollow pra agenciawys.com.br)
+     ↳ Link Política de Privacidade
+
+
+================================================================================
+6. MENU & NAVEGAÇÃO
+================================================================================
+
+Menu principal: Home · Sobre · Insights · Parceiros · Contato
+Mapeamento de rotas:
+  Home       → /
+  Sobre      → /about
+  Insights   → /blog (a coleção MDX)
+  Parceiros  → /parceiros (placeholder)
+  Contato    → /contato
+
+Comportamento por viewport:
+  Desktop (≥md / 768px):  Logo + nav inline completa + social + tema
+  Mobile (<md):            Logo + hamburguer
+                           Hamburguer abre overlay full-screen com:
+                             - 5 links em coluna (display, animação staggered)
+                             - Social icons + tema no rodapé do overlay
+                           Fecha: clique em link, ESC, ou viewport crescer
+                           Scroll-lock no body quando aberto
+
+
+================================================================================
+7. IDENTIDADE VISUAL
+================================================================================
+
+Logotipo:         logo-paulgomes.webp (assinatura preta)
+                  Inverte pra branco no dark mode (filter: invert)
+Favicon:          pg-favicon (rosto em fundo ciano)
+                  5 tamanhos gerados automaticamente
+Cor de destaque:  Ciano #00b4d8 (light) / #00d2d3 (dark)
+Fonte:            Montserrat (display + sans, mesma família)
+Tema:             Light/dark toggle, padrão segue prefers-color-scheme
+                  Persistência em localStorage
+
+
+================================================================================
+8. SEO, GEO E ANALYTICS
+================================================================================
+
+Meta tags base (BaseHead.astro):
+  - title, description, canonical, og:*, twitter:*
+  - sitemap link, rss alternate
+  - google-site-verification (Search Console / Analytics)
+  - 6 link rel="icon" (favicons em múltiplos tamanhos)
+
+GEO/AEO (Generative Engine Optimization):
+  - AIPromptBar visível em todas as posições estratégicas da home
+  - Links pré-encodados pra ChatGPT, Claude e Perplexity
+  - Estratégia: posicionar Paul Gomes como entidade de autoridade
+    pra modelos de linguagem citarem
+
+Google AdSense:
+  - Publisher ID: ca-pub-6639862760844520
+  - Script async em <head> (validação)
+  - Slot manual ÚNICO entre TrendingPosts e ThemePosts na home
+  - data-ad-slot ainda vazio — pendente criar ad unit no painel
+    AdSense e injetar o ID
+
+RSS feed: /rss.xml
+Sitemap: /sitemap-index.xml (gerado automaticamente)
+
+
+================================================================================
+9. ACESSIBILIDADE
+================================================================================
+
+  - prefers-reduced-motion respeitado em todas as animações
+    (matrix canvas, fade-ins, hover transforms, hamburger morph,
+    overlay slide, marquee scroll)
+  - aria-label em todos os elementos interativos (botões, ícones)
+  - aria-expanded / aria-hidden no menu mobile
+  - aria-current="page" na paginação ativa
+  - aria-live="polite" no contador de páginas
+  - Listas sr-only nos componentes decorativos (marquee, etc)
+  - Foco visível com focus-visible
+  - Contraste de cor adequado (texto ink sobre paper, etc)
+
+
+================================================================================
+10. PERFORMANCE
+================================================================================
+
+  - Site 100% estático (zero JS no critical path do servidor)
+  - Astro Image gera webp em múltiplos sizes via srcset
+  - LCP otimizado: foto do hero com loading="eager" + fetchpriority="high"
+  - JS apenas como progressive enhancement
+    (matrix canvas, theme toggle, menu hamburger, paginação, AdSense)
+  - IntersectionObserver pausa o matrix canvas fora da viewport
+  - Fonte Montserrat carregada via @fontsource (inline CSS, sem FOIT)
+  - Build atual: ~6-7s, 121 páginas
+
+
+================================================================================
+11. PENDÊNCIAS CONHECIDAS
+================================================================================
+
+  [ ] Google AdSense: criar ad unit no painel e preencher data-ad-slot
+      em src/pages/index.astro (atualmente vazio "")
+  [ ] Página /parceiros está em "em construção" — falta conteúdo final
+  [ ] Newsletter: form é placeholder (alert no submit). Quando definir
+      provedor (ConvertKit / Mailchimp / Beehiiv / Buttondown), substituir
+      o handler em AuthorBlock.astro <script> e o componente
+      NewsletterBlock.astro (que existe mas não está em uso)
+  [ ] Componente NewsletterBlock.astro existe mas não é renderizado
+      em lugar nenhum — manter ou remover
+  [ ] FEATURED_THEME é hardcoded ("Tecnologia & IA"). Pra rotacionar
+      mensalmente, decidir se vira config ou frontmatter de algum post
+
+
+================================================================================
+12. COMO RODAR LOCALMENTE
+================================================================================
+
+Requisitos:
+  Node 22.12.0 ou superior
+  npm
+
+Setup:
+  cd paulgomes-blog
+  npm install
+
+Comandos:
+  npm run dev          Servidor de desenvolvimento em localhost:4321
+  npm run build        Build de produção em /dist
+  npm run preview      Preview do build local
+  npm run favicons     Regenera favicons a partir de public/favicon-source.png
+
+Deploy:
+  Push pra branch main → Cloudflare Pages dispara build e deploy
+  automaticamente em ~1-2 min. Não precisa rodar nada localmente.
+
+
+================================================================================
+13. CONVENÇÕES DE COMMIT
+================================================================================
+
+Prefixos usados ao longo do histórico:
+  feat:     Nova feature ou seção
+  refine:   Ajuste visual / refinamento existente
+  fix:      Correção de bug
+  chore:    Limpeza / housekeeping
+  docs:     Documentação
+
+Mensagens em português, descrevem o "o que" (não o "como").
+
+
+================================================================================
+14. ÚLTIMOS 20 COMMITS (mais recentes primeiro)
+================================================================================
+
+ccdd192  feat: menu hamburguer mobile com overlay blur, links staggered
+48214f5  chore: is:inline explicito no script AdSense + remove imports
+dca3a6b  feat: AdSense - script global no head + slot manual unico
+e009ecd  refine: BrandsMarquee compactado - paddings menores
+29c9433  refine: BrandsMarquee mais discreto - fade lateral mais longo
+2e22570  refine: BrandsMarquee fundo branco + renomeia Pescfacil/Panine
+250219a  feat: novo favicon (pg-favicon ciano)
+f0371c3  refine: move BrandsMarquee pra logo apos a barra GEO
+6cbe85c  chore: remove import nao usado de SITE_LANG no BaseHead
+ea77b96  feat: meta google-site-verification para Search Console
+5578d83  feat: favicon do Paul Gomes (32/64/180/192/512) + script de geracao
+c5be761  feat: paginacao Anterior/Proximo + contador (substitui dots)
+c338b9d  feat: Tema do mes mostra 8 artigos com paginacao
+c72bf44  refine: SectionHeader centralizado + header mobile sem squeeze
+0f80836  feat: trending posts mostra 12 artigos com paginacao
+f2f02bc  refine: CTA Ver todos os insights apos trending + marcas menores
+a02bf79  chore: remove variaveis orfas (totalEnsaios/firstYear)
+29947fa  refine: FeaturedPost com cantos arredondados + hover overlay
+3dec5bf  refine: remove icone email do SocialIcons + remove secao Arquivo
+c6febc8  feat: FeaturedPost vira banner cinematografico full-bleed
+
+
+================================================================================
+15. PRÓXIMOS PASSOS SUGERIDOS
+================================================================================
+
+Curto prazo:
+  1. Conectar AdSense (criar ad unit, atualizar data-ad-slot)
+  2. Definir provedor de newsletter e integrar
+  3. Construir conteúdo de /parceiros (logos das marcas, talvez cases)
+
+Médio prazo:
+  4. Criar página /categoria/<tag> pra cada categoria (filtro por keyword)
+  5. Página /autor (mais densa que /about, com bio editorial)
+  6. Newsletter archive (página com todas as edições enviadas)
+  7. Search bar interna (Pagefind ou similar)
+
+Longo prazo:
+  8. Sistema de tags/categorias por frontmatter MDX
+  9. View counter (Cloudflare Workers ou Vercel KV)
+ 10. Comentários (Giscus integrado ao GitHub Discussions)
+ 11. PWA com service worker (offline-first)
+
+
+================================================================================
+FIM DO DOCUMENTO
+================================================================================
