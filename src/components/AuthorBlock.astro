@@ -4,37 +4,40 @@ import SocialIcons from './SocialIcons.astro';
 import authorPhoto from '../assets/brand/paul-avatar.png';
 ---
 
-<section class="author-light author-as-hero">
-  <!-- Canvas do matrix sutil em ciano claro -->
-  <canvas class="matrix-canvas-light" aria-hidden="true"></canvas>
+<section class="author-cinematic">
+  <!-- Canvas matrix sutil -->
+  <canvas class="cinematic-matrix" aria-hidden="true"></canvas>
 
-  <!-- Overlay branco suave nas bordas pra fundir -->
-  <div class="matrix-overlay-light" aria-hidden="true"></div>
+  <!-- Overlay com gradient radial pra fundir nas bordas -->
+  <div class="cinematic-overlay" aria-hidden="true"></div>
 
-  <div class="container-wide relative z-10">
-    <div class="grid gap-8 lg:grid-cols-[5fr_6fr] lg:gap-16 items-center">
-      <!-- Foto à esquerda — sem moldura, integra com o fundo -->
-      <div class="photo-wrap-light">
+  <div class="cinematic-inner">
+    <div class="cinematic-grid">
+      <!-- COLUNA FOTO -->
+      <div class="cinematic-photo">
         <Image
           src={authorPhoto}
           alt="Paul Gomes"
-          width={900}
-          widths={[480, 720, 900]}
-          class="photo-light w-full h-auto"
-          loading="lazy"
+          width={1200}
+          widths={[600, 900, 1200]}
+          class="photo-img"
+          loading="eager"
+          fetchpriority="high"
         />
       </div>
 
-      <!-- Texto à direita -->
-      <div>
-        <p class="mb-4 text-xs font-semibold uppercase tracking-[0.3em] eyebrow-light">
-          ◆ Sobre o autor
+      <!-- COLUNA TEXTO -->
+      <div class="cinematic-text">
+        <p class="cinematic-eyebrow">
+          <span class="eyebrow-dot">◆</span> Sobre o autor
         </p>
-        <h2 class="font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-5xl lg:text-6xl">
+
+        <h1 class="cinematic-headline">
           Paul Gomes —<br />
-          <span class="brand-cyan-light">Thinking Forward</span>.
-        </h2>
-        <div class="mt-8 space-y-5 text-lg leading-relaxed" style="color: var(--color-muted)">
+          <span class="forward-cyan">Thinking Forward</span>.
+        </h1>
+
+        <div class="cinematic-bio">
           <p>
             Escrevo sobre inteligência artificial, GEO, SEO, arquitetura digital e as transformações que redefinem negócios, marcas e comportamento.
           </p>
@@ -43,33 +46,27 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
           </p>
         </div>
 
-        <!-- Newsletter inline -->
-        <div class="mt-10">
-          <form
-            action="#"
-            method="post"
-            class="flex flex-col gap-3 sm:flex-row max-w-lg"
-            onsubmit="event.preventDefault(); alert('Newsletter em breve! Me siga no LinkedIn ou Instagram.');"
-          >
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="seu@email.com"
-              aria-label="Seu e-mail"
-              class="newsletter-input-light flex-1 rounded-full px-6 py-4 text-base outline-none"
-            />
-            <button
-              type="submit"
-              class="newsletter-btn-cyan-light rounded-full px-7 py-4 text-sm font-bold"
-            >
-              Inscrever →
-            </button>
-          </form>
-        </div>
+        <!-- Newsletter -->
+        <form
+          action="#"
+          method="post"
+          class="cinematic-form"
+          onsubmit="event.preventDefault(); alert('Newsletter em breve! Me siga no LinkedIn ou Instagram.');"
+        >
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="seu@email.com"
+            aria-label="Seu e-mail"
+            class="cinematic-input"
+          />
+          <button type="submit" class="cinematic-btn">
+            Inscrever →
+          </button>
+        </form>
 
-        <!-- Redes sociais -->
-        <div class="mt-8 social-dark">
+        <div class="cinematic-social">
           <SocialIcons size={22} />
         </div>
       </div>
@@ -78,160 +75,293 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
 </section>
 
 <style>
-  .author-light {
+  .author-cinematic {
     position: relative;
     background-color: var(--color-paper);
     color: var(--color-ink);
     overflow: hidden;
     isolation: isolate;
     border-bottom: 1px solid var(--color-border);
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
   }
 
-  .author-as-hero {
-    margin-top: 0;
-    padding-top: 4rem;
-    padding-bottom: 4rem;
-  }
-
-  @media (min-width: 768px) {
-    .author-as-hero {
-      padding-top: 6rem;
-      padding-bottom: 6rem;
-    }
-  }
-
-  .matrix-canvas-light {
+  .cinematic-matrix {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     z-index: 1;
-    opacity: 0.55;
+    opacity: 0.7;
     pointer-events: none;
   }
 
-  /* Overlay branco que fade nas bordas */
-  .matrix-overlay-light {
+  .cinematic-overlay {
     position: absolute;
     inset: 0;
     z-index: 2;
-    background: radial-gradient(
-      ellipse at center,
-      transparent 40%,
-      var(--color-paper) 95%
-    );
+    background:
+      radial-gradient(ellipse 70% 50% at center, transparent 30%, var(--color-paper) 95%),
+      linear-gradient(180deg, transparent 0%, transparent 70%, var(--color-paper) 100%);
     pointer-events: none;
   }
 
-  /* Forward em ciano vibrante */
-  .brand-cyan-light {
-    color: #00b4d8;
-    text-shadow: 0 0 22px rgba(0, 180, 216, 0.15);
-  }
-
-  .eyebrow-light {
-    color: #00b4d8;
-    opacity: 0.85;
-  }
-
-  /* Foto integra com o fundo (sem moldura) */
-  .photo-wrap-light {
+  .cinematic-inner {
     position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 5rem 2rem 4rem;
   }
 
-  .photo-light {
-    /* Não tem aspect-ratio fixo — deixa a foto natural */
-    max-width: 100%;
-    object-fit: contain;
-    object-position: bottom;
-    /* Sombra suave abaixo pra dar profundidade */
-    filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.12));
+  @media (min-width: 768px) {
+    .cinematic-inner {
+      padding: 7rem 3rem 6rem;
+    }
   }
 
-  /* Newsletter clara */
-  .newsletter-input-light {
-    background-color: var(--color-paper);
-    border: 1px solid var(--color-border);
+  @media (min-width: 1280px) {
+    .cinematic-inner {
+      padding: 8rem 4rem 7rem;
+    }
+  }
+
+  .cinematic-grid {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 1024px) {
+    .cinematic-grid {
+      grid-template-columns: 1fr 1.2fr;
+      gap: 5rem;
+    }
+  }
+
+  /* === FOTO === */
+  .cinematic-photo {
+    position: relative;
+    width: 100%;
+  }
+
+  .photo-img {
+    width: 100%;
+    height: auto;
+    max-width: 600px;
+    margin: 0 auto;
+    display: block;
+    /* Drop-shadow cinematográfico */
+    filter:
+      drop-shadow(0 30px 60px rgba(0, 0, 0, 0.18))
+      drop-shadow(0 10px 20px rgba(0, 0, 0, 0.08));
+  }
+
+  @media (min-width: 1024px) {
+    .photo-img {
+      max-width: 100%;
+    }
+  }
+
+  /* === TEXTO === */
+  .cinematic-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: #00b4d8;
+    margin: 0 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .eyebrow-dot {
+    font-size: 0.7em;
+  }
+
+  .cinematic-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    margin: 0;
     color: var(--color-ink);
+  }
+
+  @media (min-width: 1024px) {
+    .cinematic-headline {
+      font-size: clamp(3.5rem, 5.5vw, 6.5rem);
+    }
+  }
+
+  .forward-cyan {
+    color: #00b4d8;
+    background: linear-gradient(135deg, #00b4d8 0%, #0096b8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(0, 180, 216, 0.18);
+  }
+
+  .cinematic-bio {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    font-size: 1.125rem;
+    line-height: 1.65;
+    color: var(--color-muted);
+    max-width: 580px;
+  }
+
+  @media (min-width: 1024px) {
+    .cinematic-bio {
+      font-size: 1.2rem;
+    }
+  }
+
+  .cinematic-bio p {
+    margin: 0;
+  }
+
+  /* === FORM NEWSLETTER === */
+  .cinematic-form {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 0.75rem;
+    max-width: 520px;
+    flex-direction: column;
+  }
+
+  @media (min-width: 480px) {
+    .cinematic-form {
+      flex-direction: row;
+    }
+  }
+
+  .cinematic-input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-size: 1rem;
+    outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .newsletter-input-light::placeholder {
+  .cinematic-input::placeholder {
     color: var(--color-muted);
   }
 
-  .newsletter-input-light:focus {
+  .cinematic-input:focus {
     border-color: #00b4d8;
     box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
   }
 
-  .newsletter-btn-cyan-light {
-    background: linear-gradient(45deg, #00b4d8, #0096b8);
-    color: #fff;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
+  .cinematic-btn {
+    padding: 1rem 1.75rem;
+    border-radius: 9999px;
     border: none;
+    background: linear-gradient(135deg, #00b4d8 0%, #0096b8 100%);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
   }
 
-  .newsletter-btn-cyan-light:hover {
+  .cinematic-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 180, 216, 0.35);
+    box-shadow: 0 12px 28px rgba(0, 180, 216, 0.35);
   }
 
-  /* Redes sociais escuras (sobre fundo claro) */
-  .social-dark :global(svg) {
+  /* === REDES === */
+  .cinematic-social {
+    margin-top: 2rem;
+  }
+
+  .cinematic-social :global(svg) {
     color: var(--color-ink);
-    opacity: 0.65;
+    opacity: 0.55;
     transition: opacity 0.2s ease, color 0.2s ease;
   }
 
-  .social-dark :global(a:hover svg) {
+  .cinematic-social :global(a:hover svg) {
     color: #00b4d8;
     opacity: 1;
   }
 
-  /* DARK MODE: inverte tudo */
-  :global(.dark) .author-light {
+  /* === MOBILE: foto antes do texto, sem matrix === */
+  @media (max-width: 1023px) {
+    .author-cinematic {
+      min-height: auto;
+    }
+    .cinematic-photo {
+      order: -1;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+  }
+
+  /* === DARK MODE === */
+  :global(.dark) .author-cinematic {
     background-color: #020202;
+  }
+
+  :global(.dark) .cinematic-overlay {
+    background:
+      radial-gradient(ellipse 70% 50% at center, transparent 30%, #020202 95%),
+      linear-gradient(180deg, transparent 0%, transparent 70%, #020202 100%);
+  }
+
+  :global(.dark) .cinematic-headline {
     color: #fff;
   }
 
-  :global(.dark) .matrix-overlay-light {
-    background: radial-gradient(
-      ellipse at center,
-      transparent 30%,
-      #020202 95%
-    );
+  :global(.dark) .cinematic-bio {
+    color: rgba(255, 255, 255, 0.72);
   }
 
-  :global(.dark) .author-light h2 {
+  :global(.dark) .cinematic-input {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
     color: #fff;
   }
 
-  :global(.dark) .author-light p {
-    color: rgba(255, 255, 255, 0.7) !important;
+  :global(.dark) .cinematic-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  :global(.dark) .cinematic-social :global(svg) {
+    color: rgba(255, 255, 255, 0.6);
   }
 </style>
 
 <script>
-  // Matrix rain CLARO — caracteres ciano sutis sobre fundo branco
+  // Matrix rain refinado — mais sutil e atmosférico
   (function () {
-    const section = document.querySelector<HTMLElement>('.author-light');
-    const canvas = section?.querySelector<HTMLCanvasElement>('.matrix-canvas-light');
+    const section = document.querySelector<HTMLElement>('.author-cinematic');
+    const canvas = section?.querySelector<HTMLCanvasElement>('.cinematic-matrix');
     if (!section || !canvas) return;
 
-    // Respeitar prefers-reduced-motion
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    // Desligar no mobile (economia de bateria)
-    if (window.matchMedia('(max-width: 768px)').matches) return;
+    if (window.matchMedia('(max-width: 1023px)').matches) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const CHARS = 'PAULGOMESWYSMARKETING01THINKINGFORWARD◆';
-    const FONT_SIZE = 18;
-    let drops: number[] = [];
+    const CHARS = 'PAULGOMESWYSAITHINKINGFORWARDGEOSEOINTELIGENCIAARTIFICIAL01◆';
+    const FONT_SIZE = 16;
+    let drops: { x: number; y: number; speed: number; opacity: number }[] = [];
     let rafId = 0;
 
     function isDark(): boolean {
@@ -240,38 +370,50 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
 
     function resize() {
       if (!canvas || !section) return;
-      canvas.width = section.offsetWidth;
-      canvas.height = section.offsetHeight;
-      const columns = Math.floor(canvas.width / FONT_SIZE);
-      drops = new Array(columns).fill(0).map(() => Math.random() * -50);
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = section.offsetWidth * dpr;
+      canvas.height = section.offsetHeight * dpr;
+      canvas.style.width = section.offsetWidth + 'px';
+      canvas.style.height = section.offsetHeight + 'px';
+      ctx?.scale(dpr, dpr);
+
+      const columns = Math.floor(section.offsetWidth / FONT_SIZE);
+      drops = new Array(columns).fill(null).map((_, i) => ({
+        x: i * FONT_SIZE,
+        y: Math.random() * -section.offsetHeight,
+        speed: 0.5 + Math.random() * 1.5,
+        opacity: 0.3 + Math.random() * 0.7,
+      }));
     }
 
     let lastFrame = 0;
-    const FRAME_INTERVAL = 60; // ms entre frames (mais sutil que a versão escura)
+    const FRAME_INTERVAL = 50;
 
     function draw(now: number) {
-      if (!canvas || !ctx) return;
+      if (!canvas || !ctx || !section) return;
       if (now - lastFrame >= FRAME_INTERVAL) {
         lastFrame = now;
 
         const dark = isDark();
-        // Cor de fundo do fade (varia com tema)
-        ctx.fillStyle = dark ? 'rgba(2, 2, 2, 0.10)' : 'rgba(255, 255, 255, 0.10)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Fade do frame anterior
+        ctx.fillStyle = dark ? 'rgba(2, 2, 2, 0.08)' : 'rgba(255, 255, 255, 0.10)';
+        ctx.fillRect(0, 0, section.offsetWidth, section.offsetHeight);
 
-        // Cor dos caracteres: ciano sempre, mas mais opaco no dark
-        ctx.fillStyle = dark
-          ? 'rgba(0, 210, 211, 0.85)'
-          : 'rgba(0, 180, 216, 0.42)';
-        ctx.font = `${FONT_SIZE}px ui-monospace, "Courier New", monospace`;
+        ctx.font = `${FONT_SIZE}px ui-monospace, "SF Mono", "Courier New", monospace`;
 
-        for (let i = 0; i < drops.length; i++) {
+        for (const drop of drops) {
           const char = CHARS[Math.floor(Math.random() * CHARS.length)];
-          ctx.fillText(char, i * FONT_SIZE, drops[i] * FONT_SIZE);
-          if (drops[i] * FONT_SIZE > canvas.height && Math.random() > 0.975) {
-            drops[i] = 0;
+          // Cor varia com tema, opacidade varia por drop pra dar profundidade
+          const color = dark
+            ? `rgba(0, 210, 211, ${drop.opacity * 0.9})`
+            : `rgba(0, 180, 216, ${drop.opacity * 0.45})`;
+          ctx.fillStyle = color;
+          ctx.fillText(char, drop.x, drop.y);
+
+          drop.y += drop.speed * FONT_SIZE * 0.4;
+          if (drop.y > section.offsetHeight && Math.random() > 0.97) {
+            drop.y = Math.random() * -100;
           }
-          drops[i]++;
         }
       }
       rafId = requestAnimationFrame(draw);
@@ -283,7 +425,6 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
       rafId = requestAnimationFrame(draw);
     }
 
-    // Inicia quando a seção entra na viewport
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -298,6 +439,9 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     );
 
     io.observe(section);
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', () => {
+      cancelAnimationFrame(rafId);
+      setTimeout(start, 100);
+    });
   })();
 </script>

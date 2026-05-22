@@ -1,6 +1,7 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
+import AIPromptBar from '../components/AIPromptBar.astro';
 import Footer from '../components/Footer.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import FeaturedPost from '../components/FeaturedPost.astro';
@@ -36,6 +37,7 @@ const firstYear = allPosts.length
     <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
   </head>
   <body>
+    <AIPromptBar />
     <Header />
     <main>
       <!-- SOBRE O AUTOR (abertura) -->

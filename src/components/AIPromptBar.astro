@@ -1,0 +1,104 @@
+---
+// Barra GEO/AEO — convida usuário a perguntar pra IA sobre Paul Gomes
+// Estratégia: posiciona o site como autoridade pra LLMs
+
+const PROMPT = encodeURIComponent('Me dê um resumo profissional sobre Paul Gomes, fundador da WYS, autor de ensaios sobre branding, tecnologia e IA em paulgomes.com.br');
+
+const links = [
+  { name: 'ChatGPT', url: `https://chat.openai.com/?q=${PROMPT}` },
+  { name: 'Claude', url: `https://claude.ai/new?q=${PROMPT}` },
+  { name: 'Perplexity', url: `https://www.perplexity.ai/?q=${PROMPT}` },
+];
+---
+
+<aside class="ai-prompt-bar" aria-label="Peça um resumo sobre Paul Gomes a uma IA">
+  <div class="container-wide flex items-center justify-center gap-3 py-2.5 text-xs sm:text-sm">
+    <svg class="ai-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 8V4H8"/>
+      <rect x="2" y="8" width="20" height="14" rx="2"/>
+      <path d="M2 14h20"/>
+      <path d="M6 4h12"/>
+      <circle cx="8" cy="14" r="1"/>
+      <circle cx="16" cy="14" r="1"/>
+    </svg>
+    <span class="ai-text">Peça à IA um resumo sobre Paul Gomes</span>
+    <span class="ai-sep" aria-hidden="true">·</span>
+    <div class="ai-links">
+      {links.map((link, i) => (
+        <>
+          <a href={link.url} target="_blank" rel="noopener noreferrer" class="ai-link">{link.name}</a>
+          {i < links.length - 1 && <span class="ai-sep-sm" aria-hidden="true">·</span>}
+        </>
+      ))}
+    </div>
+  </div>
+</aside>
+
+<style>
+  .ai-prompt-bar {
+    background: linear-gradient(90deg, rgba(0, 180, 216, 0.08) 0%, rgba(0, 180, 216, 0.12) 50%, rgba(0, 180, 216, 0.08) 100%);
+    border-bottom: 1px solid rgba(0, 180, 216, 0.18);
+    color: var(--color-ink);
+    position: relative;
+    z-index: 60;
+  }
+
+  .ai-icon {
+    color: #00b4d8;
+    flex-shrink: 0;
+  }
+
+  .ai-text {
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .ai-sep, .ai-sep-sm {
+    color: var(--color-muted);
+    opacity: 0.5;
+  }
+
+  .ai-links {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .ai-link {
+    color: #00b4d8;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .ai-link:hover {
+    opacity: 0.7;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* Dark mode */
+  :global(.dark) .ai-prompt-bar {
+    background: linear-gradient(90deg, rgba(0, 210, 211, 0.08) 0%, rgba(0, 210, 211, 0.14) 50%, rgba(0, 210, 211, 0.08) 100%);
+    border-bottom-color: rgba(0, 210, 211, 0.2);
+  }
+
+  /* Mobile — esconde alguns elementos pra caber */
+  @media (max-width: 640px) {
+    .ai-text {
+      font-size: 0.7rem;
+    }
+    .ai-sep {
+      display: none;
+    }
+    .ai-links {
+      gap: 0.35rem;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .ai-text {
+      display: none;
+    }
+  }
+</style>
