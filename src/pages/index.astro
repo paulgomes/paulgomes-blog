@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import FeaturedPost from '../components/FeaturedPost.astro';
 import PostCard from '../components/PostCard.astro';
+import TrendingPosts from '../components/TrendingPosts.astro';
 import AuthorBlock from '../components/AuthorBlock.astro';
 import BrandsMarquee from '../components/BrandsMarquee.astro';
 import { SITE_TITLE, SITE_DESCRIPTION, FEATURED_THEME } from '../consts';
@@ -47,27 +48,16 @@ const firstYear = allPosts.length
         <AIPromptBar />
       </div>
 
-      <!-- EM DESTAQUE -->
+      <!-- EM DESTAQUE (banner full-bleed) -->
       {featured && (
-        <section class="container-wide py-16 md:py-20 border-t" style="border-color: var(--color-border)">
-          <SectionHeader eyebrow="Em destaque" title="O ensaio do momento" />
+        <section class="border-t" style="border-color: var(--color-border)">
           <FeaturedPost post={featured} />
         </section>
       )}
 
-      <!-- ÚLTIMOS ENSAIOS -->
+      <!-- EM ALTA (trending posts) -->
       {latest.length > 0 && (
-        <section class="container-wide py-16 md:py-20 border-t" style="border-color: var(--color-border)">
-          <SectionHeader
-            eyebrow="Últimos ensaios"
-            title="Publicados recentemente"
-            href="/blog"
-            hrefLabel="Ver arquivo completo →"
-          />
-          <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
-            {latest.map((post) => <PostCard post={post} />)}
-          </div>
-        </section>
+        <TrendingPosts posts={latest.slice(0, 4)} title="Em alta" />
       )}
 
       <!-- MARCAS QUE PASSARAM POR AQUI -->

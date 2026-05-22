@@ -1,0 +1,163 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import FormattedDate from './FormattedDate.astro';
+import { SITE_AUTHOR } from '../consts';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  title?: string;
+}
+
+const { posts, title = 'Em alta' } = Astro.props;
+---
+
+<section class="trending">
+  <div class="container-wide">
+    <p class="trending-eyebrow">{title}</p>
+    <div class="trending-grid">
+      {posts.map((post) => (
+        <a href={`/blog/${post.id}/`} class="trending-card" aria-label={`Ler: ${post.data.title}`}>
+          <div class="trending-image">
+            {post.data.heroImage ? (
+              <Image
+                src={post.data.heroImage}
+                alt=""
+                width={600}
+                widths={[300, 450, 600]}
+                class="trending-img"
+                loading="lazy"
+              />
+            ) : (
+              <div class="trending-img trending-img-fallback" aria-hidden="true"></div>
+            )}
+          </div>
+          <p class="trending-tag">Insight</p>
+          <h3 class="trending-title">{post.data.title}</h3>
+          <p class="trending-meta">
+            {SITE_AUTHOR}<span class="meta-dot"> · </span><FormattedDate date={post.data.pubDate} />
+          </p>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .trending {
+    padding: 4.5rem 0 5rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .trending-eyebrow {
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--color-ink);
+    margin: 0 0 3rem;
+  }
+
+  .trending-grid {
+    display: grid;
+    gap: 2.5rem 2rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .trending-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .trending-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .trending-card {
+    display: block;
+    color: var(--color-ink);
+    text-decoration: none;
+    transition: transform 0.25s ease;
+  }
+
+  .trending-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .trending-image {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background-color: var(--color-subtle);
+    margin-bottom: 1.25rem;
+  }
+
+  .trending-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .trending-img-fallback {
+    background: linear-gradient(135deg, var(--color-subtle) 0%, var(--color-border) 100%);
+  }
+
+  .trending-card:hover .trending-img {
+    transform: scale(1.05);
+  }
+
+  .trending-tag {
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    color: var(--color-muted);
+    text-align: center;
+    margin: 0 0 0.65rem;
+  }
+
+  .trending-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    font-size: 1.05rem;
+    margin: 0 0 0.85rem;
+    text-align: center;
+    color: var(--color-ink);
+  }
+
+  .trending-meta {
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-muted);
+    text-align: center;
+    margin: 0;
+  }
+
+  .meta-dot {
+    opacity: 0.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .trending-card,
+    .trending-img {
+      transition: none;
+    }
+    .trending-card:hover {
+      transform: none;
+    }
+    .trending-card:hover .trending-img {
+      transform: none;
+    }
+  }
+</style>
