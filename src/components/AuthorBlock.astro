@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import AIPromptBar from './AIPromptBar.astro';
 import authorPhoto from '../assets/brand/paul-avatar.png';
 ---
 
@@ -23,6 +24,11 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
           loading="eager"
           fetchpriority="high"
         />
+      </div>
+
+      <!-- BARRA GEO/AEO — só visível no mobile, entre foto e texto -->
+      <div class="ai-prompt-mobile">
+        <AIPromptBar />
       </div>
 
       <!-- COLUNA TEXTO -->
@@ -291,10 +297,15 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     box-shadow: 0 12px 28px rgba(0, 180, 216, 0.35);
   }
 
-  /* === MOBILE: foto antes do texto, conteúdo compactado, breathing room final === */
+  /* Barra GEO inline: só aparece no mobile entre foto e texto */
+  .ai-prompt-mobile {
+    display: none;
+  }
+
+  /* === MOBILE: foto → GEO → texto centralizado, breathing room final === */
   @media (max-width: 1023px) {
     .cinematic-inner {
-      padding-bottom: 2rem;
+      padding: 1.5rem 0 2rem;
     }
     .cinematic-grid {
       gap: 1.5rem;
@@ -303,12 +314,26 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
       order: -1;
       max-width: 360px;
       margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    .ai-prompt-mobile {
+      display: block;
+    }
+    .cinematic-text {
+      padding: 0 1.5rem;
+      text-align: center;
+    }
+    .cinematic-eyebrow {
+      justify-content: center;
     }
     .cinematic-bio {
       margin-top: 1.25rem;
+      margin-left: auto;
+      margin-right: auto;
     }
     .cinematic-form {
-      margin-top: 1.5rem;
+      margin: 1.5rem auto 0;
+      align-items: center;
     }
   }
 

@@ -42,8 +42,10 @@ const firstYear = allPosts.length
       <!-- SOBRE O AUTOR (abertura) -->
       <AuthorBlock />
 
-      <!-- BARRA GEO/AEO (entre hero e em destaque) -->
-      <AIPromptBar />
+      <!-- BARRA GEO/AEO (entre hero e em destaque) — desktop apenas; no mobile aparece dentro do AuthorBlock entre foto e texto -->
+      <div class="geo-desktop">
+        <AIPromptBar />
+      </div>
 
       <!-- EM DESTAQUE -->
       {featured && (
@@ -120,6 +122,13 @@ const firstYear = allPosts.length
     <style>
       .theme-section {
         background-color: var(--color-subtle);
+      }
+
+      /* No mobile a barra GEO aparece dentro do AuthorBlock (entre foto e texto) */
+      @media (max-width: 1023px) {
+        .geo-desktop {
+          display: none;
+        }
       }
     </style>
   </body>
