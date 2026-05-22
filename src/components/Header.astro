@@ -8,23 +8,23 @@ import logo from '../assets/brand/logo-paulgomes.webp';
 
 <header class="border-b sticky top-0 z-50 backdrop-blur" style="border-color: var(--color-border); background-color: color-mix(in srgb, var(--color-paper) 88%, transparent);">
   <div class="container-wide flex h-20 items-center justify-between gap-6">
-    <a href="/" class="flex items-center transition-opacity hover:opacity-70" aria-label="Paul Gomes — Página inicial">
+    <a href="/" class="flex flex-shrink-0 items-center transition-opacity hover:opacity-70" aria-label="Paul Gomes — Página inicial">
       <Image
         src={logo}
         alt="Paul Gomes"
         width={180}
         height={56}
-        class="logo-img h-12 w-auto"
+        class="logo-img h-10 w-auto sm:h-12"
         loading="eager"
       />
     </a>
 
-    <nav class="flex items-center gap-6 text-sm font-medium">
-      <HeaderLink href="/" class="hidden sm:inline-block">Home</HeaderLink>
+    <nav class="flex items-center gap-5 text-sm font-medium">
+      <HeaderLink href="/" class="hidden md:inline-block">Home</HeaderLink>
       <HeaderLink href="/about">Sobre</HeaderLink>
       <HeaderLink href="/blog">Insights</HeaderLink>
-      <HeaderLink href="/parceiros">Parceiros</HeaderLink>
-      <HeaderLink href="/contato">Contato</HeaderLink>
+      <HeaderLink href="/parceiros" class="hidden sm:inline-block">Parceiros</HeaderLink>
+      <HeaderLink href="/contato" class="hidden sm:inline-block">Contato</HeaderLink>
       <span class="mx-1 hidden h-5 w-px lg:inline-block" style="background-color: var(--color-border)"></span>
       <HeaderSocial />
       <span class="mx-1 hidden h-5 w-px sm:inline-block" style="background-color: var(--color-border)"></span>
