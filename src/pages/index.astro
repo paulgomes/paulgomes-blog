@@ -59,6 +59,21 @@ const themePosts = allPosts
         <TrendingPosts posts={latest.slice(0, 12)} title="Em alta" />
       )}
 
+      <!-- ESPAÇO ÚNICO DE ANÚNCIO (entre Em alta e Tema do mês) -->
+      <div class="ad-slot">
+        <div class="container-wide">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-6639862760844520"
+               data-ad-slot=""
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script is:inline>
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+      </div>
+
       <!-- TEMA DO MÊS (com paginação) -->
       {themePosts.length > 0 && (
         <ThemePosts
@@ -78,6 +93,12 @@ const themePosts = allPosts
         .geo-desktop {
           display: none;
         }
+      }
+
+      /* Espaço de anúncio AdSense — único slot manual da home */
+      .ad-slot {
+        padding: 2rem 0;
+        min-height: 90px;
       }
     </style>
   </body>
