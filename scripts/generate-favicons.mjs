@@ -2,8 +2,9 @@
 // Roda com: node scripts/generate-favicons.mjs
 
 import sharp from 'sharp';
+import pngToIco from 'png-to-ico';
+import { writeFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
-import { stat } from 'node:fs/promises';
 
 const INPUT = 'public/favicon-source.png';
 const OUTPUTS = [
@@ -19,6 +20,7 @@ console.log('🎨 Gerando favicons a partir de', INPUT, '\n');
 const beforeStat = await stat(INPUT);
 console.log(`  source: ${(beforeStat.size / 1024).toFixed(0)} KB\n`);
 
+// 1. PNGs (32, 64, apple-touch, 192, 512)
 for (const out of OUTPUTS) {
   const outPath = join('public', out.name);
   await sharp(INPUT)
@@ -28,5 +30,20 @@ for (const out of OUTPUTS) {
   const s = await stat(outPath);
   console.log(`  ✓ ${out.name.padEnd(25)} ${out.size}×${out.size}  →  ${(s.size / 1024).toFixed(1)} KB`);
 }
+
+// 2. favicon.ico multi-size (16, 32, 48)
+const icoSizes = [16, 32, 48];
+const icoBuffers = await Promise.all(
+  icoSizes.map((size) =>
+    sharp(INPUT)
+      .resize({ width: size, height: size, fit: 'cover', position: 'attention' })
+      .png({ compressionLevel: 9 })
+      .toBuffer()
+  )
+);
+const icoBuffer = await pngToIco(icoBuffers);
+await writeFile('public/favicon.ico', icoBuffer);
+const icoStat = await stat('public/favicon.ico');
+console.log(`  ✓ favicon.ico               16/32/48 multi-size  →  ${(icoStat.size / 1024).toFixed(1)} KB`);
 
 console.log('\n✅ Favicons gerados em public/');
