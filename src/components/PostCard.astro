@@ -11,7 +11,7 @@ const { post } = Astro.props;
 ---
 
 <article class="group">
-  <a href={`/blog/${post.id}/`} class="block">
+  <a href={`/${post.id}/`} class="block">
     {post.data.heroImage && (
       <div class="mb-4 overflow-hidden rounded-lg" style="background-color: var(--color-subtle)">
         <Image

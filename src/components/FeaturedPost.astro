@@ -10,7 +10,7 @@ interface Props {
 
 const { post } = Astro.props;
 const { title, pubDate, heroImage } = post.data;
-const href = `/blog/${post.id}/`;
+const href = `/${post.id}/`;
 ---
 
 <div class="featured-wrap">

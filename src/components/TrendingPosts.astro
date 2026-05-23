@@ -22,7 +22,7 @@ const pageIndices = Array.from({ length: totalPages }, (_, i) => i);
       {pageIndices.map((pageIdx) => (
         <div class="trending-grid" data-page={pageIdx} hidden={pageIdx !== 0}>
           {posts.slice(pageIdx * perPage, (pageIdx + 1) * perPage).map((post) => (
-            <a href={`/blog/${post.id}/`} class="trending-card" aria-label={`Ler: ${post.data.title}`}>
+            <a href={`/${post.id}/`} class="trending-card" aria-label={`Ler: ${post.data.title}`}>
               <div class="trending-image">
                 {post.data.heroImage ? (
                   <Image
