@@ -1,5 +1,6 @@
 ---
 import BaseHead from '../../components/BaseHead.astro';
+import '../../styles/painel.css';
 ---
 
 <!doctype html>
@@ -24,35 +25,23 @@ import BaseHead from '../../components/BaseHead.astro';
       </div>
     </div>
 
-    <main class="container-wide py-12">
+    <main class="painel-main">
       <div class="max-w-3xl">
-        <h2 class="font-display text-4xl font-bold tracking-tight mb-4">
-          Bem-vindo ao painel
-        </h2>
-        <p class="text-lg mb-10" style="color: var(--color-muted)">
-          Aqui você criará, editará e publicará ensaios.
-        </p>
+        <h2 class="font-display text-4xl font-bold tracking-tight mb-4">Bem-vindo ao painel</h2>
+        <p class="text-lg mb-10" style="color: var(--color-muted)">Crie, edite e publique ensaios.</p>
 
         <div class="grid gap-4 sm:grid-cols-2">
-          <div class="p-6 rounded-lg border" style="border-color: var(--color-border); background-color: var(--color-subtle);">
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] mb-2" style="color: var(--color-muted)">
-              ✍️ Em breve
-            </p>
-            <p class="font-display text-xl font-bold mb-2">Editor de posts</p>
-            <p class="text-sm" style="color: var(--color-muted)">
-              Sessão 2: editor TipTap, upload de imagens, salvar rascunho.
-            </p>
-          </div>
+          <a href="/painel/posts" class="painel-card" style="text-decoration: none; color: inherit; display: block;">
+            <p style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted); margin-bottom: 0.5rem;">📝 Posts</p>
+            <p class="font-display" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Ensaios</p>
+            <p style="font-size: 0.85rem; color: var(--color-muted); margin: 0;">Rascunhos e publicados</p>
+          </a>
 
-          <div class="p-6 rounded-lg border" style="border-color: var(--color-border); background-color: var(--color-subtle);">
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] mb-2" style="color: var(--color-muted)">
-              📊 Em breve
-            </p>
-            <p class="font-display text-xl font-bold mb-2">SEO inline</p>
-            <p class="text-sm" style="color: var(--color-muted)">
-              Sessão 3: snippet preview Google, focus keyword, score.
-            </p>
-          </div>
+          <a href="/painel/posts/editor" class="painel-card" style="text-decoration: none; color: inherit; display: block;">
+            <p style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted); margin-bottom: 0.5rem;">✍️ Novo</p>
+            <p class="font-display" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Criar ensaio</p>
+            <p style="font-size: 0.85rem; color: var(--color-muted); margin: 0;">Editor + auto-save</p>
+          </a>
         </div>
       </div>
     </main>

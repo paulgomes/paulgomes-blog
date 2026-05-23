@@ -13,3 +13,5 @@ bucket_name = "paulgomes-uploads"
 
 [vars]
 PUBLIC_R2_DOMAIN = "https://media.paulgomes.com.br"
+GITHUB_REPO = "paulgomes/paulgomes-blog"
+GITHUB_BRANCH = "main"

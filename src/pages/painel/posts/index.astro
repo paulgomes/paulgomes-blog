@@ -1,0 +1,105 @@
+---
+import BaseHead from '../../../components/BaseHead.astro';
+import '../../../styles/painel.css';
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <BaseHead title="Posts — Painel" description="Lista de posts" />
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body>
+    <div class="painel-shell">
+      <div class="painel-topbar">
+        <div class="painel-topbar-inner">
+          <a href="/painel" class="font-display text-xl font-bold" style="color: var(--color-ink); text-decoration: none;">← Painel</a>
+          <div class="flex items-center gap-4">
+            <a href="/painel/posts/editor" class="painel-button primary">+ Novo post</a>
+            <button id="logoutBtn" class="painel-button secondary">Sair</button>
+          </div>
+        </div>
+      </div>
+
+      <main class="painel-main">
+        <h1 class="font-display text-3xl font-bold mb-2">Posts</h1>
+        <p class="mb-6" style="color: var(--color-muted)">Rascunhos e ensaios publicados</p>
+
+        <div class="flex gap-2 mb-6">
+          <button class="filter-btn painel-button secondary is-active" data-filter="all">Todos</button>
+          <button class="filter-btn painel-button secondary" data-filter="draft">Rascunhos</button>
+          <button class="filter-btn painel-button secondary" data-filter="published">Publicados</button>
+        </div>
+
+        <div id="postsList" class="space-y-3">
+          <p style="color: var(--color-muted)">Carregando...</p>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      let currentFilter = 'all';
+
+      async function loadPosts() {
+        const res = await fetch(`/api/drafts?status=${currentFilter}`);
+        if (res.status === 401) {
+          window.location.href = '/painel/login';
+          return;
+        }
+        const data = await res.json();
+        renderPosts(data.drafts || []);
+      }
+
+      function renderPosts(drafts) {
+        const container = document.getElementById('postsList');
+        if (!drafts.length) {
+          container.innerHTML = `<div class="painel-card text-center" style="padding: 3rem 1.5rem; color: var(--color-muted);">Nenhum post encontrado.</div>`;
+          return;
+        }
+        container.innerHTML = drafts.map(d => `
+          <a href="/painel/posts/editor?id=${d.id}" class="painel-card flex items-center justify-between" style="text-decoration: none; color: inherit; transition: border-color 0.15s ease;" onmouseover="this.style.borderColor='#00b4d8'" onmouseout="this.style.borderColor='var(--color-border)'">
+            <div style="flex: 1; min-width: 0;">
+              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
+                <span class="badge badge-${d.status}" style="font-size: 0.7rem; padding: 0.15rem 0.6rem; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; ${d.status === 'published' ? 'background: #00b4d8; color: white;' : 'background: var(--color-subtle); color: var(--color-muted);'}">${d.status === 'published' ? 'Publicado' : 'Rascunho'}</span>
+                <span style="font-size: 0.8rem; color: var(--color-muted);">${new Date(d.updated_at).toLocaleDateString('pt-BR')}</span>
+              </div>
+              <h3 class="font-display" style="font-size: 1.15rem; font-weight: 600; margin: 0 0 0.25rem;">${escapeHtml(d.title || 'Sem título')}</h3>
+              <p style="font-size: 0.85rem; color: var(--color-muted); margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(d.description || '')}</p>
+            </div>
+            <div style="color: var(--color-muted); font-size: 1.5rem; padding-left: 1rem;">›</div>
+          </a>
+        `).join('');
+      }
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          currentFilter = btn.dataset.filter;
+          loadPosts();
+        });
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/painel/login';
+      });
+
+      loadPosts();
+    </script>
+
+    <style>
+      .filter-btn.is-active {
+        background: var(--color-ink) !important;
+        color: var(--color-paper) !important;
+        border-color: var(--color-ink) !important;
+      }
+    </style>
+  </body>
+</html>

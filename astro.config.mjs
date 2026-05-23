@@ -1,6 +1,7 @@
 // @ts-check
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import react from '@astrojs/react';
 import { defineConfig } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
@@ -20,6 +21,7 @@ export default defineConfig({
     sitemap({
       filter: (page) => !page.includes('/painel'),
     }),
+    react(),
   ],
 
   vite: {

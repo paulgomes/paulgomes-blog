@@ -3,6 +3,9 @@ export type Env = {
   MEDIA: R2Bucket;
   SESSION_SECRET: string;
   PUBLIC_R2_DOMAIN: string;
+  GITHUB_TOKEN: string;
+  GITHUB_REPO: string;
+  GITHUB_BRANCH: string;
 };
 
 export function getDB(env: Env): D1Database {

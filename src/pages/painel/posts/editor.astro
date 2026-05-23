@@ -1,0 +1,205 @@
+---
+import BaseHead from '../../../components/BaseHead.astro';
+import '../../../styles/painel.css';
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <BaseHead title="Editor — Painel" description="Editar post" />
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body>
+    <div class="painel-shell">
+      <div class="painel-topbar">
+        <div class="painel-topbar-inner">
+          <a href="/painel/posts" class="font-display text-base font-semibold" style="color: var(--color-ink); text-decoration: none;">← Posts</a>
+          <div class="flex items-center gap-3">
+            <span id="saveStatus" style="font-size: 0.8rem; color: var(--color-muted);"></span>
+            <button id="deleteBtn" class="painel-button danger" style="display: none;">Excluir</button>
+            <button id="publishBtn" class="painel-button primary">Publicar</button>
+          </div>
+        </div>
+      </div>
+
+      <main class="painel-main" style="max-width: 920px;">
+        <input id="title" class="painel-input" placeholder="Título do ensaio" style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; border: none; padding: 0.5rem 0; margin-bottom: 0.5rem;" />
+        <input id="description" class="painel-input" placeholder="Descrição curta (aparece em listagens)" style="border: none; padding: 0.5rem 0; margin-bottom: 1rem; color: var(--color-muted);" />
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <label style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-muted); margin-bottom: 0.4rem;">Slug</label>
+            <input id="slug" class="painel-input" placeholder="meu-post" />
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-muted); margin-bottom: 0.4rem;">Categoria</label>
+            <input id="category" class="painel-input" placeholder="Branding, IA, etc" />
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-muted); margin-bottom: 0.4rem;">Hero Image URL</label>
+          <input id="heroImage" class="painel-input" placeholder="https://media.paulgomes.com.br/..." />
+        </div>
+
+        <div id="editorRoot"></div>
+
+        <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--color-muted);">Auto-save ativado · Use a barra de ferramentas para formatar · Imagens vão direto pro R2</p>
+      </main>
+    </div>
+
+    <script>
+      import { createRoot } from 'react-dom/client';
+      import { createElement, useState } from 'react';
+      import Editor from '/src/components/painel/Editor.tsx';
+
+      // (Astro injeta o componente diretamente — esse script roda no client)
+    </script>
+
+    <!-- Carregamento dinâmico via React island -->
+    <script type="module">
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      let currentContent = '';
+      let saveTimer = null;
+      let hasChanges = false;
+
+      const $title = document.getElementById('title');
+      const $description = document.getElementById('description');
+      const $slug = document.getElementById('slug');
+      const $category = document.getElementById('category');
+      const $heroImage = document.getElementById('heroImage');
+      const $saveStatus = document.getElementById('saveStatus');
+      const $publishBtn = document.getElementById('publishBtn');
+      const $deleteBtn = document.getElementById('deleteBtn');
+
+      let draftId = id;
+
+      async function uploadImage(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        return data.url;
+      }
+
+      async function loadDraft() {
+        if (!id) return;
+        const res = await fetch(`/api/drafts/${id}`);
+        if (!res.ok) {
+          $saveStatus.textContent = 'Erro ao carregar';
+          return;
+        }
+        const { draft } = await res.json();
+        $title.value = draft.title || '';
+        $description.value = draft.description || '';
+        $slug.value = draft.slug || '';
+        $category.value = draft.category || '';
+        $heroImage.value = draft.hero_image_url || '';
+        currentContent = draft.content_md || '';
+        $deleteBtn.style.display = 'inline-flex';
+        if (draft.status === 'published') {
+          $publishBtn.textContent = 'Republicar';
+        }
+        initEditor(currentContent);
+      }
+
+      function buildPayload() {
+        return {
+          title: $title.value,
+          description: $description.value,
+          slug: $slug.value || $title.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+          category: $category.value,
+          hero_image_url: $heroImage.value,
+          content_md: currentContent,
+        };
+      }
+
+      async function autoSave() {
+        if (!hasChanges) return;
+        $saveStatus.textContent = 'Salvando...';
+        const payload = buildPayload();
+        if (!draftId) {
+          const res = await fetch('/api/drafts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+          if (res.ok) {
+            draftId = data.id;
+            history.replaceState({}, '', `/painel/posts/editor?id=${data.id}`);
+            $deleteBtn.style.display = 'inline-flex';
+          }
+        } else {
+          await fetch(`/api/drafts/${draftId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+        }
+        hasChanges = false;
+        $saveStatus.textContent = 'Salvo ✓';
+        setTimeout(() => { $saveStatus.textContent = ''; }, 2000);
+      }
+
+      function scheduleAutoSave() {
+        hasChanges = true;
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(autoSave, 1500);
+      }
+
+      [$title, $description, $slug, $category, $heroImage].forEach(el => {
+        el.addEventListener('input', scheduleAutoSave);
+      });
+
+      $publishBtn.addEventListener('click', async () => {
+        if (!draftId) await autoSave();
+        if (!draftId) { alert('Salva o rascunho antes de publicar'); return; }
+        if (!confirm('Publicar este post? Vai gerar o markdown no GitHub e o blog será reconstruído em ~1-2 min.')) return;
+        $publishBtn.disabled = true;
+        $publishBtn.textContent = 'Publicando...';
+        const res = await fetch(`/api/drafts/${draftId}/publish`, { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) {
+          alert('Erro: ' + (data.error || 'desconhecido'));
+          $publishBtn.disabled = false;
+          $publishBtn.textContent = 'Publicar';
+          return;
+        }
+        alert(`✓ Publicado!\n\n${data.message}\n\nLink: ${data.preview_url}`);
+        $publishBtn.disabled = false;
+        $publishBtn.textContent = 'Republicar';
+      });
+
+      $deleteBtn.addEventListener('click', async () => {
+        if (!draftId) return;
+        if (!confirm('Excluir este rascunho?')) return;
+        await fetch(`/api/drafts/${draftId}`, { method: 'DELETE' });
+        window.location.href = '/painel/posts';
+      });
+
+      // ===== Editor TipTap via React island =====
+      async function initEditor(initial) {
+        const { createRoot } = await import('react-dom/client');
+        const { createElement } = await import('react');
+        const EditorModule = await import('/src/components/painel/Editor.tsx');
+        const Editor = EditorModule.default;
+
+        const root = createRoot(document.getElementById('editorRoot'));
+        root.render(createElement(Editor, {
+          initialContent: initial,
+          onChange: (md) => { currentContent = md; scheduleAutoSave(); },
+          onUploadImage: uploadImage,
+        }));
+      }
+
+      if (id) {
+        loadDraft();
+      } else {
+        initEditor('');
+      }
+    </script>
+  </body>
+</html>
