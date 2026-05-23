@@ -4,13 +4,15 @@ import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import Typography from '@tiptap/extension-typography';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-type Props = {
-  initialContent?: string;
-  onChange?: (markdown: string) => void;
-  onUploadImage?: (file: File) => Promise<string>;
-};
+// Ponte com o script inline da página (editor.astro)
+declare global {
+  interface Window {
+    __editorGetHTML?: () => string;
+    __editorGetMarkdown?: () => string;
+  }
+}
 
 // Converte HTML do TipTap pra markdown simples
 function htmlToMarkdown(html: string): string {
@@ -38,7 +40,17 @@ function htmlToMarkdown(html: string): string {
   return md.trim();
 }
 
-export default function Editor({ initialContent = '', onChange, onUploadImage }: Props) {
+// Upload de imagem pro R2 via /api/upload
+async function uploadImage(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await fetch('/api/upload', { method: 'POST', body: formData });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'upload failed');
+  return data.url;
+}
+
+export default function Editor() {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -50,19 +62,42 @@ export default function Editor({ initialContent = '', onChange, onUploadImage }:
       Placeholder.configure({ placeholder: 'Comece a escrever...' }),
       Typography,
     ],
-    content: initialContent,
+    content: '',
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       const md = htmlToMarkdown(html);
-      onChange?.(md);
+      window.dispatchEvent(new CustomEvent('editor:change', { detail: { html, md } }));
     },
   });
 
+  // Ponte com script inline da página: expõe getters + escuta set-content + sinaliza ready
+  useEffect(() => {
+    if (!editor) return;
+
+    window.__editorGetHTML = () => editor.getHTML();
+    window.__editorGetMarkdown = () => htmlToMarkdown(editor.getHTML());
+
+    const setContentHandler = (e: Event) => {
+      const ev = e as CustomEvent<{ html?: string }>;
+      editor.commands.setContent(ev.detail?.html || '', { emitUpdate: false });
+    };
+    window.addEventListener('editor:set-content', setContentHandler);
+
+    // Sinaliza que o editor já está pronto pra receber conteúdo
+    window.dispatchEvent(new Event('editor:ready'));
+
+    return () => {
+      window.removeEventListener('editor:set-content', setContentHandler);
+      delete window.__editorGetHTML;
+      delete window.__editorGetMarkdown;
+    };
+  }, [editor]);
+
   const handleImageUpload = async (file: File) => {
-    if (!onUploadImage || !editor) return;
+    if (!editor) return;
     setUploading(true);
     try {
-      const url = await onUploadImage(file);
+      const url = await uploadImage(file);
       editor.chain().focus().setImage({ src: url, alt: file.name }).run();
     } catch (err) {
       alert('Erro ao subir imagem');

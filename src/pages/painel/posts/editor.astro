@@ -1,5 +1,6 @@
 ---
 import BaseHead from '../../../components/BaseHead.astro';
+import Editor from '../../../components/painel/Editor.tsx';
 import '../../../styles/painel.css';
 ---
 
@@ -42,51 +43,63 @@ import '../../../styles/painel.css';
           <input id="heroImage" class="painel-input" placeholder="https://media.paulgomes.com.br/..." />
         </div>
 
-        <div id="editorRoot"></div>
+        <!-- React island: TipTap roda aqui -->
+        <Editor client:load />
 
         <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--color-muted);">Auto-save ativado · Use a barra de ferramentas para formatar · Imagens vão direto pro R2</p>
       </main>
     </div>
 
     <script>
-      import { createRoot } from 'react-dom/client';
-      import { createElement, useState } from 'react';
-      import Editor from '/src/components/painel/Editor.tsx';
-
-      // (Astro injeta o componente diretamente — esse script roda no client)
-    </script>
-
-    <!-- Carregamento dinâmico via React island -->
-    <script type="module">
+      // ===== Estado =====
       const params = new URLSearchParams(window.location.search);
-      const id = params.get('id');
+      const initialId = params.get('id');
+      let draftId: string | null = initialId;
       let currentContent = '';
-      let saveTimer = null;
+      let saveTimer: ReturnType<typeof setTimeout> | null = null;
       let hasChanges = false;
 
-      const $title = document.getElementById('title');
-      const $description = document.getElementById('description');
-      const $slug = document.getElementById('slug');
-      const $category = document.getElementById('category');
-      const $heroImage = document.getElementById('heroImage');
-      const $saveStatus = document.getElementById('saveStatus');
-      const $publishBtn = document.getElementById('publishBtn');
-      const $deleteBtn = document.getElementById('deleteBtn');
+      // Editor pode demorar pra montar (client:load + hidratação). Fila de conteúdo pendente.
+      let editorReady = false;
+      let pendingContent: string | null = null;
 
-      let draftId = id;
+      // ===== Refs DOM =====
+      const $title = document.getElementById('title') as HTMLInputElement;
+      const $description = document.getElementById('description') as HTMLInputElement;
+      const $slug = document.getElementById('slug') as HTMLInputElement;
+      const $category = document.getElementById('category') as HTMLInputElement;
+      const $heroImage = document.getElementById('heroImage') as HTMLInputElement;
+      const $saveStatus = document.getElementById('saveStatus') as HTMLSpanElement;
+      const $publishBtn = document.getElementById('publishBtn') as HTMLButtonElement;
+      const $deleteBtn = document.getElementById('deleteBtn') as HTMLButtonElement;
 
-      async function uploadImage(file) {
-        const formData = new FormData();
-        formData.append('file', file);
-        const res = await fetch('/api/upload', { method: 'POST', body: formData });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
-        return data.url;
+      // ===== Ponte com o Editor (React island) =====
+      window.addEventListener('editor:ready', () => {
+        editorReady = true;
+        if (pendingContent !== null) {
+          window.dispatchEvent(new CustomEvent('editor:set-content', { detail: { html: pendingContent } }));
+          pendingContent = null;
+        }
+      });
+
+      window.addEventListener('editor:change', (e: Event) => {
+        const ev = e as CustomEvent<{ html: string; md: string }>;
+        currentContent = ev.detail.md;
+        scheduleAutoSave();
+      });
+
+      function setEditorContent(html: string) {
+        if (editorReady) {
+          window.dispatchEvent(new CustomEvent('editor:set-content', { detail: { html } }));
+        } else {
+          pendingContent = html;
+        }
       }
 
+      // ===== Load existing draft =====
       async function loadDraft() {
-        if (!id) return;
-        const res = await fetch(`/api/drafts/${id}`);
+        if (!initialId) return;
+        const res = await fetch(`/api/drafts/${initialId}`);
         if (!res.ok) {
           $saveStatus.textContent = 'Erro ao carregar';
           return;
@@ -102,9 +115,10 @@ import '../../../styles/painel.css';
         if (draft.status === 'published') {
           $publishBtn.textContent = 'Republicar';
         }
-        initEditor(currentContent);
+        setEditorContent(currentContent);
       }
 
+      // ===== Auto-save =====
       function buildPayload() {
         return {
           title: $title.value,
@@ -146,14 +160,15 @@ import '../../../styles/painel.css';
 
       function scheduleAutoSave() {
         hasChanges = true;
-        clearTimeout(saveTimer);
+        if (saveTimer) clearTimeout(saveTimer);
         saveTimer = setTimeout(autoSave, 1500);
       }
 
-      [$title, $description, $slug, $category, $heroImage].forEach(el => {
+      [$title, $description, $slug, $category, $heroImage].forEach((el) => {
         el.addEventListener('input', scheduleAutoSave);
       });
 
+      // ===== Publicar =====
       $publishBtn.addEventListener('click', async () => {
         if (!draftId) await autoSave();
         if (!draftId) { alert('Salva o rascunho antes de publicar'); return; }
@@ -173,6 +188,7 @@ import '../../../styles/painel.css';
         $publishBtn.textContent = 'Republicar';
       });
 
+      // ===== Excluir =====
       $deleteBtn.addEventListener('click', async () => {
         if (!draftId) return;
         if (!confirm('Excluir este rascunho?')) return;
@@ -180,25 +196,9 @@ import '../../../styles/painel.css';
         window.location.href = '/painel/posts';
       });
 
-      // ===== Editor TipTap via React island =====
-      async function initEditor(initial) {
-        const { createRoot } = await import('react-dom/client');
-        const { createElement } = await import('react');
-        const EditorModule = await import('/src/components/painel/Editor.tsx');
-        const Editor = EditorModule.default;
-
-        const root = createRoot(document.getElementById('editorRoot'));
-        root.render(createElement(Editor, {
-          initialContent: initial,
-          onChange: (md) => { currentContent = md; scheduleAutoSave(); },
-          onUploadImage: uploadImage,
-        }));
-      }
-
-      if (id) {
+      // ===== Init =====
+      if (initialId) {
         loadDraft();
-      } else {
-        initEditor('');
       }
     </script>
   </body>
