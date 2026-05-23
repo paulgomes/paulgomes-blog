@@ -11,6 +11,7 @@ declare global {
   interface Window {
     __editorGetHTML?: () => string;
     __editorGetMarkdown?: () => string;
+    toast?: (message: string, type?: 'success' | 'error' | 'info', duration?: number) => void;
   }
 }
 
@@ -40,7 +41,6 @@ function htmlToMarkdown(html: string): string {
   return md.trim();
 }
 
-// Upload de imagem pro R2 via /api/upload
 async function uploadImage(file: File): Promise<string> {
   const formData = new FormData();
   formData.append('file', file);
@@ -52,7 +52,9 @@ async function uploadImage(file: File): Promise<string> {
 
 export default function Editor() {
   const [uploading, setUploading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragCounter = useRef(0);
 
   const editor = useEditor({
     extensions: [
@@ -63,14 +65,59 @@ export default function Editor() {
       Typography,
     ],
     content: '',
+    editorProps: {
+      handlePaste(view, event) {
+        const items = event.clipboardData?.items;
+        if (!items) return false;
+        for (const item of Array.from(items)) {
+          if (item.type.startsWith('image/')) {
+            event.preventDefault();
+            const file = item.getAsFile();
+            if (file) uploadAndInsert(file);
+            return true;
+          }
+        }
+        return false;
+      },
+      handleDrop(view, event, _slice, moved) {
+        if (moved) return false; // movendo elemento dentro do editor — não interfere
+        const files = event.dataTransfer?.files;
+        if (!files || files.length === 0) return false;
+        const imageFile = Array.from(files).find((f) => f.type.startsWith('image/'));
+        if (!imageFile) return false;
+        event.preventDefault();
+        uploadAndInsert(imageFile);
+        return true;
+      },
+    },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       const md = htmlToMarkdown(html);
-      window.dispatchEvent(new CustomEvent('editor:change', { detail: { html, md } }));
+      const text = editor.getText();
+      const words = text.trim().split(/\s+/).filter(Boolean).length;
+      const readTime = words === 0 ? 0 : Math.max(1, Math.round(words / 200));
+      window.dispatchEvent(new CustomEvent('editor:change', {
+        detail: { html, md, wordCount: words, readTime }
+      }));
     },
   });
 
-  // Ponte com script inline da página: expõe getters + escuta set-content + sinaliza ready
+  async function uploadAndInsert(file: File) {
+    if (!editor) return;
+    setUploading(true);
+    try {
+      const url = await uploadImage(file);
+      editor.chain().focus().setImage({ src: url, alt: file.name }).run();
+      window.toast?.('Imagem enviada', 'success');
+    } catch (err) {
+      console.error(err);
+      window.toast?.('Erro ao subir imagem', 'error');
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  // Ponte com script inline da página
   useEffect(() => {
     if (!editor) return;
 
@@ -83,7 +130,6 @@ export default function Editor() {
     };
     window.addEventListener('editor:set-content', setContentHandler);
 
-    // Sinaliza que o editor já está pronto pra receber conteúdo
     window.dispatchEvent(new Event('editor:ready'));
 
     return () => {
@@ -93,19 +139,7 @@ export default function Editor() {
     };
   }, [editor]);
 
-  const handleImageUpload = async (file: File) => {
-    if (!editor) return;
-    setUploading(true);
-    try {
-      const url = await uploadImage(file);
-      editor.chain().focus().setImage({ src: url, alt: file.name }).run();
-    } catch (err) {
-      alert('Erro ao subir imagem');
-      console.error(err);
-    } finally {
-      setUploading(false);
-    }
-  };
+  const handleImageUpload = (file: File) => uploadAndInsert(file);
 
   const setLink = () => {
     const url = prompt('URL do link:');
@@ -113,10 +147,38 @@ export default function Editor() {
     editor?.chain().focus().setLink({ href: url }).run();
   };
 
+  // Drag-and-drop visual feedback (counter pattern para evitar flicker)
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounter.current += 1;
+    if (e.dataTransfer.types.includes('Files')) setIsDragOver(true);
+  };
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounter.current -= 1;
+    if (dragCounter.current <= 0) {
+      dragCounter.current = 0;
+      setIsDragOver(false);
+    }
+  };
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+  const handleDrop = (e: React.DragEvent) => {
+    dragCounter.current = 0;
+    setIsDragOver(false);
+  };
+
   if (!editor) return <div>Carregando editor...</div>;
 
   return (
-    <div className="editor-wrapper">
+    <div
+      className={`editor-wrapper${isDragOver ? ' editor-dragover' : ''}`}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <div className="editor-toolbar">
         <button onClick={() => editor.chain().focus().toggleBold().run()} className={editor.isActive('bold') ? 'is-active' : ''}>B</button>
         <button onClick={() => editor.chain().focus().toggleItalic().run()} className={editor.isActive('italic') ? 'is-active' : ''}><i>i</i></button>

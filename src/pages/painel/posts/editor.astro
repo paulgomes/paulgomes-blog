@@ -1,5 +1,5 @@
 ---
-import BaseHead from '../../../components/BaseHead.astro';
+import PainelHead from '../../../components/painel/PainelHead.astro';
 import Editor from '../../../components/painel/Editor.tsx';
 import '../../../styles/painel.css';
 ---
@@ -7,8 +7,7 @@ import '../../../styles/painel.css';
 <!doctype html>
 <html lang="pt-BR">
   <head>
-    <BaseHead title="Editor — Painel" description="Editar post" />
-    <meta name="robots" content="noindex, nofollow" />
+    <PainelHead title="Editor — Painel" description="Editar post" />
   </head>
   <body>
     <div class="painel-shell">
@@ -16,7 +15,7 @@ import '../../../styles/painel.css';
         <div class="painel-topbar-inner">
           <a href="/painel/posts" class="font-display text-base font-semibold" style="color: var(--color-ink); text-decoration: none;">← Posts</a>
           <div class="flex items-center gap-3">
-            <span id="saveStatus" style="font-size: 0.8rem; color: var(--color-muted);"></span>
+            <span id="saveStatus" class="save-status"></span>
             <button id="deleteBtn" class="painel-button danger" style="display: none;">Excluir</button>
             <button id="publishBtn" class="painel-button primary">Publicar</button>
           </div>
@@ -46,7 +45,32 @@ import '../../../styles/painel.css';
         <!-- React island: TipTap roda aqui -->
         <Editor client:load />
 
-        <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--color-muted);">Auto-save ativado · Use a barra de ferramentas para formatar · Imagens vão direto pro R2</p>
+        <div class="editor-meta">
+          <span id="wordCount">0 palavras</span>
+          <span>·</span>
+          <span id="readTime">0 min de leitura</span>
+        </div>
+
+        <!-- SEO Block -->
+        <section class="seo-block">
+          <h3>SEO</h3>
+
+          <div class="seo-counter">
+            <label>Título</label>
+            <div id="titleCounter">0 / 60</div>
+          </div>
+
+          <div class="seo-counter">
+            <label>Descrição</label>
+            <div id="descCounter">0 / 160</div>
+          </div>
+
+          <div class="seo-preview">
+            <span class="seo-preview-url">paulgomes.com.br › blog › <span id="previewSlug">meu-post</span></span>
+            <h4 id="previewTitle">Título do ensaio</h4>
+            <p id="previewDesc">Descrição curta aparece aqui...</p>
+          </div>
+        </section>
       </main>
     </div>
 
@@ -57,9 +81,9 @@ import '../../../styles/painel.css';
       let draftId: string | null = initialId;
       let currentContent = '';
       let saveTimer: ReturnType<typeof setTimeout> | null = null;
+      let retryTimer: ReturnType<typeof setTimeout> | null = null;
       let hasChanges = false;
 
-      // Editor pode demorar pra montar (client:load + hidratação). Fila de conteúdo pendente.
       let editorReady = false;
       let pendingContent: string | null = null;
 
@@ -73,7 +97,16 @@ import '../../../styles/painel.css';
       const $publishBtn = document.getElementById('publishBtn') as HTMLButtonElement;
       const $deleteBtn = document.getElementById('deleteBtn') as HTMLButtonElement;
 
-      // ===== Ponte com o Editor (React island) =====
+      const $wordCount = document.getElementById('wordCount') as HTMLSpanElement;
+      const $readTime = document.getElementById('readTime') as HTMLSpanElement;
+
+      const $titleCounter = document.getElementById('titleCounter') as HTMLDivElement;
+      const $descCounter = document.getElementById('descCounter') as HTMLDivElement;
+      const $previewSlug = document.getElementById('previewSlug') as HTMLSpanElement;
+      const $previewTitle = document.getElementById('previewTitle') as HTMLHeadingElement;
+      const $previewDesc = document.getElementById('previewDesc') as HTMLParagraphElement;
+
+      // ===== Ponte com o Editor =====
       window.addEventListener('editor:ready', () => {
         editorReady = true;
         if (pendingContent !== null) {
@@ -83,8 +116,10 @@ import '../../../styles/painel.css';
       });
 
       window.addEventListener('editor:change', (e: Event) => {
-        const ev = e as CustomEvent<{ html: string; md: string }>;
+        const ev = e as CustomEvent<{ html: string; md: string; wordCount: number; readTime: number }>;
         currentContent = ev.detail.md;
+        $wordCount.textContent = `${ev.detail.wordCount} ${ev.detail.wordCount === 1 ? 'palavra' : 'palavras'}`;
+        $readTime.textContent = `${ev.detail.readTime} min de leitura`;
         scheduleAutoSave();
       });
 
@@ -96,12 +131,38 @@ import '../../../styles/painel.css';
         }
       }
 
+      // ===== SEO counters + preview =====
+      function updateSeoCounter(el: HTMLDivElement, current: number, max: number) {
+        el.textContent = `${current} / ${max}`;
+        el.classList.remove('warn', 'over');
+        if (current > max) el.classList.add('over');
+        else if (current > max * 0.8) el.classList.add('warn');
+      }
+
+      function slugify(s: string) {
+        return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      }
+
+      function updateSeoPreview() {
+        const t = $title.value || 'Título do ensaio';
+        const d = $description.value || 'Descrição curta aparece aqui...';
+        const s = $slug.value || slugify($title.value) || 'meu-post';
+        $previewTitle.textContent = t;
+        $previewDesc.textContent = d;
+        $previewSlug.textContent = s;
+
+        updateSeoCounter($titleCounter, $title.value.length, 60);
+        updateSeoCounter($descCounter, $description.value.length, 160);
+      }
+      updateSeoPreview();
+
       // ===== Load existing draft =====
       async function loadDraft() {
         if (!initialId) return;
         const res = await fetch(`/api/drafts/${initialId}`);
         if (!res.ok) {
           $saveStatus.textContent = 'Erro ao carregar';
+          window.toast?.('Erro ao carregar rascunho', 'error');
           return;
         }
         const { draft } = await res.json();
@@ -116,46 +177,78 @@ import '../../../styles/painel.css';
           $publishBtn.textContent = 'Republicar';
         }
         setEditorContent(currentContent);
+        updateSeoPreview();
       }
 
-      // ===== Auto-save =====
+      // ===== Auto-save (lazy: não cria draft vazio) =====
       function buildPayload() {
         return {
           title: $title.value,
           description: $description.value,
-          slug: $slug.value || $title.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+          slug: $slug.value || slugify($title.value),
           category: $category.value,
           hero_image_url: $heroImage.value,
           content_md: currentContent,
         };
       }
 
+      function hasAnyContent(): boolean {
+        return !!(
+          $title.value.trim() ||
+          $description.value.trim() ||
+          $slug.value.trim() ||
+          $category.value.trim() ||
+          $heroImage.value.trim() ||
+          (currentContent && currentContent.trim())
+        );
+      }
+
+      function formatTime(d: Date): string {
+        return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      }
+
       async function autoSave() {
         if (!hasChanges) return;
+
+        // Lazy: não cria draft vazio
+        if (!draftId && !hasAnyContent()) return;
+
+        hasChanges = false;
         $saveStatus.textContent = 'Salvando...';
+        $saveStatus.classList.remove('save-status-error');
+
         const payload = buildPayload();
-        if (!draftId) {
-          const res = await fetch('/api/drafts', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          const data = await res.json();
-          if (res.ok) {
+
+        try {
+          if (!draftId) {
+            const res = await fetch('/api/drafts', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+            if (!res.ok) throw new Error('POST falhou');
+            const data = await res.json();
             draftId = data.id;
             history.replaceState({}, '', `/painel/posts/editor?id=${data.id}`);
             $deleteBtn.style.display = 'inline-flex';
+          } else {
+            const res = await fetch(`/api/drafts/${draftId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+            if (!res.ok) throw new Error('PUT falhou');
           }
-        } else {
-          await fetch(`/api/drafts/${draftId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
+          if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
+          $saveStatus.textContent = `Salvo às ${formatTime(new Date())}`;
+        } catch (err) {
+          console.error(err);
+          $saveStatus.textContent = 'Erro ao salvar — tentando de novo';
+          $saveStatus.classList.add('save-status-error');
+          hasChanges = true;
+          if (retryTimer) clearTimeout(retryTimer);
+          retryTimer = setTimeout(autoSave, 5000);
         }
-        hasChanges = false;
-        $saveStatus.textContent = 'Salvo ✓';
-        setTimeout(() => { $saveStatus.textContent = ''; }, 2000);
       }
 
       function scheduleAutoSave() {
@@ -165,35 +258,71 @@ import '../../../styles/painel.css';
       }
 
       [$title, $description, $slug, $category, $heroImage].forEach((el) => {
-        el.addEventListener('input', scheduleAutoSave);
+        el.addEventListener('input', () => {
+          updateSeoPreview();
+          scheduleAutoSave();
+        });
       });
 
       // ===== Publicar =====
       $publishBtn.addEventListener('click', async () => {
-        if (!draftId) await autoSave();
-        if (!draftId) { alert('Salva o rascunho antes de publicar'); return; }
-        if (!confirm('Publicar este post? Vai gerar o markdown no GitHub e o blog será reconstruído em ~1-2 min.')) return;
-        $publishBtn.disabled = true;
-        $publishBtn.textContent = 'Publicando...';
-        const res = await fetch(`/api/drafts/${draftId}/publish`, { method: 'POST' });
-        const data = await res.json();
-        if (!res.ok) {
-          alert('Erro: ' + (data.error || 'desconhecido'));
-          $publishBtn.disabled = false;
-          $publishBtn.textContent = 'Publicar';
+        // Força salvar pendente antes (cria draft se ainda não existir + houver conteúdo)
+        if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+        if (hasChanges) await autoSave();
+
+        if (!draftId) {
+          window.toast?.('Adicione título e conteúdo antes de publicar', 'error');
           return;
         }
-        alert(`✓ Publicado!\n\n${data.message}\n\nLink: ${data.preview_url}`);
-        $publishBtn.disabled = false;
-        $publishBtn.textContent = 'Republicar';
+
+        const ok = await window.confirmAction!({
+          title: 'Publicar este post?',
+          message: 'Vai gerar o markdown no GitHub e o blog será reconstruído em ~1-2 min.',
+          confirmLabel: 'Publicar',
+          cancelLabel: 'Cancelar',
+        });
+        if (!ok) return;
+
+        $publishBtn.disabled = true;
+        $publishBtn.textContent = 'Publicando...';
+        try {
+          const res = await fetch(`/api/drafts/${draftId}/publish`, { method: 'POST' });
+          const data = await res.json();
+          if (!res.ok) {
+            window.toast?.('Erro: ' + (data.error || 'desconhecido'), 'error');
+            $publishBtn.disabled = false;
+            $publishBtn.textContent = 'Publicar';
+            return;
+          }
+          window.toast?.(`Publicado! Rebuild em ~2 min`, 'success', 5000);
+          $publishBtn.disabled = false;
+          $publishBtn.textContent = 'Republicar';
+        } catch (err) {
+          window.toast?.('Erro de rede ao publicar', 'error');
+          $publishBtn.disabled = false;
+          $publishBtn.textContent = 'Publicar';
+        }
       });
 
       // ===== Excluir =====
       $deleteBtn.addEventListener('click', async () => {
         if (!draftId) return;
-        if (!confirm('Excluir este rascunho?')) return;
-        await fetch(`/api/drafts/${draftId}`, { method: 'DELETE' });
-        window.location.href = '/painel/posts';
+        const ok = await window.confirmAction!({
+          title: 'Excluir este rascunho?',
+          message: 'Esta ação não pode ser desfeita.',
+          confirmLabel: 'Excluir',
+          cancelLabel: 'Cancelar',
+          danger: true,
+        });
+        if (!ok) return;
+
+        const res = await fetch(`/api/drafts/${draftId}`, { method: 'DELETE' });
+        if (res.ok) {
+          window.toast?.('Rascunho excluído', 'success');
+          setTimeout(() => { window.location.href = '/painel/posts'; }, 700);
+        } else {
+          window.toast?.('Erro ao excluir', 'error');
+        }
       });
 
       // ===== Init =====

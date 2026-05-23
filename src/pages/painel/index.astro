@@ -1,13 +1,12 @@
 ---
-import BaseHead from '../../components/BaseHead.astro';
+import PainelHead from '../../components/painel/PainelHead.astro';
 import '../../styles/painel.css';
 ---
 
 <!doctype html>
 <html lang="pt-BR">
   <head>
-    <BaseHead title="Painel — Paul Gomes" description="Painel administrativo" />
-    <meta name="robots" content="noindex, nofollow" />
+    <PainelHead title="Painel — Paul Gomes" description="Painel administrativo" />
   </head>
   <body class="min-h-screen" style="background-color: var(--color-paper)">
     <div class="border-b" style="border-color: var(--color-border)">
@@ -30,6 +29,21 @@ import '../../styles/painel.css';
         <h2 class="font-display text-4xl font-bold tracking-tight mb-4">Bem-vindo ao painel</h2>
         <p class="text-lg mb-10" style="color: var(--color-muted)">Crie, edite e publique ensaios.</p>
 
+        <div class="painel-stats-grid">
+          <div class="painel-stat">
+            <p class="painel-stat-label">Total</p>
+            <p class="painel-stat-value" id="statTotal"><span class="painel-stat-skeleton"></span></p>
+          </div>
+          <div class="painel-stat">
+            <p class="painel-stat-label">Rascunhos</p>
+            <p class="painel-stat-value" id="statDrafts"><span class="painel-stat-skeleton"></span></p>
+          </div>
+          <div class="painel-stat">
+            <p class="painel-stat-label">Publicados</p>
+            <p class="painel-stat-value" id="statPublished"><span class="painel-stat-skeleton"></span></p>
+          </div>
+        </div>
+
         <div class="grid gap-4 sm:grid-cols-2">
           <a href="/painel/posts" class="painel-card" style="text-decoration: none; color: inherit; display: block;">
             <p style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted); margin-bottom: 0.5rem;">📝 Posts</p>
@@ -49,9 +63,10 @@ import '../../styles/painel.css';
     <script>
       // Carrega info do usuário
       fetch('/api/auth/me')
-        .then(r => r.json())
-        .then(data => {
+        .then((r) => r.json())
+        .then((data) => {
           const userInfo = document.getElementById('userInfo');
+          if (!userInfo) return;
           if (data.user) {
             userInfo.textContent = `${data.user.name} (${data.user.role})`;
           } else {
@@ -59,8 +74,25 @@ import '../../styles/painel.css';
           }
         });
 
+      // Stats
+      async function loadStats() {
+        const res = await fetch('/api/drafts?status=all');
+        if (!res.ok) return;
+        const { drafts } = await res.json();
+        const total = drafts.length;
+        const draftsCount = drafts.filter((d: any) => d.status === 'draft').length;
+        const publishedCount = drafts.filter((d: any) => d.status === 'published').length;
+        const $t = document.getElementById('statTotal');
+        const $d = document.getElementById('statDrafts');
+        const $p = document.getElementById('statPublished');
+        if ($t) $t.textContent = String(total);
+        if ($d) $d.textContent = String(draftsCount);
+        if ($p) $p.textContent = String(publishedCount);
+      }
+      loadStats();
+
       // Logout
-      document.getElementById('logoutBtn').addEventListener('click', async () => {
+      document.getElementById('logoutBtn')?.addEventListener('click', async () => {
         await fetch('/api/auth/logout', { method: 'POST' });
         window.location.href = '/painel/login';
       });

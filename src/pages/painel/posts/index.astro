@@ -1,13 +1,12 @@
 ---
-import BaseHead from '../../../components/BaseHead.astro';
+import PainelHead from '../../../components/painel/PainelHead.astro';
 import '../../../styles/painel.css';
 ---
 
 <!doctype html>
 <html lang="pt-BR">
   <head>
-    <BaseHead title="Posts — Painel" description="Lista de posts" />
-    <meta name="robots" content="noindex, nofollow" />
+    <PainelHead title="Posts — Painel" description="Lista de posts" />
   </head>
   <body>
     <div class="painel-shell">
@@ -40,6 +39,24 @@ import '../../../styles/painel.css';
     <script>
       let currentFilter = 'all';
 
+      function escapeHtml(str: string) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function badgeClass(status: string) {
+        if (status === 'published') return 'badge badge-publicado';
+        if (status === 'scheduled') return 'badge badge-agendado';
+        return 'badge badge-rascunho';
+      }
+
+      function badgeLabel(status: string) {
+        if (status === 'published') return 'Publicado';
+        if (status === 'scheduled') return 'Agendado';
+        return 'Rascunho';
+      }
+
       async function loadPosts() {
         const res = await fetch(`/api/drafts?status=${currentFilter}`);
         if (res.status === 401) {
@@ -50,43 +67,63 @@ import '../../../styles/painel.css';
         renderPosts(data.drafts || []);
       }
 
-      function renderPosts(drafts) {
+      function renderPosts(drafts: any[]) {
         const container = document.getElementById('postsList');
+        if (!container) return;
         if (!drafts.length) {
-          container.innerHTML = `<div class="painel-card text-center" style="padding: 3rem 1.5rem; color: var(--color-muted);">Nenhum post encontrado.</div>`;
+          container.innerHTML = `<div class="painel-card" style="padding: 3rem 1.5rem; color: var(--color-muted); text-align: center;">Nenhum post encontrado.</div>`;
           return;
         }
-        container.innerHTML = drafts.map(d => `
-          <a href="/painel/posts/editor?id=${d.id}" class="painel-card flex items-center justify-between" style="text-decoration: none; color: inherit; transition: border-color 0.15s ease;" onmouseover="this.style.borderColor='#00b4d8'" onmouseout="this.style.borderColor='var(--color-border)'">
-            <div style="flex: 1; min-width: 0;">
-              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
-                <span class="badge badge-${d.status}" style="font-size: 0.7rem; padding: 0.15rem 0.6rem; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; ${d.status === 'published' ? 'background: #00b4d8; color: white;' : 'background: var(--color-subtle); color: var(--color-muted);'}">${d.status === 'published' ? 'Publicado' : 'Rascunho'}</span>
-                <span style="font-size: 0.8rem; color: var(--color-muted);">${new Date(d.updated_at).toLocaleDateString('pt-BR')}</span>
+        container.innerHTML = drafts.map((d: any) => `
+          <div class="posts-list-row painel-card" data-id="${escapeHtml(d.id)}">
+            <a href="/painel/posts/editor?id=${escapeHtml(d.id)}" class="posts-list-link">
+              <div class="posts-list-meta">
+                <span class="${badgeClass(d.status)}">${badgeLabel(d.status)}</span>
+                <span class="posts-list-date">${new Date(d.updated_at).toLocaleDateString('pt-BR')}</span>
               </div>
-              <h3 class="font-display" style="font-size: 1.15rem; font-weight: 600; margin: 0 0 0.25rem;">${escapeHtml(d.title || 'Sem título')}</h3>
-              <p style="font-size: 0.85rem; color: var(--color-muted); margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(d.description || '')}</p>
-            </div>
-            <div style="color: var(--color-muted); font-size: 1.5rem; padding-left: 1rem;">›</div>
-          </a>
+              <h3 class="posts-list-title">${escapeHtml(d.title || 'Sem título')}</h3>
+              <p class="posts-list-desc">${escapeHtml(d.description || '')}</p>
+            </a>
+            <button class="posts-list-card-delete" data-delete-id="${escapeHtml(d.id)}" data-delete-title="${escapeHtml(d.title || 'Sem título')}" aria-label="Excluir">🗑</button>
+          </div>
         `).join('');
+
+        // Bind delete buttons
+        container.querySelectorAll<HTMLButtonElement>('[data-delete-id]').forEach((btn) => {
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const id = btn.dataset.deleteId!;
+            const title = btn.dataset.deleteTitle || 'este post';
+            const ok = await window.confirmAction!({
+              title: 'Excluir post?',
+              message: `Tem certeza que quer excluir "${title}"? Esta ação não pode ser desfeita.`,
+              confirmLabel: 'Excluir',
+              cancelLabel: 'Cancelar',
+              danger: true,
+            });
+            if (!ok) return;
+            const res = await fetch(`/api/drafts/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+              window.toast?.('Post excluído', 'success');
+              loadPosts();
+            } else {
+              window.toast?.('Erro ao excluir', 'error');
+            }
+          });
+        });
       }
 
-      function escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-      }
-
-      document.querySelectorAll('.filter-btn').forEach(btn => {
+      document.querySelectorAll<HTMLButtonElement>('.filter-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('is-active'));
+          document.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('is-active'));
           btn.classList.add('is-active');
-          currentFilter = btn.dataset.filter;
+          currentFilter = btn.dataset.filter || 'all';
           loadPosts();
         });
       });
 
-      document.getElementById('logoutBtn').addEventListener('click', async () => {
+      document.getElementById('logoutBtn')?.addEventListener('click', async () => {
         await fetch('/api/auth/logout', { method: 'POST' });
         window.location.href = '/painel/login';
       });
