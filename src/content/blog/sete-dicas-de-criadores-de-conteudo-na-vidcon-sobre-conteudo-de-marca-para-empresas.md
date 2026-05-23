@@ -2,6 +2,8 @@
 title: "Sete dicas de criadores de conteúdo na VidCon sobre conteúdo de marca para empresas"
 description: "No mês passado, a Meta participou da VidCon nos Estados Unidos para conversar com os criadores de conteúdo sobre como eles gostam de trabalhar com empresas grandes e pequenas em conteúdo como os..."
 pubDate: 2022-11-01
+tags:
+  - Negócios
 heroImage: "../../assets/posts/library/296362711-597962548409928-5294185315491526449-n.webp"
 ---
 

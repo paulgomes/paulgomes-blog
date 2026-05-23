@@ -2,6 +2,8 @@
 title: "Cases finalistas e vencedores do TikTok Ad Awards"
 description: "🏆 Lançado em outubro de 2022, o TikTok Ad Awards foi pensado pra reconhecer e celebrar quem mais tem abraçado a plataforma e, mais do que isso, alcançado resultados incríveis nela. Foram quase 200..."
 pubDate: 2023-04-06
+tags:
+  - Negócios
 heroImage: "../../assets/posts/library/tipdilz7wysq-6s6gquunyc8suysvtnpiwa.webp"
 ---
 

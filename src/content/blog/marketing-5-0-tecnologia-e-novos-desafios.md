@@ -2,6 +2,8 @@
 title: "Marketing 5.0: Tecnologia e Novos desafios"
 description: "O marketing está em constante processo de mudança. Mudam-se hábitos de consumo, consumidores e formas de interação em vendas e processos decisórios. A nova Era do Marketing está mais interativa pela..."
 pubDate: 2022-01-05
+tags:
+  - Negócios
 heroImage: "../../assets/posts/library/5050.webp"
 ---
 

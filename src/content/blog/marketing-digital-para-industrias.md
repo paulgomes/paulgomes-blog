@@ -2,6 +2,9 @@
 title: "Marketing Digital Para industrias"
 description: "Nossa agência é especializada em oferecer serviços de marketing digital para indústrias que desejam aumentar sua presença online e gerar resultados. A Importância do Marketing Digital para Indústrias..."
 pubDate: 2021-08-07
+tags:
+  - Negócios
+  - Tecnologia
 heroImage: "../../assets/posts/library/screenshot-10.webp"
 ---
 

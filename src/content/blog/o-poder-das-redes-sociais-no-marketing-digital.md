@@ -2,6 +2,9 @@
 title: "O Poder das Redes Sociais no Marketing Digital"
 description: "As redes sociais transformaram a forma como as empresas se relacionam com seu público-alvohttps://agenciawys.com.br/solucoes/ \"público-alvo\". No mundo do marketing..."
 pubDate: 2020-06-12
+tags:
+  - Negócios
+  - Tecnologia
 heroImage: "../../assets/posts/library/wys-blog-posts-7.webp"
 ---
 

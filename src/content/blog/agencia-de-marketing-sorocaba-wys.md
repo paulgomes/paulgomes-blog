@@ -2,6 +2,9 @@
 title: "Agência de marketing sorocaba Wys"
 description: "Na Agência Wys, acreditamos que a visão é o ponto de partida para transformar sonhos em realidade. Desde o nosso início, nossa missão tem sido clara: utilizar a combinação de criatividade, expertise..."
 pubDate: 2023-08-11
+tags:
+  - Tecnologia
+  - Negócios
 heroImage: "../../assets/posts/library/paul-gomes-3.webp"
 ---
 

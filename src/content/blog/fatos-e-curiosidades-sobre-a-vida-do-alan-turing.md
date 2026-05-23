@@ -2,6 +2,8 @@
 title: "Fatos e curiosidades sobre a vida do Alan Turing"
 description: "Alan Turing é uma das figuras mais importantes da história da computação. Ele é considerado um pioneiro na ciência da computação, e suas contribuições na matemática e na criptografia tiveram um papel..."
 pubDate: 2023-04-20
+tags:
+  - IA
 heroImage: "../../assets/posts/library/alan-turing.webp"
 ---
 

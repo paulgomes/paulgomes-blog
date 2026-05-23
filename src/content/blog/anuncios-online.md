@@ -2,6 +2,9 @@
 title: "Anúncios Online"
 description: "Você deseja obter resultados excepcionais em sua estratégia de marketing digitalhttps://agenciawys.com.br/solucoes/ \"marketing digital\"? Os anúncios onlinehttps://agenciawys.com.br/solucoes/ \"..."
 pubDate: 2020-06-12
+tags:
+  - Negócios
+  - Tecnologia
 heroImage: "../../assets/posts/library/wys-blog-posts-3.webp"
 ---
 

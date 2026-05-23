@@ -2,6 +2,8 @@
 title: "Negócios e Conectividade Global"
 description: "Uma pesquisa do Google revela que 90% de nossas interações com a mídia passaram a ser facilitadas por telas: de smartphones, tablet, laptop e televisão. As telas estão se tornando tão importantes em..."
 pubDate: 2015-04-06
+tags:
+  - Tecnologia
 heroImage: "../../assets/posts/library/negocios.webp"
 ---
 

@@ -2,6 +2,8 @@
 title: "Agência Wys no TDC INNOVATION: Impulsione sua Marca"
 description: "Juntamente com a Agência Wys, marcaremos presença no TDC INNOVATION, o maior evento de tecnologia da América Latina. Será realizado em Florianópolis, a encantadora cidade conhecida como um dos..."
 pubDate: 2023-06-13
+tags:
+  - Tecnologia
 heroImage: "../../assets/posts/library/wys-blog-posts-1.webp"
 ---
 

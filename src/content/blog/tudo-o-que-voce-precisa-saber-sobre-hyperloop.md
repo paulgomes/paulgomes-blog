@@ -2,6 +2,8 @@
 title: "Tudo o que você precisa saber sobre: Hyperloop"
 description: "O que é? Projeto apresentado por Elon Musk, o Hyperloop é um sistema de transporte com alta tecnologia e velocidade. Com o objetivo de revolucionar o transporte em massa, é uma espécie de trem que é..."
 pubDate: 2020-10-09
+tags:
+  - Tecnologia
 heroImage: "../../assets/posts/library/hyper.webp"
 ---
 

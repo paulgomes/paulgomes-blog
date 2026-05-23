@@ -2,6 +2,8 @@
 title: "Existe algum computador quantico no brasil?"
 description: "https://youtube.com/shorts/SVWb2Vn-PqM?feature=share Existem algumas iniciativas de pesquisa e desenvolvimento de computação quântica no Brasil, mas atualmente não há computadores quânticos..."
 pubDate: 2023-01-27
+tags:
+  - Tecnologia
 heroImage: "../../assets/posts/library/shutterstock-1787263763.webp"
 ---
 

@@ -2,6 +2,9 @@
 title: "Segundo Philip Kotler, o que é Marketing Digital"
 description: "Na esfera do marketing, as palavras do lendário Philip Kotler ecoam como um farol orientador. Quando se trata de marketing digital, Kotler nos presenteia com uma perspectiva esclarecedora sobre esse..."
 pubDate: 2023-08-17
+tags:
+  - Negócios
+  - Tecnologia
 heroImage: "../../assets/posts/library/paul-gomes-9.webp"
 ---
 

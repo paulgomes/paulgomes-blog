@@ -2,6 +2,9 @@
 title: "Dicas de Marketing Digital para iniciantes"
 description: "O Marketing Digital é essencial para alavancar seu negócio, quando bem elaborado, ele ajuda a alcançar um número de pessoas que possivelmente possam se tornar seus clientes. Então, para começar a..."
 pubDate: 2020-10-14
+tags:
+  - Negócios
+  - Tecnologia
 heroImage: "../../assets/posts/library/agencia-wys-menu1900x1078.webp"
 ---
 

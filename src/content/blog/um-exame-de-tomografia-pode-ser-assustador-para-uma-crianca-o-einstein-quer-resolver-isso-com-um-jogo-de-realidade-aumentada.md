@@ -2,6 +2,8 @@
 title: "Um exame de tomografia pode ser assustador para uma criança. O Einstein quer resolver isso com um jogo de realidade aumentada"
 description: "Por mais que médicos e enfermeiros se esforcem em deixar os pacientes à vontade, um hospital pode ser um ambiente desconfortável, mesmo assustador. Sobretudo se você ainda frequenta o ensino..."
 pubDate: 2022-11-02
+tags:
+  - Tecnologia
 heroImage: "../../assets/posts/library/screenshot-9.webp"
 ---
 

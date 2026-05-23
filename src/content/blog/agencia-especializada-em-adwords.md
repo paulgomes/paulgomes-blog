@@ -2,6 +2,9 @@
 title: "Agência Especializada Em Adwords"
 description: "Agência Especializada Em Adwords Aumente suas vendas e conquiste novos clientes com a ajuda da nossa agência especializada em AdWords. Oferecemos soluções personalizadas para garantir que sua empresa..."
 pubDate: 2023-08-07
+tags:
+  - Negócios
+  - Tecnologia
 heroImage: "../../assets/posts/library/screenshot-8.webp"
 ---
 

@@ -2,6 +2,8 @@
 title: "O Poder do Marketing de Influência na Era das Redes Sociais"
 description: "O poder do marketing de influênciahttps://agenciawys.com.br/solucoes/ \"marketing de influência\" na era das redes sociais é inegável. Com o crescimento exponencial do uso das plataformas digitais, os..."
 pubDate: 2020-06-12
+tags:
+  - Negócios
 heroImage: "../../assets/posts/library/wys-blog-posts-14.webp"
 ---
 

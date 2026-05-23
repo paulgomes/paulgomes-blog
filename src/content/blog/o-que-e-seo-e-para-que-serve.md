@@ -2,6 +2,8 @@
 title: "O que é SEO e para que serve"
 description: "SEO Search Engine Optimization é o processo de otimizar um site ou página para melhorar sua visibilidade e classificação nos resultados de busca orgânica. Isso é feito através de técnicas de..."
 pubDate: 2023-01-28
+tags:
+  - SEO
 heroImage: "../../assets/posts/library/paul-gomes-br.webp"
 ---
 

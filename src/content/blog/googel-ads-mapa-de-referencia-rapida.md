@@ -2,6 +2,8 @@
 title: "Googel Ads Mapa de referência rápida"
 description: "| | | | | | | --- | --- | --- | --- | --- | | 1. Menu de navegação | 2. Menu de páginas | 3. Menu de subpáginas | 4. Barra superior | 5. Barra de ferramentas da tabela |"
 pubDate: 2021-04-19
+tags:
+  - Tecnologia
 heroImage: "../../assets/posts/library/unnamed.webp"
 ---
 

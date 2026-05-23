@@ -2,6 +2,9 @@
 title: "Domine o mercado: torne-se um especialista em branding e conquiste o sucesso"
 description: "Domine o mercado: torne-se um especialista em branding e conquiste o sucesso O branding é uma das estratégias de marketing mais importantes para estabelecer e fortalecer a identidade de uma marca no..."
 pubDate: 2011-02-16
+tags:
+  - Branding
+  - Negócios
 heroImage: "../../assets/posts/library/financial-review-p5nmyca.webp"
 ---
 

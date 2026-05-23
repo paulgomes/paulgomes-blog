@@ -2,6 +2,9 @@
 title: "O que é SEO e como aplicá-lo em seu site?"
 description: "No mundo digitalhttps://agenciawys.com.br/solucoes/ \"mundo digital\", é essencial que as empresas adotem estratégias eficazes para se destacar e alcançar seu..."
 pubDate: 2020-06-12
+tags:
+  - SEO
+  - Negócios
 heroImage: "../../assets/posts/library/wys-blog-posts-12.webp"
 ---
 

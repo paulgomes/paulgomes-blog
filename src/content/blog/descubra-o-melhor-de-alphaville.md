@@ -2,6 +2,8 @@
 title: "Descubra o melhor de Alphaville"
 description: "Se você é morador de Alphaville e procura por serviços e produtos de qualidade, com certeza já deve ter ouvido falar da startup Menu Alphaville. Essa plataforma online tem como objetivo conectar a..."
 pubDate: 2011-04-15
+tags:
+  - Tecnologia
 heroImage: "../../assets/posts/library/screenshot-9.webp"
 ---
 

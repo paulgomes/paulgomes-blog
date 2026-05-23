@@ -2,6 +2,9 @@
 title: "Quem é Philip Kotler? Conheça o Pai do Marketing"
 description: "Philip Kotler, uma figura ímpar no mundo do marketing, é amplamente reconhecido como o pai do marketing moderno. Sua influência transcende os limites acadêmicos, permeando a prática e a teoria do..."
 pubDate: 2023-08-19
+tags:
+  - Negócios
+  - SEO
 heroImage: "../../assets/posts/library/paul-gomes-11.webp"
 ---
 

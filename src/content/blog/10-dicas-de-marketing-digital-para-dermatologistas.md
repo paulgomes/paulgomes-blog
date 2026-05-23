@@ -2,6 +2,9 @@
 title: "10 Dicas de Marketing Digital para Dermatologistas"
 description: "Os dermatologistas enfrentam a necessidade de se destacar em meio a uma concorrência crescente. O marketing digital oferece um caminho valioso para criar uma presença forte e conectar-se com..."
 pubDate: 2023-08-14
+tags:
+  - Negócios
+  - Tecnologia
 heroImage: "../../assets/posts/library/paul-gomes-6.webp"
 ---
 

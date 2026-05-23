@@ -2,6 +2,9 @@
 title: "Tecnologia 2026: Tendências que Transformarão Negócios"
 description: "IntroduIntrodução Nos últimos anos, a tecnologia avançou em um ritmo surpreendente. Empresas de todos os setores precisam estar atentas às tendências para se manterem competitivas. À medida que nos..."
 pubDate: 2025-08-01
+tags:
+  - Tecnologia
+  - IA
 heroImage: "../../assets/posts/library/aabab7f5-83a1-49d1-a939-62d15662a0f1.webp"
 ---
 

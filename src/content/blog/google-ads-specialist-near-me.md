@@ -2,6 +2,8 @@
 title: "Google Ads specialist near me"
 description: "We help people and businesses build more relevant brands. A clinical look to the future brings exceptional baggage to the present. Creating, reinventing and adapting with knowledge, creativity and..."
 pubDate: 2021-02-07
+tags:
+  - Tecnologia
 heroImage: "../../assets/posts/library/1.webp"
 ---
 

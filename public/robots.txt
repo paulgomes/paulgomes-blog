@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /painel
+Disallow: /painel/
+
+Sitemap: https://paulgomes.com.br/sitemap-index.xml
+Sitemap: https://paulgomes.com.br/video-sitemap.xml

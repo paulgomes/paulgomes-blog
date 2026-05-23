@@ -2,6 +2,9 @@
 title: "Quais são as maiores agências de marketing do Brasil?"
 description: "O cenário empresarial de Sorocaba tem se transformado rapidamente nos últimos anos, impulsionando a demanda por serviços de marketing inovadores e eficazes. No coração dessa revolução está a Agência..."
 pubDate: 2023-08-09
+tags:
+  - Negócios
+  - Branding
 heroImage: "../../assets/posts/library/paul-gomes-1.webp"
 ---
 

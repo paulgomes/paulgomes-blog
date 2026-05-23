@@ -2,6 +2,8 @@
 title: "Como definir prioridade no gerenciador de tarefas"
 description: "Um gerenciador de tarefas com prioridade alta é uma ferramenta útil para quem procura manter o foco em suas tarefas mais importantes e urgentes. Ele ajuda a organizar suas tarefas e a garantir que..."
 pubDate: 2023-01-31
+tags:
+  - Tecnologia
 heroImage: "../../assets/posts/library/screenshot-4-1.webp"
 ---
 

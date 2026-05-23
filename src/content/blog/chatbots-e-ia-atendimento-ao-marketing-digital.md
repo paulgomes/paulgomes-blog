@@ -2,6 +2,9 @@
 title: "Chatbots e IA: Atendimento ao Marketing Digital"
 description: "No marketing digitalhttps://agenciawys.com.br/solucoes/ \"marketing digital\", o atendimento ao cliente desempenha um papel fundamental no sucesso das empresas. Como os chatbots e a inteligência..."
 pubDate: 2020-06-12
+tags:
+  - Negócios
+  - IA
 heroImage: "../../assets/posts/library/wys-blog-posts-1.webp"
 ---
 

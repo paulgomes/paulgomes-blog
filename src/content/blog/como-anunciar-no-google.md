@@ -2,6 +2,8 @@
 title: "Como anunciar no Google"
 description: "Você quer aprender como anunciar no Google? Quer aprender como iniciar sua primeira campanha no Google Ads? Como explorar todo o potencial da maior rede de publicidade online? Você está no lugar..."
 pubDate: 2022-11-02
+tags:
+  - Negócios
 heroImage: "../../assets/posts/library/screenshot-8.webp"
 ---
 

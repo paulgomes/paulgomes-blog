@@ -2,6 +2,8 @@
 title: "A hipótese do Tecnofeudalismo"
 description: "A hipótese do Tecnofeudalismo é uma teoria que sugere que, com o avanço da tecnologia e a crescente concentração de poder nas mãos de uma pequena elite de empresas e indivíduos, estamos caminhando..."
 pubDate: 2023-01-27
+tags:
+  - Tecnologia
 heroImage: "../../assets/posts/library/a.webp"
 ---
 

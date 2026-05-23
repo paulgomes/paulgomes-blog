@@ -2,6 +2,9 @@
 title: "Agência de Marketing Especializada em Dermatologista Sorocaba"
 description: "Na agitada paisagem do mundo digital, o sucesso de um dermatologista em Sorocaba vai além do consultório. É aqui que a nossa Agência de Marketing Especializada entra em cena, dedicando-se..."
 pubDate: 2023-08-12
+tags:
+  - Negócios
+  - Tecnologia
 heroImage: "../../assets/posts/library/paul-gomes-4.webp"
 ---
 

@@ -2,6 +2,8 @@
 title: "Nova Inteligência Artificial da Google consegue ouvir um trecho de uma música e continuar a tocá-la"
 description: "A técnica, chamada AudioLM, gera sons realistas sem a necessidade de transcrições humanas. Um novo sistema de Inteligência Artificial IA consegue criar músicas e falas que soam naturais após receber..."
 pubDate: 2022-11-14
+tags:
+  - IA
 heroImage: "../../assets/posts/library/shutterstock-592921421.webp"
 ---
 

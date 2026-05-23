@@ -2,6 +2,9 @@
 title: "Consultoria de SEO em Sorocaba"
 description: "Consultoria de SEO em Sorocaba: Um Olhar Atualizado para o Futuro Digital Por Paul Gomes Em um mundo onde a presença online não é apenas desejada, mas essencial, o papel do Search Engine Optimization..."
 pubDate: 2023-08-15
+tags:
+  - SEO
+  - Tecnologia
 heroImage: "../../assets/posts/library/base-d.webp"
 ---
 

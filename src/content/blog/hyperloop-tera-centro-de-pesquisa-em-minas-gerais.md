@@ -2,6 +2,8 @@
 title: "Hyperloop, terá centro de pesquisa em Minas Gerais"
 description: "Tecnologia foi idealizada por Elon Muskhttp://paulgomes.com.br/paul-gomes-brazil/, dono da Teslahttp://paulgomes.com.br/paul-gomes-brazil/ e da SpaceXhttp://paulgomes.com.br/paul-gomes-brazil/. No..."
 pubDate: 2018-04-08
+tags:
+  - Tecnologia
 heroImage: "../../assets/posts/library/hyper.webp"
 ---
 

@@ -2,6 +2,9 @@
 title: "Tendências de Marketing Digital em 2023"
 description: "O mundo do marketing digitalhttps://agenciawys.com.br/solucoes/ \"marketing digital \" está em constante evolução, e 2023 não será diferente. Novas tendências estão surgindo e moldando a forma como as..."
 pubDate: 2020-06-12
+tags:
+  - Negócios
+  - Tecnologia
 heroImage: "../../assets/posts/library/wys-blog-posts.webp"
 ---
 

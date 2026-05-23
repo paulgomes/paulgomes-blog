@@ -2,6 +2,9 @@
 title: "Transformação digital"
 description: "A “transformação digital” não é só mais um tema em alta, ou uma palavra sedutora para dizer que vale a pena investir em Inbound Marketing. Pelo contrário: ela faz parte de um processo muito maior, o..."
 pubDate: 2018-01-06
+tags:
+  - Tecnologia
+  - Negócios
 heroImage: "../../assets/posts/library/paul-gomes-revista-exame.webp"
 ---
 

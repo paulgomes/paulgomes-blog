@@ -2,6 +2,9 @@
 title: "Identidade de Marca Forte"
 description: "Uma identidade de marca fortehttps://agenciawys.com.br/showcase/ \"identidade de marca forte\" é um dos principais pilares para o sucesso de qualquer empresa. Ela não apenas ajuda a diferenciar seu..."
 pubDate: 2020-06-12
+tags:
+  - Branding
+  - Negócios
 heroImage: "../../assets/posts/library/wys-blog-posts-10.webp"
 ---
 

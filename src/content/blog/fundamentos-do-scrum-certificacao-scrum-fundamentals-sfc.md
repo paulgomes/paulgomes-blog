@@ -2,6 +2,8 @@
 title: "Fundamentos do Scrum + Certificação Scrum Fundamentals (SFC)"
 description: "Aprenda os fundamentos do Scrum e prepare-se para a certificação gratuita Scrum Fundamentals Certified da ScrumStudy Você sabia que o Scrum é o framework ágil mais famoso do mundo? Pois é Ele ficou..."
 pubDate: 2023-01-10
+tags:
+  - Negócios
 heroImage: "../../assets/posts/library/screenshot-4.webp"
 ---
 

@@ -2,6 +2,8 @@
 title: "Hábitos que você deve abandonar para evoluir na carreira em 2023"
 description: "Muitas pessoas estão pensando nas suas metas de ano novo e coisas que elas precisam fazer em 2023 para evoluir na carreira. Entretanto, os profissionais mais experientes criaram algo diferente: as..."
 pubDate: 2023-01-06
+tags:
+  - Tecnologia
 heroImage: "../../assets/posts/library/shutterstock-2209159351.webp"
 ---
 

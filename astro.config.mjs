@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://paulgomes-blog.pages.dev',
+  site: 'https://paulgomes.com.br',
   output: 'static',
   trailingSlash: 'ignore',
 

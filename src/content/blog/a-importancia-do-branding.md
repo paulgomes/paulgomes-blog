@@ -2,6 +2,9 @@
 title: "A Importância do Branding"
 description: "O brandinghttps://agenciawys.com.br/solucoes/ \"branding\" é fundamental para o sucesso de qualquer negócio. Trata-se do conjunto de ações que visa construir e fortalecer a imagem e a identidade da..."
 pubDate: 2020-06-12
+tags:
+  - Branding
+  - Negócios
 heroImage: "../../assets/posts/library/wys-blog-posts-15.webp"
 ---
 

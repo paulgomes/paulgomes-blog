@@ -2,6 +2,9 @@
 title: "Como a Inteligência Artificial está Ajudando os Profissionais de Marketing"
 description: "No mundo dos negócios, profissionais de marketinghttps://agenciawys.com.br/solucoes/ \"marketing \" enfrentam o desafio de se destacar e alcançar resultados significativos. A inteligência..."
 pubDate: 2020-06-12
+tags:
+  - Negócios
+  - IA
 heroImage: "../../assets/posts/library/wys-blog-posts-17.webp"
 ---
 

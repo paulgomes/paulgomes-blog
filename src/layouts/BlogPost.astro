@@ -7,10 +7,11 @@ import FormattedDate from '../components/FormattedDate.astro';
 import { Image } from 'astro:assets';
 import { SITE_AUTHOR } from '../consts';
 import authorPhoto from '../assets/brand/paul-gomes.webp';
+import { TAG_SLUGS, TAG_COLORS, type Tag } from '../lib/tags';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro.props as Props & { tags?: Tag[] };
 ---
 
 <html lang="pt-BR">
@@ -59,13 +60,66 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
           </div>
         )}
 
-        <div class="container-prose pb-24">
+        <div class="container-prose pb-12">
           <div class="text-lg leading-relaxed [&>p]:mb-6 [&>h2]:font-display [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:mt-12 [&>h2]:mb-4 [&>h3]:font-display [&>h3]:text-2xl [&>h3]:font-bold [&>h3]:mt-10 [&>h3]:mb-4 [&>blockquote]:border-l-2 [&>blockquote]:pl-6 [&>blockquote]:my-8 [&>blockquote]:italic [&>blockquote]:text-xl [&>blockquote]:font-display [&>ul]:mb-6 [&>ul]:pl-6 [&>ol]:mb-6 [&>ol]:pl-6 [&>li]:mb-2 [&>img]:rounded-lg [&>img]:my-8 [&>a]:underline [&>a]:underline-offset-4">
             <slot />
           </div>
         </div>
+
+        {tags.length > 0 && (
+          <div class="container-prose pb-24">
+            <div class="post-tags">
+              <span class="post-tags-label">Tags:</span>
+              {tags.map((tag) => (
+                <a
+                  href={`/tag/${TAG_SLUGS[tag]}/`}
+                  class="tag-chip"
+                  style={`background:${TAG_COLORS[tag].bg};color:${TAG_COLORS[tag].fg}`}
+                >
+                  {tag}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </article>
     </main>
     <Footer />
+
+    <style>
+      .post-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        align-items: center;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-border);
+      }
+      .post-tags-label {
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.25em;
+        color: var(--color-muted);
+        margin-right: 0.25rem;
+      }
+      .tag-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.4rem 0.9rem;
+        border-radius: 9999px;
+        font-family: var(--font-sans);
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .tag-chip:hover {
+        transform: translateY(-1px) scale(1.03);
+        box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.2);
+      }
+    </style>
   </body>
 </html>

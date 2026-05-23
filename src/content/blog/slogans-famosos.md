@@ -2,6 +2,8 @@
 title: "SLOGANS FAMOSOS"
 description: "Os slogans são essenciais para sempre nos lembrarmos de alguma empresa ou marca. Reunimos as frases mais conhecidas para você. Confira > DOLLY GUARANÁ > > Dolly, Dolly Guaraná, Dolly Guaraná, o sabor..."
 pubDate: 2023-04-04
+tags:
+  - Negócios
 heroImage: "../../assets/posts/library/screenshot-2.webp"
 ---
 

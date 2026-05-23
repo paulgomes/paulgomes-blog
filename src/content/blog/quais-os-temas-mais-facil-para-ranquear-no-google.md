@@ -2,6 +2,8 @@
 title: "Quais os temas mais facil para ranquear no google?"
 description: "Existem muitos fatores que afetam a capacidade de um site de ranquear bem no Google, mas alguns temas tendem a ter uma vantagem natural em termos de SEO otimização para mecanismos de busca. Alguns..."
 pubDate: 2023-01-27
+tags:
+  - SEO
 heroImage: "../../assets/posts/library/paulgomes-2.webp"
 ---
 

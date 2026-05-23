@@ -2,9 +2,10 @@
 title: "Criar uma campanha TrueView for Action"
 description: "Configure o acompanhamento de conversões no seu site e verifique se a tag global do site está funcionando corretamente. Otimize para eventos de conversão leves (como \"adicionar ao carrinho\" ou \"visita ao site\") e escolha uma opção de contagem de conversões adequada à sua campanha. Isso proporciona sinais valiosos para nossos sistemas e permite que você atinja os resultados desejados mais rapidamente."
 pubDate: 2021-07-10
+tags:
+  - Negócios
 heroImage: "../../assets/posts/library/807049.webp"
 ---
-
 Para ajudar você a gerar mais conversões a um ótimo custo-benefício, estamos aprimorando o [TrueView for Action](https://support.google.com/google-ads/answer/7671017) e expandindo os melhores recursos desse formato para mais lugares com as [campanhas de ação em vídeo](https://support.google.com/google-ads/answer/10147229). Com elas, é possível alcançar mais clientes em locais de alto desempenho dentro e fora do YouTube, tudo usando uma única campanha. A partir do início de 2022, todas as campanhas TrueView for Action serão atualizadas automaticamente para campanhas de ação em vídeo.
 
 Para se preparar, [crie novas campanhas de ação em vídeo](https://support.google.com/google-ads/answer/10146226) escolhendo o tipo de grupo de anúncios responsivos durante a configuração da campanha no Google Ads. Será possível criar campanhas TrueView for Action até 30 de setembro de 2021. [Saiba mais sobre as próximas mudanças nas campanhas TrueView for Action](https://support.google.com/google-ads/answer/10745509).
@@ -13,7 +14,7 @@ Com as campanhas TrueView for Action, você pode gerar leads e conversões adici
 
 Neste artigo, você aprenderá a configurar uma campanha TrueView for Action no Google Ads.
 
-https://youtu.be/0JW0pL0ZDiU
+https://www.youtube.com/watch?v=0JW0pL0ZDiU
 
 [Ative as legendas do YouTube](https://support.google.com/youtube/answer/100078) para vê-las no seu idioma. Clique no ícone de configurações na parte inferior do player de vídeo, selecione "Legendas" e escolha seu idioma.
 

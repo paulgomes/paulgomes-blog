@@ -2,6 +2,8 @@
 title: "Qual a importância da otimização de plataforma online?"
 description: "A otimização de plataforma online é importante porque ajuda a garantir que o site carregue rapidamente, seja fácil de navegar e ofereça uma boa experiência de usuário. Isso é crítico para manter os..."
 pubDate: 2023-01-28
+tags:
+  - SEO
 heroImage: "../../assets/posts/library/screenshot-3.webp"
 ---
 

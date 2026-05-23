@@ -2,6 +2,8 @@
 title: "Personalização no Marketing"
 description: "Conheça como a personalizaçãohttps://agenciawys.com.br/solucoes/ \"personalização\" no marketinghttps://agenciawys.com.br/solucoes/ \"marketing\" pode impulsionar o crescimento do seu negócio. Ao..."
 pubDate: 2020-06-12
+tags:
+  - Negócios
 heroImage: "../../assets/posts/library/wys-blog-posts-9.webp"
 ---
 

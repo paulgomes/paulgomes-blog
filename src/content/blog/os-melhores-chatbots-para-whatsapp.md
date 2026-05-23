@@ -2,6 +2,9 @@
 title: "Os melhores Chatbots para WhatsApp"
 description: "O WhatsApp Business API é uma solução desenvolvida pelo Facebook para facilitar a comunicação das empresas com seus clientes. O uso dessa ferramenta, nos dias atuais, é uma das tendências..."
 pubDate: 2020-10-16
+tags:
+  - Negócios
+  - Tecnologia
 heroImage: "../../assets/posts/library/5-chatbots.webp"
 ---
 

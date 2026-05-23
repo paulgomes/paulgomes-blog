@@ -2,6 +2,8 @@
 title: "Como fazer seo no youtube?"
 description: "Existem algumas estratégias que você pode usar para melhorar o SEO do seu canal do YouTube: 1. Utilize palavras-chave relevantes: Escolha palavras-chave relevantes para o seu vídeo e inclua-as no..."
 pubDate: 2023-01-27
+tags:
+  - SEO
 heroImage: "../../assets/posts/library/screenshot-4.webp"
 ---
 

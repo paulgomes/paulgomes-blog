@@ -2,6 +2,8 @@
 title: "Brasil é um dos líderes na adoção de IA"
 description: "Uma pesquisa global revela que o Brasil é um dos países mais confiantes na adoção de sistemas de IAhttps://agenciawys.com.br/solucoes/ \"IA\". De acordo com a consultoria KPMG, 39% dos participantes..."
 pubDate: 2020-06-12
+tags:
+  - IA
 heroImage: "../../assets/posts/library/wys-blog-posts-2.webp"
 ---
 

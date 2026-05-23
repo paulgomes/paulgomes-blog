@@ -2,6 +2,8 @@
 title: "Agência de marketing focada em alto padrao"
 description: "Uma agência de marketing focada em alto padrão é uma empresa especializada em promover e divulgar produtos e serviços de alta qualidade e alto valor agregado. Esses produtos e serviços podem incluir..."
 pubDate: 2023-01-27
+tags:
+  - Negócios
 heroImage: "../../assets/posts/library/1.webp"
 ---
 

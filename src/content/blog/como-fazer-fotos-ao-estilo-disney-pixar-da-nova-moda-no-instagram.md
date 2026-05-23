@@ -2,6 +2,9 @@
 title: "Como fazer fotos ao estilo 'Disney Pixar', da nova moda no Instagram"
 description: "Se você está atento às tendências nas redes sociais, é provável que esteja ciente sobre a mais recente \"trend\" na web, que resume-se em criar foto no estilo “Disney Pixar”. A brincadeira, que..."
 pubDate: 2023-10-26
+tags:
+  - IA
+  - Tecnologia
 heroImage: "../../assets/posts/library/screenshot-25.webp"
 ---
 
