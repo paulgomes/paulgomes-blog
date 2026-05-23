@@ -1,0 +1,15 @@
+name = "paulgomes-blog"
+compatibility_date = "2026-05-01"
+pages_build_output_dir = "./dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "paulgomes-painel"
+database_id = "cde7e049-faf1-4a18-8410-df2439bf226f"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "paulgomes-uploads"
+
+[vars]
+PUBLIC_R2_DOMAIN = "https://media.paulgomes.com.br"

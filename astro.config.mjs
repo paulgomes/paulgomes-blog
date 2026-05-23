@@ -15,7 +15,12 @@ export default defineConfig({
     format: 'directory',
   },
 
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      filter: (page) => !page.includes('/painel'),
+    }),
+  ],
 
   vite: {
     plugins: [tailwindcss()],

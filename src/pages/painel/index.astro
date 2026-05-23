@@ -1,0 +1,80 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <BaseHead title="Painel — Paul Gomes" description="Painel administrativo" />
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body class="min-h-screen" style="background-color: var(--color-paper)">
+    <div class="border-b" style="border-color: var(--color-border)">
+      <div class="container-wide flex h-16 items-center justify-between">
+        <h1 class="font-display text-xl font-bold">Painel · Paul Gomes</h1>
+        <div class="flex items-center gap-6 text-sm">
+          <span id="userInfo" style="color: var(--color-muted)">Carregando...</span>
+          <button
+            id="logoutBtn"
+            class="text-sm underline underline-offset-4 transition-opacity hover:opacity-60"
+          >
+            Sair
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <main class="container-wide py-12">
+      <div class="max-w-3xl">
+        <h2 class="font-display text-4xl font-bold tracking-tight mb-4">
+          Bem-vindo ao painel
+        </h2>
+        <p class="text-lg mb-10" style="color: var(--color-muted)">
+          Aqui você criará, editará e publicará ensaios.
+        </p>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="p-6 rounded-lg border" style="border-color: var(--color-border); background-color: var(--color-subtle);">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] mb-2" style="color: var(--color-muted)">
+              ✍️ Em breve
+            </p>
+            <p class="font-display text-xl font-bold mb-2">Editor de posts</p>
+            <p class="text-sm" style="color: var(--color-muted)">
+              Sessão 2: editor TipTap, upload de imagens, salvar rascunho.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-lg border" style="border-color: var(--color-border); background-color: var(--color-subtle);">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] mb-2" style="color: var(--color-muted)">
+              📊 Em breve
+            </p>
+            <p class="font-display text-xl font-bold mb-2">SEO inline</p>
+            <p class="text-sm" style="color: var(--color-muted)">
+              Sessão 3: snippet preview Google, focus keyword, score.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Carrega info do usuário
+      fetch('/api/auth/me')
+        .then(r => r.json())
+        .then(data => {
+          const userInfo = document.getElementById('userInfo');
+          if (data.user) {
+            userInfo.textContent = `${data.user.name} (${data.user.role})`;
+          } else {
+            window.location.href = '/painel/login';
+          }
+        });
+
+      // Logout
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/painel/login';
+      });
+    </script>
+  </body>
+</html>
