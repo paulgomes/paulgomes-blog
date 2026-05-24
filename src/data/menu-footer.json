@@ -1,6 +1,6 @@
 {
   "menu_type": "footer",
-  "synced_at": 1779654360452,
+  "synced_at": 1779654490073,
   "items": [
     {
       "id": "f-home",
@@ -32,13 +32,13 @@
       "id": "f-insights",
       "menu_type": "footer",
       "parent_id": null,
-      "label": "Insights22",
+      "label": "Insights",
       "url": "/blog",
       "sort_order": 2,
       "open_new_tab": 0,
       "is_hidden": 0,
       "created_at": 1779649504000,
-      "updated_at": 1779654260396,
+      "updated_at": 1779654487010,
       "children": []
     },
     {
