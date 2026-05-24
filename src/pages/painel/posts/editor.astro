@@ -18,7 +18,7 @@ import '../../../styles/painel.css';
             <span id="saveStatus" class="save-status"></span>
             <button id="deleteBtn" class="painel-button danger" style="display: none;">Excluir</button>
             <button id="publishBtn" class="painel-button primary">Publicar</button>
-            <button id="syncBtn" class="painel-button primary" style="display: none;" disabled title="Sincronização com Git em breve (Sessão C)">Sincronizar com Git</button>
+            <button id="syncBtn" class="painel-button primary" style="display: none;" title="Commita as alterações do painel direto em main do GitHub">Sincronizar com Git</button>
           </div>
         </div>
       </div>
@@ -372,6 +372,47 @@ import '../../../styles/painel.css';
           updateSeoPreview();
           scheduleAutoSave();
         });
+      });
+
+      // ===== Sincronizar com Git (post mode only) =====
+      $syncBtn.addEventListener('click', async () => {
+        if (mode !== 'post' || !postSlug) return;
+
+        // Força salvar pendente antes
+        if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+        if (hasChanges) await autoSave();
+
+        const ok = await window.confirmAction!({
+          title: 'Sincronizar com Git?',
+          message: 'Commita as alterações direto em main. Cloudflare vai rebuildar em ~1-2 min.',
+          confirmLabel: 'Sincronizar',
+          cancelLabel: 'Cancelar',
+        });
+        if (!ok) return;
+
+        $syncBtn.disabled = true;
+        const originalText = $syncBtn.textContent;
+        $syncBtn.textContent = 'Sincronizando...';
+
+        try {
+          const res = await fetch(`/api/posts/${encodeURIComponent(postSlug)}/sync`, { method: 'POST' });
+          const data = await res.json();
+          if (!res.ok) {
+            window.toast?.('Erro: ' + (data.error || 'desconhecido'), 'error', 6000);
+            $syncBtn.disabled = false;
+            $syncBtn.textContent = originalText;
+            return;
+          }
+          $saveStatus.textContent = `Sincronizado às ${formatTime(new Date())} · rebuild em ~2 min`;
+          $saveStatus.classList.remove('save-status-error');
+          window.toast?.('Sincronizado com Git', 'success', 5000);
+          $syncBtn.disabled = false;
+          $syncBtn.textContent = originalText;
+        } catch (err) {
+          window.toast?.('Erro de rede ao sincronizar', 'error');
+          $syncBtn.disabled = false;
+          $syncBtn.textContent = originalText;
+        }
       });
 
       // ===== Publicar (draft mode only) =====

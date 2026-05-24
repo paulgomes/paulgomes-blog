@@ -39,7 +39,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       status,
       published_at,
       updated_at,
-      CASE WHEN updated_at > published_at THEN 0 ELSE 1 END AS git_synced
+      CASE WHEN updated_at > COALESCE(synced_at, published_at) THEN 0 ELSE 1 END AS git_synced
     FROM posts_meta
     WHERE status != 'deleted'
     ${likeQ ? "AND title LIKE ?" : ""}

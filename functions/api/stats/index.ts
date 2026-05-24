@@ -16,7 +16,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     SELECT
       (SELECT COUNT(*) FROM posts_meta WHERE status != 'deleted') AS posts_total,
       (SELECT COUNT(*) FROM posts_meta WHERE status = 'published') AS published,
-      (SELECT COUNT(*) FROM posts_meta WHERE status = 'published' AND updated_at > published_at) AS unsynced,
+      (SELECT COUNT(*) FROM posts_meta WHERE status = 'published' AND updated_at > COALESCE(synced_at, published_at)) AS unsynced,
       (SELECT COUNT(*) FROM drafts) AS drafts_total,
       (SELECT COUNT(*) FROM drafts WHERE status = 'draft') AS drafts,
       (SELECT COUNT(*) FROM drafts WHERE status = 'scheduled') AS scheduled

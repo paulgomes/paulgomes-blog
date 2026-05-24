@@ -26,10 +26,10 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env, params })
     return Response.json({ error: 'Post não encontrado' }, { status: 404 });
   }
 
-  // git_synced: assume sincronizado se updated_at == published_at (não foi editado)
+  // git_synced: edits no painel vs último sync com Git (coluna synced_at)
   const updated = Number(post.updated_at || 0);
-  const published = Number(post.published_at || 0);
-  const git_synced = updated <= published;
+  const synced = Number(post.synced_at || 0);
+  const git_synced = updated <= synced;
 
   return Response.json({ post: { ...post, git_synced } });
 };
