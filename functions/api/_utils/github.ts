@@ -77,6 +77,49 @@ export async function commitFile(env: Env, opts: {
 }
 
 /**
+ * Remove um arquivo do repo. Pega o SHA atual automaticamente.
+ * Lanca erro 'arquivo nao existe no Git' se o path nao for encontrado (404)
+ * — caller decide se eh erro fatal ou warning.
+ */
+export async function deleteFile(env: Env, opts: {
+  path: string;
+  message: string;
+}): Promise<{ sha: string; commit_url: string; html_url: string }> {
+  const existingSha = await getFileSha(env, opts.path);
+  if (!existingSha) {
+    throw new Error(`arquivo nao existe no Git: ${opts.path}`);
+  }
+
+  const res = await fetch(
+    `https://api.github.com/repos/${env.GITHUB_REPO}/contents/${opts.path}`,
+    {
+      method: 'DELETE',
+      headers: {
+        ...GH_HEADERS_BASE,
+        ...authHeader(env.GITHUB_TOKEN),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: opts.message,
+        sha: existingSha,
+        branch: env.GITHUB_BRANCH,
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(`GitHub deleteFile ${res.status}: ${await res.text()}`);
+  }
+
+  const data = await res.json() as any;
+  return {
+    sha: data.commit?.sha || '',
+    commit_url: data.commit?.url || '',
+    html_url: data.commit?.html_url || '',
+  };
+}
+
+/**
  * Gera frontmatter + body markdown a partir dos campos de posts_meta/drafts.
  * Aceita tags como JSON string ou array. published_at em ms timestamp ou ISO.
  */

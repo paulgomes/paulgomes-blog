@@ -1,5 +1,6 @@
 import type { Env } from '../_utils/db';
 import { requireAuth } from '../_utils/require-auth';
+import { deleteFile } from '../_utils/github';
 
 // GET    /api/posts/:slug — busca post completo de posts_meta
 // PUT    /api/posts/:slug — atualiza post
@@ -87,11 +88,67 @@ export const onRequestDelete: PagesFunction<Env> = async ({ request, env, params
   if (auth instanceof Response) return auth;
 
   const slug = params.slug as string;
-  const now = Date.now();
+  if (!slug) {
+    return Response.json({ error: 'slug obrigatorio' }, { status: 400 });
+  }
 
-  await env.DB.prepare(
-    `UPDATE posts_meta SET status = 'deleted', updated_at = ? WHERE slug = ?`
-  ).bind(now, slug).run();
+  try {
+    const post = await env.DB.prepare(
+      `SELECT slug, title, status, github_path FROM posts_meta WHERE slug = ?`
+    ).bind(slug).first<{ slug: string; title: string; status: string; github_path: string | null }>();
 
-  return Response.json({ ok: true, soft_deleted: true });
+    if (!post) {
+      return Response.json({ error: 'Post nao encontrado' }, { status: 404 });
+    }
+    if (post.status === 'deleted') {
+      return Response.json({ ok: true, slug, message: 'Post ja estava deletado' });
+    }
+
+    const githubPath = post.github_path || `src/content/blog/${slug}.md`;
+    const now = Date.now();
+
+    // 1. Soft-delete no D1 primeiro (post some do painel mesmo se Git falhar)
+    await env.DB.prepare(
+      `UPDATE posts_meta SET status = 'deleted', updated_at = ? WHERE slug = ?`
+    ).bind(now, slug).run();
+
+    // 2. Remove do Git
+    let gitResult: { sha: string; commit_url: string; html_url: string } | null = null;
+    let gitWarning: string | null = null;
+    try {
+      gitResult = await deleteFile(env, {
+        path: githubPath,
+        message: `chore(post): remove "${post.title}"`,
+      });
+    } catch (gitErr: any) {
+      const msg = gitErr?.message || String(gitErr);
+      if (msg.includes('arquivo nao existe no Git')) {
+        // Arquivo ja removido (caso ASI) — nao eh erro fatal
+        console.warn(`[DELETE ${slug}] ${msg}`);
+        gitWarning = 'Arquivo nao estava no Git';
+      } else {
+        // Falha real do Git — D1 ja soft-deletado, sinaliza 207
+        console.error(`[DELETE ${slug}] Git falhou:`, msg);
+        return Response.json({
+          ok: false,
+          slug,
+          d1_deleted: true,
+          git_deleted: false,
+          error: `D1 ok, Git falhou: ${msg}`,
+        }, { status: 207 });
+      }
+    }
+
+    return Response.json({
+      ok: true,
+      slug,
+      d1_deleted: true,
+      git_deleted: !!gitResult,
+      commit_url: gitResult?.html_url || gitResult?.commit_url,
+      ...(gitWarning ? { warning: gitWarning } : {}),
+    });
+  } catch (err: any) {
+    console.error('DELETE error:', err);
+    return Response.json({ error: err?.message || 'Erro ao deletar' }, { status: 500 });
+  }
 };
