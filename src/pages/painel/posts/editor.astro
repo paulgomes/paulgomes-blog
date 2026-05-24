@@ -58,8 +58,35 @@ const currentNav = isEditing ? 'posts' : 'new';
       </section>
 
       <section class="side-section">
-        <label class="side-label">Hero Image URL</label>
-        <input id="heroImage" class="side-input" placeholder="https://media.paulgomes.com.br/..." />
+        <label class="side-label">Hero Image</label>
+        <div class="hero-uploader">
+          <div id="heroPreview" class="hero-preview" data-empty="true">
+            <div class="hero-preview-empty">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+              <span>Nenhuma imagem</span>
+            </div>
+            <img id="heroPreviewImg" alt="" />
+          </div>
+
+          <div class="hero-actions">
+            <input type="file" id="heroFileInput" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
+            <button type="button" class="hero-btn" id="heroChooseBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span id="heroChooseBtnLabel">Escolher arquivo</span>
+            </button>
+            <button type="button" class="hero-btn hero-btn-ghost" id="heroRemoveBtn" hidden>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              Remover
+            </button>
+          </div>
+
+          <input type="hidden" id="heroImage" value="" />
+
+          <details class="hero-url-toggle">
+            <summary>Colar URL manualmente</summary>
+            <input type="url" id="heroImageUrl" class="side-input" placeholder="https://media.paulgomes.com.br/..." />
+          </details>
+        </div>
       </section>
 
       <section class="side-section seo-section">
@@ -218,7 +245,7 @@ const currentNav = isEditing ? 'posts' : 'new';
       $description.value = draft.description || '';
       $slug.value = draft.slug || '';
       $category.value = draft.category || '';
-      $heroImage.value = draft.hero_image_url || '';
+      applyHeroValue(draft.hero_image_url || '');
       currentContent = draft.content_md || '';
       $deleteBtn.style.display = 'inline-flex';
       if (draft.status === 'published') {
@@ -245,7 +272,7 @@ const currentNav = isEditing ? 'posts' : 'new';
       $description.value = post.description || '';
       $slug.value = post.slug || '';
       $category.value = tagsToString(post.tags);
-      $heroImage.value = post.hero_image_url || '';
+      applyHeroValue(post.hero_image_url || '');
       currentContent = post.content_md || '';
       setEditorContent(currentContent);
       updateSeoPreview();
@@ -363,15 +390,105 @@ const currentNav = isEditing ? 'posts' : 'new';
       saveTimer = setTimeout(autoSave, 1500);
     }
 
+    // Hidden input nao dispara 'input', entao removido do watchlist —
+    // mudancas no hero passam por scheduleAutoSave() direto via applyHeroValue.
     const inputsToWatch = mode === 'post'
-      ? [$title, $description, $category, $heroImage]
-      : [$title, $description, $slug, $category, $heroImage];
+      ? [$title, $description, $category]
+      : [$title, $description, $slug, $category];
 
     inputsToWatch.forEach((el) => {
       el.addEventListener('input', () => {
         updateSeoPreview();
         scheduleAutoSave();
       });
+    });
+
+    // ===== Hero image uploader =====
+    const $heroFileInput = document.getElementById('heroFileInput') as HTMLInputElement;
+    const $heroChooseBtn = document.getElementById('heroChooseBtn') as HTMLButtonElement;
+    const $heroChooseBtnLabel = document.getElementById('heroChooseBtnLabel') as HTMLSpanElement;
+    const $heroRemoveBtn = document.getElementById('heroRemoveBtn') as HTMLButtonElement;
+    const $heroPreview = document.getElementById('heroPreview') as HTMLDivElement;
+    const $heroPreviewImg = document.getElementById('heroPreviewImg') as HTMLImageElement;
+    const $heroImageUrl = document.getElementById('heroImageUrl') as HTMLInputElement;
+
+    function applyHeroValue(url: string, opts: { schedule?: boolean } = {}) {
+      const trimmed = (url || '').trim();
+      if (trimmed) {
+        $heroPreviewImg.src = trimmed;
+        $heroPreview.dataset.empty = 'false';
+        $heroRemoveBtn.hidden = false;
+        $heroImage.value = trimmed;
+        if ($heroImageUrl && $heroImageUrl.value !== trimmed) $heroImageUrl.value = trimmed;
+      } else {
+        $heroPreviewImg.removeAttribute('src');
+        $heroPreview.dataset.empty = 'true';
+        $heroRemoveBtn.hidden = true;
+        $heroImage.value = '';
+        if ($heroImageUrl) $heroImageUrl.value = '';
+      }
+      if (opts.schedule) scheduleAutoSave();
+    }
+
+    applyHeroValue($heroImage.value);
+
+    $heroChooseBtn?.addEventListener('click', () => $heroFileInput?.click());
+
+    $heroFileInput?.addEventListener('change', async (e) => {
+      const target = e.target as HTMLInputElement;
+      const file = target.files?.[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        window.toast?.('Por favor selecione uma imagem', 'error');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        window.toast?.('Imagem muito grande (máx 10MB)', 'error');
+        return;
+      }
+
+      $heroChooseBtn.disabled = true;
+      $heroChooseBtnLabel.textContent = 'Enviando...';
+      $heroPreview.dataset.loading = 'true';
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({})) as any;
+          throw new Error(err.error || 'Falha no upload');
+        }
+        const { url } = await res.json() as { url: string };
+        applyHeroValue(url, { schedule: true });
+        window.toast?.('Imagem enviada', 'success');
+      } catch (err: any) {
+        console.error(err);
+        window.toast?.(err.message || 'Erro ao enviar imagem', 'error');
+      } finally {
+        $heroChooseBtn.disabled = false;
+        $heroChooseBtnLabel.textContent = 'Escolher arquivo';
+        $heroPreview.dataset.loading = 'false';
+        $heroFileInput.value = '';
+      }
+    });
+
+    $heroRemoveBtn?.addEventListener('click', async () => {
+      const ok = await window.confirmAction!({
+        title: 'Remover imagem hero?',
+        message: 'O arquivo permanece no R2 mas não fica mais vinculado ao post.',
+        confirmLabel: 'Remover',
+        cancelLabel: 'Cancelar',
+        danger: true,
+      });
+      if (!ok) return;
+      applyHeroValue('', { schedule: true });
+    });
+
+    $heroImageUrl?.addEventListener('input', (e) => {
+      const v = (e.target as HTMLInputElement).value;
+      applyHeroValue(v, { schedule: true });
     });
 
     // ===== Sincronizar com Git (post mode only) =====
@@ -704,6 +821,79 @@ const currentNav = isEditing ? 'posts' : 'new';
       color: var(--painel-text-secondary);
       margin: 0 0 12px;
     }
+
+    /* === HERO UPLOADER === */
+    .hero-uploader {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .hero-preview {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--painel-bg);
+      border: 1px dashed var(--painel-border-strong);
+      border-radius: var(--painel-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-preview[data-empty="true"] .hero-preview-empty { display: flex; }
+    .hero-preview[data-empty="true"] #heroPreviewImg { display: none; }
+    .hero-preview[data-empty="false"] .hero-preview-empty { display: none; }
+    .hero-preview[data-empty="false"] #heroPreviewImg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-preview[data-loading="true"]::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(2px);
+    }
+    .hero-preview-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--painel-text-disabled);
+      font-size: 12px;
+    }
+    .hero-actions { display: flex; gap: 8px; }
+    .hero-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--painel-surface);
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      font-family: var(--painel-font);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--painel-text-primary);
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+    .hero-btn:hover { background: var(--painel-bg); border-color: var(--painel-border-strong); }
+    .hero-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .hero-btn-ghost { background: transparent; }
+    .hero-url-toggle {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--painel-text-secondary);
+    }
+    .hero-url-toggle summary {
+      cursor: pointer;
+      padding: 4px 0;
+      user-select: none;
+    }
+    .hero-url-toggle[open] summary { margin-bottom: 8px; }
 
     /* === SEO (sobrescreve do painel.css) === */
     .seo-section .seo-counter {

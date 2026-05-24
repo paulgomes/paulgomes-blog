@@ -41,7 +41,7 @@ const navItems: { key: NavKey; href: string; label: string; icon: string }[] = [
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
       <a href="/painel" class="painel-l-brand">
-        <img src="/logo-paulgomes.webp" alt="Paul Gomes" width="28" height="28" />
+        <img src="/logo-paulgomes.webp" alt="Paul Gomes" height="28" />
         <span>Painel</span>
       </a>
       <div class="painel-l-spacer"></div>
@@ -159,14 +159,23 @@ const navItems: { key: NavKey; href: string; label: string; icon: string }[] = [
       .painel-l-brand {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         text-decoration: none;
         color: var(--painel-text-primary);
         font-weight: 600;
-        font-size: 16px;
+        font-size: 15px;
         padding: 0 8px;
+        flex-shrink: 0;
       }
-      .painel-l-brand img { border-radius: 4px; }
+      .painel-l-brand:hover { text-decoration: none; }
+      .painel-l-brand img {
+        height: 28px;
+        width: auto;
+        max-width: 140px;
+        object-fit: contain;
+        display: block;
+        border-radius: 4px;
+      }
       .painel-l-spacer { flex: 1; }
       .painel-l-user {
         display: inline-flex;
