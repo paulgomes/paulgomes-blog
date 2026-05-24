@@ -1,0 +1,382 @@
+---
+import PainelLayout from '../../components/painel/PainelLayout.astro';
+import '../../styles/painel.css';
+---
+
+<PainelLayout title="Menus — Painel" description="Gerenciamento de menus do blog" current="menus">
+  <section class="page-header">
+    <h1>Menus</h1>
+    <p class="subtitle">Gerencie a navegação do Header e Footer do blog.</p>
+  </section>
+
+  <div class="menus-tabs">
+    <button class="menus-tab is-active" data-menu-type="header" type="button">
+      Header
+      <span class="menus-tab-count" id="countHeader">—</span>
+    </button>
+    <button class="menus-tab" data-menu-type="footer" type="button">
+      Footer
+      <span class="menus-tab-count" id="countFooter">—</span>
+    </button>
+  </div>
+
+  <div class="menus-toolbar">
+    <button class="painel-btn-primary" id="btnAddItem" type="button">+ Adicionar item</button>
+    <span class="menus-help">Clique num item pra editar. Submenus aparecem indentados.</span>
+  </div>
+
+  <div class="menus-tree-container">
+    <div id="menusTree" class="menus-tree">
+      <div class="menus-skeleton">Carregando...</div>
+    </div>
+  </div>
+
+  <div class="menus-modal" id="modalCreate" hidden>
+    <div class="menus-modal-backdrop" id="modalBackdrop"></div>
+    <div class="menus-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Novo item de menu</h3>
+      <div class="form-row">
+        <label for="newItemLabel">Texto exibido</label>
+        <input type="text" id="newItemLabel" placeholder="Ex: Sobre" />
+      </div>
+      <div class="form-row">
+        <label for="newItemUrl">URL</label>
+        <input type="text" id="newItemUrl" placeholder="/sobre" />
+        <small>URL relativa (/sobre) ou completa (https://...)</small>
+      </div>
+      <div class="form-row">
+        <label for="newItemParent">Submenu de (opcional)</label>
+        <select id="newItemParent">
+          <option value="">— Item raiz —</option>
+        </select>
+      </div>
+      <div class="menus-modal-actions">
+        <button class="painel-btn-ghost" id="btnCancelCreate" type="button">Cancelar</button>
+        <button class="painel-btn-primary" id="btnConfirmCreate" type="button">Criar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    type MenuItem = {
+      id: string;
+      menu_type: 'header' | 'footer';
+      parent_id: string | null;
+      label: string;
+      url: string;
+      sort_order: number;
+      open_new_tab: number;
+      is_hidden: number;
+      created_at: number;
+      updated_at: number;
+      children: MenuItem[];
+    };
+
+    let currentMenuType: 'header' | 'footer' = 'header';
+    let menuData: { header: MenuItem[]; footer: MenuItem[] } = { header: [], footer: [] };
+    let expandedItemId: string | null = null;
+
+    const $tree = document.getElementById('menusTree') as HTMLDivElement;
+    const $tabs = document.querySelectorAll<HTMLButtonElement>('.menus-tab');
+    const $modalCreate = document.getElementById('modalCreate') as HTMLDivElement;
+    const $modalBackdrop = document.getElementById('modalBackdrop') as HTMLDivElement;
+    const $btnAddItem = document.getElementById('btnAddItem') as HTMLButtonElement;
+    const $btnConfirmCreate = document.getElementById('btnConfirmCreate') as HTMLButtonElement;
+    const $btnCancelCreate = document.getElementById('btnCancelCreate') as HTMLButtonElement;
+    const $newItemLabel = document.getElementById('newItemLabel') as HTMLInputElement;
+    const $newItemUrl = document.getElementById('newItemUrl') as HTMLInputElement;
+    const $newItemParent = document.getElementById('newItemParent') as HTMLSelectElement;
+    const $countHeader = document.getElementById('countHeader') as HTMLSpanElement;
+    const $countFooter = document.getElementById('countFooter') as HTMLSpanElement;
+
+    function escapeHtml(s: string): string {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+      } as Record<string, string>)[c]);
+    }
+
+    function countItems(items: MenuItem[]): number {
+      let n = 0;
+      const walk = (arr: MenuItem[]) => {
+        for (const it of arr) {
+          n++;
+          if (it.children?.length) walk(it.children);
+        }
+      };
+      walk(items || []);
+      return n;
+    }
+
+    function findItemById(id: string, arr?: MenuItem[]): MenuItem | null {
+      const list = arr || menuData[currentMenuType];
+      for (const it of list || []) {
+        if (it.id === id) return it;
+        if (it.children) {
+          const f = findItemById(id, it.children);
+          if (f) return f;
+        }
+      }
+      return null;
+    }
+
+    async function loadMenus() {
+      $tree.innerHTML = '<div class="menus-skeleton">Carregando...</div>';
+      try {
+        const res = await fetch('/api/menus');
+        if (res.status === 401) {
+          window.location.href = '/painel/login';
+          return;
+        }
+        if (!res.ok) throw new Error('Erro ao carregar');
+        const data = await res.json();
+        menuData = data;
+        $countHeader.textContent = String(countItems(data.header || []));
+        $countFooter.textContent = String(countItems(data.footer || []));
+        renderTree();
+      } catch (err) {
+        console.error(err);
+        $tree.innerHTML = '<div class="menus-empty">Erro ao carregar menus</div>';
+      }
+    }
+
+    function renderTree() {
+      const items = menuData[currentMenuType] || [];
+      if (items.length === 0) {
+        $tree.innerHTML = '<div class="menus-empty">Nenhum item ainda. Clique em "+ Adicionar item".</div>';
+        return;
+      }
+      $tree.innerHTML = items.map((it) => renderItem(it, 0)).join('');
+      attachItemHandlers();
+    }
+
+    function renderItem(item: MenuItem, depth: number): string {
+      const indentClass = `menus-item-depth-${Math.min(depth, 3)}`;
+      const isExpanded = expandedItemId === item.id;
+      const hiddenCls = item.is_hidden ? ' is-hidden' : '';
+      const newTabBadge = item.open_new_tab
+        ? '<span class="menus-badge">↗ nova aba</span>'
+        : '';
+      const hiddenBadge = item.is_hidden
+        ? '<span class="menus-badge menus-badge-warn">oculto</span>'
+        : '';
+      const childrenHtml = (item.children || [])
+        .map((c) => renderItem(c, depth + 1)).join('');
+
+      return `
+        <div class="menus-item ${indentClass}${hiddenCls}" data-id="${item.id}">
+          <div class="menus-item-row" data-toggle="${item.id}">
+            <span class="menus-item-label">${escapeHtml(item.label)}</span>
+            <span class="menus-item-url">${escapeHtml(item.url)}</span>
+            ${newTabBadge} ${hiddenBadge}
+            <button class="menus-item-edit-btn" type="button">${isExpanded ? 'Fechar' : 'Editar'}</button>
+            <button class="menus-item-delete-btn" type="button" data-delete="${item.id}" aria-label="Excluir">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            </button>
+          </div>
+          ${isExpanded ? renderEditForm(item) : ''}
+          ${childrenHtml}
+        </div>
+      `;
+    }
+
+    function renderEditForm(item: MenuItem): string {
+      return `
+        <div class="menus-item-edit" data-edit="${item.id}">
+          <div class="form-row">
+            <label>Texto exibido</label>
+            <input type="text" data-field="label" value="${escapeHtml(item.label)}" />
+          </div>
+          <div class="form-row">
+            <label>URL</label>
+            <input type="text" data-field="url" value="${escapeHtml(item.url)}" />
+          </div>
+          <div class="form-row form-row-inline">
+            <label>
+              <input type="checkbox" data-field="open_new_tab" ${item.open_new_tab ? 'checked' : ''} />
+              Abrir em nova aba
+            </label>
+            <label>
+              <input type="checkbox" data-field="is_hidden" ${item.is_hidden ? 'checked' : ''} />
+              Esconder do site
+            </label>
+          </div>
+          <div class="menus-item-actions">
+            <button class="painel-btn-ghost" type="button" data-cancel="${item.id}">Cancelar</button>
+            <button class="painel-btn-primary" type="button" data-save="${item.id}">Salvar</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function attachItemHandlers() {
+      $tree.querySelectorAll<HTMLDivElement>('[data-toggle]').forEach((el) => {
+        el.addEventListener('click', (e) => {
+          const target = e.target as HTMLElement;
+          if (target.closest('[data-delete]') || target.closest('[data-save]') || target.closest('[data-cancel]') || target.tagName === 'INPUT') return;
+          const id = el.dataset.toggle!;
+          expandedItemId = expandedItemId === id ? null : id;
+          renderTree();
+        });
+      });
+      $tree.querySelectorAll<HTMLButtonElement>('[data-save]').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          saveItem(btn.dataset.save!);
+        });
+      });
+      $tree.querySelectorAll<HTMLButtonElement>('[data-cancel]').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          expandedItemId = null;
+          renderTree();
+        });
+      });
+      $tree.querySelectorAll<HTMLButtonElement>('[data-delete]').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          await deleteItem(btn.dataset.delete!);
+        });
+      });
+    }
+
+    async function saveItem(id: string) {
+      const wrap = $tree.querySelector<HTMLDivElement>(`[data-edit="${id}"]`);
+      if (!wrap) return;
+      const labelEl = wrap.querySelector<HTMLInputElement>('[data-field="label"]')!;
+      const urlEl = wrap.querySelector<HTMLInputElement>('[data-field="url"]')!;
+      const newTabEl = wrap.querySelector<HTMLInputElement>('[data-field="open_new_tab"]')!;
+      const hiddenEl = wrap.querySelector<HTMLInputElement>('[data-field="is_hidden"]')!;
+
+      const payload = {
+        label: labelEl.value.trim(),
+        url: urlEl.value.trim(),
+        open_new_tab: newTabEl.checked ? 1 : 0,
+        is_hidden: hiddenEl.checked ? 1 : 0,
+      };
+      if (!payload.label || !payload.url) {
+        window.toast?.('Preencha texto e URL', 'error');
+        return;
+      }
+      try {
+        const res = await fetch(`/api/menus/items/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({})) as any;
+          throw new Error(err.error || 'Falha ao salvar');
+        }
+        window.toast?.('Item atualizado', 'success');
+        expandedItemId = null;
+        await loadMenus();
+      } catch (err: any) {
+        window.toast?.(err.message || 'Erro ao salvar', 'error');
+      }
+    }
+
+    async function deleteItem(id: string) {
+      const item = findItemById(id);
+      if (!item) return;
+      const childCount = countItems(item.children || []);
+      const msg = childCount > 0
+        ? `Excluir "${item.label}"? Os ${childCount} subitens também serão removidos.`
+        : `Excluir "${item.label}"? Esta ação não pode ser desfeita.`;
+      const confirmed = await window.confirmAction!({
+        title: 'Excluir item de menu?',
+        message: msg,
+        confirmLabel: 'Excluir',
+        cancelLabel: 'Cancelar',
+        danger: true,
+      });
+      if (!confirmed) return;
+      try {
+        const res = await fetch(`/api/menus/items/${id}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({})) as any;
+          throw new Error(err.error || 'Falha ao excluir');
+        }
+        window.toast?.('Item excluído', 'success');
+        await loadMenus();
+      } catch (err: any) {
+        window.toast?.(err.message || 'Erro ao excluir', 'error');
+      }
+    }
+
+    // Tabs
+    $tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        $tabs.forEach((t) => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+        currentMenuType = (tab.dataset.menuType as 'header' | 'footer') || 'header';
+        expandedItemId = null;
+        renderTree();
+      });
+    });
+
+    // Modal
+    function openModal() {
+      $newItemLabel.value = '';
+      $newItemUrl.value = '';
+      populateParentSelect();
+      $modalCreate.hidden = false;
+      $newItemLabel.focus();
+    }
+    function closeModal() { $modalCreate.hidden = true; }
+
+    $btnAddItem.addEventListener('click', openModal);
+    $btnCancelCreate.addEventListener('click', closeModal);
+    $modalBackdrop.addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !$modalCreate.hidden) closeModal();
+    });
+
+    function populateParentSelect() {
+      const items = menuData[currentMenuType] || [];
+      const options = ['<option value="">— Item raiz —</option>'];
+      const walk = (arr: MenuItem[], depth: number) => {
+        if (depth > 1) return;
+        for (const it of arr) {
+          const prefix = depth > 0 ? '↳ '.repeat(depth) : '';
+          options.push(`<option value="${escapeHtml(it.id)}">${prefix}${escapeHtml(it.label)}</option>`);
+          if (it.children) walk(it.children, depth + 1);
+        }
+      };
+      walk(items, 0);
+      $newItemParent.innerHTML = options.join('');
+    }
+
+    $btnConfirmCreate.addEventListener('click', async () => {
+      const label = $newItemLabel.value.trim();
+      const url = $newItemUrl.value.trim();
+      if (!label || !url) {
+        window.toast?.('Preencha texto e URL', 'error');
+        return;
+      }
+      const payload = {
+        menu_type: currentMenuType,
+        parent_id: $newItemParent.value || null,
+        label,
+        url,
+      };
+      try {
+        const res = await fetch('/api/menus/items', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({})) as any;
+          throw new Error(err.error || 'Falha ao criar');
+        }
+        window.toast?.('Item criado', 'success');
+        closeModal();
+        await loadMenus();
+      } catch (err: any) {
+        window.toast?.(err.message || 'Erro ao criar', 'error');
+      }
+    });
+
+    loadMenus();
+  </script>
+</PainelLayout>
