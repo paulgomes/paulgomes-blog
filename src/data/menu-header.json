@@ -1,6 +1,6 @@
 {
   "menu_type": "header",
-  "synced_at": 1779654490073,
+  "synced_at": 1779654506228,
   "items": [
     {
       "id": "h-home",
@@ -32,13 +32,13 @@
       "id": "h-insights",
       "menu_type": "header",
       "parent_id": null,
-      "label": "Insights 2",
+      "label": "Insights",
       "url": "/blog",
       "sort_order": 2,
       "open_new_tab": 0,
       "is_hidden": 0,
       "created_at": 1779649504000,
-      "updated_at": 1779654189448,
+      "updated_at": 1779654502030,
       "children": []
     },
     {
