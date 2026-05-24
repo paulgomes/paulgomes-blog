@@ -4,7 +4,7 @@ description: "Partida entre Philadelphia Eagles e Kansas City Chiefs será domin
 pubDate: 2023-02-23
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/sem-titulo-1a.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/sem-titulo-1a.webp"
 ---
 
 Partida entre Philadelphia Eagles e Kansas City Chiefs será domingo, 12 de fevereiro

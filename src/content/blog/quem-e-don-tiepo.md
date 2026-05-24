@@ -4,7 +4,7 @@ description: "Quem é Don Tiepo? Don Tiepo é um empreendedor, escritor, consult
 pubDate: 2019-07-26
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/whatsapp-image-2021-09-23-at-154935-1-1024x682-1.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/whatsapp-image-2021-09-23-at-154935-1-1024x682-1.webp"
 ---
 
 ## Quem é Don Tiepo?

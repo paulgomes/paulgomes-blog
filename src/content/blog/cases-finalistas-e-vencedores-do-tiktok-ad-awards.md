@@ -4,7 +4,7 @@ description: "🏆 Lançado em outubro de 2022, o TikTok Ad Awards foi pensado p
 pubDate: 2023-04-06
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/tipdilz7wysq-6s6gquunyc8suysvtnpiwa.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/tipdilz7wysq-6s6gquunyc8suysvtnpiwa.webp"
 ---
 
 🏆 Lançado em outubro de 2022, o TikTok Ad Awards foi pensado pra reconhecer e celebrar quem mais tem abraçado a plataforma e, mais do que isso, alcançado resultados incríveis nela.

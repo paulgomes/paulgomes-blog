@@ -4,7 +4,7 @@ description: "Uma agência de marketing focada em alto padrão é uma empresa es
 pubDate: 2023-01-27
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/1.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/1.webp"
 ---
 
 Uma agência de marketing focada em alto padrão é uma empresa especializada em promover e divulgar produtos e serviços de alta qualidade e alto valor agregado. Esses produtos e serviços podem incluir imóveis de luxo, carros de alta performance, jóias, moda e muito mais.

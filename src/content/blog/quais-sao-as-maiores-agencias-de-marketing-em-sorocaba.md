@@ -4,7 +4,7 @@ description: "Escolher a agência certa é fundamental para maximizar sua presen
 pubDate: 2023-08-08
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/paul-gomes.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes.webp"
 ---
 
 Escolher a agência certa é fundamental para maximizar sua presença online e atingir seus objetivos

@@ -4,7 +4,7 @@ description: "Como Conquistar o Primeiro Lugar no Google: Dicas de Paul Gomes O 
 pubDate: 2023-08-15
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/paul-gomes-fundador-da-agencia-wys.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-fundador-da-agencia-wys.webp"
 ---
 
 **Como Conquistar o Primeiro Lugar no Google: Dicas de Paul Gomes**

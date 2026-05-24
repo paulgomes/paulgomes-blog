@@ -4,7 +4,7 @@ description: "Uma pesquisa global revela que o Brasil é um dos países mais con
 pubDate: 2020-06-12
 tags:
   - IA
-heroImage: "../../assets/posts/library/wys-blog-posts-2.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-2.webp"
 ---
 
 Uma pesquisa global revela que o Brasil é um dos países mais confiantes na adoção de sistemas de [IA](https://agenciawys.com.br/solucoes/ "IA"). De acordo com a consultoria KPMG, 39% dos participantes brasileiros estão dispostos a confiar nessa [tecnologia](https://agenciawys.com.br/solucoes/ "tecnologia") em ascensão, enquanto 61% ainda têm receios.

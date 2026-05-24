@@ -5,7 +5,7 @@ pubDate: 2020-06-12
 tags:
   - Negócios
   - SEO
-heroImage: "../../assets/posts/library/wys-blog-posts-4.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-4.webp"
 ---
 
 O [marketing](https://agenciawys.com.br/solucoes/ "marketing") de conteúdo é uma poderosa ferramenta para empresas que desejam se conectar de forma significativa com seu [público-alvo](https://agenciawys.com.br/solucoes/ "público-alvo"). Ao oferecer conteúdo relevante, informativo e útil, é possível não apenas atrair a atenção das pessoas, mas também engajá-las e educá-las sobre seus produtos ou serviços.

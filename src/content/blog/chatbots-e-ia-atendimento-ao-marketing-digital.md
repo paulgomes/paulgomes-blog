@@ -5,7 +5,7 @@ pubDate: 2020-06-12
 tags:
   - Negócios
   - IA
-heroImage: "../../assets/posts/library/wys-blog-posts-1.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-1.webp"
 ---
 
 No [marketing digital](https://agenciawys.com.br/solucoes/ "marketing digital"), o atendimento ao cliente desempenha um papel fundamental no sucesso das empresas. Como os chatbots e a [inteligência artificial (IA)](https://agenciawys.com.br/solucoes/ "inteligência artificial (IA)") estão revolucionando essa área e proporcionando uma experiência de atendimento impecável.

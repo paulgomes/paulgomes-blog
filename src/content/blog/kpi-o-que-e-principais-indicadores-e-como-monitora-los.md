@@ -4,7 +4,7 @@ description: "Você sabia que a mensuração de resultados é uma das etapas mai
 pubDate: 2020-06-12
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/wys-blog-posts-18.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-18.webp"
 ---
 
 Você sabia que a mensuração de resultados é uma das etapas mais importantes de uma **campanha** de comunicação ou [marketing](https://agenciawys.com.br/solucoes/ "marketing")? E que os indicadores de desempenho, também conhecidos como **KPIs** (do inglês Key Performance Indicators), são as métricas mais relevantes para analisar se uma estratégia está alcançando seus objetivos ou não?

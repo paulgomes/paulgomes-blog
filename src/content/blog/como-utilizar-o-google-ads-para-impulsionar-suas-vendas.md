@@ -5,7 +5,7 @@ pubDate: 2020-06-12
 tags:
   - Negócios
   - Tecnologia
-heroImage: "../../assets/posts/library/wys-blog-posts-13.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-13.webp"
 ---
 
 No [comércio digital](https://agenciawys.com.br/solucoes/ "comércio digital") acelerado, impulsionar as vendas é essencial para o sucesso do seu negócio. Uma estratégia poderosa é utilizar o [Google Ads](https://agenciawys.com.br/solucoes/ "Google Ads"). Para alcançar um público maior, aumentar a visibilidade da marca e impulsionar as vendas no Google Ads é necessário que:

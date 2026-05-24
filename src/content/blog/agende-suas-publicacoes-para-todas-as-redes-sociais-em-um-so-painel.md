@@ -4,7 +4,7 @@ description: "Conheça a plataforma mais completa para social media e marketing 
 pubDate: 2023-01-06
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/screenshot-8.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-8.webp"
 ---
 
 Conheça a plataforma mais completa para social media e marketing digital do Brasil: agende posts, crie relatórios, landing pages, workflow e muito mais

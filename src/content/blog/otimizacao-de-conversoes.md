@@ -4,7 +4,7 @@ description: "Para alcançar o sucesso no mundo digitalhttps://agenciawys.com.br
 pubDate: 2020-06-12
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/wys-blog-posts-5.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-5.webp"
 ---
 
 Para alcançar o sucesso no [mundo digital](https://agenciawys.com.br/solucoes/ "mundo digital"), não basta atrair visitantes para o [site](https://agenciawys.com.br/contato/ "site"). É preciso transformá-los em clientes fiéis. Antes de otimizar as taxas de conversão, compreenda o [público-alvo](https://agenciawys.com.br/solucoes/ "público-alvo") através de pesquisas de mercado, análise de dados demográficos e comportamentais, e feedback dos clientes.

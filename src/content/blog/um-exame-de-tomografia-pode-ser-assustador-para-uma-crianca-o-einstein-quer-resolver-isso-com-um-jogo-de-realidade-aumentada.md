@@ -4,7 +4,7 @@ description: "Por mais que médicos e enfermeiros se esforcem em deixar os pacie
 pubDate: 2022-11-02
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/screenshot-9.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-9.webp"
 ---
 
 Por mais que médicos e enfermeiros se esforcem em deixar os pacientes à vontade, um hospital pode ser um ambiente desconfortável, mesmo assustador. Sobretudo se você ainda frequenta o ensino fundamental.

@@ -4,7 +4,7 @@ description: "DRIVE MARKETING FORWARD Junto com a Agência Wys, negócios no mun
 pubDate: '2026-05-23'
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/1.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/1.webp"
 ---
 
 DRIVE MARKETING FORWARD  

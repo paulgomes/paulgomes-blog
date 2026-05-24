@@ -4,7 +4,7 @@ description: "Conheça como a personalizaçãohttps://agenciawys.com.br/solucoes
 pubDate: 2020-06-12
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/wys-blog-posts-9.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-9.webp"
 ---
 
 Conheça como a [personalização](https://agenciawys.com.br/solucoes/ "personalização") no [marketing](https://agenciawys.com.br/solucoes/ "marketing") pode impulsionar o crescimento do seu negócio. Ao segmentar e personalizar suas mensagens para diferentes segmentos de público, você aumenta as chances de engajar e conquistar clientes.

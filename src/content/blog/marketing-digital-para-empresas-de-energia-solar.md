@@ -5,7 +5,7 @@ pubDate: 2019-01-07
 tags:
   - Negócios
   - Tecnologia
-heroImage: "../../assets/posts/library/marketing-para-energia-solar.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/marketing-para-energia-solar.webp"
 ---
 
 O que podemos fazer por você?

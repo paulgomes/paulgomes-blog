@@ -4,7 +4,7 @@ description: "A técnica, chamada AudioLM, gera sons realistas sem a necessidade
 pubDate: 2022-11-14
 tags:
   - IA
-heroImage: "../../assets/posts/library/shutterstock-592921421.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/shutterstock-592921421.webp"
 ---
 
 A técnica, chamada AudioLM, gera sons realistas sem a necessidade de transcrições humanas.

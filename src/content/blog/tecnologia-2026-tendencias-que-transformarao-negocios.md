@@ -5,7 +5,7 @@ pubDate: 2025-08-01
 tags:
   - Tecnologia
   - IA
-heroImage: "../../assets/posts/library/aabab7f5-83a1-49d1-a939-62d15662a0f1.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/aabab7f5-83a1-49d1-a939-62d15662a0f1.webp"
 ---
 
 IntroduIntrodução

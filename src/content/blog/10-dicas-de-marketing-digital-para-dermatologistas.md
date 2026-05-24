@@ -5,7 +5,7 @@ pubDate: 2023-08-14
 tags:
   - Negócios
   - Tecnologia
-heroImage: "../../assets/posts/library/paul-gomes-6.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-6.webp"
 ---
 
 Os dermatologistas enfrentam a necessidade de se destacar em meio a uma concorrência crescente. O marketing digital oferece um caminho valioso para criar uma presença forte e conectar-se com pacientes em potencial de maneira significativa. Aqui estão 10 dicas fundamentais para impulsionar sua estratégia de marketing digital:

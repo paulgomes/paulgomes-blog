@@ -5,7 +5,7 @@ pubDate: 2023-08-09
 tags:
   - Negócios
   - Branding
-heroImage: "../../assets/posts/library/paul-gomes-1.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-1.webp"
 ---
 
 O cenário empresarial de Sorocaba tem se transformado rapidamente nos últimos anos, impulsionando a demanda por serviços de marketing inovadores e eficazes. No coração dessa revolução está a Agência Wys, que se destaca como uma das principais agências de marketing da região, trazendo uma abordagem única e abrangente para impulsionar marcas rumo ao sucesso.

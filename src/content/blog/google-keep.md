@@ -4,7 +4,7 @@ description: "Olá pessoal, hoje quero falar sobre uma das ferramentas mais úte
 pubDate: 2023-04-15
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/google-keep.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/google-keep.webp"
 ---
 
 Olá pessoal, hoje quero falar sobre uma das ferramentas mais úteis e práticas do Google: o [Google Keep](https://keep.google.com/ "Google Keep").
@@ -13,7 +13,7 @@ O Google Keep é um aplicativo de anotações que pode ser usado em dispositivos
 
 Uma das coisas que eu mais gosto no Google Keep é a sua facilidade de uso. É muito simples criar uma nova nota e adicionar conteúdo a ela. Além disso, a interface é intuitiva e fácil de navegar. Você pode até mesmo usar o Google Keep como uma extensão do Chrome para salvar páginas da web e ideias enquanto navega na internet.
 
-![](../../assets/posts/inline/google-keep-edited.webp)
+![](https://media.paulgomes.com.br/posts/legacy/inline/google-keep-edited.webp)
 
 google keep
 

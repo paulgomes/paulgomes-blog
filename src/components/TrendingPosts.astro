@@ -25,14 +25,9 @@ const pageIndices = Array.from({ length: totalPages }, (_, i) => i);
             <a href={`/${post.id}/`} class="trending-card" aria-label={`Ler: ${post.data.title}`}>
               <div class="trending-image">
                 {post.data.heroImage ? (
-                  <Image
-                    src={post.data.heroImage}
-                    alt=""
-                    width={800}
-                    widths={[400, 600, 800]}
-                    class="trending-img"
-                    loading="lazy"
-                  />
+                  typeof post.data.heroImage === 'string'
+                    ? <img src={post.data.heroImage} alt="" width="800" height="600" loading="lazy" class="trending-img" />
+                    : <Image src={post.data.heroImage} alt="" width={800} widths={[400, 600, 800]} class="trending-img" loading="lazy" />
                 ) : (
                   <div class="trending-img trending-img-fallback" aria-hidden="true"></div>
                 )}

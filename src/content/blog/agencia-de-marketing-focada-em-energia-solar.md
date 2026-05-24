@@ -4,7 +4,7 @@ description: "A agência de marketing focada em energia solar é uma empresa esp
 pubDate: 2023-01-27
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/marketing-para-energia-solar.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/marketing-para-energia-solar.webp"
 ---
 
 A agência de marketing focada em energia solar é uma empresa especializada em promover e divulgar os benefícios da energia solar. Ela atua como uma ponte entre as empresas de energia solar e os consumidores, ajudando a aumentar a conscientização e a adoção da energia solar.

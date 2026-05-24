@@ -5,7 +5,7 @@ pubDate: 2023-08-17
 tags:
   - Negócios
   - Tecnologia
-heroImage: "../../assets/posts/library/paul-gomes-9.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-9.webp"
 ---
 
 Na esfera do marketing, as palavras do lendário Philip Kotler ecoam como um farol orientador. Quando se trata de marketing digital, Kotler nos presenteia com uma perspectiva esclarecedora sobre esse fenômeno em constante evolução.

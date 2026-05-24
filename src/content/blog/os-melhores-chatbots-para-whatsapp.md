@@ -5,7 +5,7 @@ pubDate: 2020-10-16
 tags:
   - Negócios
   - Tecnologia
-heroImage: "../../assets/posts/library/5-chatbots.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/5-chatbots.webp"
 ---
 
 O *WhatsApp Business API* é uma solução desenvolvida pelo *Facebook* para facilitar a comunicação das empresas com seus clientes. O uso dessa ferramenta, nos dias atuais, é uma das tendências estratégicas do *Marketing Digital*.

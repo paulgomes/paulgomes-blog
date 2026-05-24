@@ -4,7 +4,7 @@ description: "Elon Musk anuncia uma luta contra Mark Zuckerberg com transmissão
 pubDate: 2023-08-07
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/screenshot-4.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-4.webp"
 ---
 
 Elon Musk anuncia uma luta contra Mark Zuckerberg com transmissão no X, a nova plataforma de vídeo ao vivo que substituiu o Twitter após sua aquisição por Musk. O empresário menciona que os lucros serão destinados a caridades para veteranos militares.

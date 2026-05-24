@@ -4,7 +4,7 @@ description: "Are You Finding Professional Google ads Specialist in Dubai ? I am
 pubDate: 2015-02-15
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/paulgomes.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/paulgomes.webp"
 ---
 
 Are You Finding Professional Google ads Specialist in Dubai ?  

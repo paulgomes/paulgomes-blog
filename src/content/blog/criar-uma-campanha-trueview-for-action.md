@@ -4,7 +4,7 @@ description: "Configure o acompanhamento de conversões no seu site e verifiqu
 pubDate: 2021-07-10
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/807049.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/807049.webp"
 ---
 Para ajudar você a gerar mais conversões a um ótimo custo-benefício, estamos aprimorando o [TrueView for Action](https://support.google.com/google-ads/answer/7671017) e expandindo os melhores recursos desse formato para mais lugares com as [campanhas de ação em vídeo](https://support.google.com/google-ads/answer/10147229). Com elas, é possível alcançar mais clientes em locais de alto desempenho dentro e fora do YouTube, tudo usando uma única campanha. A partir do início de 2022, todas as campanhas TrueView for Action serão atualizadas automaticamente para campanhas de ação em vídeo.
 
@@ -18,7 +18,7 @@ https://www.youtube.com/watch?v=0JW0pL0ZDiU
 
 [Ative as legendas do YouTube](https://support.google.com/youtube/answer/100078) para vê-las no seu idioma. Clique no ícone de configurações na parte inferior do player de vídeo, selecione "Legendas" e escolha seu idioma.
 
-![](../../assets/posts/inline/dS5G8GvM6tcMr3QhO5XzF53H15UBWyasSO8J)
+![](https://media.paulgomes.com.br/posts/legacy/inline/dS5G8GvM6tcMr3QhO5XzF53H15UBWyasSO8J)
 
 ## Antes de começar
 
@@ -40,8 +40,8 @@ Em campanhas que usam a estratégia de lances "Maximizar conversões", o orçame
 
 ## Diretrizes para criativos
 
-![](../../assets/posts/inline/rC5ChcUZMoKBtQcMqqJgTD7wn6VrBc0aVWmE)
-![Diretrizes para anúncios TrueView for Action imersivos](../../assets/posts/inline/aVChBIwFM66shDnvIWDDKNQgxU3snqiO3NBK "Diretrizes para anúncios TrueView for Action imersivos")
+![](https://media.paulgomes.com.br/posts/legacy/inline/rC5ChcUZMoKBtQcMqqJgTD7wn6VrBc0aVWmE)
+![Diretrizes para anúncios TrueView for Action imersivos](https://media.paulgomes.com.br/posts/legacy/inline/aVChBIwFM66shDnvIWDDKNQgxU3snqiO3NBK "Diretrizes para anúncios TrueView for Action imersivos")
 
 ## Considerações
 
@@ -51,7 +51,7 @@ Para conquistar os resultados ideais da sua campanha, considere itens como estra
 
 1. Faça login na sua [conta do Google Ads](https://ads.google.com/).
 2. No Menu de páginas à esquerda, escolha **Campanhas**.
-3. Clique no botão de adição ![](../../assets/posts/inline/Ns5o4jgOAKaw8NnTPog3UMQHzmGiCUG3utl0) e escolha **Nova campanha**.
+3. Clique no botão de adição ![](https://media.paulgomes.com.br/posts/legacy/inline/Ns5o4jgOAKaw8NnTPog3UMQHzmGiCUG3utl0) e escolha **Nova campanha**.
 4. Selecione a meta **Vendas**, **Leads** ou **Tráfego do site**.
    - Para o subtipo de campanha, a opção **Gerar conversões** é selecionada automaticamente.
 5. Selecione o tipo de campanha **Vídeo**.

@@ -5,7 +5,7 @@ pubDate: 2018-01-30
 tags:
   - SEO
   - Negócios
-heroImage: "../../assets/posts/library/ads.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/ads.webp"
 ---
 
 Brand with purpose, communication with result, enhancing your communication and minimizing distances between products, services and consumers.

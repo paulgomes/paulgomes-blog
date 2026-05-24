@@ -4,7 +4,7 @@ description: "Por que investir na digitalização da sua empresa? A digitalizaç
 pubDate: 2020-10-02
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/807049.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/807049.webp"
 ---
 
 *Por que investir na digitalização da sua empresa?*

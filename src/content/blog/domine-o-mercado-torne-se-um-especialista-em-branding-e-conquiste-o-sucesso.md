@@ -5,7 +5,7 @@ pubDate: 2011-02-16
 tags:
   - Branding
   - Negócios
-heroImage: "../../assets/posts/library/financial-review-p5nmyca.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/financial-review-p5nmyca.webp"
 ---
 
 # Domine o mercado: torne-se um especialista em branding e conquiste o sucesso

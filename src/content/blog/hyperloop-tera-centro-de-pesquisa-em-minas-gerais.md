@@ -4,11 +4,11 @@ description: "Tecnologia foi idealizada por Elon Muskhttp://paulgomes.com.br/pau
 pubDate: 2018-04-08
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/hyper.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/hyper.webp"
 ---
 
 Tecnologia foi idealizada por [Elon Musk](http://paulgomes.com.br/paul-gomes-brazil/), dono da [Tesla](http://paulgomes.com.br/paul-gomes-brazil/) e da [SpaceX](http://paulgomes.com.br/paul-gomes-brazil/). No Brasil, empresa pesquisará soluções para transportar cargas e passageiros a velocidades que podem chegar a 1.200 km/h.
-![](../../assets/posts/inline/hyperlooptt-brazil-xo-square.webp)HyperloopTT, que desenvolve um meio de transporte ultrarrápido por cápsulas que viajam em tubos, anunciou nesta sexta-feira (6) a implantação de um centro de inovação e logística em Contagem (MG).
+![](https://media.paulgomes.com.br/posts/legacy/inline/hyperlooptt-brazil-xo-square.webp)HyperloopTT, que desenvolve um meio de transporte ultrarrápido por cápsulas que viajam em tubos, anunciou nesta sexta-feira (6) a implantação de um centro de inovação e logística em Contagem (MG).
 
 A tecnologia deste tipo de transporte foi idealizada em 2013 por [Elon Musk](http://paulgomes.com.br/paul-gomes-brazil/), fundador da fabricante de carros elétricos [Tesla](http://paulgomes.com.br/paul-gomes-brazil/) e da [SpaceX](http://paulgomes.com.br/paul-gomes-brazil/), que também enviou um [carro ao espaço.](https://g1.globo.com/carros/noticia/spacex-lanca-foguete-que-levara-carro-da-tesla-ao-espaco.ghtml)Ele chegou a testá-la em 2016.
 
@@ -20,7 +20,7 @@ O investimento inicial de US$ 7,85 milhões (cerca de R$ 26 milhões) virá de p
 
 "Com uma posição geográfica estratégica, alta concentração de grandes indústrias e uma dedicação por inovação, é um lugar ideial para o HyperloopTT XO Square", afirmou em nota Bibop Gresta, presidente da empresa.
 
-![](../../assets/posts/inline/hyperloop-htt.webp)
+![](https://media.paulgomes.com.br/posts/legacy/inline/hyperloop-htt.webp)
 
 ## O que é Hyperloop?
 

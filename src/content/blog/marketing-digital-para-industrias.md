@@ -5,7 +5,7 @@ pubDate: 2021-08-07
 tags:
   - Negócios
   - Tecnologia
-heroImage: "../../assets/posts/library/screenshot-10.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-10.webp"
 ---
 
 Nossa agência é especializada em oferecer serviços de marketing digital para indústrias que desejam aumentar sua presença online e gerar resultados.

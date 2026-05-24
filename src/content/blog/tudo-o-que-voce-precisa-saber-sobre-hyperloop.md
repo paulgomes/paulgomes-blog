@@ -4,7 +4,7 @@ description: "O que é? Projeto apresentado por Elon Musk, o Hyperloop é um sis
 pubDate: 2020-10-09
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/hyper.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/hyper.webp"
 ---
 
 **O que é?**

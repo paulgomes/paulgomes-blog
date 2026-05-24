@@ -4,7 +4,7 @@ description: "O marketing está em constante processo de mudança. Mudam-se háb
 pubDate: 2022-01-05
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/5050.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/5050.webp"
 ---
 
 O marketing está em constante processo de mudança. Mudam-se hábitos de consumo, consumidores e formas de interação em vendas e processos decisórios. A nova Era do Marketing está mais interativa pela tecnologia e exigindo mais recursos em seus processos. Ao mesmo tempo, com tantas inovações tecnológicas, é crescente a humanização e a empatia em relação ao consumidor.

@@ -5,7 +5,7 @@ pubDate: 2025-07-24
 tags:
   - Tecnologia
   - Negócios
-heroImage: "../../assets/posts/library/29b345d0-324c-4475-8f68-2ec2c81b3c6b.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/29b345d0-324c-4475-8f68-2ec2c81b3c6b.webp"
 ---
 
 À medida que 2025 avança, as fronteiras entre tecnologia, marketing e comportamento do consumidor se estreitam. Para construir marcas relevantes no futuro, é preciso entender como essas forças moldam a vida das pessoas e os negócios. Veja a seguir uma curadoria dos principais movimentos que estão definindo o cenário:

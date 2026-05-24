@@ -14,13 +14,10 @@ const { post } = Astro.props;
   <a href={`/${post.id}/`} class="block">
     {post.data.heroImage && (
       <div class="mb-4 overflow-hidden rounded-lg" style="background-color: var(--color-subtle)">
-        <Image
-          src={post.data.heroImage}
-          alt={post.data.title}
-          width={720}
-          height={405}
-          class="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+        {typeof post.data.heroImage === 'string'
+          ? <img src={post.data.heroImage} alt={post.data.title} width="720" height="405" loading="lazy" class="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          : <Image src={post.data.heroImage} alt={post.data.title} width={720} height={405} class="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        }
       </div>
     )}
     <div class="text-xs uppercase tracking-wider" style="color: var(--color-muted)">

@@ -4,7 +4,7 @@ description: "Os slogans são essenciais para sempre nos lembrarmos de alguma em
 pubDate: 2023-04-04
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/screenshot-2.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-2.webp"
 ---
 
 Os slogans são essenciais para sempre nos lembrarmos de alguma empresa ou marca. Reunimos as frases mais conhecidas para você. Confira!

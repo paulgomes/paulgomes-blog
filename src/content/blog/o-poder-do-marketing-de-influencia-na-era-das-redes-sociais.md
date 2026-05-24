@@ -4,7 +4,7 @@ description: "O poder do marketing de influênciahttps://agenciawys.com.br/soluc
 pubDate: 2020-06-12
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/wys-blog-posts-14.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-14.webp"
 ---
 
 O poder do [marketing de influência](https://agenciawys.com.br/solucoes/ "marketing de influência") na era das redes sociais é inegável. Com o crescimento exponencial do uso das plataformas digitais, os influenciadores se tornaram peças-chave para as estratégias de marketing das empresas. Mas afinal, o que é [marketing de influência](https://agenciawys.com.br/solucoes/ " marketing de influência")?

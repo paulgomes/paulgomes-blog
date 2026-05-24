@@ -5,7 +5,7 @@ pubDate: 2020-10-14
 tags:
   - Negócios
   - Tecnologia
-heroImage: "../../assets/posts/library/agencia-wys-menu1900x1078.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/agencia-wys-menu1900x1078.webp"
 ---
 
 O *Marketing Digital* é essencial para alavancar seu negócio, quando bem elaborado, ele ajuda a alcançar um número de pessoas que possivelmente possam se tornar seus clientes. Então, para começar a ingressar nesta estratégia no mundo digital, segue algumas dicas:

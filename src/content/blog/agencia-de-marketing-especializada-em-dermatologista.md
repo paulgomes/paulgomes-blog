@@ -4,7 +4,7 @@ description: "Na jornada altamente competitiva do mundo da dermatologia, é esse
 pubDate: 2023-08-13
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/paul-gomes-5.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-5.webp"
 ---
 
 Na jornada altamente competitiva do mundo da dermatologia, é essencial ter uma presença de destaque. É aqui que a Agência Wys entra em cena, trazendo uma especialização em marketing exclusivamente focada em atender às necessidades dos dermatologistas.

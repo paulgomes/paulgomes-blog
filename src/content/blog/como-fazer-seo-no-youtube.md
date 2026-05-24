@@ -4,7 +4,7 @@ description: "Existem algumas estratégias que você pode usar para melhorar o S
 pubDate: 2023-01-27
 tags:
   - SEO
-heroImage: "../../assets/posts/library/screenshot-4.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-4.webp"
 ---
 
 Existem algumas estratégias que você pode usar para melhorar o SEO do seu canal do YouTube:

@@ -5,7 +5,7 @@ pubDate: 2023-08-16
 tags:
   - Branding
   - Negócios
-heroImage: "../../assets/posts/library/paul-gomes-8.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-8.webp"
 ---
 
 No mercado do luxo, a diferenciação é essencial para criar um impacto duradouro. O branding se torna uma ferramenta poderosa para expressar os valores, a identidade e a exclusividade de uma marca de maneira única. Aqui, exploramos a importância do branding nesse contexto distintivo.

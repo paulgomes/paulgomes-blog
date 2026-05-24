@@ -5,7 +5,7 @@ pubDate: 2023-08-15
 tags:
   - SEO
   - Tecnologia
-heroImage: "../../assets/posts/library/base-d.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/base-d.webp"
 ---
 
 **Wys: A Journey to Becoming the Largest SEO Agency in Brazil**

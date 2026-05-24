@@ -4,7 +4,7 @@ description: "No mundo competitivo atual, o e-mail marketinghttps://agenciawys.c
 pubDate: 2020-06-12
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/wys-blog-posts-6.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-6.webp"
 ---
 
 No mundo competitivo atual, o [e-mail marketing](https://agenciawys.com.br/solucoes/ "e-mail marketing") é uma ferramenta poderosa para conectar-se com o público e atrair clientes. Com planejamento eficiente e abordagem personalizada, você pode enviar mensagens relevantes diretamente para potenciais clientes, gerando resultados positivos para sua [agência de marketing](https://agenciawys.com.br/solucoes/ "agência de marketing").

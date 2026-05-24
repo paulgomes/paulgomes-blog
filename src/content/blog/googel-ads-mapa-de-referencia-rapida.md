@@ -4,7 +4,7 @@ description: "| | | | | | | --- | --- | --- | --- | --- | | 1. Menu de navega√ß√
 pubDate: 2021-04-19
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/unnamed.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/unnamed.webp"
 ---
 
 ### 

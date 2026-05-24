@@ -55,7 +55,10 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro
         {heroImage && (
           <div class="container-wide pb-12 md:pb-16">
             <div class="overflow-hidden rounded-lg" style="background-color: var(--color-subtle)">
-              <Image src={heroImage} alt={title} width={1280} height={720} class="w-full" />
+              {typeof heroImage === 'string'
+                ? <img src={heroImage} alt={title} class="w-full" loading="eager" />
+                : <Image src={heroImage} alt={title} width={1280} height={720} class="w-full" />
+              }
             </div>
           </div>
         )}

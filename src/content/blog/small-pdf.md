@@ -4,7 +4,7 @@ description: "Todas as ferramentas de que você precisa para trabalhar com docum
 pubDate: 2023-04-15
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/screenshot-2-1.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-2-1.webp"
 ---
 
 Todas as ferramentas de que você precisa para trabalhar com documentos com mais praticidade e alavancar sua produtividade.

@@ -17,14 +17,9 @@ const href = `/${post.id}/`;
   <div class="container-wide">
     <a href={href} class="featured-banner" aria-label={`Ler ensaio: ${title}`}>
       {heroImage ? (
-        <Image
-          src={heroImage}
-          alt=""
-          width={1920}
-          widths={[800, 1200, 1920]}
-          class="banner-bg"
-          loading="lazy"
-        />
+        typeof heroImage === 'string'
+          ? <img src={heroImage} alt="" width="1920" height="840" loading="lazy" class="banner-bg" />
+          : <Image src={heroImage} alt="" width={1920} widths={[800, 1200, 1920]} class="banner-bg" loading="lazy" />
       ) : (
         <div class="banner-bg banner-bg-fallback" aria-hidden="true"></div>
       )}

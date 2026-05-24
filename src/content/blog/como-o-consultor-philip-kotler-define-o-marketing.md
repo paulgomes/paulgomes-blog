@@ -5,7 +5,7 @@ pubDate: 2023-08-18
 tags:
   - Negócios
   - Tecnologia
-heroImage: "../../assets/posts/library/paul-gomes-10.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-10.webp"
 ---
 
 Philip Kotler, um dos pioneiros e principais teóricos do marketing moderno, define o marketing como algo muito além de uma simples troca comercial. Para Kotler, o marketing é a arte de criar, comunicar e entregar valor a um público-alvo, atendendo não apenas às necessidades tangíveis, mas também às aspirações e desejos mais profundos dos consumidores. Essa definição ampla e holística reflete a evolução do marketing, que transcende a mera transação financeira, visando criar uma conexão emocional e duradoura entre a marca e seu público.

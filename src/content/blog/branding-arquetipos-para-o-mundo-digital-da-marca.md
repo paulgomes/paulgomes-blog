@@ -4,7 +4,7 @@ description: "Os 12 arquétipos de Jung e as marcas que os utilizam para posicio
 pubDate: 2020-10-05
 tags:
   - SEO
-heroImage: "../../assets/posts/library/5050.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/5050.webp"
 ---
 
 #### Os 12 arquétipos de Jung e as marcas que os utilizam para posicionamento

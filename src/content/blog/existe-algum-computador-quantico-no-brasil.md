@@ -4,7 +4,7 @@ description: "https://youtube.com/shorts/SVWb2Vn-PqM?feature=share Existem algum
 pubDate: 2023-01-27
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/shutterstock-1787263763.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/shutterstock-1787263763.webp"
 ---
 
 https://youtube.com/shorts/SVWb2Vn-PqM?feature=share

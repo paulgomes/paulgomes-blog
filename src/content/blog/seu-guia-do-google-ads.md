@@ -4,7 +4,7 @@ description: "Seu guia do Google Ads Alcance novos clientes e expanda seus negó
 pubDate: 2021-04-19
 tags:
   - Branding
-heroImage: "../../assets/posts/library/por-que-o-google-adwords-1024x631-1024x585.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/por-que-o-google-adwords-1024x631-1024x585.webp"
 ---
 
 # Seu guia do Google Ads

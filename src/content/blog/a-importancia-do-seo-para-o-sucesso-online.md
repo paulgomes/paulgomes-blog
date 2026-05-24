@@ -5,7 +5,7 @@ pubDate: 2020-06-12
 tags:
   - SEO
   - Negócios
-heroImage: "../../assets/posts/library/wys-blog-posts-8.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-8.webp"
 ---
 
 No mundo online competitivo, estar presente nos resultados de pesquisa é essencial para o sucesso do seu negócio. O [SEO (Search Engine Optimization)](https://agenciawys.com.br/solucoes/ "SEO (Search Engine Optimization) ") desempenha um papel crucial nesse processo, melhorando a visibilidade do seu site nos mecanismos de busca, como o [Google](https://agenciawys.com.br/solucoes/ "Google").

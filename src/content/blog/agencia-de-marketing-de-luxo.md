@@ -4,7 +4,7 @@ description: "No mundo sofisticado do marketing de luxo, a excelência é a norm
 pubDate: 2023-08-15
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/paul-gomes-7.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-7.webp"
 ---
 
 No mundo sofisticado do marketing de luxo, a excelência é a norma e a exclusividade é a chave para o sucesso. Uma Agência de Marketing de Luxo é o catalisador por trás da criação de experiências únicas e memoráveis, transformando marcas em ícones que transcendem as tendências passageiras.

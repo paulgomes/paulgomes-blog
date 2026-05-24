@@ -4,7 +4,7 @@ description: "No mundo atual, os consumidores estão cada vez mais engajados em 
 pubDate: 2020-06-12
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/wys-blog-posts-19.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-19.webp"
 ---
 
 No mundo atual, os consumidores estão cada vez mais engajados em questões ambientais, sociais e de transparência governamental. O **ESG** (Environmental, Social and Governance) é um conceito que tem se destacado como uma abordagem para avaliar o **desempenho das empresas** nessas áreas.

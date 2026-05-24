@@ -5,7 +5,7 @@ pubDate: 2023-10-26
 tags:
   - IA
   - Tecnologia
-heroImage: "../../assets/posts/library/screenshot-25.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-25.webp"
 ---
 
 Se você está atento às tendências nas redes sociais, é provável que esteja ciente sobre a mais recente "trend" na web, que resume-se em criar foto no estilo “Disney Pixar”.

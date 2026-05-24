@@ -4,7 +4,7 @@ description: "Muitas pessoas estão pensando nas suas metas de ano novo e coisas
 pubDate: 2023-01-06
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/shutterstock-2209159351.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/shutterstock-2209159351.webp"
 ---
 
 Muitas pessoas estão pensando nas suas metas de ano novo e coisas que elas precisam fazer em 2023 para evoluir na carreira.  

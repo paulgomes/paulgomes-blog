@@ -4,7 +4,7 @@ description: "Aumente sua produtividade e faça conexões valiosas no Coworking 
 pubDate: 2023-08-09
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/screenshot-14.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-14.webp"
 ---
 
 ## Aumente sua produtividade e faça conexões valiosas no **Coworking 648.**
@@ -37,7 +37,7 @@ Oferecemos serviços de recepcionista, copa, gestão de correspondência, networ
 
 No Coworking 648, oferecemos uma ampla variedade de estações de trabalho, projetadas para atender às necessidades de profissionais de todos os setores. Desde estações de trabalho simples, com apenas uma mesa e uma cadeira, até estações equipadas com equipamentos de ponta, temos tudo o que você precisa para trabalhar de forma confortável e eficiente.
 
-![coworking em sorocaba](../../assets/posts/inline/screenshot-14-1160x633.webp)
+![coworking em sorocaba](https://media.paulgomes.com.br/posts/legacy/inline/screenshot-14-1160x633.webp)
 
 coworking em sorocaba
 

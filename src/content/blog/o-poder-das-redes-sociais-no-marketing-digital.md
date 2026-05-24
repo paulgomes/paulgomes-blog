@@ -5,7 +5,7 @@ pubDate: 2020-06-12
 tags:
   - Negócios
   - Tecnologia
-heroImage: "../../assets/posts/library/wys-blog-posts-7.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-7.webp"
 ---
 
 As redes sociais transformaram a forma como as empresas se relacionam com seu [público-alvo](https://agenciawys.com.br/solucoes/ "público-alvo"). No mundo do [marketing digital](https://agenciawys.com.br/solucoes/ " marketing digital"), elas se tornaram uma ferramenta poderosa e indispensável para alcançar resultados significativos.

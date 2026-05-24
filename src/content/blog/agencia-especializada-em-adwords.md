@@ -5,7 +5,7 @@ pubDate: 2023-08-07
 tags:
   - Negócios
   - Tecnologia
-heroImage: "../../assets/posts/library/screenshot-8.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-8.webp"
 ---
 
 # Agência Especializada Em Adwords

@@ -4,7 +4,7 @@ description: "Se você é morador de Alphaville e procura por serviços e produt
 pubDate: 2011-04-15
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/screenshot-9.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-9.webp"
 ---
 
 Se você é morador de Alphaville e procura por serviços e produtos de qualidade, com certeza já deve ter ouvido falar da startup Menu Alphaville. Essa plataforma online tem como objetivo conectar a comunidade local com o que há de melhor na região, oferecendo diversas opções de restaurantes, bares, lojas, serviços e muito mais.

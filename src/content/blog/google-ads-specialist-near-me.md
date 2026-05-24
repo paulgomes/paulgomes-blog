@@ -4,7 +4,7 @@ description: "We help people and businesses build more relevant brands. A clinic
 pubDate: 2021-02-07
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/1.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/1.webp"
 ---
 
 We help people and businesses build more relevant brands.

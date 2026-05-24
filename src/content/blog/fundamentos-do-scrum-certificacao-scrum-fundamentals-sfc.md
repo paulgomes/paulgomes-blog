@@ -4,7 +4,7 @@ description: "Aprenda os fundamentos do Scrum e prepare-se para a certificação
 pubDate: 2023-01-10
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/screenshot-4.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-4.webp"
 ---
 
 Aprenda os fundamentos do Scrum e prepare-se para a certificação gratuita Scrum Fundamentals Certified da ScrumStudy

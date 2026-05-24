@@ -4,7 +4,7 @@ description: "Alcance novos clientes online com Google Ads Apareça quando seus 
 pubDate: 2022-11-11
 tags:
   - Negócios
-heroImage: "../../assets/posts/library/screenshot-6.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-6.webp"
 ---
 
 Alcance novos clientes online com Google Ads  

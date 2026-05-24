@@ -5,7 +5,7 @@ pubDate: 2023-04-15
 tags:
   - Negócios
   - Branding
-heroImage: "../../assets/posts/library/cropped-paul-gomes-alphaville.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/cropped-paul-gomes-alphaville.webp"
 ---
 
 Olá pessoal, sou Paul Gomes e hoje quero compartilhar com vocês sobre um conceito muito importante para qualquer empresa que deseja ter uma marca forte e consistente: o Brandbook.

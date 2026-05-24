@@ -4,7 +4,7 @@ description: "Convicção: Você não pode vender seu próximo livro subestimand
 pubDate: 2023-01-06
 tags:
   - Tecnologia
-heroImage: "../../assets/posts/library/paulo-coelho.webp"
+heroImage: "https://media.paulgomes.com.br/posts/legacy/paulo-coelho.webp"
 ---
 
 **Convicção**: Você não pode vender seu próximo livro subestimando o livro que acabou de ser publicado. Tenha orgulho do que você tem.
