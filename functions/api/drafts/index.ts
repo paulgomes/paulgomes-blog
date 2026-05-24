@@ -1,6 +1,7 @@
 import type { Env } from '../_utils/db';
 import { requireAuth } from '../_utils/require-auth';
 import { generateId } from '../_utils/crypto';
+import { slugify } from '../_utils/slugify';
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const auth = await requireAuth(request, env);
@@ -35,7 +36,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const body = await request.json() as any;
   const id = generateId();
   const now = Date.now();
-  const slug = (body.slug || `rascunho-${id.slice(0, 8)}`).toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  const slug = slugify(body.slug || `rascunho-${id.slice(0, 8)}`);
 
   await env.DB.prepare(`
     INSERT INTO drafts (id, slug, title, description, content_md, hero_image_url,

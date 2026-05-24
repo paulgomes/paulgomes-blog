@@ -216,8 +216,15 @@ const currentNav = isEditing ? 'posts' : 'new';
       else if (current > max * 0.8) el.classList.add('warn');
     }
 
+    // Mantenha em sync com functions/api/_utils/slugify.ts
     function slugify(s: string) {
-      return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      return String(s ?? '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .replace(/-+/g, '-');
     }
 
     function updateSeoPreview() {
