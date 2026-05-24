@@ -1,11 +1,71 @@
 {
   "menu_type": "footer",
-  "synced_at": null,
+  "synced_at": 1779654280103,
   "items": [
-    { "id": "f-home",      "label": "Home",      "url": "/",          "open_new_tab": 0, "is_hidden": 0, "children": [] },
-    { "id": "f-sobre",     "label": "Sobre",     "url": "/sobre",     "open_new_tab": 0, "is_hidden": 0, "children": [] },
-    { "id": "f-insights",  "label": "Insights",  "url": "/blog",      "open_new_tab": 0, "is_hidden": 0, "children": [] },
-    { "id": "f-parceiros", "label": "Parceiros", "url": "/parceiros", "open_new_tab": 0, "is_hidden": 0, "children": [] },
-    { "id": "f-contato",   "label": "Contato",   "url": "/contato",   "open_new_tab": 0, "is_hidden": 0, "children": [] }
+    {
+      "id": "f-home",
+      "menu_type": "footer",
+      "parent_id": null,
+      "label": "Home",
+      "url": "/",
+      "sort_order": 0,
+      "open_new_tab": 0,
+      "is_hidden": 0,
+      "created_at": 1779649504000,
+      "updated_at": 1779649504000,
+      "children": []
+    },
+    {
+      "id": "f-sobre",
+      "menu_type": "footer",
+      "parent_id": null,
+      "label": "Sobre",
+      "url": "/sobre",
+      "sort_order": 1,
+      "open_new_tab": 0,
+      "is_hidden": 0,
+      "created_at": 1779649504000,
+      "updated_at": 1779649504000,
+      "children": []
+    },
+    {
+      "id": "f-insights",
+      "menu_type": "footer",
+      "parent_id": null,
+      "label": "Insights22",
+      "url": "/blog",
+      "sort_order": 2,
+      "open_new_tab": 0,
+      "is_hidden": 0,
+      "created_at": 1779649504000,
+      "updated_at": 1779654260396,
+      "children": []
+    },
+    {
+      "id": "f-parceiros",
+      "menu_type": "footer",
+      "parent_id": null,
+      "label": "Parceiros",
+      "url": "/parceiros",
+      "sort_order": 3,
+      "open_new_tab": 0,
+      "is_hidden": 0,
+      "created_at": 1779649504000,
+      "updated_at": 1779649504000,
+      "children": []
+    },
+    {
+      "id": "f-contato",
+      "menu_type": "footer",
+      "parent_id": null,
+      "label": "Contato",
+      "url": "/contato",
+      "sort_order": 4,
+      "open_new_tab": 0,
+      "is_hidden": 0,
+      "created_at": 1779649504000,
+      "updated_at": 1779649504000,
+      "children": []
+    }
   ]
 }
