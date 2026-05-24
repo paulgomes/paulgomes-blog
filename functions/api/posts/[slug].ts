@@ -31,6 +31,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env, params })
   const synced = Number(post.synced_at || 0);
   const git_synced = updated <= synced;
 
+  // is_featured ja vem em pm.* (0/1) — UI faz cast pra boolean se quiser
   return Response.json({ post: { ...post, git_synced } });
 };
 
