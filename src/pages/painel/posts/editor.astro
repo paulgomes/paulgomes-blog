@@ -34,7 +34,7 @@ const currentNav = isEditing ? 'posts' : 'new';
 
   <div class="editor-grid">
     <article class="editor-main">
-      <input id="title" class="title-input" placeholder="Título do ensaio" />
+      <input id="title" class="title-input" placeholder="Título do post" />
       <input id="description" class="desc-input" placeholder="Descrição curta (aparece em listagens)" />
 
       <Editor client:load />
@@ -103,7 +103,7 @@ const currentNav = isEditing ? 'posts' : 'new';
 
         <div class="seo-preview">
           <span class="seo-preview-url">paulgomes.com.br › blog › <span id="previewSlug">meu-post</span></span>
-          <h4 id="previewTitle">Título do ensaio</h4>
+          <h4 id="previewTitle">Título do post</h4>
           <p id="previewDesc">Descrição curta aparece aqui...</p>
         </div>
       </section>
@@ -201,7 +201,7 @@ const currentNav = isEditing ? 'posts' : 'new';
     }
 
     function updateSeoPreview() {
-      const t = $title.value || 'Título do ensaio';
+      const t = $title.value || 'Título do post';
       const d = $description.value || 'Descrição curta aparece aqui...';
       const s = $slug.value || slugify($title.value) || 'meu-post';
       $previewTitle.textContent = t;

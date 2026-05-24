@@ -32,14 +32,16 @@ import '../../styles/painel.css';
   <section class="quick-actions">
     <a href="/painel/posts" class="action-card">
       <p class="action-eyebrow">Posts</p>
-      <p class="action-title">Gerenciar ensaios</p>
+      <p class="action-title">Gerenciar posts</p>
       <p class="action-desc">Rascunhos e publicados em um só lugar.</p>
     </a>
-    <a href="/painel/posts/editor" class="action-card action-card--primary">
-      <p class="action-eyebrow">Criar</p>
-      <p class="action-title">Novo ensaio</p>
-      <p class="action-desc">Editor TipTap com auto-save.</p>
-    </a>
+    <div class="action-card action-card--static">
+      <p class="action-eyebrow">Atividade</p>
+      <p class="action-title">Últimas edições</p>
+      <ul id="recentEdits" class="recent-edits-list">
+        <li class="skeleton">Carregando...</li>
+      </ul>
+    </div>
   </section>
 
   <script>
@@ -92,6 +94,51 @@ import '../../styles/painel.css';
       } catch {}
     }
     loadStats();
+
+    // === Atividade recente (3 últimas edições) ===
+    function formatRelative(ts: number): string {
+      const diff = Date.now() - ts;
+      const days = Math.floor(diff / 86400000);
+      if (days <= 0) return 'hoje';
+      if (days === 1) return 'ontem';
+      if (days < 7) return `há ${days} dias`;
+      return new Date(ts).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+    }
+
+    function escapeHtml(s: string): string {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    async function loadRecentEdits() {
+      const list = document.getElementById('recentEdits');
+      if (!list) return;
+      try {
+        const res = await fetch('/api/posts?status=all&page=1&per_page=3');
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        const items = (data.items || []).slice(0, 3);
+        if (!items.length) {
+          list.innerHTML = '<li class="empty">Nenhuma atividade recente</li>';
+          return;
+        }
+        list.innerHTML = items.map((it: any) => {
+          const isDraft = it.type === 'draft';
+          const href = isDraft
+            ? `/painel/posts/editor?id=${encodeURIComponent(it.id.replace(/^draft:/, ''))}`
+            : `/painel/posts/editor?slug=${encodeURIComponent(it.slug)}`;
+          const ts = Number(it.updated_at || it.published_at || 0);
+          return `<li>
+            <a href="${href}">${escapeHtml(it.title || 'Sem título')}</a>
+            <span class="recent-date">${ts ? formatRelative(ts) : '—'}</span>
+          </li>`;
+        }).join('');
+      } catch {
+        list.innerHTML = '<li class="empty">Erro ao carregar</li>';
+      }
+    }
+    loadRecentEdits();
   </script>
 
   <style is:global>
@@ -182,6 +229,55 @@ import '../../styles/painel.css';
       border-color: #c9dcfa;
     }
     .action-card--primary .action-title { color: var(--painel-accent); }
+    .action-card--static {
+      cursor: default;
+    }
+    .action-card--static:hover {
+      box-shadow: none;
+      border-color: var(--painel-border);
+      transform: none;
+    }
+    .recent-edits-list {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .recent-edits-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--painel-border);
+      font-size: 14px;
+    }
+    .recent-edits-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+    .recent-edits-list li:first-child { padding-top: 0; }
+    .recent-edits-list a {
+      color: var(--painel-text-primary);
+      text-decoration: none;
+      font-weight: 500;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .recent-edits-list a:hover { color: var(--painel-accent); }
+    .recent-edits-list .recent-date {
+      font-size: 12px;
+      color: var(--painel-text-secondary);
+      flex-shrink: 0;
+    }
+    .recent-edits-list .skeleton,
+    .recent-edits-list .empty {
+      color: var(--painel-text-disabled);
+      font-size: 13px;
+      text-align: center;
+      padding: 12px 0;
+      border-bottom: 0;
+    }
     .action-eyebrow {
       font-size: 11px;
       font-weight: 600;
