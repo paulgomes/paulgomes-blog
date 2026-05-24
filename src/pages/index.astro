@@ -15,7 +15,12 @@ const allPosts = (await getCollection('blog')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
-const featured = allPosts.find((p) => p.data.heroImage) || allPosts[0];
+// Prioridade: post explicitamente marcado como featured no painel ->
+// fallback pro mais recente com hero -> ultimo recurso primeiro overall
+const featured =
+  allPosts.find((p) => p.data.featured === true) ||
+  allPosts.find((p) => p.data.heroImage) ||
+  allPosts[0];
 const latest = allPosts.filter((p) => p.id !== featured?.id).slice(0, 6);
 const themePosts = allPosts
   .filter((p) => p.id !== featured?.id)

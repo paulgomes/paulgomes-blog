@@ -90,6 +90,7 @@ export function buildMarkdown(post: {
   focus_keyword?: string | null;
   meta_title?: string | null;
   meta_description?: string | null;
+  is_featured?: number | boolean | null;
 }): string {
   const tags: string[] = Array.isArray(post.tags)
     ? post.tags
@@ -110,6 +111,8 @@ export function buildMarkdown(post: {
     for (const t of tags) fm += `  - ${t}\n`;
   }
   if (post.hero_image_url) fm += `heroImage: ${yamlString(post.hero_image_url)}\n`;
+  // Adiciona linha so quando is_featured=1 (omissao = false via default Zod)
+  if (post.is_featured === 1 || post.is_featured === true) fm += `featured: true\n`;
   if (post.focus_keyword) fm += `focusKeyword: ${yamlString(post.focus_keyword)}\n`;
   if (post.meta_title) fm += `metaTitle: ${yamlString(post.meta_title)}\n`;
   if (post.meta_description) fm += `metaDescription: ${yamlString(post.meta_description)}\n`;

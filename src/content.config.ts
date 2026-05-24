@@ -17,6 +17,7 @@ const blog = defineCollection({
 			tags: z.array(z.enum([
 				'IA', 'GEO', 'SEO', 'Branding', 'Tecnologia', 'Negócios'
 			])).default([]),
+			featured: z.boolean().optional().default(false),
 		}),
 });
 

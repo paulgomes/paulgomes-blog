@@ -693,14 +693,38 @@ const currentNav = isEditing ? 'posts' : 'new';
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Falha ao alterar destaque');
 
+        // Sync automatico (modelo Salvar=Publicar): commita o .md deste post
+        // com (ou sem) "featured: true" no frontmatter.
+        try {
+          const syncRes = await fetch(`/api/posts/${encodeURIComponent(postSlug)}/sync`, { method: 'POST' });
+          if (!syncRes.ok) {
+            const syncErr = await syncRes.json().catch(() => ({})) as any;
+            throw new Error(syncErr.error || 'Falha ao publicar destaque');
+          }
+        } catch (syncErr: any) {
+          window.toast?.(`Destaque salvo no painel, mas sync falhou: ${syncErr.message}`, 'error', 6000);
+          await updateFeaturedHint();
+          return;
+        }
+
+        // Sync do previous (se houver) — remove "featured: true" do .md antigo.
+        // Falha aqui nao bloqueia: o novo featured ja chegou no Git.
+        if (data.previous && data.previous.slug) {
+          try {
+            await fetch(`/api/posts/${encodeURIComponent(data.previous.slug)}/sync`, { method: 'POST' });
+          } catch (prevErr) {
+            console.warn('Sync do post anterior falhou:', prevErr);
+          }
+        }
+
         if (willFeature) {
           if (data.previous) {
-            window.toast?.(`★ Destaque alterado. "${data.previous.title}" perdeu o destaque.`, 'success', 5000);
+            window.toast?.(`★ Destaque alterado. "${data.previous.title}" perdeu o destaque. Rebuild em ~2 min.`, 'success', 6000);
           } else {
-            window.toast?.('★ Post destacado!', 'success', 3000);
+            window.toast?.('★ Post destacado! Rebuild em ~2 min.', 'success', 5000);
           }
         } else {
-          window.toast?.('Destaque removido.', 'info', 3000);
+          window.toast?.('Destaque removido. Rebuild em ~2 min.', 'info', 5000);
         }
         await updateFeaturedHint();
       } catch (err: any) {
