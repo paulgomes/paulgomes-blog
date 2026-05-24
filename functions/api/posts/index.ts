@@ -1,7 +1,7 @@
 import type { Env } from '../_utils/db';
 import { requireAuth } from '../_utils/require-auth';
 
-// GET /api/posts?q=<query>&tag=<tag>&status=<draft|published|scheduled|all>&page=<n>&per_page=50
+// GET /api/posts?q=<query>&tag=<tag>&status=<draft|published|scheduled|deleted|all>&page=<n>&per_page=50
 //
 // Lista UNIFICADA de drafts + posts_meta com filtros.
 // Retorna items[] com discriminador `type: 'post' | 'draft'`.
@@ -75,6 +75,30 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     if (likeQ) bindings.push(likeQ);
     if (likeTag) bindings.push(likeTag);
     bindings.push(perPage, offset);
+  } else if (statusParam === 'deleted') {
+    // Lixeira: so posts_meta com status='deleted' (drafts nao tem lixeira)
+    const deletedSelect = `
+      SELECT
+        'post:' || slug AS id,
+        'post' AS type,
+        slug,
+        title,
+        description,
+        hero_image_url,
+        tags,
+        status,
+        published_at,
+        updated_at,
+        0 AS git_synced
+      FROM posts_meta
+      WHERE status = 'deleted'
+      ${likeQ ? "AND title LIKE ?" : ""}
+      ${likeTag ? "AND tags LIKE ?" : ""}
+    `;
+    sql = deletedSelect + ' ORDER BY updated_at DESC LIMIT ? OFFSET ?';
+    if (likeQ) bindings.push(likeQ);
+    if (likeTag) bindings.push(likeTag);
+    bindings.push(perPage, offset);
   } else if (statusParam === 'draft' || statusParam === 'scheduled') {
     // Filtra drafts pelo status específico
     const draftWithStatus = draftsSelect + (likeQ || likeTag ? ' AND status = ?' : ' WHERE status = ?');
@@ -99,6 +123,12 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   let totalBindings: any[] = [];
   if (statusParam === 'published') {
     totalSql = `SELECT COUNT(*) as n FROM posts_meta WHERE status != 'deleted'
+      ${likeQ ? "AND title LIKE ?" : ""}
+      ${likeTag ? "AND tags LIKE ?" : ""}`;
+    if (likeQ) totalBindings.push(likeQ);
+    if (likeTag) totalBindings.push(likeTag);
+  } else if (statusParam === 'deleted') {
+    totalSql = `SELECT COUNT(*) as n FROM posts_meta WHERE status = 'deleted'
       ${likeQ ? "AND title LIKE ?" : ""}
       ${likeTag ? "AND tags LIKE ?" : ""}`;
     if (likeQ) totalBindings.push(likeQ);
