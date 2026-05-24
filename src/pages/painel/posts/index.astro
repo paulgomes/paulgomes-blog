@@ -1,5 +1,6 @@
 ---
 import PainelHead from '../../../components/painel/PainelHead.astro';
+import { TAGS } from '../../../lib/tags';
 import '../../../styles/painel.css';
 ---
 
@@ -22,22 +23,49 @@ import '../../../styles/painel.css';
 
       <main class="painel-main">
         <h1 class="font-display text-3xl font-bold mb-2">Posts</h1>
-        <p class="mb-6" style="color: var(--color-muted)">Rascunhos e ensaios publicados</p>
+        <p class="mb-6" style="color: var(--color-muted)">Rascunhos e posts publicados</p>
 
-        <div class="flex gap-2 mb-6">
+        <div class="posts-toolbar">
+          <input
+            id="searchInput"
+            class="painel-input"
+            type="search"
+            placeholder="Buscar por título..."
+            autocomplete="off"
+          />
+          <select id="tagFilter" class="painel-input posts-tag-select">
+            <option value="">Todas as tags</option>
+            {TAGS.map((t) => <option value={t}>{t}</option>)}
+          </select>
+        </div>
+
+        <div class="flex gap-2 mb-6 flex-wrap">
           <button class="filter-btn painel-button secondary is-active" data-filter="all">Todos</button>
           <button class="filter-btn painel-button secondary" data-filter="draft">Rascunhos</button>
           <button class="filter-btn painel-button secondary" data-filter="published">Publicados</button>
+          <button class="filter-btn painel-button secondary" data-filter="scheduled">Agendados</button>
         </div>
 
         <div id="postsList" class="space-y-3">
           <p style="color: var(--color-muted)">Carregando...</p>
         </div>
+
+        <div id="pagination" class="posts-pagination hidden">
+          <button id="prevPage" class="painel-button secondary" disabled>← Anterior</button>
+          <span id="pageInfo" class="posts-page-info"></span>
+          <button id="nextPage" class="painel-button secondary" disabled>Próximo →</button>
+        </div>
       </main>
     </div>
 
     <script>
-      let currentFilter = 'all';
+      const PER_PAGE = 50;
+      let currentStatus = 'all';
+      let currentQ = '';
+      let currentTag = '';
+      let currentPage = 1;
+      let totalPages = 1;
+      let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
       function escapeHtml(str: string) {
         const div = document.createElement('div');
@@ -57,43 +85,97 @@ import '../../../styles/painel.css';
         return 'Rascunho';
       }
 
+      // Lê URL inicial
+      function readUrlState() {
+        const u = new URL(window.location.href);
+        currentStatus = u.searchParams.get('status') || 'all';
+        currentQ = u.searchParams.get('q') || '';
+        currentTag = u.searchParams.get('tag') || '';
+        currentPage = Math.max(1, parseInt(u.searchParams.get('page') || '1', 10));
+
+        (document.getElementById('searchInput') as HTMLInputElement).value = currentQ;
+        (document.getElementById('tagFilter') as HTMLSelectElement).value = currentTag;
+        document.querySelectorAll<HTMLButtonElement>('.filter-btn').forEach((b) => {
+          b.classList.toggle('is-active', b.dataset.filter === currentStatus);
+        });
+      }
+
+      // Escreve URL (pushState — pra histórico funcionar com back/forward)
+      function writeUrlState(replace = false) {
+        const u = new URL(window.location.href);
+        u.searchParams.set('status', currentStatus);
+        if (currentQ) u.searchParams.set('q', currentQ); else u.searchParams.delete('q');
+        if (currentTag) u.searchParams.set('tag', currentTag); else u.searchParams.delete('tag');
+        if (currentPage > 1) u.searchParams.set('page', String(currentPage)); else u.searchParams.delete('page');
+        const method = replace ? 'replaceState' : 'pushState';
+        window.history[method](null, '', u.toString());
+      }
+
       async function loadPosts() {
-        const res = await fetch(`/api/drafts?status=${currentFilter}`);
+        const params = new URLSearchParams();
+        params.set('status', currentStatus);
+        if (currentQ) params.set('q', currentQ);
+        if (currentTag) params.set('tag', currentTag);
+        params.set('page', String(currentPage));
+        params.set('per_page', String(PER_PAGE));
+
+        const container = document.getElementById('postsList');
+        if (container) container.innerHTML = `<p style="color: var(--color-muted)">Carregando...</p>`;
+
+        const res = await fetch(`/api/posts?${params.toString()}`);
         if (res.status === 401) {
           window.location.href = '/painel/login';
           return;
         }
         const data = await res.json();
-        renderPosts(data.drafts || []);
+        totalPages = data.total_pages || 1;
+        renderItems(data.items || [], data.total || 0);
+        renderPagination(data.total || 0);
       }
 
-      function renderPosts(drafts: any[]) {
+      function renderItems(items: any[], total: number) {
         const container = document.getElementById('postsList');
         if (!container) return;
-        if (!drafts.length) {
+        if (!items.length) {
           container.innerHTML = `<div class="painel-card" style="padding: 3rem 1.5rem; color: var(--color-muted); text-align: center;">Nenhum post encontrado.</div>`;
           return;
         }
-        container.innerHTML = drafts.map((d: any) => `
-          <div class="posts-list-row painel-card" data-id="${escapeHtml(d.id)}">
-            <a href="/painel/posts/editor?id=${escapeHtml(d.id)}" class="posts-list-link">
-              <div class="posts-list-meta">
-                <span class="${badgeClass(d.status)}">${badgeLabel(d.status)}</span>
-                <span class="posts-list-date">${new Date(d.updated_at).toLocaleDateString('pt-BR')}</span>
-              </div>
-              <h3 class="posts-list-title">${escapeHtml(d.title || 'Sem título')}</h3>
-              <p class="posts-list-desc">${escapeHtml(d.description || '')}</p>
-            </a>
-            <button class="posts-list-card-delete" data-delete-id="${escapeHtml(d.id)}" data-delete-title="${escapeHtml(d.title || 'Sem título')}" aria-label="Excluir">🗑</button>
-          </div>
-        `).join('');
 
-        // Bind delete buttons
-        container.querySelectorAll<HTMLButtonElement>('[data-delete-id]').forEach((btn) => {
+        container.innerHTML = items.map((it: any) => {
+          const isDraft = it.type === 'draft';
+          const editorHref = isDraft
+            ? `/painel/posts/editor?id=${encodeURIComponent(it.id.replace(/^draft:/, ''))}`
+            : `/painel/posts/editor?slug=${encodeURIComponent(it.slug)}`;
+          const deletePath = isDraft
+            ? `/api/drafts/${encodeURIComponent(it.id.replace(/^draft:/, ''))}`
+            : `/api/posts/${encodeURIComponent(it.slug)}`;
+          const dateTs = Number(it.updated_at || it.published_at || 0);
+          const dateLabel = dateTs ? new Date(dateTs).toLocaleDateString('pt-BR') : '—';
+          const syncBadge = !isDraft && it.git_synced === 0
+            ? `<span class="badge-sync" title="Alterações pendentes de sincronização com Git">● Não sincronizado</span>`
+            : '';
+
+          return `
+            <div class="posts-list-row painel-card" data-id="${escapeHtml(it.id)}">
+              <a href="${editorHref}" class="posts-list-link">
+                <div class="posts-list-meta">
+                  <span class="${badgeClass(it.status)}">${badgeLabel(it.status)}</span>
+                  ${syncBadge}
+                  <span class="posts-list-date">${dateLabel}</span>
+                </div>
+                <h3 class="posts-list-title">${escapeHtml(it.title || 'Sem título')}</h3>
+                <p class="posts-list-desc">${escapeHtml(it.description || '')}</p>
+              </a>
+              <button class="posts-list-card-delete" data-delete-path="${escapeHtml(deletePath)}" data-delete-title="${escapeHtml(it.title || 'Sem título')}" aria-label="Excluir">🗑</button>
+            </div>
+          `;
+        }).join('');
+
+        container.querySelectorAll<HTMLButtonElement>('[data-delete-path]').forEach((btn) => {
           btn.addEventListener('click', async (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const id = btn.dataset.deleteId!;
+            const path = btn.dataset.deletePath!;
             const title = btn.dataset.deleteTitle || 'este post';
             const ok = await window.confirmAction!({
               title: 'Excluir post?',
@@ -103,8 +185,8 @@ import '../../../styles/painel.css';
               danger: true,
             });
             if (!ok) return;
-            const res = await fetch(`/api/drafts/${id}`, { method: 'DELETE' });
-            if (res.ok) {
+            const r = await fetch(path, { method: 'DELETE' });
+            if (r.ok) {
               window.toast?.('Post excluído', 'success');
               loadPosts();
             } else {
@@ -114,13 +196,74 @@ import '../../../styles/painel.css';
         });
       }
 
+      function renderPagination(total: number) {
+        const pag = document.getElementById('pagination');
+        const info = document.getElementById('pageInfo');
+        const prev = document.getElementById('prevPage') as HTMLButtonElement;
+        const next = document.getElementById('nextPage') as HTMLButtonElement;
+        if (!pag || !info || !prev || !next) return;
+
+        if (total <= PER_PAGE) {
+          pag.classList.add('hidden');
+          return;
+        }
+        pag.classList.remove('hidden');
+        info.textContent = `Página ${currentPage} de ${totalPages} · ${total} ${total === 1 ? 'item' : 'itens'}`;
+        prev.disabled = currentPage <= 1;
+        next.disabled = currentPage >= totalPages;
+      }
+
+      // === EVENT BINDINGS ===
       document.querySelectorAll<HTMLButtonElement>('.filter-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('is-active'));
           btn.classList.add('is-active');
-          currentFilter = btn.dataset.filter || 'all';
+          currentStatus = btn.dataset.filter || 'all';
+          currentPage = 1;
+          writeUrlState();
           loadPosts();
         });
+      });
+
+      document.getElementById('searchInput')?.addEventListener('input', (e) => {
+        const val = (e.target as HTMLInputElement).value;
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          currentQ = val.trim();
+          currentPage = 1;
+          writeUrlState();
+          loadPosts();
+        }, 300);
+      });
+
+      document.getElementById('tagFilter')?.addEventListener('change', (e) => {
+        currentTag = (e.target as HTMLSelectElement).value;
+        currentPage = 1;
+        writeUrlState();
+        loadPosts();
+      });
+
+      document.getElementById('prevPage')?.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          writeUrlState();
+          loadPosts();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+
+      document.getElementById('nextPage')?.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          writeUrlState();
+          loadPosts();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+
+      window.addEventListener('popstate', () => {
+        readUrlState();
+        loadPosts();
       });
 
       document.getElementById('logoutBtn')?.addEventListener('click', async () => {
@@ -128,6 +271,9 @@ import '../../../styles/painel.css';
         window.location.href = '/painel/login';
       });
 
+      // Boot
+      readUrlState();
+      writeUrlState(true);
       loadPosts();
     </script>
 
@@ -136,6 +282,43 @@ import '../../../styles/painel.css';
         background: var(--color-ink) !important;
         color: var(--color-paper) !important;
         border-color: var(--color-ink) !important;
+      }
+
+      .posts-toolbar {
+        display: grid;
+        grid-template-columns: 1fr 220px;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      @media (max-width: 640px) {
+        .posts-toolbar { grid-template-columns: 1fr; }
+      }
+      .posts-tag-select {
+        cursor: pointer;
+      }
+
+      .posts-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-border);
+      }
+      .posts-pagination.hidden { display: none; }
+      .posts-page-info {
+        font-size: 0.875rem;
+        color: var(--color-muted);
+      }
+
+      .badge-sync {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 9999px;
+        background: #fef3c7;
+        color: #92400e;
+        font-weight: 600;
       }
     </style>
   </body>

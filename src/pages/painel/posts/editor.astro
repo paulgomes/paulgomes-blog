@@ -18,11 +18,16 @@ import '../../../styles/painel.css';
             <span id="saveStatus" class="save-status"></span>
             <button id="deleteBtn" class="painel-button danger" style="display: none;">Excluir</button>
             <button id="publishBtn" class="painel-button primary">Publicar</button>
+            <button id="syncBtn" class="painel-button primary" style="display: none;" disabled title="Sincronização com Git em breve (Sessão C)">Sincronizar com Git</button>
           </div>
         </div>
       </div>
 
       <main class="painel-main" style="max-width: 920px;">
+        <div id="postModeBanner" class="post-mode-banner" style="display: none;">
+          📝 Editando post publicado — alterações ficam no painel até serem sincronizadas com Git (em breve)
+        </div>
+
         <input id="title" class="painel-input" placeholder="Título do ensaio" style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; border: none; padding: 0.5rem 0; margin-bottom: 0.5rem;" />
         <input id="description" class="painel-input" placeholder="Descrição curta (aparece em listagens)" style="border: none; padding: 0.5rem 0; margin-bottom: 1rem; color: var(--color-muted);" />
 
@@ -32,7 +37,7 @@ import '../../../styles/painel.css';
             <input id="slug" class="painel-input" placeholder="meu-post" />
           </div>
           <div>
-            <label style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-muted); margin-bottom: 0.4rem;">Categoria</label>
+            <label id="categoryLabel" style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-muted); margin-bottom: 0.4rem;">Categoria</label>
             <input id="category" class="painel-input" placeholder="Branding, IA, etc" />
           </div>
         </div>
@@ -75,10 +80,16 @@ import '../../../styles/painel.css';
     </div>
 
     <script>
-      // ===== Estado =====
+      // ===== Modo =====
+      // 'post'  → editando posts_meta via /api/posts/:slug
+      // 'draft' → editando drafts via /api/drafts/:id (legado)
       const params = new URLSearchParams(window.location.search);
+      const initialSlug = params.get('slug');
       const initialId = params.get('id');
+      const mode: 'post' | 'draft' = initialSlug ? 'post' : 'draft';
+
       let draftId: string | null = initialId;
+      let postSlug: string | null = initialSlug;
       let currentContent = '';
       let saveTimer: ReturnType<typeof setTimeout> | null = null;
       let retryTimer: ReturnType<typeof setTimeout> | null = null;
@@ -92,10 +103,13 @@ import '../../../styles/painel.css';
       const $description = document.getElementById('description') as HTMLInputElement;
       const $slug = document.getElementById('slug') as HTMLInputElement;
       const $category = document.getElementById('category') as HTMLInputElement;
+      const $categoryLabel = document.getElementById('categoryLabel') as HTMLLabelElement;
       const $heroImage = document.getElementById('heroImage') as HTMLInputElement;
       const $saveStatus = document.getElementById('saveStatus') as HTMLSpanElement;
       const $publishBtn = document.getElementById('publishBtn') as HTMLButtonElement;
+      const $syncBtn = document.getElementById('syncBtn') as HTMLButtonElement;
       const $deleteBtn = document.getElementById('deleteBtn') as HTMLButtonElement;
+      const $banner = document.getElementById('postModeBanner') as HTMLDivElement;
 
       const $wordCount = document.getElementById('wordCount') as HTMLSpanElement;
       const $readTime = document.getElementById('readTime') as HTMLSpanElement;
@@ -105,6 +119,19 @@ import '../../../styles/painel.css';
       const $previewSlug = document.getElementById('previewSlug') as HTMLSpanElement;
       const $previewTitle = document.getElementById('previewTitle') as HTMLHeadingElement;
       const $previewDesc = document.getElementById('previewDesc') as HTMLParagraphElement;
+
+      // ===== Setup modo post =====
+      if (mode === 'post') {
+        $banner.style.display = 'block';
+        $publishBtn.style.display = 'none';
+        $syncBtn.style.display = 'inline-flex';
+        $slug.readOnly = true;
+        $slug.style.background = 'var(--color-subtle)';
+        $slug.style.cursor = 'not-allowed';
+        $categoryLabel.textContent = 'Tags (separadas por vírgula)';
+        $category.placeholder = 'IA, SEO, Branding';
+        $deleteBtn.style.display = 'inline-flex';
+      }
 
       // ===== Ponte com o Editor =====
       window.addEventListener('editor:ready', () => {
@@ -156,7 +183,25 @@ import '../../../styles/painel.css';
       }
       updateSeoPreview();
 
-      // ===== Load existing draft =====
+      // ===== Helpers tags =====
+      function tagsToString(tags: any): string {
+        if (!tags) return '';
+        if (Array.isArray(tags)) return tags.join(', ');
+        if (typeof tags === 'string') {
+          try {
+            const parsed = JSON.parse(tags);
+            if (Array.isArray(parsed)) return parsed.join(', ');
+          } catch {}
+          return tags;
+        }
+        return '';
+      }
+
+      function tagsToArray(s: string): string[] {
+        return s.split(',').map((t) => t.trim()).filter(Boolean);
+      }
+
+      // ===== Load =====
       async function loadDraft() {
         if (!initialId) return;
         const res = await fetch(`/api/drafts/${initialId}`);
@@ -180,8 +225,31 @@ import '../../../styles/painel.css';
         updateSeoPreview();
       }
 
-      // ===== Auto-save (lazy: não cria draft vazio) =====
-      function buildPayload() {
+      async function loadPost() {
+        if (!initialSlug) return;
+        const res = await fetch(`/api/posts/${encodeURIComponent(initialSlug)}`);
+        if (res.status === 401) {
+          window.location.href = '/painel/login';
+          return;
+        }
+        if (!res.ok) {
+          $saveStatus.textContent = 'Erro ao carregar';
+          window.toast?.('Erro ao carregar post', 'error');
+          return;
+        }
+        const { post } = await res.json();
+        $title.value = post.title || '';
+        $description.value = post.description || '';
+        $slug.value = post.slug || '';
+        $category.value = tagsToString(post.tags);
+        $heroImage.value = post.hero_image_url || '';
+        currentContent = post.content_md || '';
+        setEditorContent(currentContent);
+        updateSeoPreview();
+      }
+
+      // ===== Auto-save =====
+      function buildDraftPayload() {
         return {
           title: $title.value,
           description: $description.value,
@@ -189,6 +257,16 @@ import '../../../styles/painel.css';
           category: $category.value,
           hero_image_url: $heroImage.value,
           content_md: currentContent,
+        };
+      }
+
+      function buildPostPayload() {
+        return {
+          title: $title.value,
+          description: $description.value,
+          hero_image_url: $heroImage.value,
+          content_md: currentContent,
+          tags: tagsToArray($category.value),
         };
       }
 
@@ -210,14 +288,41 @@ import '../../../styles/painel.css';
       async function autoSave() {
         if (!hasChanges) return;
 
-        // Lazy: não cria draft vazio
+        // ===== Modo post (PUT /api/posts/:slug) =====
+        if (mode === 'post') {
+          if (!postSlug) return;
+          hasChanges = false;
+          $saveStatus.textContent = 'Salvando...';
+          $saveStatus.classList.remove('save-status-error');
+
+          try {
+            const res = await fetch(`/api/posts/${encodeURIComponent(postSlug)}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(buildPostPayload()),
+            });
+            if (!res.ok) throw new Error('PUT falhou');
+            if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
+            $saveStatus.textContent = `Salvo às ${formatTime(new Date())} · não sincronizado com Git`;
+          } catch (err) {
+            console.error(err);
+            $saveStatus.textContent = 'Erro ao salvar — tentando de novo';
+            $saveStatus.classList.add('save-status-error');
+            hasChanges = true;
+            if (retryTimer) clearTimeout(retryTimer);
+            retryTimer = setTimeout(autoSave, 5000);
+          }
+          return;
+        }
+
+        // ===== Modo draft (lógica legada) =====
         if (!draftId && !hasAnyContent()) return;
 
         hasChanges = false;
         $saveStatus.textContent = 'Salvando...';
         $saveStatus.classList.remove('save-status-error');
 
-        const payload = buildPayload();
+        const payload = buildDraftPayload();
 
         try {
           if (!draftId) {
@@ -257,16 +362,20 @@ import '../../../styles/painel.css';
         saveTimer = setTimeout(autoSave, 1500);
       }
 
-      [$title, $description, $slug, $category, $heroImage].forEach((el) => {
+      // Slug não recebe handler de input em modo post (readonly)
+      const inputsToWatch = mode === 'post'
+        ? [$title, $description, $category, $heroImage]
+        : [$title, $description, $slug, $category, $heroImage];
+
+      inputsToWatch.forEach((el) => {
         el.addEventListener('input', () => {
           updateSeoPreview();
           scheduleAutoSave();
         });
       });
 
-      // ===== Publicar =====
+      // ===== Publicar (draft mode only) =====
       $publishBtn.addEventListener('click', async () => {
-        // Força salvar pendente antes (cria draft se ainda não existir + houver conteúdo)
         if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
         if (hasChanges) await autoSave();
 
@@ -306,6 +415,26 @@ import '../../../styles/painel.css';
 
       // ===== Excluir =====
       $deleteBtn.addEventListener('click', async () => {
+        if (mode === 'post') {
+          if (!postSlug) return;
+          const ok = await window.confirmAction!({
+            title: 'Excluir este post?',
+            message: 'O post será marcado como removido no painel. O arquivo no Git permanece intacto até a próxima sincronização (Sessão C).',
+            confirmLabel: 'Excluir',
+            cancelLabel: 'Cancelar',
+            danger: true,
+          });
+          if (!ok) return;
+          const res = await fetch(`/api/posts/${encodeURIComponent(postSlug)}`, { method: 'DELETE' });
+          if (res.ok) {
+            window.toast?.('Post excluído', 'success');
+            setTimeout(() => { window.location.href = '/painel/posts'; }, 700);
+          } else {
+            window.toast?.('Erro ao excluir', 'error');
+          }
+          return;
+        }
+
         if (!draftId) return;
         const ok = await window.confirmAction!({
           title: 'Excluir este rascunho?',
@@ -326,9 +455,27 @@ import '../../../styles/painel.css';
       });
 
       // ===== Init =====
-      if (initialId) {
+      if (mode === 'post') {
+        loadPost();
+      } else if (initialId) {
         loadDraft();
       }
     </script>
+
+    <style>
+      .post-mode-banner {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fde68a;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+      #syncBtn[disabled] {
+        cursor: not-allowed;
+      }
+    </style>
   </body>
 </html>

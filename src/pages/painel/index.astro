@@ -29,18 +29,23 @@ import '../../styles/painel.css';
         <h2 class="font-display text-4xl font-bold tracking-tight mb-4">Bem-vindo ao painel</h2>
         <p class="text-lg mb-10" style="color: var(--color-muted)">Crie, edite e publique ensaios.</p>
 
-        <div class="painel-stats-grid">
-          <div class="painel-stat">
+        <div class="painel-stats-grid painel-stats-grid-4">
+          <a href="/painel/posts" class="painel-stat painel-stat-link">
             <p class="painel-stat-label">Total</p>
             <p class="painel-stat-value" id="statTotal"><span class="painel-stat-skeleton"></span></p>
-          </div>
-          <div class="painel-stat">
+          </a>
+          <a href="/painel/posts?status=draft" class="painel-stat painel-stat-link">
             <p class="painel-stat-label">Rascunhos</p>
             <p class="painel-stat-value" id="statDrafts"><span class="painel-stat-skeleton"></span></p>
-          </div>
-          <div class="painel-stat">
+          </a>
+          <a href="/painel/posts?status=published" class="painel-stat painel-stat-link">
             <p class="painel-stat-label">Publicados</p>
             <p class="painel-stat-value" id="statPublished"><span class="painel-stat-skeleton"></span></p>
+          </a>
+          <div class="painel-stat painel-stat-warn" id="statUnsyncedCard">
+            <p class="painel-stat-label">Não sincronizados</p>
+            <p class="painel-stat-value" id="statUnsynced"><span class="painel-stat-skeleton"></span></p>
+            <p class="painel-stat-hint">Editados no painel, pendentes de Git</p>
           </div>
         </div>
 
@@ -74,20 +79,44 @@ import '../../styles/painel.css';
           }
         });
 
-      // Stats
-      async function loadStats() {
-        const res = await fetch('/api/drafts?status=all');
-        if (!res.ok) return;
-        const { drafts } = await res.json();
-        const total = drafts.length;
-        const draftsCount = drafts.filter((d: any) => d.status === 'draft').length;
-        const publishedCount = drafts.filter((d: any) => d.status === 'published').length;
+      // Stats — cache cliente 10s pra evitar refetch ao voltar/avançar
+      const STATS_CACHE_KEY = 'painel:stats';
+      const STATS_TTL = 10_000;
+
+      function renderStats(s: { total: number; drafts: number; published: number; unsynced: number }) {
         const $t = document.getElementById('statTotal');
         const $d = document.getElementById('statDrafts');
         const $p = document.getElementById('statPublished');
-        if ($t) $t.textContent = String(total);
-        if ($d) $d.textContent = String(draftsCount);
-        if ($p) $p.textContent = String(publishedCount);
+        const $u = document.getElementById('statUnsynced');
+        const $uCard = document.getElementById('statUnsyncedCard');
+        if ($t) $t.textContent = String(s.total);
+        if ($d) $d.textContent = String(s.drafts);
+        if ($p) $p.textContent = String(s.published);
+        if ($u) $u.textContent = String(s.unsynced);
+        if ($uCard) $uCard.classList.toggle('painel-stat-warn-active', s.unsynced > 0);
+      }
+
+      async function loadStats(force = false) {
+        if (!force) {
+          try {
+            const raw = sessionStorage.getItem(STATS_CACHE_KEY);
+            if (raw) {
+              const { at, data } = JSON.parse(raw);
+              if (Date.now() - at < STATS_TTL) {
+                renderStats(data);
+                return;
+              }
+            }
+          } catch {}
+        }
+
+        const res = await fetch('/api/stats');
+        if (!res.ok) return;
+        const data = await res.json();
+        renderStats(data);
+        try {
+          sessionStorage.setItem(STATS_CACHE_KEY, JSON.stringify({ at: Date.now(), data }));
+        } catch {}
       }
       loadStats();
 
