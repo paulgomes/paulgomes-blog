@@ -4,6 +4,9 @@ import HeaderLink from './HeaderLink.astro';
 import ThemeToggle from './ThemeToggle.astro';
 import HeaderSocial from './HeaderSocial.astro';
 import logo from '../assets/brand/logo-paulgomes.webp';
+import menuHeader from '../data/menu-header.json';
+
+const navItems = menuHeader.items || [];
 ---
 
 <header class="border-b sticky top-0 z-50 backdrop-blur" style="border-color: var(--color-border); background-color: color-mix(in srgb, var(--color-paper) 88%, transparent);">
@@ -21,11 +24,15 @@ import logo from '../assets/brand/logo-paulgomes.webp';
 
     <!-- Desktop nav (md+) -->
     <nav class="desktop-nav items-center gap-5 text-sm font-medium">
-      <HeaderLink href="/" class="hidden lg:inline-block">Home</HeaderLink>
-      <HeaderLink href="/sobre">Sobre</HeaderLink>
-      <HeaderLink href="/blog">Insights</HeaderLink>
-      <HeaderLink href="/parceiros">Parceiros</HeaderLink>
-      <HeaderLink href="/contato">Contato</HeaderLink>
+      {navItems.map((item) => (
+        <HeaderLink
+          href={item.url}
+          target={item.open_new_tab ? '_blank' : undefined}
+          rel={item.open_new_tab ? 'noopener noreferrer' : undefined}
+        >
+          {item.label}
+        </HeaderLink>
+      ))}
       <span class="mx-1 hidden h-5 w-px lg:inline-block" style="background-color: var(--color-border)"></span>
       <HeaderSocial />
       <span class="mx-1 hidden h-5 w-px sm:inline-block" style="background-color: var(--color-border)"></span>
@@ -72,11 +79,16 @@ import logo from '../assets/brand/logo-paulgomes.webp';
     </div>
 
     <nav class="mobile-menu-nav" aria-label="Menu principal">
-      <a href="/" data-menu-link>Home</a>
-      <a href="/sobre" data-menu-link>Sobre</a>
-      <a href="/blog" data-menu-link>Insights</a>
-      <a href="/parceiros" data-menu-link>Parceiros</a>
-      <a href="/contato" data-menu-link>Contato</a>
+      {navItems.map((item) => (
+        <a
+          href={item.url}
+          target={item.open_new_tab ? '_blank' : undefined}
+          rel={item.open_new_tab ? 'noopener noreferrer' : undefined}
+          data-menu-link
+        >
+          {item.label}
+        </a>
+      ))}
     </nav>
 
     <div class="mobile-menu-footer">

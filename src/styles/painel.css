@@ -523,6 +523,12 @@
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
+.menus-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
 .menus-help {
   font-size: 13px;
   color: var(--painel-text-secondary);

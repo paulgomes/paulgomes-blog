@@ -2,8 +2,11 @@
 import { Image } from 'astro:assets';
 import SocialIcons from './SocialIcons.astro';
 import signature from '../assets/brand/signature-paul-gomes.webp';
+import menuFooter from '../data/menu-footer.json';
 
 const year = new Date().getFullYear();
+// Defesa em profundidade: filtra /privacidade aqui tambem (ja filtrado no sync)
+const navItems = (menuFooter.items || []).filter((i) => i.url !== '/privacidade');
 ---
 
 <footer class="mt-24 border-t" style="border-color: var(--color-border)">
@@ -34,11 +37,16 @@ const year = new Date().getFullYear();
 
     <div class="flex flex-col items-start gap-4 text-sm md:flex-row md:items-center md:justify-between">
       <nav class="flex flex-wrap gap-6">
-        <a href="/" class="transition-opacity hover:opacity-60">Home</a>
-        <a href="/sobre" class="transition-opacity hover:opacity-60">Sobre</a>
-        <a href="/blog" class="transition-opacity hover:opacity-60">Insights</a>
-        <a href="/parceiros" class="transition-opacity hover:opacity-60">Parceiros</a>
-        <a href="/contato" class="transition-opacity hover:opacity-60">Contato</a>
+        {navItems.map((item) => (
+          <a
+            href={item.url}
+            target={item.open_new_tab ? '_blank' : undefined}
+            rel={item.open_new_tab ? 'noopener noreferrer' : undefined}
+            class="transition-opacity hover:opacity-60"
+          >
+            {item.label}
+          </a>
+        ))}
       </nav>
       <div class="flex flex-col gap-1 md:items-end" style="color: var(--color-muted)">
         <p>© {year} Paul Gomes · Feito com 💜 por <a href="https://agenciawys.com.br" target="_blank" rel="noopener" class="underline underline-offset-4">Agência WYS</a></p>

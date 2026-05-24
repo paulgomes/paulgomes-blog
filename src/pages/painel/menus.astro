@@ -21,8 +21,14 @@ import '../../styles/painel.css';
   </div>
 
   <div class="menus-toolbar">
-    <button class="painel-btn-primary" id="btnAddItem" type="button">+ Adicionar item</button>
-    <span class="menus-help">Clique num item pra editar. Submenus aparecem indentados.</span>
+    <div class="menus-toolbar-left">
+      <button class="painel-btn-primary" id="btnAddItem" type="button">+ Adicionar item</button>
+      <span class="menus-help">Clique num item pra editar. Submenus aparecem indentados.</span>
+    </div>
+    <button class="painel-btn-ghost" id="btnSyncGit" type="button" title="Commita src/data/menu-*.json com o estado atual do D1">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span id="btnSyncGitLabel">Sincronizar com Git</span>
+    </button>
   </div>
 
   <div class="menus-tree-container">
@@ -374,6 +380,38 @@ import '../../styles/painel.css';
         await loadMenus();
       } catch (err: any) {
         window.toast?.(err.message || 'Erro ao criar', 'error');
+      }
+    });
+
+    // === Sincronizar com Git ===
+    const $btnSyncGit = document.getElementById('btnSyncGit') as HTMLButtonElement;
+    const $btnSyncGitLabel = document.getElementById('btnSyncGitLabel') as HTMLSpanElement;
+    $btnSyncGit?.addEventListener('click', async () => {
+      const ok = await window.confirmAction!({
+        title: 'Sincronizar menus com Git?',
+        message: 'Vai gerar 2 commits (menu-header.json + menu-footer.json) e disparar rebuild do site em ~1-2 min.',
+        confirmLabel: 'Sincronizar',
+        cancelLabel: 'Cancelar',
+      });
+      if (!ok) return;
+
+      $btnSyncGit.disabled = true;
+      const originalLabel = $btnSyncGitLabel.textContent || 'Sincronizar com Git';
+      $btnSyncGitLabel.textContent = 'Sincronizando...';
+
+      try {
+        const res = await fetch('/api/menus/sync', { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) {
+          window.toast?.('Erro: ' + (data.error || 'desconhecido'), 'error', 6000);
+          return;
+        }
+        window.toast?.('Menus sincronizados — rebuild em ~2 min', 'success', 5000);
+      } catch (err) {
+        window.toast?.('Erro de rede ao sincronizar', 'error');
+      } finally {
+        $btnSyncGit.disabled = false;
+        $btnSyncGitLabel.textContent = originalLabel;
       }
     });
 
