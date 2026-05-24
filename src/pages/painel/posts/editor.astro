@@ -89,6 +89,20 @@ const currentNav = isEditing ? 'posts' : 'new';
         </div>
       </section>
 
+      <section class="side-section" id="featuredBlock" hidden>
+        <label class="side-label">Destaque</label>
+        <div class="featured-toggle">
+          <input type="checkbox" id="isFeatured" />
+          <label for="isFeatured" class="featured-toggle-label">
+            <span class="featured-star">★</span>
+            Destacar este post na home
+          </label>
+        </div>
+        <small id="featuredHint" class="featured-hint">
+          Apenas 1 post pode estar em destaque por vez.
+        </small>
+      </section>
+
       <section class="side-section seo-section">
         <h3 class="side-section__title">SEO</h3>
 
@@ -151,6 +165,11 @@ const currentNav = isEditing ? 'posts' : 'new';
     const $previewTitle = document.getElementById('previewTitle') as HTMLHeadingElement;
     const $previewDesc = document.getElementById('previewDesc') as HTMLParagraphElement;
 
+    // === Destaque (featured) — só aparece em modo post publicado ===
+    const $featuredBlock = document.getElementById('featuredBlock') as HTMLElement;
+    const $isFeatured = document.getElementById('isFeatured') as HTMLInputElement;
+    const $featuredHint = document.getElementById('featuredHint') as HTMLElement;
+
     // ===== Setup modo post =====
     if (mode === 'post') {
       $banner.style.display = 'flex';
@@ -161,6 +180,7 @@ const currentNav = isEditing ? 'posts' : 'new';
       $categoryLabel.textContent = 'Tags (separadas por vírgula)';
       $category.placeholder = 'IA, SEO, Branding';
       $deleteBtn.style.display = 'inline-flex';
+      $featuredBlock.hidden = false;
     }
 
     // ===== Ponte com o Editor =====
@@ -274,8 +294,35 @@ const currentNav = isEditing ? 'posts' : 'new';
       $category.value = tagsToString(post.tags);
       applyHeroValue(post.hero_image_url || '');
       currentContent = post.content_md || '';
+      $isFeatured.checked = Boolean(post.is_featured);
       setEditorContent(currentContent);
       updateSeoPreview();
+      updateFeaturedHint();
+    }
+
+    // === Featured hint ===
+    async function updateFeaturedHint() {
+      if (!$featuredHint) return;
+      if ($isFeatured.checked) {
+        $featuredHint.textContent = '★ Este é o post em destaque na home.';
+        $featuredHint.style.color = 'var(--painel-success)';
+        return;
+      }
+      try {
+        const res = await fetch('/api/posts/featured');
+        const data = await res.json();
+        if (!data.featured) {
+          $featuredHint.textContent = 'Nenhum post em destaque no momento.';
+        } else if (data.featured.slug !== postSlug) {
+          $featuredHint.textContent = `Atualmente em destaque: "${data.featured.title}"`;
+        } else {
+          $featuredHint.textContent = 'Apenas 1 post pode estar em destaque por vez.';
+        }
+        $featuredHint.style.color = 'var(--painel-text-secondary)';
+      } catch {
+        $featuredHint.textContent = 'Apenas 1 post pode estar em destaque por vez.';
+        $featuredHint.style.color = 'var(--painel-text-secondary)';
+      }
     }
 
     // ===== Auto-save =====
@@ -603,6 +650,67 @@ const currentNav = isEditing ? 'posts' : 'new';
       }
     });
 
+    // === Featured toggle handler ===
+    // Click no checkbox dispara API imediatamente (independe do botao Salvar).
+    // Se ja existir outro featured: confirmAction "Trocar post em destaque?" antes.
+    $isFeatured?.addEventListener('change', async (e) => {
+      const cb = e.target as HTMLInputElement;
+      const willFeature = cb.checked;
+
+      if (!postSlug || mode !== 'post') {
+        cb.checked = false;
+        return;
+      }
+
+      if (willFeature) {
+        try {
+          const checkRes = await fetch('/api/posts/featured');
+          const checkData = await checkRes.json();
+          if (checkData.featured && checkData.featured.slug !== postSlug) {
+            const confirmed = await window.confirmAction!({
+              title: 'Trocar post em destaque?',
+              message: `O post "${checkData.featured.title}" perderá o destaque. Continuar?`,
+              confirmLabel: 'Sim, destacar este',
+              cancelLabel: 'Cancelar',
+            });
+            if (!confirmed) {
+              cb.checked = false;
+              return;
+            }
+          }
+        } catch (err) {
+          console.warn('Erro ao buscar featured atual', err);
+        }
+      }
+
+      cb.disabled = true;
+      try {
+        const res = await fetch(`/api/posts/${encodeURIComponent(postSlug)}/feature`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ is_featured: willFeature }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Falha ao alterar destaque');
+
+        if (willFeature) {
+          if (data.previous) {
+            window.toast?.(`★ Destaque alterado. "${data.previous.title}" perdeu o destaque.`, 'success', 5000);
+          } else {
+            window.toast?.('★ Post destacado!', 'success', 3000);
+          }
+        } else {
+          window.toast?.('Destaque removido.', 'info', 3000);
+        }
+        await updateFeaturedHint();
+      } catch (err: any) {
+        window.toast?.(err.message || 'Erro ao alterar destaque', 'error', 5000);
+        cb.checked = !willFeature;
+      } finally {
+        cb.disabled = false;
+      }
+    });
+
     if (mode === 'post') {
       loadPost();
     } else if (initialId) {
@@ -811,6 +919,48 @@ const currentNav = isEditing ? 'posts' : 'new';
       letter-spacing: 0.05em;
       color: var(--painel-text-secondary);
       margin: 0 0 12px;
+    }
+
+    /* === FEATURED TOGGLE === */
+    .featured-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+    }
+    .featured-toggle input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--painel-accent);
+      margin: 0;
+      flex-shrink: 0;
+    }
+    .featured-toggle input[type="checkbox"]:disabled {
+      cursor: wait;
+      opacity: 0.6;
+    }
+    .featured-toggle-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--painel-text-primary);
+      user-select: none;
+    }
+    .featured-star {
+      color: var(--painel-warning);
+      font-size: 16px;
+      line-height: 1;
+    }
+    .featured-hint {
+      display: block;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--painel-text-secondary);
+      line-height: 1.4;
+      transition: color .15s;
     }
 
     /* === HERO UPLOADER === */
