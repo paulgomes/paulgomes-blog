@@ -25,10 +25,7 @@ import '../../styles/painel.css';
       <button class="painel-btn-primary" id="btnAddItem" type="button">+ Adicionar item</button>
       <span class="menus-help">Clique num item pra editar. Submenus aparecem indentados.</span>
     </div>
-    <button class="painel-btn-ghost" id="btnSyncGit" type="button" title="Commita src/data/menu-*.json com o estado atual do D1">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      <span id="btnSyncGitLabel">Sincronizar com Git</span>
-    </button>
+    <span id="menuSyncIndicator" class="menus-sync-indicator">Cada salvar publica no site</span>
   </div>
 
   <div class="menus-tree-container">
@@ -273,9 +270,10 @@ import '../../styles/painel.css';
           const err = await res.json().catch(() => ({})) as any;
           throw new Error(err.error || 'Falha ao salvar');
         }
-        window.toast?.('Item atualizado', 'success');
+        window.toast?.('Item salvo · sincronizando...', 'info');
         expandedItemId = null;
         await loadMenus();
+        await triggerMenuSync();
       } catch (err: any) {
         window.toast?.(err.message || 'Erro ao salvar', 'error');
       }
@@ -302,8 +300,9 @@ import '../../styles/painel.css';
           const err = await res.json().catch(() => ({})) as any;
           throw new Error(err.error || 'Falha ao excluir');
         }
-        window.toast?.('Item excluído', 'success');
+        window.toast?.('Item excluído · sincronizando...', 'info');
         await loadMenus();
+        await triggerMenuSync();
       } catch (err: any) {
         window.toast?.(err.message || 'Erro ao excluir', 'error');
       }
@@ -375,45 +374,48 @@ import '../../styles/painel.css';
           const err = await res.json().catch(() => ({})) as any;
           throw new Error(err.error || 'Falha ao criar');
         }
-        window.toast?.('Item criado', 'success');
+        window.toast?.('Item criado · sincronizando...', 'info');
         closeModal();
         await loadMenus();
+        await triggerMenuSync();
       } catch (err: any) {
         window.toast?.(err.message || 'Erro ao criar', 'error');
       }
     });
 
-    // === Sincronizar com Git ===
-    const $btnSyncGit = document.getElementById('btnSyncGit') as HTMLButtonElement;
-    const $btnSyncGitLabel = document.getElementById('btnSyncGitLabel') as HTMLSpanElement;
-    $btnSyncGit?.addEventListener('click', async () => {
-      const ok = await window.confirmAction!({
-        title: 'Sincronizar menus com Git?',
-        message: 'Vai gerar 2 commits (menu-header.json + menu-footer.json) e disparar rebuild do site em ~1-2 min.',
-        confirmLabel: 'Sincronizar',
-        cancelLabel: 'Cancelar',
-      });
-      if (!ok) return;
+    // === Sync automatico (modelo Salvar=Publicar) ===
+    // Disparado apos cada CRUD bem-sucedido.
+    const $menuSyncIndicator = document.getElementById('menuSyncIndicator') as HTMLSpanElement;
+    const INDICATOR_DEFAULT = 'Cada salvar publica no site';
 
-      $btnSyncGit.disabled = true;
-      const originalLabel = $btnSyncGitLabel.textContent || 'Sincronizar com Git';
-      $btnSyncGitLabel.textContent = 'Sincronizando...';
+    function formatNow(): string {
+      return new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
 
+    async function triggerMenuSync() {
+      if ($menuSyncIndicator) {
+        $menuSyncIndicator.textContent = '↻ Sincronizando...';
+        $menuSyncIndicator.style.color = 'var(--painel-accent)';
+      }
       try {
         const res = await fetch('/api/menus/sync', { method: 'POST' });
-        const data = await res.json();
-        if (!res.ok) {
-          window.toast?.('Erro: ' + (data.error || 'desconhecido'), 'error', 6000);
-          return;
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Falha no sync');
+
+        if ($menuSyncIndicator) {
+          $menuSyncIndicator.textContent = `✓ Publicado às ${formatNow()}`;
+          $menuSyncIndicator.style.color = 'var(--painel-success)';
         }
-        window.toast?.('Menus sincronizados — rebuild em ~2 min', 'success', 5000);
-      } catch (err) {
-        window.toast?.('Erro de rede ao sincronizar', 'error');
-      } finally {
-        $btnSyncGit.disabled = false;
-        $btnSyncGitLabel.textContent = originalLabel;
+        window.toast?.('Publicado! Rebuild em ~2 min.', 'success', 4000);
+      } catch (err: any) {
+        console.error('Menu sync error:', err);
+        if ($menuSyncIndicator) {
+          $menuSyncIndicator.textContent = `⚠ ${err.message || 'Erro no sync'}`;
+          $menuSyncIndicator.style.color = 'var(--painel-danger)';
+        }
+        window.toast?.(`Erro: ${err.message || 'Falha no sync'}`, 'error', 6000);
       }
-    });
+    }
 
     loadMenus();
   </script>

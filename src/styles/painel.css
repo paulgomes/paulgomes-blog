@@ -533,6 +533,14 @@
   font-size: 13px;
   color: var(--painel-text-secondary);
 }
+.menus-sync-indicator {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--painel-text-secondary);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  transition: color .15s;
+}
 
 .menus-tree-container {
   background: var(--painel-surface);
