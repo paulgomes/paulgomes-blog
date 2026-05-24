@@ -1,351 +1,311 @@
 ---
-import PainelHead from '../../../components/painel/PainelHead.astro';
+import PainelLayout from '../../../components/painel/PainelLayout.astro';
 import Editor from '../../../components/painel/Editor.tsx';
 import '../../../styles/painel.css';
+
+const url = new URL(Astro.url);
+const isEditing = url.searchParams.has('id') || url.searchParams.has('slug');
+const currentNav = isEditing ? 'posts' : 'new';
 ---
 
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <PainelHead title="Editor — Painel" description="Editar post" />
-  </head>
-  <body>
-    <div class="painel-shell">
-      <div class="painel-topbar">
-        <div class="painel-topbar-inner">
-          <a href="/painel/posts" class="font-display text-base font-semibold" style="color: var(--color-ink); text-decoration: none;">← Posts</a>
-          <div class="flex items-center gap-3">
-            <span id="saveStatus" class="save-status"></span>
-            <button id="deleteBtn" class="painel-button danger" style="display: none;">Excluir</button>
-            <button id="publishBtn" class="painel-button primary">Publicar</button>
-            <button id="syncBtn" class="painel-button primary" style="display: none;" title="Commita as alterações do painel direto em main do GitHub">Sincronizar com Git</button>
-          </div>
-        </div>
+<PainelLayout title="Editor — Painel" description="Editor de posts" current={currentNav}>
+  <header class="editor-header">
+    <a href="/painel/posts" class="editor-back">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Posts
+    </a>
+    <div class="editor-header__spacer"></div>
+    <span id="saveStatus" class="save-status"></span>
+    <button id="deleteBtn" class="ed-btn ed-btn--danger" style="display: none;" type="button">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      Excluir
+    </button>
+    <button id="publishBtn" class="ed-btn ed-btn--primary" type="button">Publicar</button>
+    <button id="syncBtn" class="ed-btn ed-btn--primary" style="display: none;" title="Commita as alterações do painel direto em main do GitHub" type="button">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Sincronizar com Git
+    </button>
+  </header>
+
+  <div id="postModeBanner" class="post-mode-banner" style="display: none;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    <span>Editando post publicado — alterações ficam no painel até serem sincronizadas com Git.</span>
+  </div>
+
+  <div class="editor-grid">
+    <article class="editor-main">
+      <input id="title" class="title-input" placeholder="Título do ensaio" />
+      <input id="description" class="desc-input" placeholder="Descrição curta (aparece em listagens)" />
+
+      <Editor client:load />
+
+      <div class="editor-meta">
+        <span id="wordCount">0 palavras</span>
+        <span>·</span>
+        <span id="readTime">0 min de leitura</span>
       </div>
+    </article>
 
-      <main class="painel-main" style="max-width: 920px;">
-        <div id="postModeBanner" class="post-mode-banner" style="display: none;">
-          📝 Editando post publicado — alterações ficam no painel até serem sincronizadas com Git (em breve)
+    <aside class="editor-side">
+      <section class="side-section">
+        <label class="side-label">Slug</label>
+        <input id="slug" class="side-input" placeholder="meu-post" />
+      </section>
+
+      <section class="side-section">
+        <label id="categoryLabel" class="side-label">Categoria</label>
+        <input id="category" class="side-input" placeholder="Branding, IA, etc" />
+      </section>
+
+      <section class="side-section">
+        <label class="side-label">Hero Image URL</label>
+        <input id="heroImage" class="side-input" placeholder="https://media.paulgomes.com.br/..." />
+      </section>
+
+      <section class="side-section seo-section">
+        <h3 class="side-section__title">SEO</h3>
+
+        <div class="seo-counter">
+          <label>Título</label>
+          <div id="titleCounter">0 / 60</div>
+        </div>
+        <div class="seo-counter">
+          <label>Descrição</label>
+          <div id="descCounter">0 / 160</div>
         </div>
 
-        <input id="title" class="painel-input" placeholder="Título do ensaio" style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; border: none; padding: 0.5rem 0; margin-bottom: 0.5rem;" />
-        <input id="description" class="painel-input" placeholder="Descrição curta (aparece em listagens)" style="border: none; padding: 0.5rem 0; margin-bottom: 1rem; color: var(--color-muted);" />
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-          <div>
-            <label style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-muted); margin-bottom: 0.4rem;">Slug</label>
-            <input id="slug" class="painel-input" placeholder="meu-post" />
-          </div>
-          <div>
-            <label id="categoryLabel" style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-muted); margin-bottom: 0.4rem;">Categoria</label>
-            <input id="category" class="painel-input" placeholder="Branding, IA, etc" />
-          </div>
+        <div class="seo-preview">
+          <span class="seo-preview-url">paulgomes.com.br › blog › <span id="previewSlug">meu-post</span></span>
+          <h4 id="previewTitle">Título do ensaio</h4>
+          <p id="previewDesc">Descrição curta aparece aqui...</p>
         </div>
+      </section>
+    </aside>
+  </div>
 
-        <div style="margin-bottom: 1rem;">
-          <label style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-muted); margin-bottom: 0.4rem;">Hero Image URL</label>
-          <input id="heroImage" class="painel-input" placeholder="https://media.paulgomes.com.br/..." />
-        </div>
+  <script>
+    // ===== Modo =====
+    // 'post'  → editando posts_meta via /api/posts/:slug
+    // 'draft' → editando drafts via /api/drafts/:id (legado)
+    const params = new URLSearchParams(window.location.search);
+    const initialSlug = params.get('slug');
+    const initialId = params.get('id');
+    const mode: 'post' | 'draft' = initialSlug ? 'post' : 'draft';
 
-        <!-- React island: TipTap roda aqui -->
-        <Editor client:load />
+    let draftId: string | null = initialId;
+    let postSlug: string | null = initialSlug;
+    let currentContent = '';
+    let saveTimer: ReturnType<typeof setTimeout> | null = null;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let hasChanges = false;
 
-        <div class="editor-meta">
-          <span id="wordCount">0 palavras</span>
-          <span>·</span>
-          <span id="readTime">0 min de leitura</span>
-        </div>
+    let editorReady = false;
+    let pendingContent: string | null = null;
 
-        <!-- SEO Block -->
-        <section class="seo-block">
-          <h3>SEO</h3>
+    // ===== Refs DOM =====
+    const $title = document.getElementById('title') as HTMLInputElement;
+    const $description = document.getElementById('description') as HTMLInputElement;
+    const $slug = document.getElementById('slug') as HTMLInputElement;
+    const $category = document.getElementById('category') as HTMLInputElement;
+    const $categoryLabel = document.getElementById('categoryLabel') as HTMLLabelElement;
+    const $heroImage = document.getElementById('heroImage') as HTMLInputElement;
+    const $saveStatus = document.getElementById('saveStatus') as HTMLSpanElement;
+    const $publishBtn = document.getElementById('publishBtn') as HTMLButtonElement;
+    const $syncBtn = document.getElementById('syncBtn') as HTMLButtonElement;
+    const $deleteBtn = document.getElementById('deleteBtn') as HTMLButtonElement;
+    const $banner = document.getElementById('postModeBanner') as HTMLDivElement;
 
-          <div class="seo-counter">
-            <label>Título</label>
-            <div id="titleCounter">0 / 60</div>
-          </div>
+    const $wordCount = document.getElementById('wordCount') as HTMLSpanElement;
+    const $readTime = document.getElementById('readTime') as HTMLSpanElement;
 
-          <div class="seo-counter">
-            <label>Descrição</label>
-            <div id="descCounter">0 / 160</div>
-          </div>
+    const $titleCounter = document.getElementById('titleCounter') as HTMLDivElement;
+    const $descCounter = document.getElementById('descCounter') as HTMLDivElement;
+    const $previewSlug = document.getElementById('previewSlug') as HTMLSpanElement;
+    const $previewTitle = document.getElementById('previewTitle') as HTMLHeadingElement;
+    const $previewDesc = document.getElementById('previewDesc') as HTMLParagraphElement;
 
-          <div class="seo-preview">
-            <span class="seo-preview-url">paulgomes.com.br › blog › <span id="previewSlug">meu-post</span></span>
-            <h4 id="previewTitle">Título do ensaio</h4>
-            <p id="previewDesc">Descrição curta aparece aqui...</p>
-          </div>
-        </section>
-      </main>
-    </div>
+    // ===== Setup modo post =====
+    if (mode === 'post') {
+      $banner.style.display = 'flex';
+      $publishBtn.style.display = 'none';
+      $syncBtn.style.display = 'inline-flex';
+      $slug.readOnly = true;
+      $slug.classList.add('is-readonly');
+      $categoryLabel.textContent = 'Tags (separadas por vírgula)';
+      $category.placeholder = 'IA, SEO, Branding';
+      $deleteBtn.style.display = 'inline-flex';
+    }
 
-    <script>
-      // ===== Modo =====
-      // 'post'  → editando posts_meta via /api/posts/:slug
-      // 'draft' → editando drafts via /api/drafts/:id (legado)
-      const params = new URLSearchParams(window.location.search);
-      const initialSlug = params.get('slug');
-      const initialId = params.get('id');
-      const mode: 'post' | 'draft' = initialSlug ? 'post' : 'draft';
-
-      let draftId: string | null = initialId;
-      let postSlug: string | null = initialSlug;
-      let currentContent = '';
-      let saveTimer: ReturnType<typeof setTimeout> | null = null;
-      let retryTimer: ReturnType<typeof setTimeout> | null = null;
-      let hasChanges = false;
-
-      let editorReady = false;
-      let pendingContent: string | null = null;
-
-      // ===== Refs DOM =====
-      const $title = document.getElementById('title') as HTMLInputElement;
-      const $description = document.getElementById('description') as HTMLInputElement;
-      const $slug = document.getElementById('slug') as HTMLInputElement;
-      const $category = document.getElementById('category') as HTMLInputElement;
-      const $categoryLabel = document.getElementById('categoryLabel') as HTMLLabelElement;
-      const $heroImage = document.getElementById('heroImage') as HTMLInputElement;
-      const $saveStatus = document.getElementById('saveStatus') as HTMLSpanElement;
-      const $publishBtn = document.getElementById('publishBtn') as HTMLButtonElement;
-      const $syncBtn = document.getElementById('syncBtn') as HTMLButtonElement;
-      const $deleteBtn = document.getElementById('deleteBtn') as HTMLButtonElement;
-      const $banner = document.getElementById('postModeBanner') as HTMLDivElement;
-
-      const $wordCount = document.getElementById('wordCount') as HTMLSpanElement;
-      const $readTime = document.getElementById('readTime') as HTMLSpanElement;
-
-      const $titleCounter = document.getElementById('titleCounter') as HTMLDivElement;
-      const $descCounter = document.getElementById('descCounter') as HTMLDivElement;
-      const $previewSlug = document.getElementById('previewSlug') as HTMLSpanElement;
-      const $previewTitle = document.getElementById('previewTitle') as HTMLHeadingElement;
-      const $previewDesc = document.getElementById('previewDesc') as HTMLParagraphElement;
-
-      // ===== Setup modo post =====
-      if (mode === 'post') {
-        $banner.style.display = 'block';
-        $publishBtn.style.display = 'none';
-        $syncBtn.style.display = 'inline-flex';
-        $slug.readOnly = true;
-        $slug.style.background = 'var(--color-subtle)';
-        $slug.style.cursor = 'not-allowed';
-        $categoryLabel.textContent = 'Tags (separadas por vírgula)';
-        $category.placeholder = 'IA, SEO, Branding';
-        $deleteBtn.style.display = 'inline-flex';
+    // ===== Ponte com o Editor =====
+    window.addEventListener('editor:ready', () => {
+      editorReady = true;
+      if (pendingContent !== null) {
+        window.dispatchEvent(new CustomEvent('editor:set-content', { detail: { html: pendingContent } }));
+        pendingContent = null;
       }
+    });
 
-      // ===== Ponte com o Editor =====
-      window.addEventListener('editor:ready', () => {
-        editorReady = true;
-        if (pendingContent !== null) {
-          window.dispatchEvent(new CustomEvent('editor:set-content', { detail: { html: pendingContent } }));
-          pendingContent = null;
-        }
-      });
+    window.addEventListener('editor:change', (e: Event) => {
+      const ev = e as CustomEvent<{ html: string; md: string; wordCount: number; readTime: number }>;
+      currentContent = ev.detail.md;
+      $wordCount.textContent = `${ev.detail.wordCount} ${ev.detail.wordCount === 1 ? 'palavra' : 'palavras'}`;
+      $readTime.textContent = `${ev.detail.readTime} min de leitura`;
+      scheduleAutoSave();
+    });
 
-      window.addEventListener('editor:change', (e: Event) => {
-        const ev = e as CustomEvent<{ html: string; md: string; wordCount: number; readTime: number }>;
-        currentContent = ev.detail.md;
-        $wordCount.textContent = `${ev.detail.wordCount} ${ev.detail.wordCount === 1 ? 'palavra' : 'palavras'}`;
-        $readTime.textContent = `${ev.detail.readTime} min de leitura`;
-        scheduleAutoSave();
-      });
-
-      function setEditorContent(html: string) {
-        if (editorReady) {
-          window.dispatchEvent(new CustomEvent('editor:set-content', { detail: { html } }));
-        } else {
-          pendingContent = html;
-        }
+    function setEditorContent(html: string) {
+      if (editorReady) {
+        window.dispatchEvent(new CustomEvent('editor:set-content', { detail: { html } }));
+      } else {
+        pendingContent = html;
       }
+    }
 
-      // ===== SEO counters + preview =====
-      function updateSeoCounter(el: HTMLDivElement, current: number, max: number) {
-        el.textContent = `${current} / ${max}`;
-        el.classList.remove('warn', 'over');
-        if (current > max) el.classList.add('over');
-        else if (current > max * 0.8) el.classList.add('warn');
+    // ===== SEO counters + preview =====
+    function updateSeoCounter(el: HTMLDivElement, current: number, max: number) {
+      el.textContent = `${current} / ${max}`;
+      el.classList.remove('warn', 'over');
+      if (current > max) el.classList.add('over');
+      else if (current > max * 0.8) el.classList.add('warn');
+    }
+
+    function slugify(s: string) {
+      return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    }
+
+    function updateSeoPreview() {
+      const t = $title.value || 'Título do ensaio';
+      const d = $description.value || 'Descrição curta aparece aqui...';
+      const s = $slug.value || slugify($title.value) || 'meu-post';
+      $previewTitle.textContent = t;
+      $previewDesc.textContent = d;
+      $previewSlug.textContent = s;
+
+      updateSeoCounter($titleCounter, $title.value.length, 60);
+      updateSeoCounter($descCounter, $description.value.length, 160);
+    }
+    updateSeoPreview();
+
+    // ===== Helpers tags =====
+    function tagsToString(tags: any): string {
+      if (!tags) return '';
+      if (Array.isArray(tags)) return tags.join(', ');
+      if (typeof tags === 'string') {
+        try {
+          const parsed = JSON.parse(tags);
+          if (Array.isArray(parsed)) return parsed.join(', ');
+        } catch {}
+        return tags;
       }
+      return '';
+    }
 
-      function slugify(s: string) {
-        return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    function tagsToArray(s: string): string[] {
+      return s.split(',').map((t) => t.trim()).filter(Boolean);
+    }
+
+    // ===== Load =====
+    async function loadDraft() {
+      if (!initialId) return;
+      const res = await fetch(`/api/drafts/${initialId}`);
+      if (!res.ok) {
+        $saveStatus.textContent = 'Erro ao carregar';
+        window.toast?.('Erro ao carregar rascunho', 'error');
+        return;
       }
-
-      function updateSeoPreview() {
-        const t = $title.value || 'Título do ensaio';
-        const d = $description.value || 'Descrição curta aparece aqui...';
-        const s = $slug.value || slugify($title.value) || 'meu-post';
-        $previewTitle.textContent = t;
-        $previewDesc.textContent = d;
-        $previewSlug.textContent = s;
-
-        updateSeoCounter($titleCounter, $title.value.length, 60);
-        updateSeoCounter($descCounter, $description.value.length, 160);
+      const { draft } = await res.json();
+      $title.value = draft.title || '';
+      $description.value = draft.description || '';
+      $slug.value = draft.slug || '';
+      $category.value = draft.category || '';
+      $heroImage.value = draft.hero_image_url || '';
+      currentContent = draft.content_md || '';
+      $deleteBtn.style.display = 'inline-flex';
+      if (draft.status === 'published') {
+        $publishBtn.textContent = 'Republicar';
       }
+      setEditorContent(currentContent);
       updateSeoPreview();
+    }
 
-      // ===== Helpers tags =====
-      function tagsToString(tags: any): string {
-        if (!tags) return '';
-        if (Array.isArray(tags)) return tags.join(', ');
-        if (typeof tags === 'string') {
-          try {
-            const parsed = JSON.parse(tags);
-            if (Array.isArray(parsed)) return parsed.join(', ');
-          } catch {}
-          return tags;
-        }
-        return '';
+    async function loadPost() {
+      if (!initialSlug) return;
+      const res = await fetch(`/api/posts/${encodeURIComponent(initialSlug)}`);
+      if (res.status === 401) {
+        window.location.href = '/painel/login';
+        return;
       }
-
-      function tagsToArray(s: string): string[] {
-        return s.split(',').map((t) => t.trim()).filter(Boolean);
+      if (!res.ok) {
+        $saveStatus.textContent = 'Erro ao carregar';
+        window.toast?.('Erro ao carregar post', 'error');
+        return;
       }
+      const { post } = await res.json();
+      $title.value = post.title || '';
+      $description.value = post.description || '';
+      $slug.value = post.slug || '';
+      $category.value = tagsToString(post.tags);
+      $heroImage.value = post.hero_image_url || '';
+      currentContent = post.content_md || '';
+      setEditorContent(currentContent);
+      updateSeoPreview();
+    }
 
-      // ===== Load =====
-      async function loadDraft() {
-        if (!initialId) return;
-        const res = await fetch(`/api/drafts/${initialId}`);
-        if (!res.ok) {
-          $saveStatus.textContent = 'Erro ao carregar';
-          window.toast?.('Erro ao carregar rascunho', 'error');
-          return;
-        }
-        const { draft } = await res.json();
-        $title.value = draft.title || '';
-        $description.value = draft.description || '';
-        $slug.value = draft.slug || '';
-        $category.value = draft.category || '';
-        $heroImage.value = draft.hero_image_url || '';
-        currentContent = draft.content_md || '';
-        $deleteBtn.style.display = 'inline-flex';
-        if (draft.status === 'published') {
-          $publishBtn.textContent = 'Republicar';
-        }
-        setEditorContent(currentContent);
-        updateSeoPreview();
-      }
+    // ===== Auto-save =====
+    function buildDraftPayload() {
+      return {
+        title: $title.value,
+        description: $description.value,
+        slug: $slug.value || slugify($title.value),
+        category: $category.value,
+        hero_image_url: $heroImage.value,
+        content_md: currentContent,
+      };
+    }
 
-      async function loadPost() {
-        if (!initialSlug) return;
-        const res = await fetch(`/api/posts/${encodeURIComponent(initialSlug)}`);
-        if (res.status === 401) {
-          window.location.href = '/painel/login';
-          return;
-        }
-        if (!res.ok) {
-          $saveStatus.textContent = 'Erro ao carregar';
-          window.toast?.('Erro ao carregar post', 'error');
-          return;
-        }
-        const { post } = await res.json();
-        $title.value = post.title || '';
-        $description.value = post.description || '';
-        $slug.value = post.slug || '';
-        $category.value = tagsToString(post.tags);
-        $heroImage.value = post.hero_image_url || '';
-        currentContent = post.content_md || '';
-        setEditorContent(currentContent);
-        updateSeoPreview();
-      }
+    function buildPostPayload() {
+      return {
+        title: $title.value,
+        description: $description.value,
+        hero_image_url: $heroImage.value,
+        content_md: currentContent,
+        tags: tagsToArray($category.value),
+      };
+    }
 
-      // ===== Auto-save =====
-      function buildDraftPayload() {
-        return {
-          title: $title.value,
-          description: $description.value,
-          slug: $slug.value || slugify($title.value),
-          category: $category.value,
-          hero_image_url: $heroImage.value,
-          content_md: currentContent,
-        };
-      }
+    function hasAnyContent(): boolean {
+      return !!(
+        $title.value.trim() ||
+        $description.value.trim() ||
+        $slug.value.trim() ||
+        $category.value.trim() ||
+        $heroImage.value.trim() ||
+        (currentContent && currentContent.trim())
+      );
+    }
 
-      function buildPostPayload() {
-        return {
-          title: $title.value,
-          description: $description.value,
-          hero_image_url: $heroImage.value,
-          content_md: currentContent,
-          tags: tagsToArray($category.value),
-        };
-      }
+    function formatTime(d: Date): string {
+      return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
 
-      function hasAnyContent(): boolean {
-        return !!(
-          $title.value.trim() ||
-          $description.value.trim() ||
-          $slug.value.trim() ||
-          $category.value.trim() ||
-          $heroImage.value.trim() ||
-          (currentContent && currentContent.trim())
-        );
-      }
+    async function autoSave() {
+      if (!hasChanges) return;
 
-      function formatTime(d: Date): string {
-        return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      }
-
-      async function autoSave() {
-        if (!hasChanges) return;
-
-        // ===== Modo post (PUT /api/posts/:slug) =====
-        if (mode === 'post') {
-          if (!postSlug) return;
-          hasChanges = false;
-          $saveStatus.textContent = 'Salvando...';
-          $saveStatus.classList.remove('save-status-error');
-
-          try {
-            const res = await fetch(`/api/posts/${encodeURIComponent(postSlug)}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(buildPostPayload()),
-            });
-            if (!res.ok) throw new Error('PUT falhou');
-            if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
-            $saveStatus.textContent = `Salvo às ${formatTime(new Date())} · não sincronizado com Git`;
-          } catch (err) {
-            console.error(err);
-            $saveStatus.textContent = 'Erro ao salvar — tentando de novo';
-            $saveStatus.classList.add('save-status-error');
-            hasChanges = true;
-            if (retryTimer) clearTimeout(retryTimer);
-            retryTimer = setTimeout(autoSave, 5000);
-          }
-          return;
-        }
-
-        // ===== Modo draft (lógica legada) =====
-        if (!draftId && !hasAnyContent()) return;
-
+      if (mode === 'post') {
+        if (!postSlug) return;
         hasChanges = false;
         $saveStatus.textContent = 'Salvando...';
         $saveStatus.classList.remove('save-status-error');
 
-        const payload = buildDraftPayload();
-
         try {
-          if (!draftId) {
-            const res = await fetch('/api/drafts', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload),
-            });
-            if (!res.ok) throw new Error('POST falhou');
-            const data = await res.json();
-            draftId = data.id;
-            history.replaceState({}, '', `/painel/posts/editor?id=${data.id}`);
-            $deleteBtn.style.display = 'inline-flex';
-          } else {
-            const res = await fetch(`/api/drafts/${draftId}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload),
-            });
-            if (!res.ok) throw new Error('PUT falhou');
-          }
+          const res = await fetch(`/api/posts/${encodeURIComponent(postSlug)}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(buildPostPayload()),
+          });
+          if (!res.ok) throw new Error('PUT falhou');
           if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
-          $saveStatus.textContent = `Salvo às ${formatTime(new Date())}`;
+          $saveStatus.textContent = `Salvo às ${formatTime(new Date())} · não sincronizado com Git`;
         } catch (err) {
           console.error(err);
           $saveStatus.textContent = 'Erro ao salvar — tentando de novo';
@@ -354,169 +314,446 @@ import '../../../styles/painel.css';
           if (retryTimer) clearTimeout(retryTimer);
           retryTimer = setTimeout(autoSave, 5000);
         }
+        return;
       }
 
-      function scheduleAutoSave() {
-        hasChanges = true;
-        if (saveTimer) clearTimeout(saveTimer);
-        saveTimer = setTimeout(autoSave, 1500);
-      }
+      if (!draftId && !hasAnyContent()) return;
 
-      // Slug não recebe handler de input em modo post (readonly)
-      const inputsToWatch = mode === 'post'
-        ? [$title, $description, $category, $heroImage]
-        : [$title, $description, $slug, $category, $heroImage];
+      hasChanges = false;
+      $saveStatus.textContent = 'Salvando...';
+      $saveStatus.classList.remove('save-status-error');
 
-      inputsToWatch.forEach((el) => {
-        el.addEventListener('input', () => {
-          updateSeoPreview();
-          scheduleAutoSave();
-        });
-      });
+      const payload = buildDraftPayload();
 
-      // ===== Sincronizar com Git (post mode only) =====
-      $syncBtn.addEventListener('click', async () => {
-        if (mode !== 'post' || !postSlug) return;
-
-        // Força salvar pendente antes
-        if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
-        if (hasChanges) await autoSave();
-
-        const ok = await window.confirmAction!({
-          title: 'Sincronizar com Git?',
-          message: 'Commita as alterações direto em main. Cloudflare vai rebuildar em ~1-2 min.',
-          confirmLabel: 'Sincronizar',
-          cancelLabel: 'Cancelar',
-        });
-        if (!ok) return;
-
-        $syncBtn.disabled = true;
-        const originalText = $syncBtn.textContent;
-        $syncBtn.textContent = 'Sincronizando...';
-
-        try {
-          const res = await fetch(`/api/posts/${encodeURIComponent(postSlug)}/sync`, { method: 'POST' });
-          const data = await res.json();
-          if (!res.ok) {
-            window.toast?.('Erro: ' + (data.error || 'desconhecido'), 'error', 6000);
-            $syncBtn.disabled = false;
-            $syncBtn.textContent = originalText;
-            return;
-          }
-          $saveStatus.textContent = `Sincronizado às ${formatTime(new Date())} · rebuild em ~2 min`;
-          $saveStatus.classList.remove('save-status-error');
-          window.toast?.('Sincronizado com Git', 'success', 5000);
-          $syncBtn.disabled = false;
-          $syncBtn.textContent = originalText;
-        } catch (err) {
-          window.toast?.('Erro de rede ao sincronizar', 'error');
-          $syncBtn.disabled = false;
-          $syncBtn.textContent = originalText;
-        }
-      });
-
-      // ===== Publicar (draft mode only) =====
-      $publishBtn.addEventListener('click', async () => {
-        if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
-        if (hasChanges) await autoSave();
-
+      try {
         if (!draftId) {
-          window.toast?.('Adicione título e conteúdo antes de publicar', 'error');
+          const res = await fetch('/api/drafts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) throw new Error('POST falhou');
+          const data = await res.json();
+          draftId = data.id;
+          history.replaceState({}, '', `/painel/posts/editor?id=${data.id}`);
+          $deleteBtn.style.display = 'inline-flex';
+        } else {
+          const res = await fetch(`/api/drafts/${draftId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) throw new Error('PUT falhou');
+        }
+        if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
+        $saveStatus.textContent = `Salvo às ${formatTime(new Date())}`;
+      } catch (err) {
+        console.error(err);
+        $saveStatus.textContent = 'Erro ao salvar — tentando de novo';
+        $saveStatus.classList.add('save-status-error');
+        hasChanges = true;
+        if (retryTimer) clearTimeout(retryTimer);
+        retryTimer = setTimeout(autoSave, 5000);
+      }
+    }
+
+    function scheduleAutoSave() {
+      hasChanges = true;
+      if (saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(autoSave, 1500);
+    }
+
+    const inputsToWatch = mode === 'post'
+      ? [$title, $description, $category, $heroImage]
+      : [$title, $description, $slug, $category, $heroImage];
+
+    inputsToWatch.forEach((el) => {
+      el.addEventListener('input', () => {
+        updateSeoPreview();
+        scheduleAutoSave();
+      });
+    });
+
+    // ===== Sincronizar com Git (post mode only) =====
+    $syncBtn.addEventListener('click', async () => {
+      if (mode !== 'post' || !postSlug) return;
+
+      if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+      if (hasChanges) await autoSave();
+
+      const ok = await window.confirmAction!({
+        title: 'Sincronizar com Git?',
+        message: 'Commita as alterações direto em main. Cloudflare vai rebuildar em ~1-2 min.',
+        confirmLabel: 'Sincronizar',
+        cancelLabel: 'Cancelar',
+      });
+      if (!ok) return;
+
+      $syncBtn.disabled = true;
+      const originalText = $syncBtn.textContent;
+      $syncBtn.textContent = 'Sincronizando...';
+
+      try {
+        const res = await fetch(`/api/posts/${encodeURIComponent(postSlug)}/sync`, { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) {
+          window.toast?.('Erro: ' + (data.error || 'desconhecido'), 'error', 6000);
+          $syncBtn.disabled = false;
+          $syncBtn.textContent = originalText;
           return;
         }
+        $saveStatus.textContent = `Sincronizado às ${formatTime(new Date())} · rebuild em ~2 min`;
+        $saveStatus.classList.remove('save-status-error');
+        window.toast?.('Sincronizado com Git', 'success', 5000);
+        $syncBtn.disabled = false;
+        $syncBtn.textContent = originalText;
+      } catch (err) {
+        window.toast?.('Erro de rede ao sincronizar', 'error');
+        $syncBtn.disabled = false;
+        $syncBtn.textContent = originalText;
+      }
+    });
 
-        const ok = await window.confirmAction!({
-          title: 'Publicar este post?',
-          message: 'Vai gerar o markdown no GitHub e o blog será reconstruído em ~1-2 min.',
-          confirmLabel: 'Publicar',
-          cancelLabel: 'Cancelar',
-        });
-        if (!ok) return;
+    // ===== Publicar (draft mode only) =====
+    $publishBtn.addEventListener('click', async () => {
+      if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+      if (hasChanges) await autoSave();
 
-        $publishBtn.disabled = true;
-        $publishBtn.textContent = 'Publicando...';
-        try {
-          const res = await fetch(`/api/drafts/${draftId}/publish`, { method: 'POST' });
-          const data = await res.json();
-          if (!res.ok) {
-            window.toast?.('Erro: ' + (data.error || 'desconhecido'), 'error');
-            $publishBtn.disabled = false;
-            $publishBtn.textContent = 'Publicar';
-            return;
-          }
-          window.toast?.(`Publicado! Rebuild em ~2 min`, 'success', 5000);
-          $publishBtn.disabled = false;
-          $publishBtn.textContent = 'Republicar';
-        } catch (err) {
-          window.toast?.('Erro de rede ao publicar', 'error');
+      if (!draftId) {
+        window.toast?.('Adicione título e conteúdo antes de publicar', 'error');
+        return;
+      }
+
+      const ok = await window.confirmAction!({
+        title: 'Publicar este post?',
+        message: 'Vai gerar o markdown no GitHub e o blog será reconstruído em ~1-2 min.',
+        confirmLabel: 'Publicar',
+        cancelLabel: 'Cancelar',
+      });
+      if (!ok) return;
+
+      $publishBtn.disabled = true;
+      $publishBtn.textContent = 'Publicando...';
+      try {
+        const res = await fetch(`/api/drafts/${draftId}/publish`, { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) {
+          window.toast?.('Erro: ' + (data.error || 'desconhecido'), 'error');
           $publishBtn.disabled = false;
           $publishBtn.textContent = 'Publicar';
-        }
-      });
-
-      // ===== Excluir =====
-      $deleteBtn.addEventListener('click', async () => {
-        if (mode === 'post') {
-          if (!postSlug) return;
-          const ok = await window.confirmAction!({
-            title: 'Excluir este post?',
-            message: 'O post será marcado como removido no painel. O arquivo no Git permanece intacto até a próxima sincronização (Sessão C).',
-            confirmLabel: 'Excluir',
-            cancelLabel: 'Cancelar',
-            danger: true,
-          });
-          if (!ok) return;
-          const res = await fetch(`/api/posts/${encodeURIComponent(postSlug)}`, { method: 'DELETE' });
-          if (res.ok) {
-            window.toast?.('Post excluído', 'success');
-            setTimeout(() => { window.location.href = '/painel/posts'; }, 700);
-          } else {
-            window.toast?.('Erro ao excluir', 'error');
-          }
           return;
         }
+        window.toast?.(`Publicado! Rebuild em ~2 min`, 'success', 5000);
+        $publishBtn.disabled = false;
+        $publishBtn.textContent = 'Republicar';
+      } catch (err) {
+        window.toast?.('Erro de rede ao publicar', 'error');
+        $publishBtn.disabled = false;
+        $publishBtn.textContent = 'Publicar';
+      }
+    });
 
-        if (!draftId) return;
+    // ===== Excluir =====
+    $deleteBtn.addEventListener('click', async () => {
+      if (mode === 'post') {
+        if (!postSlug) return;
         const ok = await window.confirmAction!({
-          title: 'Excluir este rascunho?',
-          message: 'Esta ação não pode ser desfeita.',
+          title: 'Excluir este post?',
+          message: 'O post será marcado como removido no painel. O arquivo no Git permanece intacto até a próxima sincronização.',
           confirmLabel: 'Excluir',
           cancelLabel: 'Cancelar',
           danger: true,
         });
         if (!ok) return;
-
-        const res = await fetch(`/api/drafts/${draftId}`, { method: 'DELETE' });
+        const res = await fetch(`/api/posts/${encodeURIComponent(postSlug)}`, { method: 'DELETE' });
         if (res.ok) {
-          window.toast?.('Rascunho excluído', 'success');
+          window.toast?.('Post excluído', 'success');
           setTimeout(() => { window.location.href = '/painel/posts'; }, 700);
         } else {
           window.toast?.('Erro ao excluir', 'error');
         }
+        return;
+      }
+
+      if (!draftId) return;
+      const ok = await window.confirmAction!({
+        title: 'Excluir este rascunho?',
+        message: 'Esta ação não pode ser desfeita.',
+        confirmLabel: 'Excluir',
+        cancelLabel: 'Cancelar',
+        danger: true,
       });
+      if (!ok) return;
 
-      // ===== Init =====
-      if (mode === 'post') {
-        loadPost();
-      } else if (initialId) {
-        loadDraft();
+      const res = await fetch(`/api/drafts/${draftId}`, { method: 'DELETE' });
+      if (res.ok) {
+        window.toast?.('Rascunho excluído', 'success');
+        setTimeout(() => { window.location.href = '/painel/posts'; }, 700);
+      } else {
+        window.toast?.('Erro ao excluir', 'error');
       }
-    </script>
+    });
 
-    <style>
-      .post-mode-banner {
-        background: #fef3c7;
-        color: #92400e;
-        border: 1px solid #fde68a;
-        border-radius: 0.5rem;
-        padding: 0.75rem 1rem;
-        margin-bottom: 1.5rem;
-        font-size: 0.9rem;
-        line-height: 1.4;
-      }
-      #syncBtn[disabled] {
-        cursor: not-allowed;
-      }
-    </style>
-  </body>
-</html>
+    if (mode === 'post') {
+      loadPost();
+    } else if (initialId) {
+      loadDraft();
+    }
+  </script>
+
+  <style is:global>
+    /* === EDITOR HEADER (sub-header dentro do main) === */
+    .editor-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--painel-border);
+      flex-wrap: wrap;
+    }
+    .editor-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      color: var(--painel-text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background .15s, color .15s;
+    }
+    .editor-back:hover {
+      background: rgba(60,64,67,0.06);
+      color: var(--painel-text-primary);
+    }
+    .editor-header__spacer { flex: 1; }
+    .save-status {
+      font-size: 13px;
+      color: var(--painel-text-secondary);
+      margin-right: 8px;
+    }
+    .save-status-error { color: var(--painel-danger); }
+
+    .ed-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 36px;
+      padding: 0 16px;
+      border-radius: var(--painel-radius);
+      font-family: var(--painel-font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background .15s, border-color .15s, opacity .15s;
+    }
+    .ed-btn--primary {
+      background: var(--painel-accent);
+      color: #fff;
+    }
+    .ed-btn--primary:hover:not(:disabled) { background: var(--painel-accent-hover); }
+    .ed-btn--danger {
+      background: transparent;
+      color: var(--painel-danger);
+      border-color: var(--painel-border);
+    }
+    .ed-btn--danger:hover { background: #fce8e6; border-color: #f4c7c3; }
+    .ed-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    #syncBtn[disabled] { cursor: not-allowed; }
+
+    /* === POST MODE BANNER === */
+    .post-mode-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #fff7e0;
+      color: #92400e;
+      border: 1px solid #fde68a;
+      border-left: 4px solid var(--painel-warning);
+      border-radius: var(--painel-radius);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    /* === EDITOR GRID (main + side) === */
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .editor-grid { grid-template-columns: 1fr; }
+    }
+
+    .editor-main {
+      background: var(--painel-surface);
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius-lg);
+      padding: 28px 32px;
+    }
+    @media (max-width: 640px) {
+      .editor-main { padding: 20px; }
+    }
+
+    .title-input {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      outline: 0;
+      padding: 0;
+      font-family: var(--painel-font);
+      font-size: 32px;
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--painel-text-primary);
+      margin-bottom: 8px;
+    }
+    .title-input::placeholder { color: var(--painel-text-disabled); }
+
+    .desc-input {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      outline: 0;
+      padding: 0;
+      font-family: var(--painel-font);
+      font-size: 16px;
+      color: var(--painel-text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    .desc-input::placeholder { color: var(--painel-text-disabled); }
+
+    /* TipTap (.editor-wrapper) sobrescreve com tokens novos */
+    .editor-main .editor-wrapper {
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      background: var(--painel-surface);
+    }
+    .editor-main .editor-toolbar {
+      background: var(--painel-bg);
+      border-bottom: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius) var(--painel-radius) 0 0;
+    }
+
+    .editor-main .editor-meta {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--painel-text-disabled);
+    }
+
+    /* === SIDE PANEL === */
+    .editor-side {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: sticky;
+      top: calc(var(--painel-topbar-h) + 24px);
+    }
+    @media (max-width: 980px) {
+      .editor-side { position: static; }
+    }
+
+    .side-section {
+      background: var(--painel-surface);
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      padding: 16px;
+    }
+    .side-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--painel-text-secondary);
+      margin-bottom: 6px;
+    }
+    .side-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--painel-border);
+      border-radius: 6px;
+      background: var(--painel-surface);
+      color: var(--painel-text-primary);
+      font-family: var(--painel-font);
+      font-size: 14px;
+      outline: 0;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .side-input:hover { border-color: var(--painel-border-strong); }
+    .side-input:focus {
+      border-color: var(--painel-accent);
+      box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+    }
+    .side-input.is-readonly {
+      background: var(--painel-bg);
+      color: var(--painel-text-secondary);
+      cursor: not-allowed;
+    }
+    .side-section__title {
+      font-family: var(--painel-font);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--painel-text-secondary);
+      margin: 0 0 12px;
+    }
+
+    /* === SEO (sobrescreve do painel.css) === */
+    .seo-section .seo-counter {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .seo-section .seo-counter label {
+      color: var(--painel-text-secondary);
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 500;
+    }
+    .seo-section .seo-counter > div {
+      font-variant-numeric: tabular-nums;
+      color: var(--painel-text-secondary);
+      font-weight: 500;
+    }
+    .seo-section .seo-counter > div.warn { color: var(--painel-warning); }
+    .seo-section .seo-counter > div.over { color: var(--painel-danger); }
+
+    .seo-section .seo-preview {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--painel-border);
+    }
+    .seo-section .seo-preview-url {
+      font-size: 11px;
+      color: #5f6368;
+    }
+    .seo-section .seo-preview h4 {
+      color: #1a0dab;
+      font-size: 14px;
+      font-weight: 400;
+      margin: 4px 0;
+      font-family: arial, sans-serif;
+    }
+    .seo-section .seo-preview p {
+      color: #4d5156;
+      font-size: 12px;
+      font-family: arial, sans-serif;
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 640px) {
+      .editor-header { gap: 6px; }
+      .save-status { width: 100%; order: 99; }
+    }
+  </style>
+</PainelLayout>

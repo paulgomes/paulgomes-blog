@@ -1,0 +1,308 @@
+---
+import BaseHead from '../BaseHead.astro';
+
+type NavKey = 'home' | 'posts' | 'new' | 'tags' | 'stats';
+
+interface Props {
+  title?: string;
+  description?: string;
+  current?: NavKey;
+}
+
+const {
+  title = 'Painel — Paul Gomes',
+  description = 'Painel administrativo',
+  current = 'home',
+} = Astro.props;
+
+const navItems: { key: NavKey; href: string; label: string; icon: string }[] = [
+  { key: 'home',  href: '/painel',              label: 'Home',         icon: 'home' },
+  { key: 'posts', href: '/painel/posts',        label: 'Posts',        icon: 'doc' },
+  { key: 'new',   href: '/painel/posts/editor', label: 'Novo post',    icon: 'plus' },
+  { key: 'tags',  href: '/painel/tags',         label: 'Tags',         icon: 'tag' },
+  { key: 'stats', href: '/painel/stats',        label: 'Estatísticas', icon: 'chart' },
+];
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <BaseHead title={title} description={description} />
+    <meta name="robots" content="noindex, nofollow" />
+    <script>
+      import '../../components/painel/toast';
+      import '../../components/painel/confirm';
+    </script>
+    <slot name="head" />
+  </head>
+  <body class="painel-body">
+    <header class="painel-l-topbar">
+      <button class="painel-l-menu-btn" aria-label="Abrir menu" id="painelMenuBtn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <a href="/painel" class="painel-l-brand">
+        <img src="/logo-paulgomes.webp" alt="Paul Gomes" width="28" height="28" />
+        <span>Painel</span>
+      </a>
+      <div class="painel-l-spacer"></div>
+      <div class="painel-l-user">
+        <span id="painelUserName" class="painel-l-user-name">…</span>
+        <button id="painelLogoutBtn" class="painel-l-logout" type="button">Sair</button>
+      </div>
+    </header>
+
+    <aside class="painel-l-sidebar" id="painelSidebar" aria-label="Navegação do painel">
+      <nav>
+        {navItems.map(({ key, href, label, icon }) => (
+          <a href={href} class:list={['painel-l-nav-item', { active: current === key }]}>
+            {icon === 'home'  && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>}
+            {icon === 'doc'   && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>}
+            {icon === 'plus'  && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>}
+            {icon === 'tag'   && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>}
+            {icon === 'chart' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6"  y1="20" x2="6"  y2="14"/></svg>}
+            <span>{label}</span>
+          </a>
+        ))}
+      </nav>
+    </aside>
+
+    <div class="painel-l-overlay" id="painelOverlay"></div>
+
+    <main class="painel-l-main">
+      <slot />
+    </main>
+
+    <script>
+      // === Auth + nome do usuário ===
+      fetch('/api/auth/me')
+        .then((r) => r.json())
+        .then((data) => {
+          const $u = document.getElementById('painelUserName');
+          if (!$u) return;
+          if (data.user) {
+            $u.textContent = data.user.name;
+          } else {
+            window.location.href = '/painel/login';
+          }
+        })
+        .catch(() => {
+          window.location.href = '/painel/login';
+        });
+
+      document.getElementById('painelLogoutBtn')?.addEventListener('click', async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/painel/login';
+      });
+
+      // === Mobile drawer ===
+      const $sidebar = document.getElementById('painelSidebar');
+      const $overlay = document.getElementById('painelOverlay');
+      const $menuBtn = document.getElementById('painelMenuBtn');
+
+      function openDrawer() {
+        $sidebar?.classList.add('open');
+        $overlay?.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeDrawer() {
+        $sidebar?.classList.remove('open');
+        $overlay?.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+
+      $menuBtn?.addEventListener('click', () => {
+        if ($sidebar?.classList.contains('open')) closeDrawer();
+        else openDrawer();
+      });
+      $overlay?.addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && $sidebar?.classList.contains('open')) closeDrawer();
+      });
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) closeDrawer();
+      });
+    </script>
+
+    <style is:global>
+      /* Layout escopo global — aplica só em paginas que renderizam PainelLayout */
+      .painel-body {
+        margin: 0;
+        background: var(--painel-bg);
+        color: var(--painel-text-primary);
+        font-family: var(--painel-font);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* === TOPBAR === */
+      .painel-l-topbar {
+        position: fixed; top: 0; left: 0; right: 0;
+        height: var(--painel-topbar-h);
+        background: var(--painel-surface);
+        border-bottom: 1px solid var(--painel-border);
+        display: flex;
+        align-items: center;
+        padding: 0 16px 0 8px;
+        gap: 12px;
+        z-index: 30;
+      }
+      .painel-l-menu-btn {
+        display: none;
+        background: transparent;
+        border: 0;
+        padding: 8px;
+        border-radius: 50%;
+        color: var(--painel-text-secondary);
+        cursor: pointer;
+      }
+      .painel-l-menu-btn:hover { background: rgba(60,64,67,0.06); }
+      .painel-l-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--painel-text-primary);
+        font-weight: 600;
+        font-size: 16px;
+        padding: 0 8px;
+      }
+      .painel-l-brand img { border-radius: 4px; }
+      .painel-l-spacer { flex: 1; }
+      .painel-l-user {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 13px;
+        color: var(--painel-text-secondary);
+      }
+      .painel-l-user-name {
+        font-weight: 500;
+        color: var(--painel-text-primary);
+      }
+      .painel-l-logout {
+        background: transparent;
+        border: 1px solid var(--painel-border);
+        color: var(--painel-text-primary);
+        font-family: var(--painel-font);
+        font-size: 13px;
+        font-weight: 500;
+        padding: 6px 14px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background .15s, border-color .15s;
+      }
+      .painel-l-logout:hover {
+        background: rgba(60,64,67,0.04);
+        border-color: var(--painel-border-strong);
+      }
+
+      /* === SIDEBAR === */
+      .painel-l-sidebar {
+        position: fixed;
+        top: var(--painel-topbar-h);
+        left: 0;
+        bottom: 0;
+        width: var(--painel-sidebar-w);
+        background: var(--painel-surface);
+        border-right: 1px solid var(--painel-border);
+        padding: 16px 0;
+        overflow-y: auto;
+        z-index: 20;
+      }
+      .painel-l-sidebar nav {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .painel-l-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 10px 24px;
+        color: var(--painel-text-secondary);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 0 999px 999px 0;
+        margin-right: 12px;
+        transition: background .15s, color .15s;
+      }
+      .painel-l-nav-item:hover {
+        background: rgba(60,64,67,0.06);
+        color: var(--painel-text-primary);
+      }
+      .painel-l-nav-item.active {
+        background: var(--painel-accent-soft);
+        color: var(--painel-accent);
+      }
+      .painel-l-nav-item svg { flex-shrink: 0; }
+
+      /* === MAIN === */
+      .painel-l-main {
+        margin-left: var(--painel-sidebar-w);
+        margin-top: var(--painel-topbar-h);
+        padding: 32px 40px;
+        min-height: calc(100vh - var(--painel-topbar-h));
+        max-width: 1200px;
+      }
+
+      /* === OVERLAY (mobile drawer) === */
+      .painel-l-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 15;
+      }
+      .painel-l-overlay.show { display: block; }
+
+      /* === Page header === */
+      .page-header { margin-bottom: 24px; }
+      .page-header h1 {
+        font-family: var(--painel-font);
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--painel-text-primary);
+        margin: 0 0 6px;
+        letter-spacing: -0.01em;
+      }
+      .page-header .subtitle {
+        font-size: 14px;
+        color: var(--painel-text-secondary);
+        margin: 0;
+      }
+
+      /* === Empty state (stubs) === */
+      .empty-state {
+        background: var(--painel-surface);
+        border: 1px solid var(--painel-border);
+        border-radius: var(--painel-radius);
+        padding: 64px 24px;
+        text-align: center;
+        color: var(--painel-text-secondary);
+        font-size: 14px;
+      }
+      .empty-state .icon { font-size: 32px; display: block; margin-bottom: 12px; }
+
+      /* === MOBILE === */
+      @media (max-width: 768px) {
+        .painel-l-menu-btn { display: inline-flex; }
+        .painel-l-sidebar {
+          transform: translateX(-100%);
+          transition: transform .2s ease;
+        }
+        .painel-l-sidebar.open { transform: translateX(0); box-shadow: 0 8px 24px rgba(60,64,67,0.18); }
+        .painel-l-main {
+          margin-left: 0;
+          padding: 24px 20px;
+        }
+        .painel-l-user-name { display: none; }
+        .painel-l-brand span { display: none; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .painel-l-sidebar { transition: none; }
+      }
+    </style>
+  </body>
+</html>

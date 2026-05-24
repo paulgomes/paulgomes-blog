@@ -1,325 +1,514 @@
 ---
-import PainelHead from '../../../components/painel/PainelHead.astro';
+import PainelLayout from '../../../components/painel/PainelLayout.astro';
 import { TAGS } from '../../../lib/tags';
 import '../../../styles/painel.css';
 ---
 
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <PainelHead title="Posts — Painel" description="Lista de posts" />
-  </head>
-  <body>
-    <div class="painel-shell">
-      <div class="painel-topbar">
-        <div class="painel-topbar-inner">
-          <a href="/painel" class="font-display text-xl font-bold" style="color: var(--color-ink); text-decoration: none;">← Painel</a>
-          <div class="flex items-center gap-4">
-            <a href="/painel/posts/editor" class="painel-button primary">+ Novo post</a>
-            <button id="logoutBtn" class="painel-button secondary">Sair</button>
-          </div>
-        </div>
-      </div>
+<PainelLayout title="Posts — Painel" description="Lista de posts" current="posts">
+  <section class="page-header">
+    <h1>Posts</h1>
+    <p class="subtitle">Gerencie rascunhos e publicados.</p>
+  </section>
 
-      <main class="painel-main">
-        <h1 class="font-display text-3xl font-bold mb-2">Posts</h1>
-        <p class="mb-6" style="color: var(--color-muted)">Rascunhos e posts publicados</p>
+  <div class="posts-toolbar">
+    <label class="field field--search">
+      <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="searchInput" type="search" placeholder="Buscar por título..." autocomplete="off" />
+    </label>
+    <label class="field field--select">
+      <select id="tagFilter">
+        <option value="">Todas as tags</option>
+        {TAGS.map((t) => <option value={t}>{t}</option>)}
+      </select>
+    </label>
+    <a href="/painel/posts/editor" class="btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Novo post
+    </a>
+  </div>
 
-        <div class="posts-toolbar">
-          <input
-            id="searchInput"
-            class="painel-input"
-            type="search"
-            placeholder="Buscar por título..."
-            autocomplete="off"
-          />
-          <select id="tagFilter" class="painel-input posts-tag-select">
-            <option value="">Todas as tags</option>
-            {TAGS.map((t) => <option value={t}>{t}</option>)}
-          </select>
-        </div>
+  <div class="filter-pills" role="tablist">
+    <button class="pill is-active" data-filter="all" role="tab">Todos</button>
+    <button class="pill" data-filter="draft" role="tab">Rascunhos</button>
+    <button class="pill" data-filter="published" role="tab">Publicados</button>
+    <button class="pill" data-filter="scheduled" role="tab">Agendados</button>
+  </div>
 
-        <div class="flex gap-2 mb-6 flex-wrap">
-          <button class="filter-btn painel-button secondary is-active" data-filter="all">Todos</button>
-          <button class="filter-btn painel-button secondary" data-filter="draft">Rascunhos</button>
-          <button class="filter-btn painel-button secondary" data-filter="published">Publicados</button>
-          <button class="filter-btn painel-button secondary" data-filter="scheduled">Agendados</button>
-        </div>
+  <div id="postsList" class="posts-list">
+    <p class="muted">Carregando...</p>
+  </div>
 
-        <div id="postsList" class="space-y-3">
-          <p style="color: var(--color-muted)">Carregando...</p>
-        </div>
+  <div id="pagination" class="posts-pagination hidden">
+    <button id="prevPage" class="pag-btn" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Anterior
+    </button>
+    <span id="pageInfo" class="pag-info"></span>
+    <button id="nextPage" class="pag-btn" disabled>
+      Próximo
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
 
-        <div id="pagination" class="posts-pagination hidden">
-          <button id="prevPage" class="painel-button secondary" disabled>← Anterior</button>
-          <span id="pageInfo" class="posts-page-info"></span>
-          <button id="nextPage" class="painel-button secondary" disabled>Próximo →</button>
-        </div>
-      </main>
-    </div>
+  <script>
+    const PER_PAGE = 50;
+    let currentStatus = 'all';
+    let currentQ = '';
+    let currentTag = '';
+    let currentPage = 1;
+    let totalPages = 1;
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-    <script>
-      const PER_PAGE = 50;
-      let currentStatus = 'all';
-      let currentQ = '';
-      let currentTag = '';
-      let currentPage = 1;
-      let totalPages = 1;
-      let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    function escapeHtml(str: string) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
 
-      function escapeHtml(str: string) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
+    function badgeClass(status: string) {
+      if (status === 'published') return 'badge2 badge2--published';
+      if (status === 'scheduled') return 'badge2 badge2--scheduled';
+      return 'badge2 badge2--draft';
+    }
+    function badgeLabel(status: string) {
+      if (status === 'published') return 'Publicado';
+      if (status === 'scheduled') return 'Agendado';
+      return 'Rascunho';
+    }
+
+    function readUrlState() {
+      const u = new URL(window.location.href);
+      currentStatus = u.searchParams.get('status') || 'all';
+      currentQ = u.searchParams.get('q') || '';
+      currentTag = u.searchParams.get('tag') || '';
+      currentPage = Math.max(1, parseInt(u.searchParams.get('page') || '1', 10));
+
+      (document.getElementById('searchInput') as HTMLInputElement).value = currentQ;
+      (document.getElementById('tagFilter') as HTMLSelectElement).value = currentTag;
+      document.querySelectorAll<HTMLButtonElement>('.pill').forEach((b) => {
+        b.classList.toggle('is-active', b.dataset.filter === currentStatus);
+      });
+    }
+
+    function writeUrlState(replace = false) {
+      const u = new URL(window.location.href);
+      u.searchParams.set('status', currentStatus);
+      if (currentQ) u.searchParams.set('q', currentQ); else u.searchParams.delete('q');
+      if (currentTag) u.searchParams.set('tag', currentTag); else u.searchParams.delete('tag');
+      if (currentPage > 1) u.searchParams.set('page', String(currentPage)); else u.searchParams.delete('page');
+      const method = replace ? 'replaceState' : 'pushState';
+      window.history[method](null, '', u.toString());
+    }
+
+    async function loadPosts() {
+      const params = new URLSearchParams();
+      params.set('status', currentStatus);
+      if (currentQ) params.set('q', currentQ);
+      if (currentTag) params.set('tag', currentTag);
+      params.set('page', String(currentPage));
+      params.set('per_page', String(PER_PAGE));
+
+      const container = document.getElementById('postsList');
+      if (container) container.innerHTML = `<p class="muted">Carregando...</p>`;
+
+      const res = await fetch(`/api/posts?${params.toString()}`);
+      if (res.status === 401) {
+        window.location.href = '/painel/login';
+        return;
+      }
+      const data = await res.json();
+      totalPages = data.total_pages || 1;
+      renderItems(data.items || []);
+      renderPagination(data.total || 0);
+    }
+
+    function renderItems(items: any[]) {
+      const container = document.getElementById('postsList');
+      if (!container) return;
+      if (!items.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.4;margin-bottom:12px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <p style="margin:0;font-weight:500;color:var(--painel-text-primary)">Nenhum post encontrado</p>
+            <p style="margin:4px 0 0;font-size:13px">Ajuste os filtros ou crie um novo ensaio.</p>
+          </div>`;
+        return;
       }
 
-      function badgeClass(status: string) {
-        if (status === 'published') return 'badge badge-publicado';
-        if (status === 'scheduled') return 'badge badge-agendado';
-        return 'badge badge-rascunho';
-      }
+      container.innerHTML = items.map((it: any) => {
+        const isDraft = it.type === 'draft';
+        const editorHref = isDraft
+          ? `/painel/posts/editor?id=${encodeURIComponent(it.id.replace(/^draft:/, ''))}`
+          : `/painel/posts/editor?slug=${encodeURIComponent(it.slug)}`;
+        const deletePath = isDraft
+          ? `/api/drafts/${encodeURIComponent(it.id.replace(/^draft:/, ''))}`
+          : `/api/posts/${encodeURIComponent(it.slug)}`;
+        const dateTs = Number(it.updated_at || it.published_at || 0);
+        const dateLabel = dateTs ? new Date(dateTs).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+        const syncBadge = !isDraft && it.git_synced === 0
+          ? `<span class="badge2 badge2--unsynced" title="Alterações pendentes de sincronização com Git">● Não sincronizado</span>`
+          : '';
+        const thumb = it.hero_image_url
+          ? `<img src="${escapeHtml(it.hero_image_url)}" alt="" loading="lazy" />`
+          : `<div class="thumb-placeholder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
 
-      function badgeLabel(status: string) {
-        if (status === 'published') return 'Publicado';
-        if (status === 'scheduled') return 'Agendado';
-        return 'Rascunho';
-      }
-
-      // Lê URL inicial
-      function readUrlState() {
-        const u = new URL(window.location.href);
-        currentStatus = u.searchParams.get('status') || 'all';
-        currentQ = u.searchParams.get('q') || '';
-        currentTag = u.searchParams.get('tag') || '';
-        currentPage = Math.max(1, parseInt(u.searchParams.get('page') || '1', 10));
-
-        (document.getElementById('searchInput') as HTMLInputElement).value = currentQ;
-        (document.getElementById('tagFilter') as HTMLSelectElement).value = currentTag;
-        document.querySelectorAll<HTMLButtonElement>('.filter-btn').forEach((b) => {
-          b.classList.toggle('is-active', b.dataset.filter === currentStatus);
-        });
-      }
-
-      // Escreve URL (pushState — pra histórico funcionar com back/forward)
-      function writeUrlState(replace = false) {
-        const u = new URL(window.location.href);
-        u.searchParams.set('status', currentStatus);
-        if (currentQ) u.searchParams.set('q', currentQ); else u.searchParams.delete('q');
-        if (currentTag) u.searchParams.set('tag', currentTag); else u.searchParams.delete('tag');
-        if (currentPage > 1) u.searchParams.set('page', String(currentPage)); else u.searchParams.delete('page');
-        const method = replace ? 'replaceState' : 'pushState';
-        window.history[method](null, '', u.toString());
-      }
-
-      async function loadPosts() {
-        const params = new URLSearchParams();
-        params.set('status', currentStatus);
-        if (currentQ) params.set('q', currentQ);
-        if (currentTag) params.set('tag', currentTag);
-        params.set('page', String(currentPage));
-        params.set('per_page', String(PER_PAGE));
-
-        const container = document.getElementById('postsList');
-        if (container) container.innerHTML = `<p style="color: var(--color-muted)">Carregando...</p>`;
-
-        const res = await fetch(`/api/posts?${params.toString()}`);
-        if (res.status === 401) {
-          window.location.href = '/painel/login';
-          return;
-        }
-        const data = await res.json();
-        totalPages = data.total_pages || 1;
-        renderItems(data.items || [], data.total || 0);
-        renderPagination(data.total || 0);
-      }
-
-      function renderItems(items: any[], total: number) {
-        const container = document.getElementById('postsList');
-        if (!container) return;
-        if (!items.length) {
-          container.innerHTML = `<div class="painel-card" style="padding: 3rem 1.5rem; color: var(--color-muted); text-align: center;">Nenhum post encontrado.</div>`;
-          return;
-        }
-
-        container.innerHTML = items.map((it: any) => {
-          const isDraft = it.type === 'draft';
-          const editorHref = isDraft
-            ? `/painel/posts/editor?id=${encodeURIComponent(it.id.replace(/^draft:/, ''))}`
-            : `/painel/posts/editor?slug=${encodeURIComponent(it.slug)}`;
-          const deletePath = isDraft
-            ? `/api/drafts/${encodeURIComponent(it.id.replace(/^draft:/, ''))}`
-            : `/api/posts/${encodeURIComponent(it.slug)}`;
-          const dateTs = Number(it.updated_at || it.published_at || 0);
-          const dateLabel = dateTs ? new Date(dateTs).toLocaleDateString('pt-BR') : '—';
-          const syncBadge = !isDraft && it.git_synced === 0
-            ? `<span class="badge-sync" title="Alterações pendentes de sincronização com Git">● Não sincronizado</span>`
-            : '';
-
-          return `
-            <div class="posts-list-row painel-card" data-id="${escapeHtml(it.id)}">
-              <a href="${editorHref}" class="posts-list-link">
-                <div class="posts-list-meta">
+        return `
+          <article class="post-row" data-id="${escapeHtml(it.id)}">
+            <a href="${editorHref}" class="post-row__link">
+              <div class="post-row__thumb">${thumb}</div>
+              <div class="post-row__body">
+                <div class="post-row__meta">
                   <span class="${badgeClass(it.status)}">${badgeLabel(it.status)}</span>
                   ${syncBadge}
-                  <span class="posts-list-date">${dateLabel}</span>
+                  <span class="post-row__date">${dateLabel}</span>
                 </div>
-                <h3 class="posts-list-title">${escapeHtml(it.title || 'Sem título')}</h3>
-                <p class="posts-list-desc">${escapeHtml(it.description || '')}</p>
-              </a>
-              <button class="posts-list-card-delete" data-delete-path="${escapeHtml(deletePath)}" data-delete-title="${escapeHtml(it.title || 'Sem título')}" aria-label="Excluir">🗑</button>
-            </div>
-          `;
-        }).join('');
+                <h3 class="post-row__title">${escapeHtml(it.title || 'Sem título')}</h3>
+                <p class="post-row__desc">${escapeHtml(it.description || '')}</p>
+              </div>
+            </a>
+            <button class="post-row__delete" data-delete-path="${escapeHtml(deletePath)}" data-delete-title="${escapeHtml(it.title || 'Sem título')}" aria-label="Excluir">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
+          </article>
+        `;
+      }).join('');
 
-        container.querySelectorAll<HTMLButtonElement>('[data-delete-path]').forEach((btn) => {
-          btn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const path = btn.dataset.deletePath!;
-            const title = btn.dataset.deleteTitle || 'este post';
-            const ok = await window.confirmAction!({
-              title: 'Excluir post?',
-              message: `Tem certeza que quer excluir "${title}"? Esta ação não pode ser desfeita.`,
-              confirmLabel: 'Excluir',
-              cancelLabel: 'Cancelar',
-              danger: true,
-            });
-            if (!ok) return;
-            const r = await fetch(path, { method: 'DELETE' });
-            if (r.ok) {
-              window.toast?.('Post excluído', 'success');
-              loadPosts();
-            } else {
-              window.toast?.('Erro ao excluir', 'error');
-            }
+      container.querySelectorAll<HTMLButtonElement>('[data-delete-path]').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const path = btn.dataset.deletePath!;
+          const title = btn.dataset.deleteTitle || 'este post';
+          const ok = await window.confirmAction!({
+            title: 'Excluir post?',
+            message: `Tem certeza que quer excluir "${title}"? Esta ação não pode ser desfeita.`,
+            confirmLabel: 'Excluir',
+            cancelLabel: 'Cancelar',
+            danger: true,
           });
-        });
-      }
-
-      function renderPagination(total: number) {
-        const pag = document.getElementById('pagination');
-        const info = document.getElementById('pageInfo');
-        const prev = document.getElementById('prevPage') as HTMLButtonElement;
-        const next = document.getElementById('nextPage') as HTMLButtonElement;
-        if (!pag || !info || !prev || !next) return;
-
-        if (total <= PER_PAGE) {
-          pag.classList.add('hidden');
-          return;
-        }
-        pag.classList.remove('hidden');
-        info.textContent = `Página ${currentPage} de ${totalPages} · ${total} ${total === 1 ? 'item' : 'itens'}`;
-        prev.disabled = currentPage <= 1;
-        next.disabled = currentPage >= totalPages;
-      }
-
-      // === EVENT BINDINGS ===
-      document.querySelectorAll<HTMLButtonElement>('.filter-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('is-active'));
-          btn.classList.add('is-active');
-          currentStatus = btn.dataset.filter || 'all';
-          currentPage = 1;
-          writeUrlState();
-          loadPosts();
+          if (!ok) return;
+          const r = await fetch(path, { method: 'DELETE' });
+          if (r.ok) {
+            window.toast?.('Post excluído', 'success');
+            loadPosts();
+          } else {
+            window.toast?.('Erro ao excluir', 'error');
+          }
         });
       });
+    }
 
-      document.getElementById('searchInput')?.addEventListener('input', (e) => {
-        const val = (e.target as HTMLInputElement).value;
-        if (debounceTimer) clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-          currentQ = val.trim();
-          currentPage = 1;
-          writeUrlState();
-          loadPosts();
-        }, 300);
-      });
+    function renderPagination(total: number) {
+      const pag = document.getElementById('pagination');
+      const info = document.getElementById('pageInfo');
+      const prev = document.getElementById('prevPage') as HTMLButtonElement;
+      const next = document.getElementById('nextPage') as HTMLButtonElement;
+      if (!pag || !info || !prev || !next) return;
 
-      document.getElementById('tagFilter')?.addEventListener('change', (e) => {
-        currentTag = (e.target as HTMLSelectElement).value;
+      if (total <= PER_PAGE) {
+        pag.classList.add('hidden');
+        return;
+      }
+      pag.classList.remove('hidden');
+      info.textContent = `Página ${currentPage} de ${totalPages} · ${total} ${total === 1 ? 'item' : 'itens'}`;
+      prev.disabled = currentPage <= 1;
+      next.disabled = currentPage >= totalPages;
+    }
+
+    // === Bindings ===
+    document.querySelectorAll<HTMLButtonElement>('.pill').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.pill').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        currentStatus = btn.dataset.filter || 'all';
         currentPage = 1;
         writeUrlState();
         loadPosts();
       });
+    });
 
-      document.getElementById('prevPage')?.addEventListener('click', () => {
-        if (currentPage > 1) {
-          currentPage--;
-          writeUrlState();
-          loadPosts();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      });
-
-      document.getElementById('nextPage')?.addEventListener('click', () => {
-        if (currentPage < totalPages) {
-          currentPage++;
-          writeUrlState();
-          loadPosts();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      });
-
-      window.addEventListener('popstate', () => {
-        readUrlState();
+    document.getElementById('searchInput')?.addEventListener('input', (e) => {
+      const val = (e.target as HTMLInputElement).value;
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        currentQ = val.trim();
+        currentPage = 1;
+        writeUrlState();
         loadPosts();
-      });
+      }, 300);
+    });
 
-      document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-        await fetch('/api/auth/logout', { method: 'POST' });
-        window.location.href = '/painel/login';
-      });
-
-      // Boot
-      readUrlState();
-      writeUrlState(true);
+    document.getElementById('tagFilter')?.addEventListener('change', (e) => {
+      currentTag = (e.target as HTMLSelectElement).value;
+      currentPage = 1;
+      writeUrlState();
       loadPosts();
-    </script>
+    });
 
-    <style>
-      .filter-btn.is-active {
-        background: var(--color-ink) !important;
-        color: var(--color-paper) !important;
-        border-color: var(--color-ink) !important;
+    document.getElementById('prevPage')?.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        writeUrlState();
+        loadPosts();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
+    });
 
+    document.getElementById('nextPage')?.addEventListener('click', () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        writeUrlState();
+        loadPosts();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    window.addEventListener('popstate', () => {
+      readUrlState();
+      loadPosts();
+    });
+
+    readUrlState();
+    writeUrlState(true);
+    loadPosts();
+  </script>
+
+  <style is:global>
+    /* === TOOLBAR (search + tag + cta) === */
+    .posts-toolbar {
+      display: grid;
+      grid-template-columns: 1fr 200px auto;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 720px) {
       .posts-toolbar {
-        display: grid;
-        grid-template-columns: 1fr 220px;
-        gap: 0.75rem;
-        margin-bottom: 1rem;
+        grid-template-columns: 1fr;
       }
-      @media (max-width: 640px) {
-        .posts-toolbar { grid-template-columns: 1fr; }
-      }
-      .posts-tag-select {
-        cursor: pointer;
-      }
+      .posts-toolbar .btn-primary { justify-content: center; }
+    }
+    .field {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: var(--painel-surface);
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      padding: 0 12px;
+      height: 40px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .field:hover { border-color: var(--painel-border-strong); }
+    .field:focus-within {
+      border-color: var(--painel-accent);
+      box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+    }
+    .field-icon { color: var(--painel-text-secondary); flex-shrink: 0; }
+    .field input,
+    .field select {
+      border: 0;
+      background: transparent;
+      outline: 0;
+      width: 100%;
+      font-family: var(--painel-font);
+      font-size: 14px;
+      color: var(--painel-text-primary);
+      padding: 0 8px;
+    }
+    .field select { cursor: pointer; appearance: none; padding-right: 24px; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f6368' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 8px center; background-size: 16px; }
 
-      .posts-pagination {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--color-border);
-      }
-      .posts-pagination.hidden { display: none; }
-      .posts-page-info {
-        font-size: 0.875rem;
-        color: var(--color-muted);
-      }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 40px;
+      padding: 0 18px;
+      background: var(--painel-accent);
+      color: #fff;
+      border: 0;
+      border-radius: var(--painel-radius);
+      font-family: var(--painel-font);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .15s, box-shadow .15s;
+    }
+    .btn-primary:hover { background: var(--painel-accent-hover); box-shadow: var(--painel-shadow-sm); }
 
-      .badge-sync {
-        font-size: 0.7rem;
-        padding: 0.15rem 0.5rem;
-        border-radius: 9999px;
-        background: #fef3c7;
-        color: #92400e;
-        font-weight: 600;
-      }
-    </style>
-  </body>
-</html>
+    /* === FILTER PILLS === */
+    .filter-pills {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      padding: 6px 16px;
+      background: var(--painel-surface);
+      border: 1px solid var(--painel-border);
+      border-radius: 999px;
+      color: var(--painel-text-secondary);
+      font-family: var(--painel-font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .pill:hover {
+      background: rgba(60,64,67,0.04);
+      color: var(--painel-text-primary);
+    }
+    .pill.is-active {
+      background: var(--painel-accent-soft);
+      color: var(--painel-accent);
+      border-color: #c9dcfa;
+    }
+
+    /* === POSTS LIST === */
+    .posts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .muted { color: var(--painel-text-secondary); font-size: 14px; }
+
+    .post-row {
+      display: flex;
+      align-items: stretch;
+      background: var(--painel-surface);
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      overflow: hidden;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .post-row:hover {
+      border-color: var(--painel-border-strong);
+      box-shadow: var(--painel-shadow-sm);
+    }
+    .post-row__link {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      gap: 16px;
+      padding: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .post-row__thumb {
+      flex-shrink: 0;
+      width: 120px;
+      height: 80px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #f1f3f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .post-row__thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-placeholder { color: var(--painel-text-disabled); }
+    .post-row__body { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+    .post-row__meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+    .post-row__date {
+      font-size: 12px;
+      color: var(--painel-text-disabled);
+      margin-left: auto;
+    }
+    .post-row__title {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--painel-text-primary);
+      margin: 0 0 4px;
+      line-height: 1.3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+    }
+    .post-row__desc {
+      font-size: 14px;
+      color: var(--painel-text-secondary);
+      margin: 0;
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+    }
+    .post-row__delete {
+      flex-shrink: 0;
+      width: 44px;
+      background: transparent;
+      border: 0;
+      border-left: 1px solid var(--painel-border);
+      color: var(--painel-text-disabled);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s, color .15s;
+    }
+    .post-row__delete:hover {
+      background: #fce8e6;
+      color: var(--painel-danger);
+    }
+    @media (max-width: 640px) {
+      .post-row__thumb { width: 80px; height: 60px; }
+      .post-row__link { padding: 10px; gap: 12px; }
+      .post-row__date { margin-left: 0; }
+    }
+
+    /* === BADGES (versão D) === */
+    .badge2 {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .badge2--published { background: #e6f4ea; color: #1e8e3e; }
+    .badge2--draft     { background: #f1f3f4; color: #5f6368; }
+    .badge2--scheduled { background: #e8f0fe; color: #1a73e8; }
+    .badge2--unsynced  { background: #feefc3; color: #b06000; }
+
+    /* === PAGINATION === */
+    .posts-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--painel-border);
+    }
+    .posts-pagination.hidden { display: none; }
+    .pag-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--painel-surface);
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      color: var(--painel-text-primary);
+      font-family: var(--painel-font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+    .pag-btn:hover:not(:disabled) {
+      background: rgba(60,64,67,0.04);
+      border-color: var(--painel-border-strong);
+    }
+    .pag-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .pag-info {
+      font-size: 13px;
+      color: var(--painel-text-secondary);
+    }
+  </style>
+</PainelLayout>

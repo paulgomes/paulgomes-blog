@@ -1,0 +1,16 @@
+---
+import PainelLayout from '../../components/painel/PainelLayout.astro';
+import '../../styles/painel.css';
+---
+
+<PainelLayout title="Estatísticas — Painel" description="Métricas do blog" current="stats">
+  <section class="page-header">
+    <h1>Estatísticas</h1>
+    <p class="subtitle">Visualizações, posts por mês, performance por tag.</p>
+  </section>
+
+  <div class="empty-state">
+    <span class="icon">📊</span>
+    Em desenvolvimento. Aqui vão entrar gráficos de tráfego (Plausible/GA), top posts por views e distribuição por tag.
+  </div>
+</PainelLayout>
