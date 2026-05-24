@@ -27,6 +27,11 @@ import '../../styles/painel.css';
       <p class="value" id="statUnsynced"><span class="stat-skeleton"></span></p>
       <p class="hint">Editados no painel, pendentes de Git</p>
     </div>
+    <a href="/painel/posts?status=deleted" class="stat-card stat-card--trash" id="statDeletedCard">
+      <p class="label">Lixeira</p>
+      <p class="value" id="statDeleted"><span class="stat-skeleton"></span></p>
+      <p class="hint">Posts deletados (restaurar ou purgar)</p>
+    </a>
   </section>
 
   <section class="quick-actions">
@@ -59,17 +64,22 @@ import '../../styles/painel.css';
     const STATS_CACHE_KEY = 'painel:stats';
     const STATS_TTL = 10_000;
 
-    function renderStats(s: { total: number; drafts: number; published: number; unsynced: number }) {
+    function renderStats(s: { total: number; drafts: number; published: number; unsynced: number; deleted?: number }) {
       const $t = document.getElementById('statTotal');
       const $d = document.getElementById('statDrafts');
       const $p = document.getElementById('statPublished');
       const $u = document.getElementById('statUnsynced');
       const $uCard = document.getElementById('statUnsyncedCard');
+      const $del = document.getElementById('statDeleted');
+      const $delCard = document.getElementById('statDeletedCard');
+      const deletedCount = Number(s.deleted || 0);
       if ($t) $t.textContent = String(s.total);
       if ($d) $d.textContent = String(s.drafts);
       if ($p) $p.textContent = String(s.published);
       if ($u) $u.textContent = String(s.unsynced);
       if ($uCard) $uCard.classList.toggle('stat-card--warn-active', s.unsynced > 0);
+      if ($del) $del.textContent = String(deletedCount);
+      if ($delCard) $delCard.classList.toggle('stat-card--trash-active', deletedCount > 0);
     }
 
     async function loadStats(force = false) {
@@ -189,6 +199,12 @@ import '../../styles/painel.css';
     .stat-card--warn-active .label,
     .stat-card--warn-active .value,
     .stat-card--warn-active .hint { color: #92400e; }
+    .stat-card--trash { border-color: var(--painel-border); }
+    .stat-card--trash-active {
+      background: #f6f7f8;
+      border-color: #dadce0;
+    }
+    .stat-card--trash-active .value { color: var(--painel-danger); }
 
     .stat-skeleton {
       display: inline-block;
