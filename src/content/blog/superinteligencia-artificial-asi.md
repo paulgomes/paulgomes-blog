@@ -3,6 +3,7 @@ title: "Superinteligência Artificial (ASI)"
 description: ""
 pubDate: 2026-05-24
 heroImage: "https://media.paulgomes.com.br/2026/05/2d8af6e0-a2a7-4b73-a4be-0b02fd23a62f.png"
+featured: true
 ---
 
 # O Momento em Que a Máquina Deixa de Ser Ferramenta
