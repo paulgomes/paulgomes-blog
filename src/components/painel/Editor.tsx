@@ -100,6 +100,9 @@ export default function Editor() {
       window.dispatchEvent(new CustomEvent('editor:change', {
         detail: { html, md, wordCount: words, readTime }
       }));
+      // Notifica scripts externos (ex: SEO analyzer) pra re-analisar.
+      // NOTA: setContent({ emitUpdate: false }) NAO dispara isso — so digitacao organica.
+      window.dispatchEvent(new Event('editor:content-changed'));
     },
   });
 

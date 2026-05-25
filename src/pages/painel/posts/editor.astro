@@ -106,25 +106,43 @@ const currentNav = isEditing ? 'posts' : 'new';
       <section class="side-section seo-section">
         <h3 class="side-section__title">SEO</h3>
 
-        <div class="seo-counter">
-          <label>Título</label>
-          <div id="titleCounter">0 / 60</div>
+        <div class="seo-toolbar">
+          <button type="button" id="seoGenerate" class="seo-gen-btn">✨ Gerar SEO</button>
+          <span class="seo-score-badge" id="seoScoreBadge">--</span>
         </div>
-        <div class="seo-counter">
-          <label>Descrição</label>
-          <div id="descCounter">0 / 160</div>
+
+        <div class="seo-field">
+          <label for="focusKeyword">Palavra-chave foco</label>
+          <input type="text" id="focusKeyword" class="side-input" placeholder="ex: marketing digital" />
+        </div>
+
+        <div class="seo-field">
+          <label for="metaTitle">Meta título <small id="mtCounter">0/60</small></label>
+          <input type="text" id="metaTitle" class="side-input" maxlength="80" placeholder="50-60 caracteres" />
+        </div>
+
+        <div class="seo-field">
+          <label for="metaDescription">Meta descrição <small id="mdCounter">0/160</small></label>
+          <textarea id="metaDescription" class="side-input seo-textarea" maxlength="220" rows="3" placeholder="150-160 caracteres"></textarea>
         </div>
 
         <div class="seo-preview">
-          <span class="seo-preview-url">paulgomes.com.br › blog › <span id="previewSlug">meu-post</span></span>
+          <span class="seo-preview-url">paulgomes.com.br › <span id="previewSlug">meu-post</span></span>
           <h4 id="previewTitle">Título do post</h4>
           <p id="previewDesc">Descrição curta aparece aqui...</p>
+        </div>
+
+        <div class="seo-analysis" id="seoAnalysis">
+          <h4 class="seo-analysis-title">Análise SEO</h4>
+          <ul class="seo-checks" id="seoChecks"></ul>
         </div>
       </section>
     </aside>
   </div>
 
   <script>
+    import { analyzeSEO, detectFocusKeyword, generateMetaTitle, generateMetaDescription } from '../../../lib/seo-analyzer';
+
     // ===== Modo =====
     // 'post'  → editando posts_meta via /api/posts/:slug
     // 'draft' → editando drafts via /api/drafts/:id (legado)
@@ -159,11 +177,19 @@ const currentNav = isEditing ? 'posts' : 'new';
     const $wordCount = document.getElementById('wordCount') as HTMLSpanElement;
     const $readTime = document.getElementById('readTime') as HTMLSpanElement;
 
-    const $titleCounter = document.getElementById('titleCounter') as HTMLDivElement;
-    const $descCounter = document.getElementById('descCounter') as HTMLDivElement;
     const $previewSlug = document.getElementById('previewSlug') as HTMLSpanElement;
     const $previewTitle = document.getElementById('previewTitle') as HTMLHeadingElement;
     const $previewDesc = document.getElementById('previewDesc') as HTMLParagraphElement;
+
+    // === SEO Yoast-like ===
+    const $focusKeyword = document.getElementById('focusKeyword') as HTMLInputElement;
+    const $metaTitle = document.getElementById('metaTitle') as HTMLInputElement;
+    const $metaDescription = document.getElementById('metaDescription') as HTMLTextAreaElement;
+    const $mtCounter = document.getElementById('mtCounter') as HTMLElement;
+    const $mdCounter = document.getElementById('mdCounter') as HTMLElement;
+    const $seoGenBtn = document.getElementById('seoGenerate') as HTMLButtonElement;
+    const $seoScoreBadge = document.getElementById('seoScoreBadge') as HTMLSpanElement;
+    const $seoChecks = document.getElementById('seoChecks') as HTMLUListElement;
 
     // === Destaque (featured) — só aparece em modo post publicado ===
     const $featuredBlock = document.getElementById('featuredBlock') as HTMLElement;
@@ -218,14 +244,7 @@ const currentNav = isEditing ? 'posts' : 'new';
       }
     }
 
-    // ===== SEO counters + preview =====
-    function updateSeoCounter(el: HTMLDivElement, current: number, max: number) {
-      el.textContent = `${current} / ${max}`;
-      el.classList.remove('warn', 'over');
-      if (current > max) el.classList.add('over');
-      else if (current > max * 0.8) el.classList.add('warn');
-    }
-
+    // ===== SEO preview + counters dos novos campos =====
     // Mantenha em sync com functions/api/_utils/slugify.ts
     function slugify(s: string) {
       return String(s ?? '')
@@ -237,18 +256,92 @@ const currentNav = isEditing ? 'posts' : 'new';
         .replace(/-+/g, '-');
     }
 
+    function setCounter(el: HTMLElement, current: number, max: number) {
+      el.textContent = `${current}/${max}`;
+      el.classList.remove('warn', 'over');
+      if (current > max) el.classList.add('over');
+      else if (current > max * 0.85) el.classList.add('warn');
+    }
+
     function updateSeoPreview() {
-      const t = $title.value || 'Título do post';
-      const d = $description.value || 'Descrição curta aparece aqui...';
+      // Preview usa meta_title/meta_description se preenchidos, fallback pro title/description
+      const t = $metaTitle.value.trim() || $title.value || 'Título do post';
+      const d = $metaDescription.value.trim() || $description.value || 'Descrição curta aparece aqui...';
       const s = $slug.value || slugify($title.value) || 'meu-post';
       $previewTitle.textContent = t;
       $previewDesc.textContent = d;
       $previewSlug.textContent = s;
-
-      updateSeoCounter($titleCounter, $title.value.length, 60);
-      updateSeoCounter($descCounter, $description.value.length, 160);
+      setCounter($mtCounter, $metaTitle.value.length, 60);
+      setCounter($mdCounter, $metaDescription.value.length, 160);
     }
     updateSeoPreview();
+
+    // ===== SEO Yoast-like (analise + gerar automatico) =====
+    function escapeForList(s: string): string {
+      const div = document.createElement('div');
+      div.textContent = String(s);
+      return div.innerHTML;
+    }
+
+    function updateSeoAnalysis() {
+      const analysis = analyzeSEO({
+        title: $title.value || '',
+        metaTitle: $metaTitle.value || '',
+        metaDescription: $metaDescription.value || '',
+        focusKeyword: $focusKeyword.value || '',
+        content: currentContent || '',
+      });
+      $seoScoreBadge.textContent = String(analysis.score);
+      $seoScoreBadge.className = 'seo-score-badge ' + analysis.grade;
+      $seoChecks.innerHTML = analysis.checks.map((c) => {
+        const icon = c.status === 'pass' ? '✓' : c.status === 'warn' ? '!' : '✗';
+        return `<li>
+          <span class="seo-check-icon ${c.status}">${icon}</span>
+          <div class="seo-check-text">
+            <span class="seo-check-label">${escapeForList(c.label)}:</span>
+            ${escapeForList(c.message)}
+          </div>
+        </li>`;
+      }).join('');
+    }
+
+    let seoTimer: ReturnType<typeof setTimeout> | null = null;
+    function scheduleSeoAnalysis() {
+      if (seoTimer) clearTimeout(seoTimer);
+      seoTimer = setTimeout(updateSeoAnalysis, 300);
+    }
+
+    $seoGenBtn?.addEventListener('click', () => {
+      const t = $title.value || '';
+      const content = currentContent || '';
+      if (!t.trim() && !content.trim()) {
+        window.toast?.('Adicione título e conteúdo primeiro', 'error');
+        return;
+      }
+      const kw = detectFocusKeyword(t, content);
+      if (kw && !$focusKeyword.value.trim()) $focusKeyword.value = kw;
+      if (!$metaTitle.value.trim()) $metaTitle.value = generateMetaTitle(t, kw);
+      if (!$metaDescription.value.trim()) $metaDescription.value = generateMetaDescription(content, kw);
+      updateSeoPreview();
+      updateSeoAnalysis();
+      scheduleAutoSave();
+      window.toast?.('SEO preenchido. Edite livremente.', 'success');
+    });
+
+    // Re-analisa quando usuario digita nos campos SEO
+    [$focusKeyword, $metaTitle, $metaDescription].forEach((el) => {
+      el?.addEventListener('input', () => {
+        updateSeoPreview();
+        scheduleSeoAnalysis();
+        scheduleAutoSave();
+      });
+    });
+
+    // Re-analisa quando conteudo do TipTap muda (digitacao organica)
+    window.addEventListener('editor:content-changed', scheduleSeoAnalysis);
+
+    // Analise inicial
+    setTimeout(updateSeoAnalysis, 200);
 
     // ===== Helpers categorias =====
     function categoriasToString(categorias: any): string {
@@ -282,6 +375,9 @@ const currentNav = isEditing ? 'posts' : 'new';
       $description.value = draft.description || '';
       $slug.value = draft.slug || '';
       $category.value = draft.category || '';
+      $focusKeyword.value = draft.focus_keyword || '';
+      $metaTitle.value = draft.meta_title || '';
+      $metaDescription.value = draft.meta_description || '';
       applyHeroValue(draft.hero_image_url || '');
       currentContent = draft.content_md || '';
       $deleteBtn.style.display = 'inline-flex';
@@ -290,6 +386,7 @@ const currentNav = isEditing ? 'posts' : 'new';
       }
       setEditorContent(currentContent);
       updateSeoPreview();
+      updateSeoAnalysis();
     }
 
     async function loadPost() {
@@ -309,11 +406,15 @@ const currentNav = isEditing ? 'posts' : 'new';
       $description.value = post.description || '';
       $slug.value = post.slug || '';
       $category.value = categoriasToString(post.categorias);
+      $focusKeyword.value = post.focus_keyword || '';
+      $metaTitle.value = post.meta_title || '';
+      $metaDescription.value = post.meta_description || '';
       applyHeroValue(post.hero_image_url || '');
       currentContent = post.content_md || '';
       $isFeatured.checked = Boolean(post.is_featured);
       setEditorContent(currentContent);
       updateSeoPreview();
+      updateSeoAnalysis();
       updateFeaturedHint();
     }
 
@@ -351,6 +452,9 @@ const currentNav = isEditing ? 'posts' : 'new';
         category: $category.value,
         hero_image_url: $heroImage.value,
         content_md: currentContent,
+        focus_keyword: $focusKeyword.value,
+        meta_title: $metaTitle.value,
+        meta_description: $metaDescription.value,
       };
     }
 
@@ -361,6 +465,9 @@ const currentNav = isEditing ? 'posts' : 'new';
         hero_image_url: $heroImage.value,
         content_md: currentContent,
         categorias: categoriasToArray($category.value),
+        focus_keyword: $focusKeyword.value,
+        meta_title: $metaTitle.value,
+        meta_description: $metaDescription.value,
       };
     }
 
@@ -463,6 +570,7 @@ const currentNav = isEditing ? 'posts' : 'new';
     inputsToWatch.forEach((el) => {
       el.addEventListener('input', () => {
         updateSeoPreview();
+        scheduleSeoAnalysis();
         scheduleAutoSave();
       });
     });
@@ -1077,27 +1185,117 @@ const currentNav = isEditing ? 'posts' : 'new';
     }
     .hero-url-toggle[open] summary { margin-bottom: 8px; }
 
-    /* === SEO (sobrescreve do painel.css) === */
-    .seo-section .seo-counter {
+    /* === SEO Yoast-like === */
+    .seo-section .seo-toolbar {
       display: flex;
       align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .seo-section .seo-gen-btn {
+      flex: 1;
+      padding: 8px 12px;
+      background: linear-gradient(135deg, #00b4d8, #0096b8);
+      color: #fff;
+      border: 0;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .seo-section .seo-gen-btn:hover { opacity: 0.9; }
+    .seo-section .seo-score-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 32px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 14px;
+      background: #f0f0f0;
+      color: #999;
+      font-variant-numeric: tabular-nums;
+    }
+    .seo-section .seo-score-badge.green { background: #d4edda; color: #155724; }
+    .seo-section .seo-score-badge.yellow { background: #fff3cd; color: #856404; }
+    .seo-section .seo-score-badge.red { background: #f8d7da; color: #721c24; }
+
+    .seo-section .seo-field {
+      margin-bottom: 12px;
+    }
+    .seo-section .seo-field label {
+      display: flex;
+      align-items: baseline;
       justify-content: space-between;
-      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--painel-text-secondary);
+      margin-bottom: 4px;
+    }
+    .seo-section .seo-field label small {
+      font-size: 11px;
+      color: var(--painel-text-disabled);
+      font-variant-numeric: tabular-nums;
+    }
+    .seo-section .seo-field label small.warn { color: var(--painel-warning); }
+    .seo-section .seo-field label small.over { color: var(--painel-danger); }
+    .seo-section .seo-textarea {
+      resize: vertical;
+      font-family: var(--painel-font);
+      line-height: 1.4;
+    }
+
+    .seo-section .seo-analysis {
+      margin-top: 12px;
+      padding: 12px;
+      background: var(--painel-bg);
+      border: 1px solid var(--painel-border);
+      border-radius: 6px;
+    }
+    .seo-section .seo-analysis-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--painel-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 8px;
+    }
+    .seo-section .seo-checks {
+      list-style: none;
+      margin: 0;
+      padding: 0;
       font-size: 12px;
     }
-    .seo-section .seo-counter label {
-      color: var(--painel-text-secondary);
-      text-transform: none;
-      letter-spacing: 0;
-      font-weight: 500;
+    .seo-section .seo-checks li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--painel-border);
     }
-    .seo-section .seo-counter > div {
-      font-variant-numeric: tabular-nums;
-      color: var(--painel-text-secondary);
-      font-weight: 500;
+    .seo-section .seo-checks li:last-child { border-bottom: 0; }
+    .seo-section .seo-check-icon {
+      flex-shrink: 0;
+      width: 14px;
+      text-align: center;
+      font-weight: 700;
+      line-height: 1.4;
     }
-    .seo-section .seo-counter > div.warn { color: var(--painel-warning); }
-    .seo-section .seo-counter > div.over { color: var(--painel-danger); }
+    .seo-section .seo-check-icon.pass { color: #28a745; }
+    .seo-section .seo-check-icon.warn { color: #ffc107; }
+    .seo-section .seo-check-icon.fail { color: #dc3545; }
+    .seo-section .seo-check-text {
+      flex: 1;
+      color: var(--painel-text-secondary);
+      line-height: 1.4;
+    }
+    .seo-section .seo-check-label {
+      font-weight: 600;
+      color: var(--painel-text-primary);
+      margin-right: 4px;
+    }
 
     .seo-section .seo-preview {
       margin-top: 12px;
