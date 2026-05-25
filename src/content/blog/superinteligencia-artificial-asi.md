@@ -4,6 +4,9 @@ description: ""
 pubDate: 2026-05-24
 heroImage: "https://media.paulgomes.com.br/2026/05/2d8af6e0-a2a7-4b73-a4be-0b02fd23a62f.png"
 featured: true
+focusKeyword: "Superinteligência Artificial"
+metaTitle: "Superinteligência Artificial (ASI)"
+metaDescription: "Enquanto isso, silenciosamente, uma corrida muito maior acontece nos bastidores: a criação da Superinteligência Artificial, ou Artificial..."
 ---
 
 # O Momento em Que a Máquina Deixa de Ser Ferramenta
