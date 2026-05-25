@@ -3,14 +3,14 @@ import PainelLayout from '../../components/painel/PainelLayout.astro';
 import '../../styles/painel.css';
 ---
 
-<PainelLayout title="Categorias — Painel" description="Gerenciamento de categorias" current="tags">
+<PainelLayout title="Categorias — Painel" description="Gerenciamento de categorias" current="categorias">
   <section class="page-header">
     <h1>Categorias</h1>
     <p class="subtitle">Crie, renomeie ou exclua categorias. Toda mudança publica no site.</p>
   </section>
 
   <p class="tags-hint">
-    ℹ️ Categorias geram rotas <code>/tag/&lt;slug&gt;/</code> no blog público. Slug é gerado do nome.
+    ℹ️ Categorias geram rotas <code>/categoria/&lt;slug&gt;/</code> no blog público. Slug é gerado do nome.
     Excluir categoria com posts associados é bloqueado — reatribua os posts antes.
   </p>
 
@@ -123,7 +123,7 @@ import '../../styles/painel.css';
 
       setIndicator('↻ Sincronizando categorias...', 'var(--painel-accent)');
       try {
-        const res = await fetch('/api/categories/sync', { method: 'POST' });
+        const res = await fetch('/api/categorias/sync', { method: 'POST' });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Falha no sync');
 
@@ -162,11 +162,11 @@ import '../../styles/painel.css';
         <div class="cat-row" data-id="${escapeHtml(c.id)}">
           <div class="cat-row__info">
             <span class="cat-row__name">${escapeHtml(c.name)}</span>
-            <span class="cat-row__slug">/tag/${escapeHtml(c.slug)}/</span>
+            <span class="cat-row__slug">/categoria/${escapeHtml(c.slug)}/</span>
           </div>
           <span class="cat-row__count">${c.count_posts} ${c.count_posts === 1 ? 'post' : 'posts'}</span>
           <div class="cat-row__actions">
-            <a href="/tag/${encodeURIComponent(c.slug)}/" target="_blank" rel="noopener" class="cat-row__btn cat-row__btn--ghost" title="Ver no blog">↗</a>
+            <a href="/categoria/${encodeURIComponent(c.slug)}/" target="_blank" rel="noopener" class="cat-row__btn cat-row__btn--ghost" title="Ver no blog">↗</a>
             <button class="cat-row__btn" data-edit="${escapeHtml(c.id)}" type="button">Editar</button>
             <button class="cat-row__btn cat-row__btn--danger" data-delete="${escapeHtml(c.id)}" data-count="${c.count_posts}" data-name="${escapeHtml(c.name)}" type="button">Excluir</button>
           </div>
@@ -186,7 +186,7 @@ import '../../styles/painel.css';
       $loading.hidden = false;
       $content.hidden = true;
       try {
-        const res = await fetch('/api/categories');
+        const res = await fetch('/api/categorias');
         if (res.status === 401) { window.location.href = '/painel/login'; return; }
         if (!res.ok) throw new Error('Falha ao carregar');
         const data = await res.json();
@@ -214,7 +214,7 @@ import '../../styles/painel.css';
       const name = $newCatName.value.trim();
       if (!name) { window.toast?.('Preencha o nome', 'error'); return; }
       try {
-        const res = await fetch('/api/categories', {
+        const res = await fetch('/api/categorias', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name }),
@@ -254,7 +254,7 @@ import '../../styles/painel.css';
       const name = $editCatName.value.trim();
       if (!name) { window.toast?.('Nome vazio', 'error'); return; }
       try {
-        const res = await fetch(`/api/categories/${encodeURIComponent(editingId)}`, {
+        const res = await fetch(`/api/categorias/${encodeURIComponent(editingId)}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name }),
@@ -279,14 +279,14 @@ import '../../styles/painel.css';
       }
       const ok = await window.confirmAction!({
         title: 'Excluir categoria?',
-        message: `A categoria "${name}" será removida. A rota /tag/<slug>/ correspondente some no próximo rebuild.`,
+        message: `A categoria "${name}" será removida. A rota /categoria/<slug>/ correspondente some no próximo rebuild.`,
         confirmLabel: 'Excluir',
         cancelLabel: 'Cancelar',
         danger: true,
       });
       if (!ok) return;
       try {
-        const res = await fetch(`/api/categories/${encodeURIComponent(id)}`, { method: 'DELETE' });
+        const res = await fetch(`/api/categorias/${encodeURIComponent(id)}`, { method: 'DELETE' });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Falha ao excluir');
         window.toast?.(`"${name}" excluída · sincronizando...`, 'info');

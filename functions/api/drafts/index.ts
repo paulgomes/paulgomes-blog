@@ -40,7 +40,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
   await env.DB.prepare(`
     INSERT INTO drafts (id, slug, title, description, content_md, hero_image_url,
-                        category, tags, focus_keyword, meta_title, meta_description,
+                        category, categorias, focus_keyword, meta_title, meta_description,
                         author_id, status, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, ?)
   `).bind(
@@ -50,7 +50,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     body.content_md || '',
     body.hero_image_url || null,
     body.category || null,
-    JSON.stringify(body.tags || []),
+    JSON.stringify(body.categorias || []),
     body.focus_keyword || null,
     body.meta_title || null,
     body.meta_description || null,

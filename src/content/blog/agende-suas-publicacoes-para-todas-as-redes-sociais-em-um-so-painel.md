@@ -2,7 +2,7 @@
 title: "Agende suas publicações para todas as redes sociais em um só painel"
 description: "Conheça a plataforma mais completa para social media e marketing digital do Brasil: agende posts, crie relatórios, landing pages, workflow e muito mais"
 pubDate: 2023-01-06
-tags:
+categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-8.webp"
 ---

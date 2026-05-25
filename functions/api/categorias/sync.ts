@@ -2,14 +2,14 @@ import type { Env } from '../_utils/db';
 import { requireAuth } from '../_utils/require-auth';
 import { commitFile } from '../_utils/github';
 
-// POST /api/categories/sync
-// Le D1 categories, regenera secao TAGS+TAG_SLUGS+TAG_COLORS de src/lib/tags.ts
-// entre markers <CATEGORIES_BEGIN> e <CATEGORIES_END>, commita.
-// Resto do tags.ts (SLUG_TO_TAG derivado, helpers) preservado.
+// POST /api/categorias/sync
+// Le D1 categories, regenera secao CATEGORIAS+CATEGORIA_SLUGS+CATEGORIA_COLORS
+// de src/lib/categorias.ts entre markers <CATEGORIAS_BEGIN> e <CATEGORIAS_END>,
+// commita. Resto do categorias.ts (SLUG_TO_CATEGORIA derivado) preservado.
 
-const TAGS_PATH = 'src/lib/tags.ts';
-const MARKER_BEGIN = '// <CATEGORIES_BEGIN>';
-const MARKER_END = '// <CATEGORIES_END>';
+const CATEGORIAS_PATH = 'src/lib/categorias.ts';
+const MARKER_BEGIN = '// <CATEGORIAS_BEGIN>';
+const MARKER_END = '// <CATEGORIAS_END>';
 
 // Paleta default: ciclica pra novas categorias sem cor especificada
 const DEFAULT_COLORS = [
@@ -49,21 +49,21 @@ function buildSection(cats: CategoryRow[]): string {
   }).join('\n');
 
   return `${MARKER_BEGIN}
-export const TAGS = [${names}] as const;
-export type Tag = typeof TAGS[number];
+export const CATEGORIAS = [${names}] as const;
+export type Categoria = typeof CATEGORIAS[number];
 
-export const TAG_SLUGS: Record<Tag, string> = {
+export const CATEGORIA_SLUGS: Record<Categoria, string> = {
 ${slugLines}
 };
 
-export const TAG_COLORS: Record<Tag, { bg: string; fg: string }> = {
+export const CATEGORIA_COLORS: Record<Categoria, { bg: string; fg: string }> = {
 ${colorLines}
 };
 ${MARKER_END}`;
 }
 
-async function getCurrentTagsContent(env: Env): Promise<string> {
-  const url = `https://api.github.com/repos/${env.GITHUB_REPO}/contents/${TAGS_PATH}?ref=${env.GITHUB_BRANCH}`;
+async function getCurrentCategoriasContent(env: Env): Promise<string> {
+  const url = `https://api.github.com/repos/${env.GITHUB_REPO}/contents/${CATEGORIAS_PATH}?ref=${env.GITHUB_BRANCH}`;
   const res = await fetch(url, {
     headers: {
       'Authorization': `token ${env.GITHUB_TOKEN}`,
@@ -71,7 +71,7 @@ async function getCurrentTagsContent(env: Env): Promise<string> {
       'Accept': 'application/vnd.github.v3+json',
     },
   });
-  if (!res.ok) throw new Error(`Falha ao ler ${TAGS_PATH} (${res.status})`);
+  if (!res.ok) throw new Error(`Falha ao ler ${CATEGORIAS_PATH} (${res.status})`);
   const data = await res.json() as any;
   // content base64 (Latin-1 esperado pelo encoding base64, mas conteudo TS pode ter UTF-8 — usa TextDecoder)
   const binary = atob(data.content.replace(/\n/g, ''));
@@ -93,12 +93,12 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       return Response.json({ error: 'Nenhuma categoria no D1 — z.enum precisa de >=1' }, { status: 400 });
     }
 
-    const currentContent = await getCurrentTagsContent(env);
+    const currentContent = await getCurrentCategoriasContent(env);
     const beginIdx = currentContent.indexOf(MARKER_BEGIN);
     const endIdx = currentContent.indexOf(MARKER_END);
     if (beginIdx === -1 || endIdx === -1 || endIdx < beginIdx) {
       return Response.json({
-        error: `Markers ${MARKER_BEGIN}/${MARKER_END} nao encontrados em ${TAGS_PATH} — corrigir arquivo a mao primeiro`,
+        error: `Markers ${MARKER_BEGIN}/${MARKER_END} nao encontrados em ${CATEGORIAS_PATH} — corrigir arquivo a mao primeiro`,
       }, { status: 500 });
     }
 
@@ -111,14 +111,14 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       return Response.json({
         ok: true,
         no_op: true,
-        message: 'Sem mudancas — tags.ts ja reflete o estado do D1',
+        message: 'Sem mudancas — categorias.ts ja reflete o estado do D1',
       });
     }
 
     const commit = await commitFile(env, {
-      path: TAGS_PATH,
+      path: CATEGORIAS_PATH,
       content: newContent,
-      message: `chore(categories): sync de ${cats.length} categoria(s)`,
+      message: `chore(categorias): sync de ${cats.length} categoria(s)`,
     });
 
     return Response.json({
@@ -128,7 +128,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       message: `${cats.length} categoria(s) sincronizada(s). Rebuild em ~2 min.`,
     });
   } catch (err: any) {
-    console.error('Categories sync error:', err);
+    console.error('Categorias sync error:', err);
     return Response.json({ error: err?.message || 'Erro ao sincronizar' }, { status: 500 });
   }
 };

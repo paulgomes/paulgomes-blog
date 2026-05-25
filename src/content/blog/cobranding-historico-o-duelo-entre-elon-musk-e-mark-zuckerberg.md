@@ -2,7 +2,7 @@
 title: "Cobranding Histórico: O Duelo entre Elon Musk e Mark Zuckerberg"
 description: "Elon Musk anuncia uma luta contra Mark Zuckerberg com transmissão no X, a nova plataforma de vídeo ao vivo que substituiu o Twitter após sua aquisição por Musk. O empresário menciona que os lucros..."
 pubDate: 2023-08-07
-tags:
+categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-4.webp"
 ---

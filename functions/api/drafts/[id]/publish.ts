@@ -44,11 +44,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }
 
     // 2. INSERT/UPDATE posts_meta com TODOS os campos (idempotente via slug PK)
     //    ON CONFLICT preserva published_at e is_featured (curadoria via /feature endpoint).
-    //    tags vem do draft como JSON string ou null — passa direto.
-    const tags = draft.tags ?? null;
+    //    categorias vem do draft como JSON string ou null — passa direto.
+    const categorias = draft.categorias ?? null;
     await env.DB.prepare(`
       INSERT INTO posts_meta (
-        slug, title, description, content_md, hero_image_url, tags,
+        slug, title, description, content_md, hero_image_url, categorias,
         author_id, published_at, updated_at,
         github_path, github_sha, synced_at, status,
         focus_keyword, meta_title, meta_description
@@ -58,7 +58,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }
         description = excluded.description,
         content_md = excluded.content_md,
         hero_image_url = excluded.hero_image_url,
-        tags = excluded.tags,
+        categorias = excluded.categorias,
         updated_at = excluded.updated_at,
         github_path = excluded.github_path,
         github_sha = excluded.github_sha,
@@ -73,7 +73,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }
       draft.description ?? null,
       draft.content_md,
       draft.hero_image_url ?? null,
-      tags,
+      categorias,
       draft.author_id ?? null,
       now,          // published_at (so usado em INSERT — ON CONFLICT preserva original)
       now,          // updated_at

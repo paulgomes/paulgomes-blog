@@ -2,7 +2,7 @@
 title: "Paul Gomes"
 description: "- Ajudamos pessoas e negócios a construir marcas mais relevantes. Linkedinhttps://www.linkedin.com/in/inpaulgomes/ Twitterhttps://twitter.com/paullgomes Instagramhttps://www.instagram.com/paulgomes/..."
 pubDate: 2022-05-11
-tags:
+categorias:
   - Tecnologia
 ---
 

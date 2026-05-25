@@ -2,7 +2,7 @@
 title: "Paulo Coelho revelou suas técnicas de escrita"
 description: "Convicção: Você não pode vender seu próximo livro subestimando o livro que acabou de ser publicado. Tenha orgulho do que você tem. Confiança: Confie no seu leitor, não tente descrever as coisas. Dê..."
 pubDate: 2023-01-06
-tags:
+categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paulo-coelho.webp"
 ---

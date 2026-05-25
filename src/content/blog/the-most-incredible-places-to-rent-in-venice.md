@@ -2,7 +2,7 @@
 title: "Transformação digital: onde vamos parar?"
 description: "A \"transformação digital\" não é só mais um tema em alta, ou uma palavra sedutora para dizer que vale a pena investir em Inbound Marketing. Pelo contrário: ela faz parte de um processo muito maior, o..."
 pubDate: 2016-05-24
-tags:
+categorias:
   - Tecnologia
   - Negócios
 ---

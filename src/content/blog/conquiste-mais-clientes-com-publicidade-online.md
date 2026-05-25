@@ -2,7 +2,7 @@
 title: "Conquiste mais clientes com publicidade online"
 description: "Alcance novos clientes online com Google Ads Apareça quando seus clientes estiverem pesquisando no Google, navegando na web e assistindo vídeos no YouTube. Maximize seus resultados com as soluções..."
 pubDate: 2022-11-11
-tags:
+categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-6.webp"
 ---

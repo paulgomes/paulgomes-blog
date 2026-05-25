@@ -2,7 +2,7 @@
 title: "Largest SEO Agency in Brazil"
 description: "Wys: A Journey to Becoming the Largest SEO Agency in Brazil --- In the vast digital landscape of Brazil, a nation known for its dynamic business environment and rapidly growing tech sector, one name..."
 pubDate: 2023-08-15
-tags:
+categorias:
   - SEO
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/base-d.webp"

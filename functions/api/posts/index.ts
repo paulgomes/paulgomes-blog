@@ -1,7 +1,7 @@
 import type { Env } from '../_utils/db';
 import { requireAuth } from '../_utils/require-auth';
 
-// GET /api/posts?q=<query>&tag=<tag>&status=<draft|published|scheduled|deleted|all>&page=<n>&per_page=50
+// GET /api/posts?q=<query>&categoria=<nome>&status=<draft|published|scheduled|deleted|all>&page=<n>&per_page=50
 //
 // Lista UNIFICADA de drafts + posts_meta com filtros.
 // Retorna items[] com discriminador `type: 'post' | 'draft'`.
@@ -15,7 +15,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 
   const url = new URL(request.url);
   const q = (url.searchParams.get('q') || '').trim();
-  const tag = (url.searchParams.get('tag') || '').trim();
+  const categoria = (url.searchParams.get('categoria') || '').trim();
   const statusParam = (url.searchParams.get('status') || 'all').trim();
   const page = Math.max(1, parseInt(url.searchParams.get('page') || '1', 10));
   const perPageReq = parseInt(url.searchParams.get('per_page') || String(DEFAULT_PER_PAGE), 10);
@@ -24,7 +24,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 
   // Constrói WHERE comum
   const likeQ = q ? `%${q}%` : null;
-  const likeTag = tag ? `%"${tag}"%` : null;
+  const likeCategoria = categoria ? `%"${categoria}"%` : null;
 
   // Query SELECT para posts_meta (apenas publicados, exclui deletados)
   const postsSelect = `
@@ -35,7 +35,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       title,
       description,
       hero_image_url,
-      tags,
+      categorias,
       status,
       published_at,
       updated_at,
@@ -43,7 +43,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     FROM posts_meta
     WHERE status != 'deleted'
     ${likeQ ? "AND title LIKE ?" : ""}
-    ${likeTag ? "AND tags LIKE ?" : ""}
+    ${likeCategoria ? "AND categorias LIKE ?" : ""}
   `;
 
   // Query SELECT para drafts
@@ -55,15 +55,15 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       title,
       description,
       hero_image_url,
-      tags,
+      categorias,
       status,
       published_at,
       updated_at,
       NULL AS git_synced
     FROM drafts
-    ${likeQ || likeTag ? "WHERE 1=1" : ""}
+    ${likeQ || likeCategoria ? "WHERE 1=1" : ""}
     ${likeQ ? "AND title LIKE ?" : ""}
-    ${likeTag ? "AND tags LIKE ?" : ""}
+    ${likeCategoria ? "AND categorias LIKE ?" : ""}
   `;
 
   // Monta query final + bindings baseado no status
@@ -73,7 +73,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   if (statusParam === 'published') {
     sql = postsSelect + ' ORDER BY published_at DESC LIMIT ? OFFSET ?';
     if (likeQ) bindings.push(likeQ);
-    if (likeTag) bindings.push(likeTag);
+    if (likeCategoria) bindings.push(likeCategoria);
     bindings.push(perPage, offset);
   } else if (statusParam === 'deleted') {
     // Lixeira: so posts_meta com status='deleted' (drafts nao tem lixeira)
@@ -85,7 +85,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
         title,
         description,
         hero_image_url,
-        tags,
+        categorias,
         status,
         published_at,
         updated_at,
@@ -93,26 +93,26 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       FROM posts_meta
       WHERE status = 'deleted'
       ${likeQ ? "AND title LIKE ?" : ""}
-      ${likeTag ? "AND tags LIKE ?" : ""}
+      ${likeCategoria ? "AND categorias LIKE ?" : ""}
     `;
     sql = deletedSelect + ' ORDER BY updated_at DESC LIMIT ? OFFSET ?';
     if (likeQ) bindings.push(likeQ);
-    if (likeTag) bindings.push(likeTag);
+    if (likeCategoria) bindings.push(likeCategoria);
     bindings.push(perPage, offset);
   } else if (statusParam === 'draft' || statusParam === 'scheduled') {
     // Filtra drafts pelo status específico
-    const draftWithStatus = draftsSelect + (likeQ || likeTag ? ' AND status = ?' : ' WHERE status = ?');
+    const draftWithStatus = draftsSelect + (likeQ || likeCategoria ? ' AND status = ?' : ' WHERE status = ?');
     sql = draftWithStatus + ' ORDER BY updated_at DESC LIMIT ? OFFSET ?';
     if (likeQ) bindings.push(likeQ);
-    if (likeTag) bindings.push(likeTag);
+    if (likeCategoria) bindings.push(likeCategoria);
     bindings.push(statusParam, perPage, offset);
   } else {
     // 'all' — union
     sql = `${postsSelect} UNION ALL ${draftsSelect} ORDER BY updated_at DESC LIMIT ? OFFSET ?`;
     if (likeQ) bindings.push(likeQ);
-    if (likeTag) bindings.push(likeTag);
+    if (likeCategoria) bindings.push(likeCategoria);
     if (likeQ) bindings.push(likeQ);
-    if (likeTag) bindings.push(likeTag);
+    if (likeCategoria) bindings.push(likeCategoria);
     bindings.push(perPage, offset);
   }
 
@@ -124,37 +124,37 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   if (statusParam === 'published') {
     totalSql = `SELECT COUNT(*) as n FROM posts_meta WHERE status != 'deleted'
       ${likeQ ? "AND title LIKE ?" : ""}
-      ${likeTag ? "AND tags LIKE ?" : ""}`;
+      ${likeCategoria ? "AND categorias LIKE ?" : ""}`;
     if (likeQ) totalBindings.push(likeQ);
-    if (likeTag) totalBindings.push(likeTag);
+    if (likeCategoria) totalBindings.push(likeCategoria);
   } else if (statusParam === 'deleted') {
     totalSql = `SELECT COUNT(*) as n FROM posts_meta WHERE status = 'deleted'
       ${likeQ ? "AND title LIKE ?" : ""}
-      ${likeTag ? "AND tags LIKE ?" : ""}`;
+      ${likeCategoria ? "AND categorias LIKE ?" : ""}`;
     if (likeQ) totalBindings.push(likeQ);
-    if (likeTag) totalBindings.push(likeTag);
+    if (likeCategoria) totalBindings.push(likeCategoria);
   } else if (statusParam === 'draft' || statusParam === 'scheduled') {
     totalSql = `SELECT COUNT(*) as n FROM drafts WHERE status = ?
       ${likeQ ? "AND title LIKE ?" : ""}
-      ${likeTag ? "AND tags LIKE ?" : ""}`;
+      ${likeCategoria ? "AND categorias LIKE ?" : ""}`;
     totalBindings.push(statusParam);
     if (likeQ) totalBindings.push(likeQ);
-    if (likeTag) totalBindings.push(likeTag);
+    if (likeCategoria) totalBindings.push(likeCategoria);
   } else {
     totalSql = `SELECT (
       (SELECT COUNT(*) FROM posts_meta WHERE status != 'deleted'
         ${likeQ ? "AND title LIKE ?" : ""}
-        ${likeTag ? "AND tags LIKE ?" : ""})
+        ${likeCategoria ? "AND categorias LIKE ?" : ""})
       +
       (SELECT COUNT(*) FROM drafts
-        ${likeQ || likeTag ? "WHERE 1=1" : ""}
+        ${likeQ || likeCategoria ? "WHERE 1=1" : ""}
         ${likeQ ? "AND title LIKE ?" : ""}
-        ${likeTag ? "AND tags LIKE ?" : ""})
+        ${likeCategoria ? "AND categorias LIKE ?" : ""})
     ) as n`;
     if (likeQ) totalBindings.push(likeQ);
-    if (likeTag) totalBindings.push(likeTag);
+    if (likeCategoria) totalBindings.push(likeCategoria);
     if (likeQ) totalBindings.push(likeQ);
-    if (likeTag) totalBindings.push(likeTag);
+    if (likeCategoria) totalBindings.push(likeCategoria);
   }
 
   const totalRow = await env.DB.prepare(totalSql).bind(...totalBindings).first();

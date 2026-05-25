@@ -2,7 +2,7 @@
 title: "6 fotos que você precisa ver"
 description: "Eu acredito na sorte, mas não somente na sorte. Mas eu acredito muito mais na consistência do trabalho e dedicação."
 pubDate: 2022-11-13
-tags:
+categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/sem-titulo-1.webp"
 ---

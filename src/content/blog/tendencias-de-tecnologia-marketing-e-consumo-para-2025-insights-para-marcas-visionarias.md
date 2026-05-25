@@ -2,7 +2,7 @@
 title: "Tendências de Tecnologia, Marketing e Consumo para 2025: insights para marcas visionárias"
 description: "À medida que 2025 avança, as fronteiras entre tecnologia, marketing e comportamento do consumidor se estreitam. Para construir marcas relevantes no futuro, é preciso entender como essas forças moldam..."
 pubDate: 2025-07-24
-tags:
+categorias:
   - Tecnologia
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/29b345d0-324c-4475-8f68-2ec2c81b3c6b.webp"

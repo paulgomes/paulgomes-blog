@@ -5,7 +5,7 @@ import { requireAuth } from '../_utils/require-auth';
 // PUT    /api/categories/:id  -> body { name?, sort_order? }
 // DELETE /api/categories/:id  -> hard delete (bloqueia se ha posts associados)
 
-function slugifyTag(name: string): string {
+function slugifyCategoria(name: string): string {
   return String(name)
     .toLowerCase()
     .normalize('NFD')
@@ -14,16 +14,16 @@ function slugifyTag(name: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-async function countPostsByTag(env: Env, name: string): Promise<number> {
+async function countPostsByCategoria(env: Env, name: string): Promise<number> {
   const row = await env.DB
-    .prepare(`SELECT tags FROM posts_meta WHERE status = 'published' AND tags LIKE ?`)
+    .prepare(`SELECT categorias FROM posts_meta WHERE status = 'published' AND categorias LIKE ?`)
     .bind(`%"${name}"%`)
-    .all<{ tags: string | null }>();
+    .all<{ categorias: string | null }>();
   // double-check parsing JSON pra exact match (evita falso positivo se outra categoria tem name contido)
   let n = 0;
   for (const r of row.results || []) {
     let arr: string[] = [];
-    try { arr = typeof r.tags === 'string' ? JSON.parse(r.tags) : (r.tags || []); } catch { arr = []; }
+    try { arr = typeof r.categorias === 'string' ? JSON.parse(r.categorias) : (r.categorias || []); } catch { arr = []; }
     if (arr.includes(name)) n++;
   }
   return n;
@@ -66,7 +66,7 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
     if (newName.length > 40) return Response.json({ error: 'name muito longo (max 40)' }, { status: 400 });
 
     if (newName !== existing.name) {
-      const slug = slugifyTag(newName);
+      const slug = slugifyCategoria(newName);
       if (!slug) return Response.json({ error: 'name nao gera slug valido' }, { status: 400 });
 
       // Conflito com outra categoria
@@ -100,14 +100,14 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
   try {
     await env.DB.prepare(`UPDATE categories SET ${sets.join(', ')} WHERE id = ?`).bind(...values).run();
 
-    // Cascata: se renomeou name, atualiza posts_meta.tags em D1
+    // Cascata: se renomeou name, atualiza posts_meta.categorias em D1
     let cascade_d1_updates = 0;
     let cascade_pending_syncs: string[] = [];
     if (renamedFrom && renamedTo) {
       const oldQuote = JSON.stringify(renamedFrom);
       const newQuote = JSON.stringify(renamedTo);
       const affected = await env.DB
-        .prepare(`SELECT slug FROM posts_meta WHERE status = 'published' AND tags LIKE ?`)
+        .prepare(`SELECT slug FROM posts_meta WHERE status = 'published' AND categorias LIKE ?`)
         .bind(`%${oldQuote}%`)
         .all<{ slug: string }>();
       const slugs = (affected.results || []).map((r) => r.slug);
@@ -115,7 +115,7 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
       if (slugs.length > 0) {
         // Update em D1: REPLACE("OldName" por "NewName") em todos
         const upd = await env.DB
-          .prepare(`UPDATE posts_meta SET tags = REPLACE(tags, ?, ?), updated_at = ? WHERE status = 'published' AND tags LIKE ?`)
+          .prepare(`UPDATE posts_meta SET categorias = REPLACE(categorias, ?, ?), updated_at = ? WHERE status = 'published' AND categorias LIKE ?`)
           .bind(oldQuote, newQuote, now, `%${oldQuote}%`)
           .run();
         cascade_d1_updates = upd.meta?.changes || slugs.length;
@@ -154,7 +154,7 @@ export const onRequestDelete: PagesFunction<Env> = async ({ request, env, params
   if (!cat) return Response.json({ error: 'Categoria nao encontrada' }, { status: 404 });
 
   // Bloqueia se ha posts associados
-  const count = await countPostsByTag(env, cat.name);
+  const count = await countPostsByCategoria(env, cat.name);
   if (count > 0) {
     return Response.json({
       error: `${count} post(s) usam essa categoria. Reatribua antes de excluir.`,

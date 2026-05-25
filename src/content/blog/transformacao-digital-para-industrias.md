@@ -2,7 +2,7 @@
 title: "Transformação digital para indústrias"
 description: "Por que investir na digitalização da sua empresa? A digitalização das marcas já é algo inevitável. As empresas que insistem em estar fora do mundo online são dinossauros a beira da extinção. Porém,..."
 pubDate: 2020-10-02
-tags:
+categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/807049.webp"
 ---

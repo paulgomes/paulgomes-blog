@@ -2,7 +2,7 @@
 title: "Aluguel de sala por hora sorocaba"
 description: "Aumente sua produtividade e faça conexões valiosas no Coworking 648. Marque sua visita e vivencie a sensação de trabalhar em um ambiente onde conforto e produtividade caminham lado a lado. coworking..."
 pubDate: 2023-08-09
-tags:
+categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-14.webp"
 ---

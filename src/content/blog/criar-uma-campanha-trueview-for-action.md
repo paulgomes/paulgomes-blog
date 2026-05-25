@@ -2,7 +2,7 @@
 title: "Criar uma campanha TrueView for Action"
 description: "Configure o acompanhamento de conversões no seu site e verifique se a tag global do site está funcionando corretamente. Otimize para eventos de conversão leves (como \"adicionar ao carrinho\" ou \"visita ao site\") e escolha uma opção de contagem de conversões adequada à sua campanha. Isso proporciona sinais valiosos para nossos sistemas e permite que você atinja os resultados desejados mais rapidamente."
 pubDate: 2021-07-10
-tags:
+categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/807049.webp"
 ---

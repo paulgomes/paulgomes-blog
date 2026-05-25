@@ -2,7 +2,7 @@
 title: "Como o Consultor Philip Kotler Define o Marketing"
 description: "Philip Kotler, um dos pioneiros e principais teóricos do marketing moderno, define o marketing como algo muito além de uma simples troca comercial. Para Kotler, o marketing é a arte de criar,..."
 pubDate: 2023-08-18
-tags:
+categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-10.webp"

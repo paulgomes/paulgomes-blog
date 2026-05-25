@@ -2,7 +2,7 @@
 title: "Branding no Mercado do Luxo"
 description: "No mercado do luxo, a diferenciação é essencial para criar um impacto duradouro. O branding se torna uma ferramenta poderosa para expressar os valores, a identidade e a exclusividade de uma marca de..."
 pubDate: 2023-08-16
-tags:
+categorias:
   - Branding
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-8.webp"

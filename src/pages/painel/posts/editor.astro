@@ -250,21 +250,21 @@ const currentNav = isEditing ? 'posts' : 'new';
     }
     updateSeoPreview();
 
-    // ===== Helpers tags =====
-    function tagsToString(tags: any): string {
-      if (!tags) return '';
-      if (Array.isArray(tags)) return tags.join(', ');
-      if (typeof tags === 'string') {
+    // ===== Helpers categorias =====
+    function categoriasToString(categorias: any): string {
+      if (!categorias) return '';
+      if (Array.isArray(categorias)) return categorias.join(', ');
+      if (typeof categorias === 'string') {
         try {
-          const parsed = JSON.parse(tags);
+          const parsed = JSON.parse(categorias);
           if (Array.isArray(parsed)) return parsed.join(', ');
         } catch {}
-        return tags;
+        return categorias;
       }
       return '';
     }
 
-    function tagsToArray(s: string): string[] {
+    function categoriasToArray(s: string): string[] {
       return s.split(',').map((t) => t.trim()).filter(Boolean);
     }
 
@@ -308,7 +308,7 @@ const currentNav = isEditing ? 'posts' : 'new';
       $title.value = post.title || '';
       $description.value = post.description || '';
       $slug.value = post.slug || '';
-      $category.value = tagsToString(post.tags);
+      $category.value = categoriasToString(post.categorias);
       applyHeroValue(post.hero_image_url || '');
       currentContent = post.content_md || '';
       $isFeatured.checked = Boolean(post.is_featured);
@@ -360,7 +360,7 @@ const currentNav = isEditing ? 'posts' : 'new';
         description: $description.value,
         hero_image_url: $heroImage.value,
         content_md: currentContent,
-        tags: tagsToArray($category.value),
+        categorias: categoriasToArray($category.value),
       };
     }
 

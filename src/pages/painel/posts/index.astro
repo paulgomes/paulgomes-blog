@@ -1,6 +1,6 @@
 ---
 import PainelLayout from '../../../components/painel/PainelLayout.astro';
-import { TAGS } from '../../../lib/tags';
+import { CATEGORIAS } from '../../../lib/categorias';
 import '../../../styles/painel.css';
 ---
 
@@ -16,9 +16,9 @@ import '../../../styles/painel.css';
       <input id="searchInput" type="search" placeholder="Buscar por título..." autocomplete="off" />
     </label>
     <label class="field field--select">
-      <select id="tagFilter">
-        <option value="">Todas as tags</option>
-        {TAGS.map((t) => <option value={t}>{t}</option>)}
+      <select id="categoriaFilter">
+        <option value="">Todas as categorias</option>
+        {CATEGORIAS.map((c) => <option value={c}>{c}</option>)}
       </select>
     </label>
     <a href="/painel/posts/editor" class="btn-primary">
@@ -58,7 +58,7 @@ import '../../../styles/painel.css';
     const PER_PAGE = 50;
     let currentStatus = 'all';
     let currentQ = '';
-    let currentTag = '';
+    let currentCategoria = '';
     let currentPage = 1;
     let totalPages = 1;
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -84,11 +84,11 @@ import '../../../styles/painel.css';
       const u = new URL(window.location.href);
       currentStatus = u.searchParams.get('status') || 'all';
       currentQ = u.searchParams.get('q') || '';
-      currentTag = u.searchParams.get('tag') || '';
+      currentCategoria = u.searchParams.get('categoria') || '';
       currentPage = Math.max(1, parseInt(u.searchParams.get('page') || '1', 10));
 
       (document.getElementById('searchInput') as HTMLInputElement).value = currentQ;
-      (document.getElementById('tagFilter') as HTMLSelectElement).value = currentTag;
+      (document.getElementById('categoriaFilter') as HTMLSelectElement).value = currentCategoria;
       document.querySelectorAll<HTMLButtonElement>('.pill').forEach((b) => {
         b.classList.toggle('is-active', b.dataset.filter === currentStatus);
       });
@@ -98,7 +98,7 @@ import '../../../styles/painel.css';
       const u = new URL(window.location.href);
       u.searchParams.set('status', currentStatus);
       if (currentQ) u.searchParams.set('q', currentQ); else u.searchParams.delete('q');
-      if (currentTag) u.searchParams.set('tag', currentTag); else u.searchParams.delete('tag');
+      if (currentCategoria) u.searchParams.set('categoria', currentCategoria); else u.searchParams.delete('categoria');
       if (currentPage > 1) u.searchParams.set('page', String(currentPage)); else u.searchParams.delete('page');
       const method = replace ? 'replaceState' : 'pushState';
       window.history[method](null, '', u.toString());
@@ -108,7 +108,7 @@ import '../../../styles/painel.css';
       const params = new URLSearchParams();
       params.set('status', currentStatus);
       if (currentQ) params.set('q', currentQ);
-      if (currentTag) params.set('tag', currentTag);
+      if (currentCategoria) params.set('categoria', currentCategoria);
       params.set('page', String(currentPage));
       params.set('per_page', String(PER_PAGE));
 
@@ -350,8 +350,8 @@ import '../../../styles/painel.css';
       }, 300);
     });
 
-    document.getElementById('tagFilter')?.addEventListener('change', (e) => {
-      currentTag = (e.target as HTMLSelectElement).value;
+    document.getElementById('categoriaFilter')?.addEventListener('change', (e) => {
+      currentCategoria = (e.target as HTMLSelectElement).value;
       currentPage = 1;
       writeUrlState();
       loadPosts();

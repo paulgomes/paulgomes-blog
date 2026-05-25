@@ -121,13 +121,13 @@ export async function deleteFile(env: Env, opts: {
 
 /**
  * Gera frontmatter + body markdown a partir dos campos de posts_meta/drafts.
- * Aceita tags como JSON string ou array. published_at em ms timestamp ou ISO.
+ * Aceita categorias como JSON string ou array. published_at em ms timestamp ou ISO.
  */
 export function buildMarkdown(post: {
   title: string;
   description?: string | null;
   hero_image_url?: string | null;
-  tags?: string | string[] | null;
+  categorias?: string | string[] | null;
   published_at?: number | string | null;
   content_md?: string | null;
   focus_keyword?: string | null;
@@ -135,9 +135,9 @@ export function buildMarkdown(post: {
   meta_description?: string | null;
   is_featured?: number | boolean | null;
 }): string {
-  const tags: string[] = Array.isArray(post.tags)
-    ? post.tags
-    : (post.tags ? (() => { try { return JSON.parse(post.tags as string); } catch { return []; } })() : []);
+  const categorias: string[] = Array.isArray(post.categorias)
+    ? post.categorias
+    : (post.categorias ? (() => { try { return JSON.parse(post.categorias as string); } catch { return []; } })() : []);
 
   // pubDate como YYYY-MM-DD (formato dos 115 posts existentes)
   const pubTs = post.published_at
@@ -149,9 +149,9 @@ export function buildMarkdown(post: {
   fm += `title: ${yamlString(post.title)}\n`;
   fm += `description: ${yamlString(post.description || '')}\n`;
   fm += `pubDate: ${pubDate}\n`;
-  if (tags.length) {
-    fm += 'tags:\n';
-    for (const t of tags) fm += `  - ${t}\n`;
+  if (categorias.length) {
+    fm += 'categorias:\n';
+    for (const t of categorias) fm += `  - ${t}\n`;
   }
   if (post.hero_image_url) fm += `heroImage: ${yamlString(post.hero_image_url)}\n`;
   // Adiciona linha so quando is_featured=1 (omissao = false via default Zod)

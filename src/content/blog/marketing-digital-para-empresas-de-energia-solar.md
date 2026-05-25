@@ -2,7 +2,7 @@
 title: "Marketing Digital para empresas de Energia Solar"
 description: "O que podemos fazer por você? Soluções de marketing A Wys ajuda a sua marca a criar conexões significativas com os seus clientes. Ao longo de 11 anos de história, somamos mais de mil cases..."
 pubDate: 2019-01-07
-tags:
+categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/marketing-para-energia-solar.webp"

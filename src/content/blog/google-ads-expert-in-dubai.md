@@ -2,7 +2,7 @@
 title: "Google Ads Expert in Dubai"
 description: "Are You Finding Professional Google ads Specialist in Dubai ? I am Paul Gomes who is Google Ads Specialist in Dubai. Google ads is a model of online marketing in which advertisers pay a fee for every..."
 pubDate: 2015-02-15
-tags:
+categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paulgomes.webp"
 ---

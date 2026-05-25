@@ -54,9 +54,9 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
     }
   }
 
-  if (body.tags !== undefined) {
-    sets.push('tags = ?');
-    values.push(typeof body.tags === 'string' ? body.tags : JSON.stringify(body.tags));
+  if (body.categorias !== undefined) {
+    sets.push('categorias = ?');
+    values.push(typeof body.categorias === 'string' ? body.categorias : JSON.stringify(body.categorias));
   }
 
   if (sets.length === 0) {

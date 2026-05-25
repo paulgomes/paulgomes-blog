@@ -2,7 +2,7 @@
 title: "Small Pdf - Mais simplicidade para as suas tarefas"
 description: "Todas as ferramentas de que você precisa para trabalhar com documentos com mais praticidade e alavancar sua produtividade. Olá pessoal, Paul Gomes aqui novamente Hoje eu quero falar sobre uma..."
 pubDate: 2023-04-15
-tags:
+categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-2-1.webp"
 ---

@@ -2,7 +2,7 @@
 title: "Branding – Arquétipos para o mundo digital da marca"
 description: "Os 12 arquétipos de Jung e as marcas que os utilizam para posicionamento O posicionamento das marcas nas plataformas digitais vai muito além de uma diretriz, apenas. A comunicação deve estar pronta..."
 pubDate: 2020-10-05
-tags:
+categorias:
   - SEO
 heroImage: "https://media.paulgomes.com.br/posts/legacy/5050.webp"
 ---

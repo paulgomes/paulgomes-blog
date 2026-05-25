@@ -2,7 +2,7 @@
 title: "O uso de emojis é uma ótima maneira de tornar seus textos mais interativos"
 description: "O uso de emojis é uma ótima maneira de tornar seus textos mais interativos e divertidos. Usando emojis, você pode adicionar significado e humor a qualquer postagem ou conversa. Eles também podem ser..."
 pubDate: 2023-01-06
-tags:
+categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-9.webp"
 ---

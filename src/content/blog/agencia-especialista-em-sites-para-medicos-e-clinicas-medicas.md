@@ -2,7 +2,7 @@
 title: "Agência especialista em sites para médicos e clínicas médicas"
 description: "No cenário em constante evolução da área médica, entender a importância de uma presença online eficaz é crucial para se destacar. Na Agência Wys, nós compreendemos as necessidades específicas de..."
 pubDate: 2023-08-10
-tags:
+categorias:
   - Tecnologia
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-2.webp"

@@ -1,10 +1,10 @@
 import type { Env } from '../_utils/db';
 import { requireAuth } from '../_utils/require-auth';
 
-// GET  /api/categories  -> { ok, categories: [{ id, name, slug, sort_order, count_posts }] }
-// POST /api/categories  -> body { name } -> cria com slug auto-gerado
+// GET  /api/categorias  -> { ok, categories: [{ id, name, slug, sort_order, count_posts }] }
+// POST /api/categorias  -> body { name } -> cria com slug auto-gerado
 
-function slugifyTag(name: string): string {
+function slugifyCategoria(name: string): string {
   return String(name)
     .toLowerCase()
     .normalize('NFD')
@@ -22,16 +22,16 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       .prepare(`SELECT id, name, slug, sort_order, created_at, updated_at FROM categories ORDER BY sort_order`)
       .all<{ id: string; name: string; slug: string; sort_order: number; created_at: number; updated_at: number }>();
 
-    // count_posts: posts publicados com a categoria no JSON tags
+    // count_posts: posts publicados com a categoria no JSON categorias
     const posts = await env.DB
-      .prepare(`SELECT tags FROM posts_meta WHERE status = 'published'`)
-      .all<{ tags: string | null }>();
+      .prepare(`SELECT categorias FROM posts_meta WHERE status = 'published'`)
+      .all<{ categorias: string | null }>();
 
     const counts: Record<string, number> = {};
     for (const row of posts.results || []) {
       let arr: string[] = [];
       try {
-        arr = typeof row.tags === 'string' ? JSON.parse(row.tags) : (row.tags || []);
+        arr = typeof row.categorias === 'string' ? JSON.parse(row.categorias) : (row.categorias || []);
       } catch { arr = []; }
       for (const t of arr) counts[t] = (counts[t] || 0) + 1;
     }
@@ -43,7 +43,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 
     return Response.json({ ok: true, categories });
   } catch (err: any) {
-    console.error('Categories GET error:', err);
+    console.error('Categorias GET error:', err);
     return Response.json({ error: err?.message || 'Erro ao listar categorias' }, { status: 500 });
   }
 };
@@ -59,7 +59,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (!name) return Response.json({ error: 'name obrigatorio' }, { status: 400 });
   if (name.length > 40) return Response.json({ error: 'name muito longo (max 40)' }, { status: 400 });
 
-  const slug = slugifyTag(name);
+  const slug = slugifyCategoria(name);
   if (!slug) return Response.json({ error: 'name nao gera slug valido' }, { status: 400 });
 
   try {
@@ -90,7 +90,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       category: { id, name, slug, sort_order, created_at: now, updated_at: now, count_posts: 0 },
     }, { status: 201 });
   } catch (err: any) {
-    console.error('Categories POST error:', err);
+    console.error('Categorias POST error:', err);
     return Response.json({ error: err?.message || 'Erro ao criar categoria' }, { status: 500 });
   }
 };

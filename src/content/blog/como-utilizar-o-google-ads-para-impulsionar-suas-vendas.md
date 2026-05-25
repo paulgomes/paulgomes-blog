@@ -2,7 +2,7 @@
 title: "Como utilizar o Google Ads para impulsionar suas vendas?"
 description: "No comércio digitalhttps://agenciawys.com.br/solucoes/ \"comércio digital\" acelerado, impulsionar as vendas é essencial para o sucesso do seu negócio. Uma estratégia poderosa é utilizar o Google..."
 pubDate: 2020-06-12
-tags:
+categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-13.webp"

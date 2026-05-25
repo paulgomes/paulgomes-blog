@@ -2,7 +2,7 @@
 title: "KPI: O que é, Principais Indicadores e como Monitorá-los"
 description: "Você sabia que a mensuração de resultados é uma das etapas mais importantes de uma campanha de comunicação ou marketinghttps://agenciawys.com.br/solucoes/ \"marketing\"? E que os indicadores de..."
 pubDate: 2020-06-12
-tags:
+categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-18.webp"
 ---

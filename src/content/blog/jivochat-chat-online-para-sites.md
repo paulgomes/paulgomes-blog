@@ -2,7 +2,7 @@
 title: "JivoChat: Chat Online Para Sites"
 description: "Olá pessoal, Paul Gomes aqui novamente Hoje eu quero compartilhar com vocês uma ferramenta incrível que tenho usado em meu site chamada Jivo Chat. Se você tem um site ou loja virtual, sabe que a..."
 pubDate: 2023-04-15
-tags:
+categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/jivochat.webp"
 ---

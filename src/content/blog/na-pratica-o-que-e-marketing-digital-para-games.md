@@ -2,7 +2,7 @@
 title: "Na prática: o que é marketing digital para games"
 description: "Basta navegar rapidamente pelas stores e ver que dezenas de novos jogos são adicionados todos os dias. Mas seu projeto tem a melhor inteligência técnica no desenvolvimento, vai ser fácil se destacar,..."
 pubDate: 2024-06-28
-tags:
+categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/tild6637-3665-4235-a138-366632653962-bauhaus-1.webp"

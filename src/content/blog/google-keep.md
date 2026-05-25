@@ -2,7 +2,7 @@
 title: "Google Keep"
 description: "Olá pessoal, hoje quero falar sobre uma das ferramentas mais úteis e práticas do Google: o Google Keephttps://keep.google.com/ \"Google Keep\". O Google Keep é um aplicativo de anotações que pode ser..."
 pubDate: 2023-04-15
-tags:
+categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/google-keep.webp"
 ---

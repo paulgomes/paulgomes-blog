@@ -2,7 +2,7 @@
 title: "Quais são as maiores agências de marketing em Sorocaba?"
 description: "Escolher a agência certa é fundamental para maximizar sua presença online e atingir seus objetivos Experiência da Agência com o seu Segmento Antes de escolher uma agência, verifique se ela tem..."
 pubDate: 2023-08-08
-tags:
+categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes.webp"
 ---

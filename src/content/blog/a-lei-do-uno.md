@@ -2,7 +2,7 @@
 title: "A Lei do Uno"
 description: "Tudo será, como você diria, reconciliado em algum ponto de sua dança através do complexo mente/corpo/espírito que você se diverte distorcendo de várias maneiras neste momento. Esta distorção não é,..."
 pubDate: 2023-02-25
-tags:
+categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-15.webp"
 ---

@@ -2,7 +2,7 @@
 title: "seo company in brisbane australia"
 description: "Brand with purpose, communication with result, enhancing your communication and minimizing distances between products, services and consumers. We are specialists in taking care of the image of..."
 pubDate: 2018-01-30
-tags:
+categorias:
   - SEO
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/ads.webp"

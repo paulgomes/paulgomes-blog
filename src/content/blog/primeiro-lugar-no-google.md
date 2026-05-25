@@ -2,7 +2,7 @@
 title: "Primeiro lugar no google"
 description: "Como Conquistar o Primeiro Lugar no Google: Dicas de Paul Gomes O almejado primeiro lugar no ranking de busca do Google. Muitas empresas e profissionais de marketing digital passam horas trabalhando..."
 pubDate: 2023-08-15
-tags:
+categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-fundador-da-agencia-wys.webp"
 ---

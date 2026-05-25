@@ -2,7 +2,7 @@
 title: "Seu guia do Google Ads"
 description: "Seu guia do Google Ads Alcance novos clientes e expanda seus negócios com o Google Ads, a solução de publicidade on-line do Google. Esses guias foram criados com o objetivo de ajudar você a começar a..."
 pubDate: 2021-04-19
-tags:
+categorias:
   - Branding
 heroImage: "https://media.paulgomes.com.br/posts/legacy/por-que-o-google-adwords-1024x631-1024x585.webp"
 ---

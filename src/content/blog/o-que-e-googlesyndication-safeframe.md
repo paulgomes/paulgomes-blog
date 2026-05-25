@@ -2,7 +2,7 @@
 title: "O que é GoogleSyndication SafeFrame?"
 description: "Usuários de Mac relataram recentemente algumas mensagens pop-up 'suspeitas' chamadas 'Googlesyndication' exibidas a eles enquanto visitavam sites específicos. Esse problema ocorre em todos os..."
 pubDate: 2023-07-24
-tags:
+categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-8.webp"
 ---

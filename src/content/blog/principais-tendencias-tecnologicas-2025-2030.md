@@ -2,7 +2,7 @@
 title: "Principais tendências tecnológicas 2025-2030"
 description: "A década de 2020 está acelerando a convergência de tecnologias que, até recentemente, pareciam ficção científica. Entre 2025 e 2030, as inovações que hoje aparecem em laboratórios e notícias..."
 pubDate: 2025-07-24
-tags:
+categorias:
   - IA
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/29b345d0-324c-4475-8f68-2ec2c81b3c6b.webp"

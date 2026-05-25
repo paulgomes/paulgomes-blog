@@ -2,7 +2,7 @@
 title: "Ações para o acompanhamento no indicativo de otimizacao da plataforma online"
 description: "DRIVE MARKETING FORWARD Junto com a Agência Wys, negócios no mundo inteiro estão indo além Marca com propósito, comunicação com resultado potencializando sua comunicação e minimizando as distâncias..."
 pubDate: '2026-05-23'
-tags:
+categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/1.webp"
 ---

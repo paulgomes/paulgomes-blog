@@ -38,9 +38,9 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
     }
   }
 
-  if (body.tags !== undefined) {
-    fields.push('tags = ?');
-    values.push(JSON.stringify(body.tags));
+  if (body.categorias !== undefined) {
+    fields.push('categorias = ?');
+    values.push(JSON.stringify(body.categorias));
   }
 
   fields.push('updated_at = ?');
