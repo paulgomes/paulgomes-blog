@@ -25,3 +25,9 @@ pnpm-debug.log*
 
 # SQL gerado pelo script de import (artefato one-shot)
 /scripts/import-posts.sql
+
+# Backups D1 (gerados por wrangler d1 export — não comitar)
+/backup-*.sql
+
+# Wrangler local state (D1 local SQLite, cache de hidratação) — não comitar
+.wrangler/
