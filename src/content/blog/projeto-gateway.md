@@ -1,9 +1,8 @@
 ---
 title: "Projeto Gateway"
 description: ""
-pubDate: "2026-05-24T23:07:43.585Z"
-heroImage: "https://media.paulgomes.com.br/2026/05/6ebc4e6e-0ff2-4a46-b37b-31f1bcb6374e.png"
-author: "Paul Gomes"
+pubDate: 2026-05-24
+featured: true
 ---
 
 # Quando a CIA Investigou Consciência, Frequência e Realidades Não Físicas
