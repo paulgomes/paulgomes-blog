@@ -3,36 +3,85 @@ import PainelLayout from '../../components/painel/PainelLayout.astro';
 import '../../styles/painel.css';
 ---
 
-<PainelLayout title="Categorias — Painel" description="Distribuição de posts por categoria" current="tags">
+<PainelLayout title="Categorias — Painel" description="Gerenciamento de categorias" current="tags">
   <section class="page-header">
     <h1>Categorias</h1>
-    <p class="subtitle">Distribuição dos posts pelas 6 categorias do blog.</p>
+    <p class="subtitle">Crie, renomeie ou exclua categorias. Toda mudança publica no site.</p>
   </section>
 
   <p class="tags-hint">
-    ℹ️ Categorias são fixas por SEO (poucas tags fortes &gt; muitas fracas).
-    Pra adicionar ou renomear, edite <code>src/lib/tags.ts</code> no código.
+    ℹ️ Categorias geram rotas <code>/tag/&lt;slug&gt;/</code> no blog público. Slug é gerado do nome.
+    Excluir categoria com posts associados é bloqueado — reatribua os posts antes.
   </p>
 
-  <div class="tags-loading" id="tagsLoading">Carregando...</div>
+  <div class="cats-toolbar">
+    <div class="cats-toolbar-left">
+      <button class="painel-btn-primary" id="btnAddCat" type="button">+ Nova categoria</button>
+    </div>
+    <span id="catsSyncIndicator" class="menus-sync-indicator">Cada salvar publica no site</span>
+  </div>
 
-  <div class="tags-content" id="tagsContent" hidden>
+  <div class="tags-loading" id="catsLoading">Carregando...</div>
+
+  <div class="cats-content" id="catsContent" hidden>
     <div class="tags-chart-section">
       <h2>Distribuição</h2>
-      <div class="tags-chart" id="tagsChart"></div>
+      <div class="tags-chart" id="catsChart"></div>
     </div>
 
-    <div class="tags-cards" id="tagsCards"></div>
+    <div class="cats-list" id="catsList"></div>
+  </div>
+
+  <div class="menus-modal" id="modalCreate" hidden>
+    <div class="menus-modal-backdrop" id="modalCreateBackdrop"></div>
+    <div class="menus-modal-card" role="dialog" aria-modal="true">
+      <h3>Nova categoria</h3>
+      <div class="form-row">
+        <label for="newCatName">Nome</label>
+        <input type="text" id="newCatName" maxlength="40" placeholder="Ex: Tecnologia" />
+        <small>O slug será gerado automaticamente.</small>
+      </div>
+      <div class="menus-modal-actions">
+        <button class="painel-btn-ghost" id="btnCancelCreate" type="button">Cancelar</button>
+        <button class="painel-btn-primary" id="btnConfirmCreate" type="button">Criar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="menus-modal" id="modalEdit" hidden>
+    <div class="menus-modal-backdrop" id="modalEditBackdrop"></div>
+    <div class="menus-modal-card" role="dialog" aria-modal="true">
+      <h3>Editar categoria</h3>
+      <div class="form-row">
+        <label for="editCatName">Nome</label>
+        <input type="text" id="editCatName" maxlength="40" />
+        <small id="editCatHint">Slug muda junto se o nome mudar.</small>
+      </div>
+      <div id="editCatWarn" class="cats-rename-warn" hidden></div>
+      <div class="menus-modal-actions">
+        <button class="painel-btn-ghost" id="btnCancelEdit" type="button">Cancelar</button>
+        <button class="painel-btn-primary" id="btnConfirmEdit" type="button">Salvar</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    type Post = { slug: string; title: string; published_at: number | null };
-    type TagStat = { name: string; slug: string; count: number; percentage: number; posts: Post[] };
+    type Cat = { id: string; name: string; slug: string; sort_order: number; count_posts: number };
 
-    const $loading = document.getElementById('tagsLoading') as HTMLDivElement;
-    const $content = document.getElementById('tagsContent') as HTMLDivElement;
-    const $chart = document.getElementById('tagsChart') as HTMLDivElement;
-    const $cards = document.getElementById('tagsCards') as HTMLDivElement;
+    let cats: Cat[] = [];
+    let editingId: string | null = null;
+
+    const $loading = document.getElementById('catsLoading') as HTMLDivElement;
+    const $content = document.getElementById('catsContent') as HTMLDivElement;
+    const $chart = document.getElementById('catsChart') as HTMLDivElement;
+    const $list = document.getElementById('catsList') as HTMLDivElement;
+    const $indicator = document.getElementById('catsSyncIndicator') as HTMLSpanElement;
+
+    const $modalCreate = document.getElementById('modalCreate') as HTMLDivElement;
+    const $modalEdit = document.getElementById('modalEdit') as HTMLDivElement;
+    const $newCatName = document.getElementById('newCatName') as HTMLInputElement;
+    const $editCatName = document.getElementById('editCatName') as HTMLInputElement;
+    const $editCatWarn = document.getElementById('editCatWarn') as HTMLDivElement;
 
     function escapeHtml(s: string): string {
       return String(s).replace(/[&<>"']/g, (c) => ({
@@ -40,70 +89,337 @@ import '../../styles/painel.css';
       } as Record<string, string>)[c]);
     }
 
-    function formatDate(ts: number | null): string {
-      if (!ts) return '—';
-      return new Date(ts).toLocaleDateString('pt-BR', {
-        year: 'numeric', month: 'short', day: 'numeric',
-      });
+    function formatNow(): string {
+      return new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     }
 
-    function renderChart(tags: TagStat[]) {
-      const maxCount = Math.max(...tags.map((t) => t.count), 1);
-      $chart.innerHTML = tags.map((tag) => {
-        const widthPct = (tag.count / maxCount) * 100;
+    function setIndicator(text: string, color = 'var(--painel-text-secondary)') {
+      if ($indicator) {
+        $indicator.textContent = text;
+        $indicator.style.color = color;
+      }
+    }
+
+    async function triggerCategoriesSync(opts: { pendingPostSyncs?: string[] } = {}) {
+      const slugs = opts.pendingPostSyncs || [];
+
+      // ORDEM CRITICA: posts primeiro, categorias depois.
+      // Se categorias.sync rodasse antes, tags.ts teria nome novo enquanto .md de posts nao-sincronizados ainda teria nome velho — Zod quebraria o build.
+      if (slugs.length > 0) {
+        setIndicator(`↻ Sincronizando ${slugs.length} post(s)...`, 'var(--painel-accent)');
+        let ok = 0, fail = 0;
+        for (const slug of slugs) {
+          try {
+            const r = await fetch(`/api/posts/${encodeURIComponent(slug)}/sync`, { method: 'POST' });
+            if (r.ok) ok++; else fail++;
+          } catch { fail++; }
+        }
+        if (fail > 0) {
+          setIndicator(`⚠ ${ok}/${slugs.length} posts ok, ${fail} falharam — NAO sincronizando categorias (evita build quebrar). Retry pelo editor.`, 'var(--painel-danger)');
+          window.toast?.(`Sync parcial: ${ok}/${slugs.length} posts. Categorias NAO foram sincronizadas pra evitar build quebrar. Retry os posts pelo editor.`, 'error', 8000);
+          return;
+        }
+      }
+
+      setIndicator('↻ Sincronizando categorias...', 'var(--painel-accent)');
+      try {
+        const res = await fetch('/api/categories/sync', { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Falha no sync');
+
+        setIndicator(`✓ Publicado às ${formatNow()}`, 'var(--painel-success)');
+        if (data.no_op) {
+          window.toast?.('Categorias sem mudanças (no-op).', 'info', 3000);
+        } else {
+          window.toast?.('Categorias publicadas. Rebuild em ~2 min.', 'success', 4000);
+        }
+      } catch (err: any) {
+        setIndicator(`⚠ ${err.message || 'Erro no sync'}`, 'var(--painel-danger)');
+        window.toast?.(`Erro: ${err.message || 'Falha no sync'}`, 'error', 6000);
+      }
+    }
+
+    function renderChart() {
+      const maxCount = Math.max(...cats.map((c) => c.count_posts), 1);
+      $chart.innerHTML = cats.map((c) => {
+        const widthPct = (c.count_posts / maxCount) * 100;
+        const pct = cats.reduce((s, x) => s + x.count_posts, 0) > 0
+          ? Math.round((c.count_posts / cats.reduce((s, x) => s + x.count_posts, 0)) * 100)
+          : 0;
         return `
           <div class="bar-row">
-            <span class="bar-label">${escapeHtml(tag.name)}</span>
-            <div class="bar-track">
-              <div class="bar-fill" style="width: ${widthPct}%"></div>
-            </div>
-            <span class="bar-value">${tag.count}</span>
-            <span class="bar-pct">${tag.percentage}%</span>
+            <span class="bar-label">${escapeHtml(c.name)}</span>
+            <div class="bar-track"><div class="bar-fill" style="width: ${widthPct}%"></div></div>
+            <span class="bar-value">${c.count_posts}</span>
+            <span class="bar-pct">${pct}%</span>
           </div>
         `;
       }).join('');
     }
 
-    function renderCards(tags: TagStat[]) {
-      $cards.innerHTML = tags.map((tag) => `
-        <details class="tag-card">
-          <summary class="tag-card-header">
-            <span class="tag-name">${escapeHtml(tag.name)}</span>
-            <span class="tag-count">${tag.count} ${tag.count === 1 ? 'post' : 'posts'}</span>
-            <span class="tag-pct">${tag.percentage}%</span>
-            <a href="/tag/${encodeURIComponent(tag.slug)}/" target="_blank" rel="noopener" class="tag-link" onclick="event.stopPropagation()" title="Ver no blog público">↗</a>
-          </summary>
-          <div class="tag-posts">
-            ${tag.posts.length === 0
-              ? '<p class="tag-empty">Nenhum post nessa categoria ainda.</p>'
-              : tag.posts.map((post) => `
-                  <a href="/painel/posts/editor?slug=${encodeURIComponent(post.slug)}" class="tag-post-row">
-                    <span class="tag-post-title">${escapeHtml(post.title || 'Sem título')}</span>
-                    <span class="tag-post-date">${formatDate(post.published_at)}</span>
-                  </a>
-                `).join('')
-            }
+    function renderList() {
+      $list.innerHTML = cats.map((c) => `
+        <div class="cat-row" data-id="${escapeHtml(c.id)}">
+          <div class="cat-row__info">
+            <span class="cat-row__name">${escapeHtml(c.name)}</span>
+            <span class="cat-row__slug">/tag/${escapeHtml(c.slug)}/</span>
           </div>
-        </details>
+          <span class="cat-row__count">${c.count_posts} ${c.count_posts === 1 ? 'post' : 'posts'}</span>
+          <div class="cat-row__actions">
+            <a href="/tag/${encodeURIComponent(c.slug)}/" target="_blank" rel="noopener" class="cat-row__btn cat-row__btn--ghost" title="Ver no blog">↗</a>
+            <button class="cat-row__btn" data-edit="${escapeHtml(c.id)}" type="button">Editar</button>
+            <button class="cat-row__btn cat-row__btn--danger" data-delete="${escapeHtml(c.id)}" data-count="${c.count_posts}" data-name="${escapeHtml(c.name)}" type="button">Excluir</button>
+          </div>
+        </div>
       `).join('');
+
+      // Binds
+      $list.querySelectorAll<HTMLButtonElement>('[data-edit]').forEach((btn) => {
+        btn.addEventListener('click', () => openEditModal(btn.dataset.edit!));
+      });
+      $list.querySelectorAll<HTMLButtonElement>('[data-delete]').forEach((btn) => {
+        btn.addEventListener('click', () => handleDelete(btn.dataset.delete!, btn.dataset.name!, Number(btn.dataset.count || 0)));
+      });
     }
 
-    (async function loadTagsStats() {
+    async function loadCategories() {
+      $loading.hidden = false;
+      $content.hidden = true;
       try {
-        const res = await fetch('/api/tags/stats');
-        if (res.status === 401) {
-          window.location.href = '/painel/login';
-          return;
-        }
-        if (!res.ok) throw new Error('Falha ao carregar stats');
+        const res = await fetch('/api/categories');
+        if (res.status === 401) { window.location.href = '/painel/login'; return; }
+        if (!res.ok) throw new Error('Falha ao carregar');
         const data = await res.json();
-        renderChart(data.tags);
-        renderCards(data.tags);
+        cats = data.categories || [];
+        renderChart();
+        renderList();
         $loading.hidden = true;
         $content.hidden = false;
       } catch (err: any) {
-        $loading.innerHTML = `<p style="color:var(--painel-danger)">Erro: ${escapeHtml(err.message || 'desconhecido')}</p>`;
+        $loading.innerHTML = `<p style="color:var(--painel-danger)">Erro: ${escapeHtml(err?.message || 'desconhecido')}</p>`;
       }
-    })();
+    }
+
+    // === CREATE ===
+    document.getElementById('btnAddCat')?.addEventListener('click', () => {
+      $newCatName.value = '';
+      $modalCreate.hidden = false;
+      $newCatName.focus();
+    });
+    function closeCreate() { $modalCreate.hidden = true; }
+    document.getElementById('btnCancelCreate')?.addEventListener('click', closeCreate);
+    document.getElementById('modalCreateBackdrop')?.addEventListener('click', closeCreate);
+
+    document.getElementById('btnConfirmCreate')?.addEventListener('click', async () => {
+      const name = $newCatName.value.trim();
+      if (!name) { window.toast?.('Preencha o nome', 'error'); return; }
+      try {
+        const res = await fetch('/api/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Falha ao criar');
+        window.toast?.(`Categoria "${data.category.name}" criada · sincronizando...`, 'info');
+        closeCreate();
+        await loadCategories();
+        await triggerCategoriesSync();
+      } catch (err: any) {
+        window.toast?.(err?.message || 'Erro ao criar', 'error', 5000);
+      }
+    });
+
+    // === EDIT ===
+    function openEditModal(id: string) {
+      const cat = cats.find((c) => c.id === id);
+      if (!cat) return;
+      editingId = id;
+      $editCatName.value = cat.name;
+      if (cat.count_posts > 0) {
+        $editCatWarn.hidden = false;
+        $editCatWarn.textContent = `⚠️ ${cat.count_posts} post(s) usam esta categoria. Renomear atualiza tags em todos eles em sequência (cada post = 1 commit no Git).`;
+      } else {
+        $editCatWarn.hidden = true;
+      }
+      $modalEdit.hidden = false;
+      $editCatName.focus();
+    }
+    function closeEdit() { $modalEdit.hidden = true; editingId = null; }
+    document.getElementById('btnCancelEdit')?.addEventListener('click', closeEdit);
+    document.getElementById('modalEditBackdrop')?.addEventListener('click', closeEdit);
+
+    document.getElementById('btnConfirmEdit')?.addEventListener('click', async () => {
+      if (!editingId) return;
+      const name = $editCatName.value.trim();
+      if (!name) { window.toast?.('Nome vazio', 'error'); return; }
+      try {
+        const res = await fetch(`/api/categories/${encodeURIComponent(editingId)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Falha ao salvar');
+        const pending = (data.cascade?.pending_syncs as string[]) || [];
+        window.toast?.(`Salvo · sincronizando${pending.length ? ` (${pending.length} posts afetados)` : ''}...`, 'info');
+        closeEdit();
+        await loadCategories();
+        await triggerCategoriesSync({ pendingPostSyncs: pending });
+      } catch (err: any) {
+        window.toast?.(err?.message || 'Erro ao salvar', 'error', 5000);
+      }
+    });
+
+    // === DELETE ===
+    async function handleDelete(id: string, name: string, count: number) {
+      if (count > 0) {
+        window.toast?.(`Não dá pra excluir: ${count} post(s) usam "${name}". Reatribua antes.`, 'error', 6000);
+        return;
+      }
+      const ok = await window.confirmAction!({
+        title: 'Excluir categoria?',
+        message: `A categoria "${name}" será removida. A rota /tag/<slug>/ correspondente some no próximo rebuild.`,
+        confirmLabel: 'Excluir',
+        cancelLabel: 'Cancelar',
+        danger: true,
+      });
+      if (!ok) return;
+      try {
+        const res = await fetch(`/api/categories/${encodeURIComponent(id)}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Falha ao excluir');
+        window.toast?.(`"${name}" excluída · sincronizando...`, 'info');
+        await loadCategories();
+        await triggerCategoriesSync();
+      } catch (err: any) {
+        window.toast?.(err?.message || 'Erro ao excluir', 'error', 5000);
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (!$modalCreate.hidden) closeCreate();
+        if (!$modalEdit.hidden) closeEdit();
+      }
+    });
+
+    loadCategories();
   </script>
+
+  <style is:global>
+    .cats-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .cats-toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .cats-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .cat-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--painel-surface);
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .cat-row:hover {
+      border-color: var(--painel-border-strong);
+      box-shadow: var(--painel-shadow-sm);
+    }
+    .cat-row__info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .cat-row__name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--painel-text-primary);
+    }
+    .cat-row__slug {
+      font-size: 12px;
+      color: var(--painel-text-secondary);
+      font-family: ui-monospace, 'Cascadia Code', Menlo, monospace;
+    }
+    .cat-row__count {
+      font-size: 13px;
+      color: var(--painel-text-secondary);
+      font-variant-numeric: tabular-nums;
+      padding: 4px 10px;
+      background: var(--painel-bg);
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .cat-row__actions {
+      display: flex;
+      gap: 6px;
+    }
+    .cat-row__btn {
+      background: transparent;
+      border: 1px solid var(--painel-border);
+      color: var(--painel-text-primary);
+      padding: 6px 12px;
+      border-radius: var(--painel-radius);
+      font-family: var(--painel-font);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+    .cat-row__btn:hover {
+      background: var(--painel-bg);
+      border-color: var(--painel-border-strong);
+    }
+    .cat-row__btn--ghost {
+      color: var(--painel-text-secondary);
+      font-size: 14px;
+      line-height: 1;
+      padding: 6px 10px;
+    }
+    .cat-row__btn--ghost:hover { color: var(--painel-accent); }
+    .cat-row__btn--danger { color: var(--painel-danger); }
+    .cat-row__btn--danger:hover { background: #fce8e6; border-color: var(--painel-danger); }
+
+    .cats-rename-warn {
+      background: #fff7e0;
+      border: 1px solid #fde68a;
+      border-left: 3px solid var(--painel-warning);
+      color: #92400e;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 640px) {
+      .cat-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .cat-row__actions { justify-content: flex-end; }
+    }
+  </style>
 </PainelLayout>
