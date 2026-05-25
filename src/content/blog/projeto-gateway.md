@@ -3,7 +3,6 @@ title: "Projeto Gateway"
 description: ""
 pubDate: 2026-05-24
 heroImage: "https://media.paulgomes.com.br/2026/05/d09a170c-7bc6-41be-820d-523fd59ce2c9.png"
-featured: true
 focusKeyword: "Projeto Gateway"
 metaTitle: "Projeto Gateway"
 metaDescription: "Em 1983, um documento técnico do Exército dos Estados Unidos analisou seriamente essas possibilidades dentro de um programa ligado à CIA chamado Gateway..."
