@@ -6,6 +6,9 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-7.webp"
+focusKeyword: "redes sociais"
+metaTitle: "O Poder das Redes Sociais no Marketing Digital"
+metaDescription: "As redes sociais transformaram a forma como as empresas se relacionam com seu público-alvo."
 ---
 
 As redes sociais transformaram a forma como as empresas se relacionam com seu [público-alvo](https://agenciawys.com.br/solucoes/ "público-alvo"). No mundo do [marketing digital](https://agenciawys.com.br/solucoes/ " marketing digital"), elas se tornaram uma ferramenta poderosa e indispensável para alcançar resultados significativos.

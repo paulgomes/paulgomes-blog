@@ -74,6 +74,8 @@ export function detectFocusKeyword(title: string, content: string): string {
 
   const bigrams: Record<string, number> = {};
   for (let i = 0; i < tokens.length - 1; i++) {
+    // Rejeita bigram com palavra repetida (ex: "paulgomes paulgomes" de alt-text duplicado)
+    if (tokens[i] === tokens[i + 1]) continue;
     const bg = `${tokens[i]} ${tokens[i + 1]}`;
     bigrams[bg] = (bigrams[bg] || 0) + 1;
   }

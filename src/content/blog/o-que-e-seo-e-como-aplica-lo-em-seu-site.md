@@ -6,6 +6,9 @@ categorias:
   - SEO
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-12.webp"
+focusKeyword: "seo"
+metaTitle: "O que é SEO e como aplicá-lo em seu site?"
+metaDescription: "Uma dessas estratégias é o SEO (Search Engine Optimization)\"), um conjunto de técnicas para otimizar um site e melhorar sua visibilidade nos mecanismos de..."
 ---
 
 No [mundo digital](https://agenciawys.com.br/solucoes/ "mundo digital"), é essencial que as empresas adotem estratégias eficazes para se destacar e alcançar seu [público-alvo](https://agenciawys.com.br/solucoes/ "público-alvo"). Uma dessas estratégias é o [SEO (Search Engine Optimization)](https://agenciawys.com.br/solucoes/ "SEO (Search Engine Optimization)"), um conjunto de técnicas para otimizar um site e melhorar sua visibilidade nos mecanismos de busca.

@@ -5,6 +5,9 @@ pubDate: 2023-07-24
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-8.webp"
+focusKeyword: "googlesyndication"
+metaTitle: "O que é GoogleSyndication SafeFrame?"
+metaDescription: "Usuários de Mac relataram recentemente algumas mensagens pop-up 'suspeitas' chamadas 'Googlesyndication' exibidas a eles enquanto visitavam sites específicos."
 ---
 
 Usuários de Mac relataram recentemente algumas mensagens pop-up 'suspeitas' chamadas 'Googlesyndication' exibidas a eles enquanto visitavam sites específicos. Esse problema ocorre em todos os navegadores populares, incluindo Safari, Chrome, Firefox e outros. A mensagem solicita que os usuários baixem alguns arquivos de URLs como 'tpc.googlesyndication.com' e 'safeframe.googlesyndication.com.' Em outros casos, os usuários relatam terem sido redirecionados por meio dessas URLs para outros sites desconhecidos.

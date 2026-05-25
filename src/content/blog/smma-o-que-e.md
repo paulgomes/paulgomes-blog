@@ -6,6 +6,9 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/landing-page.webp"
+focusKeyword: "smma"
+metaTitle: "SMMA o que é?"
+metaDescription: "SMMA é a sigla para \"Social Media Marketing Agency\", que em português significa \"Agência de Marketing para Mídias Sociais\"."
 ---
 
 SMMA é a sigla para "Social Media Marketing Agency", que em português significa "Agência de Marketing para Mídias Sociais". Trata-se de uma empresa ou profissional especializado em criar, gerenciar e otimizar campanhas publicitárias e estratégias de conteúdo para plataformas de mídia social, como Facebook, Instagram, Twitter, LinkedIn, entre outras.

@@ -5,6 +5,9 @@ pubDate: 2023-01-06
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/shutterstock-2209159351.webp"
+focusKeyword: "voce"
+metaTitle: "Hábitos que você deve abandonar para evoluir na carreira..."
+metaDescription: "Junto com a Agência Wys, negócios no mundo inteiro estão indo além Melhor agência de marketing em Sorocaba Agência de Marketing em Sorocaba Leia mais em:..."
 ---
 
 Muitas pessoas estão pensando nas suas metas de ano novo e coisas que elas precisam fazer em 2023 para evoluir na carreira.  

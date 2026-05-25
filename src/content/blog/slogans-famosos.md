@@ -5,6 +5,9 @@ pubDate: 2023-04-04
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-2.webp"
+focusKeyword: "dolly guarana"
+metaTitle: "SLOGANS FAMOSOS"
+metaDescription: "Os slogans são essenciais para sempre nos lembrarmos de alguma empresa ou marca."
 ---
 
 Os slogans são essenciais para sempre nos lembrarmos de alguma empresa ou marca. Reunimos as frases mais conhecidas para você. Confira!

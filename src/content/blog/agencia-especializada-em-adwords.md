@@ -6,6 +6,9 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-8.webp"
+focusKeyword: "adwords"
+metaTitle: "Agência Especializada Em Adwords"
+metaDescription: "Agência Especializada Em Adwords Aumente suas vendas e conquiste novos clientes com a ajuda da nossa agência especializada em AdWords."
 ---
 
 # Agência Especializada Em Adwords

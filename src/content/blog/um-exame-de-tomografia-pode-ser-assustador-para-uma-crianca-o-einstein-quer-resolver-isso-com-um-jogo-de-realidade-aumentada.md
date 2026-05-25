@@ -5,6 +5,9 @@ pubDate: 2022-11-02
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-9.webp"
+focusKeyword: "pode"
+metaTitle: "Um exame de tomografia pode ser assustador para uma..."
+metaDescription: "Por mais que médicos e enfermeiros se esforcem em deixar os pacientes à vontade, um hospital pode ser um ambiente desconfortável, mesmo assustador."
 ---
 
 Por mais que médicos e enfermeiros se esforcem em deixar os pacientes à vontade, um hospital pode ser um ambiente desconfortável, mesmo assustador. Sobretudo se você ainda frequenta o ensino fundamental.

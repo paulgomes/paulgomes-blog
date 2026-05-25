@@ -6,6 +6,9 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-4.webp"
+focusKeyword: "agencia marketing"
+metaTitle: "Agência de Marketing Especializada em Dermatologista..."
+metaDescription: "Na agitada paisagem do mundo digital, o sucesso de um dermatologista em Sorocaba vai além do consultório."
 ---
 
 Na agitada paisagem do mundo digital, o sucesso de um dermatologista em Sorocaba vai além do consultório. É aqui que a nossa Agência de Marketing Especializada entra em cena, dedicando-se exclusivamente a elevar a sua prática médica a um novo patamar.

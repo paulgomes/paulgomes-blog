@@ -4,6 +4,9 @@ description: "- Ajudamos pessoas e negócios a construir marcas mais relevantes.
 pubDate: 2022-05-11
 categorias:
   - Tecnologia
+focusKeyword: "read more"
+metaTitle: "Paul Gomes"
+metaDescription: "Linkedin Twitter Instagram CONTATO Read More popular News Quis ipsum suspendisse ultrices gravida."
 ---
 
 - Ajudamos pessoas e negócios a construir marcas mais relevantes.

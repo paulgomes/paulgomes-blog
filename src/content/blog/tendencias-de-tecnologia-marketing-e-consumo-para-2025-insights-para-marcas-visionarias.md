@@ -6,6 +6,9 @@ categorias:
   - Tecnologia
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/29b345d0-324c-4475-8f68-2ec2c81b3c6b.webp"
+focusKeyword: "marketing"
+metaTitle: "Tendências de Tecnologia, Marketing e Consumo para 2025:..."
+metaDescription: "À medida que 2025 avança, as fronteiras entre tecnologia, marketing e comportamento do consumidor se estreitam."
 ---
 
 À medida que 2025 avança, as fronteiras entre tecnologia, marketing e comportamento do consumidor se estreitam. Para construir marcas relevantes no futuro, é preciso entender como essas forças moldam a vida das pessoas e os negócios. Veja a seguir uma curadoria dos principais movimentos que estão definindo o cenário:

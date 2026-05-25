@@ -5,6 +5,9 @@ pubDate: 2023-06-13
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-1.webp"
+focusKeyword: "tdc innovation"
+metaTitle: "Agência Wys no TDC INNOVATION: Impulsione sua Marca"
+metaDescription: "Juntamente com a Agência Wys, marcaremos presença no TDC INNOVATION, o maior evento de tecnologia da América Latina."
 ---
 
 Juntamente com a Agência Wys, marcaremos presença no TDC INNOVATION, o maior evento de tecnologia da América Latina. Será realizado em Florianópolis, a encantadora cidade conhecida como um dos principais polos de inovação do Brasil, nos dias 14 a 16 de junho de 2023. Esta é uma oportunidade única para você se conectar com os líderes da indústria e levar sua marca a um nível superior.

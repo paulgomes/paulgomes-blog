@@ -5,6 +5,9 @@ pubDate: 2018-04-08
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/hyper.webp"
+focusKeyword: "hyperloop"
+metaTitle: "Hyperloop, terá centro de pesquisa em Minas Gerais"
+metaDescription: "HyperloopTT, que desenvolve um meio de transporte ultrarrápido por cápsulas que viajam em tubos, anunciou nesta sexta-feira (6) a implantação de um centro..."
 ---
 
 Tecnologia foi idealizada por [Elon Musk](http://paulgomes.com.br/paul-gomes-brazil/), dono da [Tesla](http://paulgomes.com.br/paul-gomes-brazil/) e da [SpaceX](http://paulgomes.com.br/paul-gomes-brazil/). No Brasil, empresa pesquisará soluções para transportar cargas e passageiros a velocidades que podem chegar a 1.200 km/h.

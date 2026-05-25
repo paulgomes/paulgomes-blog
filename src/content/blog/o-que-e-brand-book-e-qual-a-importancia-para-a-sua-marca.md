@@ -6,6 +6,9 @@ categorias:
   - Negócios
   - Branding
 heroImage: "https://media.paulgomes.com.br/posts/legacy/cropped-paul-gomes-alphaville.webp"
+focusKeyword: "marca"
+metaTitle: "O que é Brand Book e qual a importância para a sua marca"
+metaDescription: "Olá pessoal, sou Paul Gomes e hoje quero compartilhar com vocês sobre um conceito muito importante para qualquer empresa que deseja ter uma marca forte e..."
 ---
 
 Olá pessoal, sou Paul Gomes e hoje quero compartilhar com vocês sobre um conceito muito importante para qualquer empresa que deseja ter uma marca forte e consistente: o Brandbook.

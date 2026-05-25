@@ -6,6 +6,9 @@ categorias:
   - Branding
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-10.webp"
+focusKeyword: "identidade marca"
+metaTitle: "Identidade de Marca Forte"
+metaDescription: "Uma identidade de marca forte é um dos principais pilares para o sucesso de qualquer empresa."
 ---
 
 Uma [identidade de marca forte](https://agenciawys.com.br/showcase/ "identidade de marca forte") é um dos principais pilares para o sucesso de qualquer empresa. Ela não apenas ajuda a diferenciar seu negócio da concorrência, mas também estabelece uma conexão duradoura com o [público-alvo](https://agenciawys.com.br/showcase/ "público-alvo"). Construa uma identidade de marca forte que irá destacar sua empresa e criar uma base sólida para o crescimento e reconhecimento no mercado.

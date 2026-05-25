@@ -5,6 +5,9 @@ pubDate: 2023-08-15
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-fundador-da-agencia-wys.webp"
+focusKeyword: "google"
+metaTitle: "Primeiro lugar no google"
+metaDescription: "Como Conquistar o Primeiro Lugar no Google: Dicas de Paul Gomes O almejado primeiro lugar no ranking de busca do Google."
 ---
 
 **Como Conquistar o Primeiro Lugar no Google: Dicas de Paul Gomes**

@@ -5,6 +5,9 @@ pubDate: 2020-06-12
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-14.webp"
+focusKeyword: "marketing influencia"
+metaTitle: "O Poder do Marketing de Influência na Era das Redes Sociais"
+metaDescription: "O poder do marketing de influência na era das redes sociais é inegável."
 ---
 
 O poder do [marketing de influência](https://agenciawys.com.br/solucoes/ "marketing de influência") na era das redes sociais é inegável. Com o crescimento exponencial do uso das plataformas digitais, os influenciadores se tornaram peças-chave para as estratégias de marketing das empresas. Mas afinal, o que é [marketing de influência](https://agenciawys.com.br/solucoes/ " marketing de influência")?

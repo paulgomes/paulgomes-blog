@@ -5,6 +5,9 @@ pubDate: 2023-01-06
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paulo-coelho.webp"
+focusKeyword: "voce"
+metaTitle: "Paulo Coelho revelou suas técnicas de escrita"
+metaDescription: "Convicção: Você não pode vender seu próximo livro subestimando o livro que acabou de ser publicado."
 ---
 
 **Convicção**: Você não pode vender seu próximo livro subestimando o livro que acabou de ser publicado. Tenha orgulho do que você tem.

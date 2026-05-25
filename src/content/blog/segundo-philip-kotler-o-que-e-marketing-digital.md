@@ -6,6 +6,9 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-9.webp"
+focusKeyword: "marketing digital"
+metaTitle: "Segundo Philip Kotler, o que é Marketing Digital"
+metaDescription: "Quando se trata de marketing digital, Kotler nos presenteia com uma perspectiva esclarecedora sobre esse fenômeno em constante evolução."
 ---
 
 Na esfera do marketing, as palavras do lendário Philip Kotler ecoam como um farol orientador. Quando se trata de marketing digital, Kotler nos presenteia com uma perspectiva esclarecedora sobre esse fenômeno em constante evolução.

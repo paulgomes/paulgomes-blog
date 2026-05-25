@@ -6,6 +6,9 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/marketing-para-energia-solar.webp"
+focusKeyword: "marketing digital"
+metaTitle: "Marketing Digital para empresas de Energia Solar"
+metaDescription: "CRIAÇÃO DE SITES A Wys é uma Agência de Marketing Digital especializada em criação de Sites."
 ---
 
 O que podemos fazer por você?

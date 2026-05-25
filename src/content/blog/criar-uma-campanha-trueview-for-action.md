@@ -5,6 +5,9 @@ pubDate: 2021-07-10
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/807049.webp"
+focusKeyword: "campanha"
+metaTitle: "Criar uma campanha TrueView for Action"
+metaDescription: "Para ajudar você a gerar mais conversões a um ótimo custo-benefício, estamos aprimorando o TrueView for Action e expandindo os melhores recursos desse..."
 ---
 Para ajudar você a gerar mais conversões a um ótimo custo-benefício, estamos aprimorando o [TrueView for Action](https://support.google.com/google-ads/answer/7671017) e expandindo os melhores recursos desse formato para mais lugares com as [campanhas de ação em vídeo](https://support.google.com/google-ads/answer/10147229). Com elas, é possível alcançar mais clientes em locais de alto desempenho dentro e fora do YouTube, tudo usando uma única campanha. A partir do início de 2022, todas as campanhas TrueView for Action serão atualizadas automaticamente para campanhas de ação em vídeo.
 

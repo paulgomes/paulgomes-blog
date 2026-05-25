@@ -5,6 +5,9 @@ pubDate: 2022-11-14
 categorias:
   - IA
 heroImage: "https://media.paulgomes.com.br/posts/legacy/shutterstock-592921421.webp"
+focusKeyword: "musica"
+metaTitle: "Nova Inteligência Artificial da Google consegue ouvir um..."
+metaDescription: "fonte: https://mittechreview.com.br/nova-inteligencia-artificial-da-google-consegue-ouvir-um-trecho-de-uma-musica-e-continuar-a-toca-la/"
 ---
 
 A técnica, chamada AudioLM, gera sons realistas sem a necessidade de transcrições humanas.

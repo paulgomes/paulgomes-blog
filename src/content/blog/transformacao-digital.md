@@ -6,6 +6,9 @@ categorias:
   - Tecnologia
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-revista-exame.webp"
+focusKeyword: "transformacao digital"
+metaTitle: "Transformação digital"
+metaDescription: "A “transformação digital” não é só mais um tema em alta, ou uma palavra sedutora para dizer que vale a pena investir em Inbound Marketing."
 ---
 
 A “transformação digital” não é só mais um tema em alta, ou uma palavra sedutora para dizer que vale a pena investir em Inbound Marketing. Pelo contrário: ela faz parte de um processo muito maior, o progresso tecnológico.

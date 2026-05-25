@@ -5,6 +5,9 @@ pubDate: 2020-06-12
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-5.webp"
+focusKeyword: "otimizacao conversoes"
+metaTitle: "Otimização de Conversões"
+metaDescription: "Para alcançar o sucesso no mundo digital, não basta atrair visitantes para o site."
 ---
 
 Para alcançar o sucesso no [mundo digital](https://agenciawys.com.br/solucoes/ "mundo digital"), não basta atrair visitantes para o [site](https://agenciawys.com.br/contato/ "site"). É preciso transformá-los em clientes fiéis. Antes de otimizar as taxas de conversão, compreenda o [público-alvo](https://agenciawys.com.br/solucoes/ "público-alvo") através de pesquisas de mercado, análise de dados demográficos e comportamentais, e feedback dos clientes.

@@ -5,6 +5,9 @@ pubDate: 2021-04-19
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/unnamed.webp"
+focusKeyword: "menu"
+metaTitle: "Googel Ads Mapa de referência rápida"
+metaDescription: "Menu de navegação | 2."
 ---
 
 ### 

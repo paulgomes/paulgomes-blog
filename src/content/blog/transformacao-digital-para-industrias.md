@@ -5,6 +5,9 @@ pubDate: 2020-10-02
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/807049.webp"
+focusKeyword: "digitalizacao"
+metaTitle: "Transformação digital para indústrias"
+metaDescription: "Por que investir na digitalização da sua empresa?"
 ---
 
 *Por que investir na digitalização da sua empresa?*

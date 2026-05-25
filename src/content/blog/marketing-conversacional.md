@@ -5,6 +5,9 @@ pubDate: 2020-10-13
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/negocios.webp"
+focusKeyword: "marketing"
+metaTitle: "Marketing Conversacional"
+metaDescription: "O Marketing Conversacional, ou seja, Marketing de Conversação, é em uma estratégia para o atendimento rápido e eficaz."
 ---
 
 O Marketing Conversacional, ou seja, *Marketing de Conversação*, é em uma estratégia para o atendimento rápido e eficaz. Que consiste em uma conversa automatizada com os visitantes do seu site, simulando uma conversa real, assim, criando um relacionamento.

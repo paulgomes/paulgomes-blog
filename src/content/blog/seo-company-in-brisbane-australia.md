@@ -6,6 +6,9 @@ categorias:
   - SEO
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/ads.webp"
+focusKeyword: "seo company"
+metaTitle: "seo company in brisbane australia"
+metaDescription: "How do I find a good SEO company?"
 ---
 
 Brand with purpose, communication with result, enhancing your communication and minimizing distances between products, services and consumers.

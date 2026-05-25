@@ -5,6 +5,9 @@ pubDate: 2023-04-06
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/tipdilz7wysq-6s6gquunyc8suysvtnpiwa.webp"
+focusKeyword: "https"
+metaTitle: "Cases finalistas e vencedores do TikTok Ad Awards"
+metaDescription: "🏆 Avon #Avonscov com Wunderman Thompson Brasil: criar conteúdo sem interrupção (nativo); 🔗 https://rb.gy/kxkpxp, https://rb.gy/spxlnz 🏆 Burger King..."
 ---
 
 🏆 Lançado em outubro de 2022, o TikTok Ad Awards foi pensado pra reconhecer e celebrar quem mais tem abraçado a plataforma e, mais do que isso, alcançado resultados incríveis nela.

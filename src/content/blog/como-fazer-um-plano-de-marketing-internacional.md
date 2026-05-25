@@ -5,6 +5,9 @@ pubDate: 2020-06-12
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-16.webp"
+focusKeyword: "plano marketing"
+metaTitle: "Como fazer um plano de Marketing Internacional?"
+metaDescription: "Expandir os negócios além das fronteiras nacionais é uma estratégia comum para empresas em busca de crescimento e alcance de novos públicos."
 ---
 
 Expandir os negócios além das fronteiras nacionais é uma [estratégia](https://agenciawys.com.br/solucoes/ "estratégia ") comum para empresas em busca de crescimento e alcance de novos públicos. No entanto, entrar em mercados internacionais exige planejamento cuidadoso e uma abordagem estratégica para garantir o sucesso. Neste contexto, é fundamental criar um plano de [marketing](https://agenciawys.com.br/solucoes/ "marketing ") internacional eficaz. Abaixo, apresento os passos necessários para ajudar sua empresa a conquistar novos territórios:

@@ -6,6 +6,9 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts.webp"
+focusKeyword: "marketing digital"
+metaTitle: "Tendências de Marketing Digital em 2023"
+metaDescription: "O mundo do marketing digital está em constante evolução, e 2023 não será diferente."
 ---
 
 O mundo do [marketing digital](https://agenciawys.com.br/solucoes/ "marketing digital ") está em constante evolução, e 2023 não será diferente. Novas tendências estão surgindo e moldando a forma como as marcas se comunicam e se conectam com seu público. Se você deseja se manter atualizado e obter resultados excepcionais, é essencial estar ciente dessas tendências. Aqui estão algumas das principais tendências de [marketing digital](https://agenciawys.com.br/solucoes/ "marketing digital") que devem dominar o cenário em 2023:

@@ -5,6 +5,9 @@ pubDate: 2016-05-24
 categorias:
   - Tecnologia
   - Negócios
+focusKeyword: "transformacao digital"
+metaTitle: "Transformação digital: onde vamos parar?"
+metaDescription: "A \"transformação digital\" não é só mais um tema em alta, ou uma palavra sedutora para dizer que vale a pena investir em Inbound Marketing."
 ---
 
 A "transformação digital" não é só mais um tema em alta, ou uma palavra sedutora para dizer que vale a pena investir em Inbound Marketing. Pelo contrário: ela faz parte de um processo muito maior, o progresso tecnológico.

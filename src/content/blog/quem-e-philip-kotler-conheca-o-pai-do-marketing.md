@@ -6,6 +6,9 @@ categorias:
   - Negócios
   - SEO
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-11.webp"
+focusKeyword: "marketing"
+metaTitle: "Quem é Philip Kotler? Conheça o Pai do Marketing"
+metaDescription: "Philip Kotler, uma figura ímpar no mundo do marketing, é amplamente reconhecido como o pai do marketing moderno."
 ---
 
 Philip Kotler, uma figura ímpar no mundo do marketing, é amplamente reconhecido como o pai do marketing moderno. Sua influência transcende os limites acadêmicos, permeando a prática e a teoria do marketing com sua visão inovadora e revolucionária. Kotler é um autor prolífico, palestrante renomado e um pensador incansável que moldou a forma como entendemos e praticamos o marketing atualmente.

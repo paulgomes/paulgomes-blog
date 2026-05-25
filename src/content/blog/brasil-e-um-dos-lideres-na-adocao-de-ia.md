@@ -5,6 +5,9 @@ pubDate: 2020-06-12
 categorias:
   - IA
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-2.webp"
+focusKeyword: "brasil"
+metaTitle: "Brasil é um dos líderes na adoção de IA"
+metaDescription: "Uma pesquisa global revela que o Brasil é um dos países mais confiantes na adoção de sistemas de IA."
 ---
 
 Uma pesquisa global revela que o Brasil é um dos países mais confiantes na adoção de sistemas de [IA](https://agenciawys.com.br/solucoes/ "IA"). De acordo com a consultoria KPMG, 39% dos participantes brasileiros estão dispostos a confiar nessa [tecnologia](https://agenciawys.com.br/solucoes/ "tecnologia") em ascensão, enquanto 61% ainda têm receios.

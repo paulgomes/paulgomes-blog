@@ -6,6 +6,9 @@ categorias:
   - Negócios
   - SEO
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-4.webp"
+focusKeyword: "marketing conteudo"
+metaTitle: "Marketing de Conteúdo: a Estratégia para Engajar"
+metaDescription: "O marketing de conteúdo é uma poderosa ferramenta para empresas que desejam se conectar de forma significativa com seu público-alvo."
 ---
 
 O [marketing](https://agenciawys.com.br/solucoes/ "marketing") de conteúdo é uma poderosa ferramenta para empresas que desejam se conectar de forma significativa com seu [público-alvo](https://agenciawys.com.br/solucoes/ "público-alvo"). Ao oferecer conteúdo relevante, informativo e útil, é possível não apenas atrair a atenção das pessoas, mas também engajá-las e educá-las sobre seus produtos ou serviços.

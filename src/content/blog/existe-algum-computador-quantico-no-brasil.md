@@ -5,6 +5,9 @@ pubDate: 2023-01-27
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/shutterstock-1787263763.webp"
+focusKeyword: "brasil"
+metaTitle: "Existe algum computador quantico no brasil?"
+metaDescription: "https://youtube.com/shorts/SVWb2Vn-PqM?feature=share Existem algumas iniciativas de pesquisa e desenvolvimento de computação quântica no Brasil, mas..."
 ---
 
 https://youtube.com/shorts/SVWb2Vn-PqM?feature=share

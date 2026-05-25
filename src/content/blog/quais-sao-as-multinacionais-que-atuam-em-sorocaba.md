@@ -5,6 +5,9 @@ pubDate: 2023-08-15
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-1aaa.webp"
+focusKeyword: "sorocaba"
+metaTitle: "Quais são as multinacionais que atuam em Sorocaba?"
+metaDescription: "Sorocaba, uma cidade no estado de São Paulo, Brasil, é um polo industrial e tecnológico que atrai muitas empresas nacionais e multinacionais."
 ---
 
 Sorocaba, uma cidade no estado de São Paulo, Brasil, é um polo industrial e tecnológico que atrai muitas empresas nacionais e multinacionais. Até a minha última atualização em setembro de 2021, várias multinacionais têm operações em Sorocaba, em setores que variam desde a manufatura até serviços.

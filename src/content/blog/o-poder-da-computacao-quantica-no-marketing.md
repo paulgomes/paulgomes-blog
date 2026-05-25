@@ -5,6 +5,9 @@ pubDate: 2021-04-14
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/223-capa-blog-wys-1000x562-wys-800x450.webp"
+focusKeyword: "quantica"
+metaTitle: "O poder da computação quântica no marketing"
+metaDescription: "As máquinas serão responsáveis por mudanças na segmentação e previsão de padrões de consumo com seus novos processamentos."
 ---
 
 As máquinas serão responsáveis por mudanças na

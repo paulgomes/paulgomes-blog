@@ -5,6 +5,9 @@ pubDate: 2020-10-11
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wordpress-otimizacao.webp"
+focusKeyword: "wordpress"
+metaTitle: "WordPress para iniciantes: principais maneiras de aprender"
+metaDescription: "Trilha de Aprendizado WordPress (2024) 🚀 Prepare-se para dominar o WordPress em 2024 com nossa trilha de aprendizado completa!"
 ---
 
 Trilha de Aprendizado WordPress (2024) 🚀 Prepare-se para dominar o WordPress em 2024 com nossa trilha de aprendizado completa! Aprenda desde o básico até técnicas avançadas, passando por personalização de temas, plugins essenciais e práticas de SEO para otimizar seus projetos.

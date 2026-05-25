@@ -5,6 +5,9 @@ pubDate: 2020-06-12
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-19.webp"
+focusKeyword: "esg"
+metaTitle: "ESG: O que é, Princípios e Benefícios"
+metaDescription: "O ESG (Environmental, Social and Governance) é um conceito que tem se destacado como uma abordagem para avaliar o desempenho das empresas nessas áreas."
 ---
 
 No mundo atual, os consumidores estão cada vez mais engajados em questões ambientais, sociais e de transparência governamental. O **ESG** (Environmental, Social and Governance) é um conceito que tem se destacado como uma abordagem para avaliar o **desempenho das empresas** nessas áreas.

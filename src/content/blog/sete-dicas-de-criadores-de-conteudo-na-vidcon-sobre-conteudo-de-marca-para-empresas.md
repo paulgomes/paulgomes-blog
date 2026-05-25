@@ -5,6 +5,9 @@ pubDate: 2022-11-01
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/296362711-597962548409928-5294185315491526449-n.webp"
+focusKeyword: "criadores conteudo"
+metaTitle: "Sete dicas de criadores de conteúdo na VidCon sobre..."
+metaDescription: "No mês passado, a Meta participou da VidCon nos Estados Unidos para conversar com os criadores de conteúdo sobre como eles gostam de trabalhar com..."
 ---
 
 No mês passado, a Meta participou da VidCon nos Estados Unidos para conversar com os criadores de conteúdo sobre como eles gostam de trabalhar com empresas grandes e pequenas em conteúdo como os reels do Instagram. Nossa série de vídeo recente We Create mostra imagens de bastidores sobre como criadores de conteúdo podem colaborar com marcas, empresas e agências no Instagram. Na VidCon, discutimos esse tema em detalhes ao falar com ainda mais criadores sobre conteúdo de marca.

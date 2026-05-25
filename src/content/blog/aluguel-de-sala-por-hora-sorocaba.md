@@ -5,6 +5,9 @@ pubDate: 2023-08-09
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-14.webp"
+focusKeyword: "sorocaba"
+metaTitle: "Aluguel de sala por hora sorocaba"
+metaDescription: "coworking A criação de um ambiente para gerar resultados.CoWorking em Sorocaba O Coworking 648 foi fundado em 2023 com a visão de criar ambientes nos..."
 ---
 
 ## Aumente sua produtividade e faça conexões valiosas no **Coworking 648.**

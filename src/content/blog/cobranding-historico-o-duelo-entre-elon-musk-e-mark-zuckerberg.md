@@ -5,6 +5,9 @@ pubDate: 2023-08-07
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-4.webp"
+focusKeyword: "musk"
+metaTitle: "Cobranding Histórico: O Duelo entre Elon Musk e Mark..."
+metaDescription: "Elon Musk anuncia uma luta contra Mark Zuckerberg com transmissão no X, a nova plataforma de vídeo ao vivo que substituiu o Twitter após sua aquisição por Musk."
 ---
 
 Elon Musk anuncia uma luta contra Mark Zuckerberg com transmissão no X, a nova plataforma de vídeo ao vivo que substituiu o Twitter após sua aquisição por Musk. O empresário menciona que os lucros serão destinados a caridades para veteranos militares.

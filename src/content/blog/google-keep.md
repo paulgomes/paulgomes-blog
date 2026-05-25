@@ -5,6 +5,9 @@ pubDate: 2023-04-15
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/google-keep.webp"
+focusKeyword: "google keep"
+metaTitle: "Google Keep"
+metaDescription: "Olá pessoal, hoje quero falar sobre uma das ferramentas mais úteis e práticas do Google: o Google Keep."
 ---
 
 Olá pessoal, hoje quero falar sobre uma das ferramentas mais úteis e práticas do Google: o [Google Keep](https://keep.google.com/ "Google Keep").

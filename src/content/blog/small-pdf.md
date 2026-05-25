@@ -5,6 +5,9 @@ pubDate: 2023-04-15
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-2-1.webp"
+focusKeyword: "pdf"
+metaTitle: "Small Pdf - Mais simplicidade para as suas tarefas"
+metaDescription: "Hoje eu quero falar sobre uma ferramenta incrível que eu descobri recentemente chamada Smallpdf."
 ---
 
 Todas as ferramentas de que você precisa para trabalhar com documentos com mais praticidade e alavancar sua produtividade.
