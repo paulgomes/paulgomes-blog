@@ -763,3 +763,196 @@
   transition: background .15s, border-color .15s;
 }
 .painel-btn-ghost:hover { background: var(--painel-bg); border-color: var(--painel-border-strong); }
+
+/* === TAGS / CATEGORIAS PAGE === */
+.tags-hint {
+  background: var(--painel-bg);
+  border-left: 3px solid var(--painel-accent);
+  padding: 12px 16px;
+  border-radius: var(--painel-radius);
+  font-size: 13px;
+  color: var(--painel-text-secondary);
+  margin-bottom: 32px;
+}
+.tags-hint code {
+  background: var(--painel-surface);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  border: 1px solid var(--painel-border);
+  font-family: ui-monospace, 'Cascadia Code', Menlo, monospace;
+}
+
+.tags-loading {
+  padding: 60px;
+  text-align: center;
+  color: var(--painel-text-secondary);
+}
+
+.tags-chart-section {
+  background: var(--painel-surface);
+  border: 1px solid var(--painel-border);
+  border-radius: var(--painel-radius);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+.tags-chart-section h2 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--painel-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 16px;
+}
+
+.tags-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.bar-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 50px 50px;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+.bar-label {
+  color: var(--painel-text-primary);
+  font-weight: 500;
+}
+.bar-track {
+  height: 20px;
+  background: var(--painel-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background: var(--painel-accent);
+  border-radius: 4px;
+  transition: width .3s ease;
+  min-width: 4px;
+}
+.bar-value {
+  color: var(--painel-text-primary);
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.bar-pct {
+  color: var(--painel-text-secondary);
+  font-size: 12px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.tags-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tag-card {
+  background: var(--painel-surface);
+  border: 1px solid var(--painel-border);
+  border-radius: var(--painel-radius);
+  overflow: hidden;
+}
+.tag-card[open] { box-shadow: var(--painel-shadow-sm); }
+
+.tag-card-header {
+  display: grid;
+  grid-template-columns: 1fr 100px 60px 32px;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  cursor: pointer;
+  list-style: none;
+  transition: background .15s;
+}
+.tag-card-header::-webkit-details-marker { display: none; }
+.tag-card-header::marker { content: ''; }
+.tag-card-header:hover { background: var(--painel-bg); }
+
+.tag-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--painel-text-primary);
+}
+.tag-count {
+  font-size: 13px;
+  color: var(--painel-text-secondary);
+}
+.tag-pct {
+  font-size: 13px;
+  color: var(--painel-text-secondary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.tag-link {
+  color: var(--painel-text-secondary);
+  text-decoration: none;
+  font-size: 18px;
+  text-align: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color .15s, background .15s;
+  line-height: 1;
+}
+.tag-link:hover {
+  color: var(--painel-accent);
+  background: var(--painel-bg);
+}
+
+.tag-posts {
+  padding: 4px 20px 16px;
+  border-top: 1px solid var(--painel-border);
+}
+.tag-post-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--painel-border);
+  text-decoration: none;
+  color: inherit;
+  transition: color .15s;
+}
+.tag-post-row:last-child { border-bottom: 0; }
+.tag-post-row:hover .tag-post-title { color: var(--painel-accent); }
+.tag-post-title {
+  color: var(--painel-text-primary);
+  font-size: 14px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tag-post-date {
+  color: var(--painel-text-secondary);
+  font-size: 12px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.tag-empty {
+  padding: 12px 0;
+  color: var(--painel-text-disabled);
+  font-size: 13px;
+  text-align: center;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .bar-row {
+    grid-template-columns: 80px 1fr 40px 40px;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .tag-card-header {
+    grid-template-columns: 1fr 70px 50px 28px;
+    padding: 12px 16px;
+  }
+  .tag-link { font-size: 16px; }
+}

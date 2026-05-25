@@ -3,14 +3,107 @@ import PainelLayout from '../../components/painel/PainelLayout.astro';
 import '../../styles/painel.css';
 ---
 
-<PainelLayout title="Tags — Painel" description="CRUD de tags" current="tags">
+<PainelLayout title="Categorias — Painel" description="Distribuição de posts por categoria" current="tags">
   <section class="page-header">
-    <h1>Tags</h1>
-    <p class="subtitle">CRUD das 6 tags com contagem de posts por tag.</p>
+    <h1>Categorias</h1>
+    <p class="subtitle">Distribuição dos posts pelas 6 categorias do blog.</p>
   </section>
 
-  <div class="empty-state">
-    <span class="icon">🚧</span>
-    Em desenvolvimento. Aqui vai entrar gerenciamento de tags com contagem por tag.
+  <p class="tags-hint">
+    ℹ️ Categorias são fixas por SEO (poucas tags fortes &gt; muitas fracas).
+    Pra adicionar ou renomear, edite <code>src/lib/tags.ts</code> no código.
+  </p>
+
+  <div class="tags-loading" id="tagsLoading">Carregando...</div>
+
+  <div class="tags-content" id="tagsContent" hidden>
+    <div class="tags-chart-section">
+      <h2>Distribuição</h2>
+      <div class="tags-chart" id="tagsChart"></div>
+    </div>
+
+    <div class="tags-cards" id="tagsCards"></div>
   </div>
+
+  <script>
+    type Post = { slug: string; title: string; published_at: number | null };
+    type TagStat = { name: string; slug: string; count: number; percentage: number; posts: Post[] };
+
+    const $loading = document.getElementById('tagsLoading') as HTMLDivElement;
+    const $content = document.getElementById('tagsContent') as HTMLDivElement;
+    const $chart = document.getElementById('tagsChart') as HTMLDivElement;
+    const $cards = document.getElementById('tagsCards') as HTMLDivElement;
+
+    function escapeHtml(s: string): string {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+      } as Record<string, string>)[c]);
+    }
+
+    function formatDate(ts: number | null): string {
+      if (!ts) return '—';
+      return new Date(ts).toLocaleDateString('pt-BR', {
+        year: 'numeric', month: 'short', day: 'numeric',
+      });
+    }
+
+    function renderChart(tags: TagStat[]) {
+      const maxCount = Math.max(...tags.map((t) => t.count), 1);
+      $chart.innerHTML = tags.map((tag) => {
+        const widthPct = (tag.count / maxCount) * 100;
+        return `
+          <div class="bar-row">
+            <span class="bar-label">${escapeHtml(tag.name)}</span>
+            <div class="bar-track">
+              <div class="bar-fill" style="width: ${widthPct}%"></div>
+            </div>
+            <span class="bar-value">${tag.count}</span>
+            <span class="bar-pct">${tag.percentage}%</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderCards(tags: TagStat[]) {
+      $cards.innerHTML = tags.map((tag) => `
+        <details class="tag-card">
+          <summary class="tag-card-header">
+            <span class="tag-name">${escapeHtml(tag.name)}</span>
+            <span class="tag-count">${tag.count} ${tag.count === 1 ? 'post' : 'posts'}</span>
+            <span class="tag-pct">${tag.percentage}%</span>
+            <a href="/tag/${encodeURIComponent(tag.slug)}/" target="_blank" rel="noopener" class="tag-link" onclick="event.stopPropagation()" title="Ver no blog público">↗</a>
+          </summary>
+          <div class="tag-posts">
+            ${tag.posts.length === 0
+              ? '<p class="tag-empty">Nenhum post nessa categoria ainda.</p>'
+              : tag.posts.map((post) => `
+                  <a href="/painel/posts/editor?slug=${encodeURIComponent(post.slug)}" class="tag-post-row">
+                    <span class="tag-post-title">${escapeHtml(post.title || 'Sem título')}</span>
+                    <span class="tag-post-date">${formatDate(post.published_at)}</span>
+                  </a>
+                `).join('')
+            }
+          </div>
+        </details>
+      `).join('');
+    }
+
+    (async function loadTagsStats() {
+      try {
+        const res = await fetch('/api/tags/stats');
+        if (res.status === 401) {
+          window.location.href = '/painel/login';
+          return;
+        }
+        if (!res.ok) throw new Error('Falha ao carregar stats');
+        const data = await res.json();
+        renderChart(data.tags);
+        renderCards(data.tags);
+        $loading.hidden = true;
+        $content.hidden = false;
+      } catch (err: any) {
+        $loading.innerHTML = `<p style="color:var(--painel-danger)">Erro: ${escapeHtml(err.message || 'desconhecido')}</p>`;
+      }
+    })();
+  </script>
 </PainelLayout>
