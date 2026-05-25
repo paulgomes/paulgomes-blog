@@ -6,6 +6,10 @@ export type Env = {
   GITHUB_TOKEN: string;
   GITHUB_REPO: string;
   GITHUB_BRANCH: string;
+  // Newsletter (Resend)
+  RESEND_API_KEY: string;
+  RESEND_AUDIENCE_ID: string;
+  SITE_URL: string;
 };
 
 export function getDB(env: Env): D1Database {

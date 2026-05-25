@@ -48,7 +48,8 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
 
         <!-- NEWSLETTER -->
         <form
-          action="#"
+          id="newsletterForm"
+          action="/api/newsletter/subscribe"
           method="post"
           class="cinematic-form"
         >
@@ -64,10 +65,48 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
             Inscrever →
           </button>
         </form>
+        <p id="newsletterMessage" class="cinematic-newsletter-msg" hidden></p>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  const form = document.getElementById('newsletterForm') as HTMLFormElement | null;
+  const msg = document.getElementById('newsletterMessage') as HTMLParagraphElement | null;
+  if (form && msg) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = (form.elements.namedItem('email') as HTMLInputElement)?.value || '';
+      const button = form.querySelector('button') as HTMLButtonElement | null;
+      msg.hidden = false;
+      msg.textContent = 'Inscrevendo...';
+      msg.dataset.kind = 'pending';
+      if (button) button.disabled = true;
+      try {
+        const res = await fetch('/api/newsletter/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json() as any;
+        if (!res.ok) {
+          msg.textContent = data?.error || 'Erro. Tente novamente.';
+          msg.dataset.kind = 'error';
+        } else {
+          msg.textContent = data?.message || 'Inscrição registrada.';
+          msg.dataset.kind = 'success';
+          form.reset();
+        }
+      } catch (err) {
+        msg.textContent = 'Erro de conexão. Tente novamente.';
+        msg.dataset.kind = 'error';
+      } finally {
+        if (button) button.disabled = false;
+      }
+    });
+  }
+</script>
 
 <style>
   .author-cinematic {
@@ -291,6 +330,16 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     transform: translateY(-2px);
     box-shadow: 0 12px 28px rgba(0, 180, 216, 0.35);
   }
+
+  .cinematic-newsletter-msg {
+    margin: 12px 0 0;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--color-muted);
+    transition: color 0.15s ease;
+  }
+  .cinematic-newsletter-msg[data-kind="success"] { color: #00b4d8; }
+  .cinematic-newsletter-msg[data-kind="error"] { color: #d33; }
 
   /* Barra GEO inline: só aparece no mobile entre foto e texto */
   .ai-prompt-mobile {
@@ -532,9 +581,5 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
     });
   })();
 
-  // Newsletter placeholder handler — substitui o onsubmit inline pra evitar dep do global `event`
-  document.querySelector<HTMLFormElement>('.cinematic-form')?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    alert('Newsletter em breve! Me siga no LinkedIn ou Instagram.');
-  });
+  // Newsletter handler agora vive no <script> superior (id="newsletterForm").
 </script>
