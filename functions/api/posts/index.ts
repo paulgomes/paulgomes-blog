@@ -107,8 +107,11 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     if (likeCategoria) bindings.push(likeCategoria);
     bindings.push(statusParam, perPage, offset);
   } else {
-    // 'all' — union
-    sql = `${postsSelect} UNION ALL ${draftsSelect} ORDER BY updated_at DESC LIMIT ? OFFSET ?`;
+    // 'all' — union. Posts ordenam por published_at (updated_at foi sobrescrito
+    // em massa pelo backfill SEO); drafts caem no updated_at (sem published_at).
+    sql = `${postsSelect} UNION ALL ${draftsSelect}
+      ORDER BY CASE WHEN published_at IS NULL THEN updated_at ELSE published_at END DESC
+      LIMIT ? OFFSET ?`;
     if (likeQ) bindings.push(likeQ);
     if (likeCategoria) bindings.push(likeCategoria);
     if (likeQ) bindings.push(likeQ);
