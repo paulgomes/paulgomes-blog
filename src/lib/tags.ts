@@ -3,7 +3,7 @@
 // O resto do arquivo (slugifyTag helpers e cores fallback) eh preservado pelo sync.
 
 // <CATEGORIES_BEGIN>
-export const TAGS = ['IA', 'GEO', 'SEO', 'Branding', 'Tecnologia', 'Negócios'] as const;
+export const TAGS = ['IA', 'GEO', 'SEO', 'Branding', 'Tecnologia', 'Negócios', 'EM ALTA'] as const;
 export type Tag = typeof TAGS[number];
 
 export const TAG_SLUGS: Record<Tag, string> = {
@@ -13,15 +13,17 @@ export const TAG_SLUGS: Record<Tag, string> = {
   'Branding': 'branding',
   'Tecnologia': 'tecnologia',
   'Negócios': 'negocios',
+  'EM ALTA': 'em-alta',
 };
 
 export const TAG_COLORS: Record<Tag, { bg: string; fg: string }> = {
-  'IA':         { bg: '#00b4d8', fg: '#ffffff' },
-  'GEO':        { bg: '#0096b8', fg: '#ffffff' },
-  'SEO':        { bg: '#0077a3', fg: '#ffffff' },
-  'Branding':   { bg: '#005f86', fg: '#ffffff' },
+  'IA': { bg: '#00b4d8', fg: '#ffffff' },
+  'GEO': { bg: '#0096b8', fg: '#ffffff' },
+  'SEO': { bg: '#0077a3', fg: '#ffffff' },
+  'Branding': { bg: '#005f86', fg: '#ffffff' },
   'Tecnologia': { bg: '#1f2937', fg: '#ffffff' },
-  'Negócios':   { bg: '#4b5563', fg: '#ffffff' },
+  'Negócios': { bg: '#4b5563', fg: '#ffffff' },
+  'EM ALTA': { bg: '#6b7280', fg: '#ffffff' },
 };
 // <CATEGORIES_END>
 
