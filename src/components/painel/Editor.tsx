@@ -11,6 +11,7 @@ declare global {
   interface Window {
     __editorGetHTML?: () => string;
     __editorGetMarkdown?: () => string;
+    __editorMounted?: boolean;
     toast?: (message: string, type?: 'success' | 'error' | 'info', duration?: number) => void;
   }
 }
@@ -130,12 +131,16 @@ export default function Editor() {
     };
     window.addEventListener('editor:set-content', setContentHandler);
 
+    // Defensiva: flag global pro script inline detectar montagem retroativa
+    // (caso o evento editor:ready abaixo dispare ANTES do listener ser registrado).
+    window.__editorMounted = true;
     window.dispatchEvent(new Event('editor:ready'));
 
     return () => {
       window.removeEventListener('editor:set-content', setContentHandler);
       delete window.__editorGetHTML;
       delete window.__editorGetMarkdown;
+      delete window.__editorMounted;
     };
   }, [editor]);
 

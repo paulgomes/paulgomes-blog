@@ -192,6 +192,16 @@ const currentNav = isEditing ? 'posts' : 'new';
       }
     });
 
+    // Defensiva: se Editor.tsx montou ANTES deste script registrar o listener
+    // de editor:ready (race em cold cache), o evento ja passou. Detecta via flag.
+    if ((window as any).__editorMounted) {
+      editorReady = true;
+      if (pendingContent !== null) {
+        window.dispatchEvent(new CustomEvent('editor:set-content', { detail: { html: pendingContent } }));
+        pendingContent = null;
+      }
+    }
+
     window.addEventListener('editor:change', (e: Event) => {
       const ev = e as CustomEvent<{ html: string; md: string; wordCount: number; readTime: number }>;
       currentContent = ev.detail.md;
