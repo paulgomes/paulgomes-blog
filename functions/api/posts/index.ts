@@ -109,7 +109,8 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   } else {
     // 'all' — union. Posts ordenam por published_at (updated_at foi sobrescrito
     // em massa pelo backfill SEO); drafts caem no updated_at (sem published_at).
-    sql = `${postsSelect} UNION ALL ${draftsSelect}
+    // Wrap em subquery: SQLite nao aceita expressao no ORDER BY de um UNION direto.
+    sql = `SELECT * FROM (${postsSelect} UNION ALL ${draftsSelect})
       ORDER BY CASE WHEN published_at IS NULL THEN updated_at ELSE published_at END DESC
       LIMIT ? OFFSET ?`;
     if (likeQ) bindings.push(likeQ);
