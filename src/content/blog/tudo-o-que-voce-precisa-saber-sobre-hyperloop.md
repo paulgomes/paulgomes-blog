@@ -5,6 +5,7 @@ pubDate: 2020-10-09
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/hyper.webp"
+heroImageAlt: "Tudo o que você precisa saber sobre: Hyperloop"
 focusKeyword: "hyperloop"
 metaTitle: "Tudo o que você precisa saber sobre: Hyperloop"
 metaDescription: "Projeto apresentado por Elon Musk, o Hyperloop é um sistema de transporte com alta tecnologia e velocidade."

@@ -86,6 +86,21 @@ const currentNav = isEditing ? 'posts' : 'new';
             <summary>Colar URL manualmente</summary>
             <input type="url" id="heroImageUrl" class="side-input" placeholder="https://media.paulgomes.com.br/..." />
           </details>
+
+          <div class="hero-alt-block" id="heroAltBlock" hidden>
+            <label class="hero-alt-label" for="heroImageAlt">
+              Alt text
+              <span class="hero-alt-hint">(descreva o que aparece — SEO + acessibilidade)</span>
+            </label>
+            <input
+              type="text"
+              id="heroImageAlt"
+              class="side-input"
+              maxlength="200"
+              placeholder="Ex: Paul Gomes palestrando sobre IA…"
+            />
+            <p class="hero-alt-counter" id="heroAltCounter">0/200</p>
+          </div>
         </div>
       </section>
 
@@ -206,6 +221,21 @@ const currentNav = isEditing ? 'posts' : 'new';
     const $featuredBlock = document.getElementById('featuredBlock') as HTMLElement;
     const $isFeatured = document.getElementById('isFeatured') as HTMLInputElement;
     const $featuredHint = document.getElementById('featuredHint') as HTMLElement;
+
+    // === Hero image alt text (campo aparece so quando hero existe) ===
+    const $heroAltBlock = document.getElementById('heroAltBlock') as HTMLElement;
+    const $heroImageAlt = document.getElementById('heroImageAlt') as HTMLInputElement;
+    const $heroAltCounter = document.getElementById('heroAltCounter') as HTMLElement;
+
+    function refreshHeroAltCounter() {
+      const len = $heroImageAlt.value.length;
+      $heroAltCounter.textContent = `${len}/200`;
+      $heroAltCounter.classList.toggle('warn', len > 180);
+    }
+    $heroImageAlt?.addEventListener('input', () => {
+      refreshHeroAltCounter();
+      scheduleAutoSave();
+    });
 
     // === Data de publicacao — so aparece em modo post publicado ===
     const $publishedAtBlock = document.getElementById('publishedAtBlock') as HTMLElement;
@@ -433,6 +463,8 @@ const currentNav = isEditing ? 'posts' : 'new';
       $metaTitle.value = draft.meta_title || '';
       $metaDescription.value = draft.meta_description || '';
       applyHeroValue(draft.hero_image_url || '');
+      $heroImageAlt.value = draft.hero_image_alt || '';
+      refreshHeroAltCounter();
       currentContent = draft.content_md || '';
       $deleteBtn.style.display = 'inline-flex';
       if (draft.status === 'published') {
@@ -464,6 +496,8 @@ const currentNav = isEditing ? 'posts' : 'new';
       $metaTitle.value = post.meta_title || '';
       $metaDescription.value = post.meta_description || '';
       applyHeroValue(post.hero_image_url || '');
+      $heroImageAlt.value = post.hero_image_alt || '';
+      refreshHeroAltCounter();
       currentContent = post.content_md || '';
       $isFeatured.checked = Boolean(post.is_featured);
       $publishedAtInput.value = tsToLocalInput(post.published_at);
@@ -507,6 +541,7 @@ const currentNav = isEditing ? 'posts' : 'new';
         slug: $slug.value || slugify($title.value),
         category: $category.value,
         hero_image_url: $heroImage.value,
+        hero_image_alt: $heroImageAlt.value.trim() || null,
         content_md: currentContent,
         focus_keyword: $focusKeyword.value,
         meta_title: $metaTitle.value,
@@ -519,6 +554,7 @@ const currentNav = isEditing ? 'posts' : 'new';
         title: $title.value,
         description: $description.value,
         hero_image_url: $heroImage.value,
+        hero_image_alt: $heroImageAlt.value.trim() || null,
         content_md: currentContent,
         categorias: categoriasToArray($category.value),
         focus_keyword: $focusKeyword.value,
@@ -656,12 +692,16 @@ const currentNav = isEditing ? 'posts' : 'new';
         $heroRemoveBtn.hidden = false;
         $heroImage.value = trimmed;
         if ($heroImageUrl && $heroImageUrl.value !== trimmed) $heroImageUrl.value = trimmed;
+        if ($heroAltBlock) $heroAltBlock.hidden = false;
       } else {
         $heroPreviewImg.removeAttribute('src');
         $heroPreview.dataset.empty = 'true';
         $heroRemoveBtn.hidden = true;
         $heroImage.value = '';
         if ($heroImageUrl) $heroImageUrl.value = '';
+        if ($heroAltBlock) $heroAltBlock.hidden = true;
+        if ($heroImageAlt) $heroImageAlt.value = '';
+        refreshHeroAltCounter();
       }
       if (opts.schedule) scheduleAutoSave();
     }
@@ -1297,6 +1337,31 @@ const currentNav = isEditing ? 'posts' : 'new';
       user-select: none;
     }
     .hero-url-toggle[open] summary { margin-bottom: 8px; }
+
+    /* Alt text do hero — so aparece quando ha imagem */
+    .hero-alt-block { margin-top: 8px; }
+    .hero-alt-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--painel-text-secondary);
+      margin-bottom: 6px;
+    }
+    .hero-alt-hint {
+      display: inline;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--painel-text-disabled);
+      margin-left: 4px;
+    }
+    .hero-alt-counter {
+      margin: 4px 0 0;
+      font-size: 11px;
+      color: var(--painel-text-disabled);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .hero-alt-counter.warn { color: var(--painel-warning); }
 
     /* === SEO Yoast-like === */
     .seo-section .seo-toolbar {

@@ -5,6 +5,7 @@ pubDate: 2011-04-15
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-9.webp"
+heroImageAlt: "Descubra o melhor de Alphaville"
 focusKeyword: "alphaville"
 metaTitle: "Descubra o melhor de Alphaville"
 metaDescription: "Se você é morador de Alphaville e procura por serviços e produtos de qualidade, com certeza já deve ter ouvido falar da startup Menu Alphaville."

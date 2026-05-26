@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/5-chatbots.webp"
+heroImageAlt: "Os melhores Chatbots para WhatsApp"
 focusKeyword: "whatsapp"
 metaTitle: "Os melhores Chatbots para WhatsApp"
 metaDescription: "O WhatsApp Business API é uma solução desenvolvida pelo Facebook para facilitar a comunicação das empresas com seus clientes."

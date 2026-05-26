@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - Branding
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-1.webp"
+heroImageAlt: "Quais são as maiores agências de marketing do Brasil?"
 focusKeyword: "marketing"
 metaTitle: "Quais são as maiores agências de marketing do Brasil?"
 metaDescription: "O cenário empresarial de Sorocaba tem se transformado rapidamente nos últimos anos, impulsionando a demanda por serviços de marketing inovadores e eficazes."

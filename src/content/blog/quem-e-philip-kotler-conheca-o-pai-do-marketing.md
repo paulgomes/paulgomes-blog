@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - SEO
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-11.webp"
+heroImageAlt: "Quem é Philip Kotler? Conheça o Pai do Marketing"
 focusKeyword: "marketing"
 metaTitle: "Quem é Philip Kotler? Conheça o Pai do Marketing"
 metaDescription: "Philip Kotler, uma figura ímpar no mundo do marketing, é amplamente reconhecido como o pai do marketing moderno."

@@ -5,6 +5,7 @@ pubDate: 2020-06-12
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-11.webp"
+heroImageAlt: "Otimização de Site: Tráfego e Conversões"
 focusKeyword: "trafego conversoes"
 metaTitle: "Otimização de Site: Tráfego e Conversões"
 metaDescription: "Ter um site otimizado é essencial para o sucesso online atual."

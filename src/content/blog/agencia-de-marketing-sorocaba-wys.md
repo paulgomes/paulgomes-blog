@@ -6,6 +6,7 @@ categorias:
   - Tecnologia
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-3.webp"
+heroImageAlt: "Agência de marketing sorocaba Wys"
 focusKeyword: "agencia wys"
 metaTitle: "Agência de marketing sorocaba Wys"
 metaDescription: "Na Agência Wys, acreditamos que a visão é o ponto de partida para transformar sonhos em realidade."

@@ -5,6 +5,7 @@ pubDate: 2020-06-12
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-6.webp"
+heroImageAlt: "E-mail Marketing: a Chave para se Conectar com seu Público"
 focusKeyword: "mail marketing"
 metaTitle: "E-mail Marketing: a Chave para se Conectar com seu Público"
 metaDescription: "No mundo competitivo atual, o e-mail marketing é uma ferramenta poderosa para conectar-se com o público e atrair clientes."

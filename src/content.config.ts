@@ -15,6 +15,7 @@ const blog = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: z.union([image(), z.string().url()]).optional(),
+			heroImageAlt: z.string().max(200).optional(),
 			// Enum dinamico — vem do CATEGORIAS gerado por /api/categorias/sync
 			categorias: z.array(z.enum(CATEGORIAS as unknown as [string, ...string[]])).default([]),
 			featured: z.boolean().optional().default(false),

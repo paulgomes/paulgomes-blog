@@ -5,6 +5,7 @@ pubDate: 2023-01-28
 categorias:
   - SEO
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-br.webp"
+heroImageAlt: "O que é SEO e para que serve"
 focusKeyword: "seo"
 metaTitle: "O que é SEO e para que serve"
 metaDescription: "SEO (Search Engine Optimization) é o processo de otimizar um site ou página para melhorar sua visibilidade e classificação nos resultados de busca orgânica."

@@ -5,6 +5,7 @@ pubDate: 2018-04-08
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/hyper.webp"
+heroImageAlt: "Hyperloop, terá centro de pesquisa em Minas Gerais"
 focusKeyword: "hyperloop"
 metaTitle: "Hyperloop, terá centro de pesquisa em Minas Gerais"
 metaDescription: "HyperloopTT, que desenvolve um meio de transporte ultrarrápido por cápsulas que viajam em tubos, anunciou nesta sexta-feira (6) a implantação de um centro..."

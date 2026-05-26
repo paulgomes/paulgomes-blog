@@ -5,6 +5,7 @@ pubDate: 2022-01-05
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/5050.webp"
+heroImageAlt: "Marketing 5.0: Tecnologia e Novos desafios"
 focusKeyword: "marketing"
 metaTitle: "Marketing 5.0: Tecnologia e Novos desafios"
 metaDescription: "O marketing está em constante processo de mudança. Mudam-se hábitos de consumo, consumidores e formas de interação em vendas e processos decisórios."

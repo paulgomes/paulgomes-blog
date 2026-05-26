@@ -6,6 +6,7 @@ categorias:
   - Branding
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-8.webp"
+heroImageAlt: "Branding no Mercado do Luxo"
 focusKeyword: "luxo"
 metaTitle: "Branding no Mercado do Luxo"
 metaDescription: "No mercado do luxo, a diferenciação é essencial para criar um impacto duradouro."

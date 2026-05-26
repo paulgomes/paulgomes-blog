@@ -5,6 +5,7 @@ pubDate: 2019-07-26
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/whatsapp-image-2021-09-23-at-154935-1-1024x682-1.webp"
+heroImageAlt: "Quem é Don Tiepo?"
 focusKeyword: "don tiepo"
 metaTitle: "Quem é Don Tiepo?"
 metaDescription: "Quem é Don Tiepo?"

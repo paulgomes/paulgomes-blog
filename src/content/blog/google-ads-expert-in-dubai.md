@@ -5,6 +5,7 @@ pubDate: 2015-02-15
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paulgomes.webp"
+heroImageAlt: "Google Ads Expert in Dubai"
 focusKeyword: "google ads"
 metaTitle: "Google Ads Expert in Dubai"
 metaDescription: "Are You Finding Professional Google ads Specialist in Dubai ? I am Paul Gomes who is Google Ads Specialist in Dubai."

@@ -5,6 +5,7 @@ pubDate: 2023-08-15
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-7.webp"
+heroImageAlt: "Agência de Marketing de Luxo"
 focusKeyword: "marketing luxo"
 metaTitle: "Agência de Marketing de Luxo"
 metaDescription: "No mundo sofisticado do marketing de luxo, a excelência é a norma e a exclusividade é a chave para o sucesso."

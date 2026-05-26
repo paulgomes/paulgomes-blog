@@ -6,6 +6,7 @@ categorias:
   - SEO
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/base-d.webp"
+heroImageAlt: "Consultoria de SEO em Sorocaba"
 focusKeyword: "seo"
 metaTitle: "Consultoria de SEO em Sorocaba"
 metaDescription: "Consultoria de SEO em Sorocaba: Um Olhar Atualizado para o Futuro Digital Por Paul Gomes Em um mundo onde a presença online não é apenas desejada, mas..."

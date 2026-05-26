@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/agencia-wys-menu1900x1078.webp"
+heroImageAlt: "Dicas de Marketing Digital para iniciantes"
 focusKeyword: "marketing"
 metaTitle: "Dicas de Marketing Digital para iniciantes"
 metaDescription: "O Marketing Digital é essencial para alavancar seu negócio, quando bem elaborado, ele ajuda a alcançar um número de pessoas que possivelmente possam se..."

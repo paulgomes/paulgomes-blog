@@ -5,6 +5,7 @@ pubDate: 2021-07-10
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/807049.webp"
+heroImageAlt: "Criar uma campanha TrueView for Action"
 focusKeyword: "campanha"
 metaTitle: "Criar uma campanha TrueView for Action"
 metaDescription: "Para ajudar você a gerar mais conversões a um ótimo custo-benefício, estamos aprimorando o TrueView for Action e expandindo os melhores recursos desse..."

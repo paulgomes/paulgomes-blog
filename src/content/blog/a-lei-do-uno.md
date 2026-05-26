@@ -5,6 +5,7 @@ pubDate: 2023-02-25
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-15.webp"
+heroImageAlt: "A Lei do Uno"
 focusKeyword: "voce"
 metaTitle: "A Lei do Uno"
 metaDescription: "Tudo será, como você diria, reconciliado em algum ponto de sua dança através do complexo mente/corpo/espírito que você se diverte distorcendo de várias..."

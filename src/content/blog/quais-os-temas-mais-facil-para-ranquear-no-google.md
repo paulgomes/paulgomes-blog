@@ -5,6 +5,7 @@ pubDate: 2023-01-27
 categorias:
   - SEO
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paulgomes-2.webp"
+heroImageAlt: "Quais os temas mais facil para ranquear no google?"
 focusKeyword: "google"
 metaTitle: "Quais os temas mais facil para ranquear no google?"
 metaDescription: "Existem muitos fatores que afetam a capacidade de um site de ranquear bem no Google, mas alguns temas tendem a ter uma vantagem natural em termos de SEO..."

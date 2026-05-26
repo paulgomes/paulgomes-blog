@@ -5,6 +5,7 @@ pubDate: 2023-01-28
 categorias:
   - SEO
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-3.webp"
+heroImageAlt: "Qual a importância da otimização de plataforma online?"
 focusKeyword: "otimizacao plataforma"
 metaTitle: "Qual a importância da otimização de plataforma online?"
 metaDescription: "A otimização de plataforma online é importante porque ajuda a garantir que o site carregue rapidamente, seja fácil de navegar e ofereça uma boa..."

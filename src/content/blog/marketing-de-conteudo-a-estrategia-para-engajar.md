@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - SEO
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-4.webp"
+heroImageAlt: "Marketing de Conteúdo: a Estratégia para Engajar"
 focusKeyword: "marketing conteudo"
 metaTitle: "Marketing de Conteúdo: a Estratégia para Engajar"
 metaDescription: "O marketing de conteúdo é uma poderosa ferramenta para empresas que desejam se conectar de forma significativa com seu público-alvo."

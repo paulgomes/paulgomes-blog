@@ -5,6 +5,7 @@ pubDate: 2015-04-06
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/negocios.webp"
+heroImageAlt: "Negócios e Conectividade Global"
 focusKeyword: "telas"
 metaTitle: "Negócios e Conectividade Global"
 metaDescription: "Uma pesquisa do Google revela que 90% de nossas interações com a mídia passaram a ser facilitadas por telas: de smartphones, tablet, laptop e televisão."

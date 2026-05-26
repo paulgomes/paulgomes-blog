@@ -5,6 +5,7 @@ pubDate: 2023-04-06
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/tipdilz7wysq-6s6gquunyc8suysvtnpiwa.webp"
+heroImageAlt: "Cases finalistas e vencedores do TikTok Ad Awards"
 focusKeyword: "https"
 metaTitle: "Cases finalistas e vencedores do TikTok Ad Awards"
 metaDescription: "🏆 Avon #Avonscov com Wunderman Thompson Brasil: criar conteúdo sem interrupção (nativo); 🔗 https://rb.gy/kxkpxp, https://rb.gy/spxlnz 🏆 Burger King..."

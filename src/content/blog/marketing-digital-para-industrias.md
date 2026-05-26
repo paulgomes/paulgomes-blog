@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-10.webp"
+heroImageAlt: "Marketing Digital Para industrias"
 focusKeyword: "marketing digital"
 metaTitle: "Marketing Digital Para industrias"
 metaDescription: "Nossa agência é especializada em oferecer serviços de marketing digital para indústrias que desejam aumentar sua presença online e gerar resultados."

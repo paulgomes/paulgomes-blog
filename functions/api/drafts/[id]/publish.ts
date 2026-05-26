@@ -48,16 +48,17 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }
     const categorias = draft.categorias ?? null;
     await env.DB.prepare(`
       INSERT INTO posts_meta (
-        slug, title, description, content_md, hero_image_url, categorias,
+        slug, title, description, content_md, hero_image_url, hero_image_alt, categorias,
         author_id, published_at, updated_at,
         github_path, github_sha, synced_at, status,
         focus_keyword, meta_title, meta_description
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, ?)
       ON CONFLICT(slug) DO UPDATE SET
         title = excluded.title,
         description = excluded.description,
         content_md = excluded.content_md,
         hero_image_url = excluded.hero_image_url,
+        hero_image_alt = excluded.hero_image_alt,
         categorias = excluded.categorias,
         updated_at = excluded.updated_at,
         github_path = excluded.github_path,
@@ -73,6 +74,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }
       draft.description ?? null,
       draft.content_md,
       draft.hero_image_url ?? null,
+      draft.hero_image_alt ?? null,
       categorias,
       draft.author_id ?? null,
       now,          // published_at (so usado em INSERT — ON CONFLICT preserva original)

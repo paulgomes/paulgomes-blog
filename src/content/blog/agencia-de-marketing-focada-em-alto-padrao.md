@@ -5,6 +5,7 @@ pubDate: 2023-01-27
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/1.webp"
+heroImageAlt: "Agência de marketing focada em alto padrao"
 focusKeyword: "alto padrao"
 metaTitle: "Agência de marketing focada em alto padrao"
 metaDescription: "Uma agência de marketing focada em alto padrão é uma empresa especializada em promover e divulgar produtos e serviços de alta qualidade e alto valor agregado."

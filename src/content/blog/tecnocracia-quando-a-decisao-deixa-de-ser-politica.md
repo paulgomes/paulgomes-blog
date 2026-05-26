@@ -3,6 +3,7 @@ title: "Tecnocracia: quando a decisão deixa de ser política "
 description: ""
 pubDate: 2026-05-25
 heroImage: "https://media.paulgomes.com.br/2026/05/9b7d29c7-fbbb-448f-8955-b5da2a566290.png"
+heroImageAlt: "Tecnocracia: quando a decisão deixa de ser política "
 focusKeyword: "Tecnocracia"
 metaTitle: "Tecnocracia: quando a decisão deixa de ser política"
 metaDescription: "A tecnocracia não vai recuar por crítica intelectual. Ela é uma resposta natural a um mundo onde a complexidade ultrapassou"

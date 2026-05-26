@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/landing-page.webp"
+heroImageAlt: "SMMA o que é?"
 focusKeyword: "smma"
 metaTitle: "SMMA o que é?"
 metaDescription: "SMMA é a sigla para \"Social Media Marketing Agency\", que em português significa \"Agência de Marketing para Mídias Sociais\"."

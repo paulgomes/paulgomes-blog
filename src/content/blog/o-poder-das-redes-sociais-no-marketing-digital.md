@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-7.webp"
+heroImageAlt: "O Poder das Redes Sociais no Marketing Digital"
 focusKeyword: "redes sociais"
 metaTitle: "O Poder das Redes Sociais no Marketing Digital"
 metaDescription: "As redes sociais transformaram a forma como as empresas se relacionam com seu público-alvo."

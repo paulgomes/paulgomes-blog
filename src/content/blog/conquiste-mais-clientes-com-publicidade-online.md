@@ -5,6 +5,7 @@ pubDate: 2022-11-11
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-6.webp"
+heroImageAlt: "Conquiste mais clientes com publicidade online"
 focusKeyword: "clientes"
 metaTitle: "Conquiste mais clientes com publicidade online"
 metaDescription: "Alcance novos clientes online com Google Ads Apareça quando seus clientes estiverem pesquisando no Google, navegando na web e assistindo vídeos no YouTube."

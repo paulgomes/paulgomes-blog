@@ -6,6 +6,7 @@ categorias:
   - IA
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/29b345d0-324c-4475-8f68-2ec2c81b3c6b.webp"
+heroImageAlt: "Principais tendências tecnológicas 2025-2030"
 focusKeyword: "2025 2030"
 metaTitle: "Principais tendências tecnológicas 2025-2030"
 metaDescription: "A década de 2020 está acelerando a convergência de tecnologias que, até recentemente, pareciam ficção científica."

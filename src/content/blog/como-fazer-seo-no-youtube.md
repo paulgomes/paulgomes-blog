@@ -5,6 +5,7 @@ pubDate: 2023-01-27
 categorias:
   - SEO
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-4.webp"
+heroImageAlt: "Como fazer seo no youtube?"
 focusKeyword: "faca uso"
 metaTitle: "Como fazer seo no youtube?"
 metaDescription: "Existem algumas estratégias que você pode usar para melhorar o SEO do seu canal do YouTube: Utilize palavras-chave relevantes: Escolha palavras-chave..."

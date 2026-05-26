@@ -5,6 +5,7 @@ pubDate: 2020-10-13
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/negocios.webp"
+heroImageAlt: "Marketing Conversacional"
 focusKeyword: "marketing"
 metaTitle: "Marketing Conversacional"
 metaDescription: "O Marketing Conversacional, ou seja, Marketing de Conversação, é em uma estratégia para o atendimento rápido e eficaz."

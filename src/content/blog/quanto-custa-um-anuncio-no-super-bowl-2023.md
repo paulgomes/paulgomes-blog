@@ -5,6 +5,7 @@ pubDate: 2023-02-23
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/sem-titulo-1a.webp"
+heroImageAlt: "Quanto custa um anúncio no Super Bowl 2023"
 focusKeyword: "super bowl"
 metaTitle: "Quanto custa um anúncio no Super Bowl 2023"
 metaDescription: "Partida entre Philadelphia Eagles e Kansas City Chiefs será domingo, 12 de fevereiro Philadelphia Eagles e Kansas City Chiefs se enfrentam, neste domingo,..."

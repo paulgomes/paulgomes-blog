@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts.webp"
+heroImageAlt: "Tendências de Marketing Digital em 2023"
 focusKeyword: "marketing digital"
 metaTitle: "Tendências de Marketing Digital em 2023"
 metaDescription: "O mundo do marketing digital está em constante evolução, e 2023 não será diferente."

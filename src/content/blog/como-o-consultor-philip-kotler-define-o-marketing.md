@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-10.webp"
+heroImageAlt: "Como o Consultor Philip Kotler Define o Marketing"
 focusKeyword: "marketing"
 metaTitle: "Como o Consultor Philip Kotler Define o Marketing"
 metaDescription: "Philip Kotler, um dos pioneiros e principais teóricos do marketing moderno, define o marketing como algo muito além de uma simples troca comercial."

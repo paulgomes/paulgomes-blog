@@ -5,6 +5,7 @@ pubDate: 2023-07-24
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-8.webp"
+heroImageAlt: "O que é GoogleSyndication SafeFrame?"
 focusKeyword: "googlesyndication"
 metaTitle: "O que é GoogleSyndication SafeFrame?"
 metaDescription: "Usuários de Mac relataram recentemente algumas mensagens pop-up 'suspeitas' chamadas 'Googlesyndication' exibidas a eles enquanto visitavam sites específicos."

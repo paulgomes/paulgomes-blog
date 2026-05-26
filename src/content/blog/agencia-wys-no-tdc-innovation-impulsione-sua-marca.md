@@ -5,6 +5,7 @@ pubDate: 2023-06-13
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-1.webp"
+heroImageAlt: "Agência Wys no TDC INNOVATION: Impulsione sua Marca"
 focusKeyword: "tdc innovation"
 metaTitle: "Agência Wys no TDC INNOVATION: Impulsione sua Marca"
 metaDescription: "Juntamente com a Agência Wys, marcaremos presença no TDC INNOVATION, o maior evento de tecnologia da América Latina."

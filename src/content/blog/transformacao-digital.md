@@ -6,6 +6,7 @@ categorias:
   - Tecnologia
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-revista-exame.webp"
+heroImageAlt: "Transformação digital"
 focusKeyword: "transformacao digital"
 metaTitle: "Transformação digital"
 metaDescription: "A “transformação digital” não é só mais um tema em alta, ou uma palavra sedutora para dizer que vale a pena investir em Inbound Marketing."

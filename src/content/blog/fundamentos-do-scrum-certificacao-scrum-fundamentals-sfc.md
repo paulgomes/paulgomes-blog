@@ -5,6 +5,7 @@ pubDate: 2023-01-10
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-4.webp"
+heroImageAlt: "Fundamentos do Scrum + Certificação Scrum Fundamentals (SFC)"
 focusKeyword: "scrum"
 metaTitle: "Fundamentos do Scrum + Certificação Scrum Fundamentals (SFC)"
 metaDescription: "Aprenda os fundamentos do Scrum e prepare-se para a certificação gratuita Scrum Fundamentals Certified da ScrumStudy Você sabia que o Scrum é o framework..."

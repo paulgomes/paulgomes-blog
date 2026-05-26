@@ -5,6 +5,7 @@ pubDate: 2022-11-13
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/sem-titulo-1.webp"
+heroImageAlt: "6 fotos que você precisa ver"
 focusKeyword: "paulgomes"
 metaTitle: "6 fotos que você precisa ver"
 metaDescription: "Eu acredito na sorte, mas não somente na sorte. Mas eu acredito muito mais na consistência do trabalho e dedicação."

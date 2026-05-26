@@ -6,6 +6,7 @@ categorias:
   - SEO
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/ads.webp"
+heroImageAlt: "seo company in brisbane australia"
 focusKeyword: "seo company"
 metaTitle: "seo company in brisbane australia"
 metaDescription: "How do I find a good SEO company?"

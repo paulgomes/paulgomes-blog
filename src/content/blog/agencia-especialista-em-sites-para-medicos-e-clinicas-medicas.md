@@ -6,6 +6,7 @@ categorias:
   - Tecnologia
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-2.webp"
+heroImageAlt: "Agência especialista em sites para médicos e clínicas médicas"
 focusKeyword: "nossa"
 metaTitle: "Agência especialista em sites para médicos e clínicas..."
 metaDescription: "Na Agência Wys, nós compreendemos as necessidades específicas de médicos e clínicas médicas, combinando nossa expertise em design, tecnologia e estratégia..."

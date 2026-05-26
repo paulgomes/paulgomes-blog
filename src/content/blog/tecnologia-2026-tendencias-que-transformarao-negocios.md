@@ -6,6 +6,7 @@ categorias:
   - Tecnologia
   - IA
 heroImage: "https://media.paulgomes.com.br/posts/legacy/aabab7f5-83a1-49d1-a939-62d15662a0f1.webp"
+heroImageAlt: "Tecnologia 2026: Tendências que Transformarão Negócios"
 focusKeyword: "2026"
 metaTitle: "Tecnologia 2026: Tendências que Transformarão Negócios"
 metaDescription: "À medida que nos aproximamos de 2026, alguns desenvolvimentos se destacam pela capacidade de transformar modelos de negócio, otimizar processos e criar..."

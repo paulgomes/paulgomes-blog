@@ -127,6 +127,7 @@ export function buildMarkdown(post: {
   title: string;
   description?: string | null;
   hero_image_url?: string | null;
+  hero_image_alt?: string | null;
   categorias?: string | string[] | null;
   published_at?: number | string | null;
   content_md?: string | null;
@@ -154,6 +155,7 @@ export function buildMarkdown(post: {
     for (const t of categorias) fm += `  - ${t}\n`;
   }
   if (post.hero_image_url) fm += `heroImage: ${yamlString(post.hero_image_url)}\n`;
+  if (post.hero_image_alt) fm += `heroImageAlt: ${yamlString(post.hero_image_alt)}\n`;
   // Adiciona linha so quando is_featured=1 (omissao = false via default Zod)
   if (post.is_featured === 1 || post.is_featured === true) fm += `featured: true\n`;
   if (post.focus_keyword) fm += `focusKeyword: ${yamlString(post.focus_keyword)}\n`;

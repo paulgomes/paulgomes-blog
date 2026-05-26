@@ -5,6 +5,7 @@ pubDate: '2026-05-23'
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/1.webp"
+heroImageAlt: "Ações para o acompanhamento no indicativo de otimizacao da plataforma online"
 focusKeyword: "comunicacao"
 metaTitle: "Ações para o acompanhamento no indicativo de otimizacao..."
 metaDescription: "DRIVE MARKETING FORWARD Junto com a Agência Wys, negócios no mundo inteiro estão indo além Marca com propósito, comunicação com resultado potencializando..."

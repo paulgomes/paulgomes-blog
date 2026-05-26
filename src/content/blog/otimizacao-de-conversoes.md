@@ -5,6 +5,7 @@ pubDate: 2020-06-12
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-5.webp"
+heroImageAlt: "Otimização de Conversões"
 focusKeyword: "otimizacao conversoes"
 metaTitle: "Otimização de Conversões"
 metaDescription: "Para alcançar o sucesso no mundo digital, não basta atrair visitantes para o site."

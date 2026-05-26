@@ -6,6 +6,7 @@ categorias:
   - SEO
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-12.webp"
+heroImageAlt: "O que é SEO e como aplicá-lo em seu site?"
 focusKeyword: "seo"
 metaTitle: "O que é SEO e como aplicá-lo em seu site?"
 metaDescription: "Uma dessas estratégias é o SEO (Search Engine Optimization)\"), um conjunto de técnicas para otimizar um site e melhorar sua visibilidade nos mecanismos de..."

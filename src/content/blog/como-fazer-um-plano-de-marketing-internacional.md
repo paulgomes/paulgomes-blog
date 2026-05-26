@@ -5,6 +5,7 @@ pubDate: 2020-06-12
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-16.webp"
+heroImageAlt: "Como fazer um plano de Marketing Internacional?"
 focusKeyword: "plano marketing"
 metaTitle: "Como fazer um plano de Marketing Internacional?"
 metaDescription: "Expandir os negócios além das fronteiras nacionais é uma estratégia comum para empresas em busca de crescimento e alcance de novos públicos."

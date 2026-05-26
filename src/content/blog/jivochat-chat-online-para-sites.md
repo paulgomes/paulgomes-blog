@@ -5,6 +5,7 @@ pubDate: 2023-04-15
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/jivochat.webp"
+heroImageAlt: "JivoChat: Chat Online Para Sites"
 focusKeyword: "chat"
 metaTitle: "JivoChat: Chat Online Para Sites"
 metaDescription: "Hoje eu quero compartilhar com vocês uma ferramenta incrível que tenho usado em meu site chamada Jivo Chat."

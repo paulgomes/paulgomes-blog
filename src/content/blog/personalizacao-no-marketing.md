@@ -5,6 +5,7 @@ pubDate: 2020-06-12
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-9.webp"
+heroImageAlt: "Personalização no Marketing"
 focusKeyword: "personalizacao marketing"
 metaTitle: "Personalização no Marketing"
 metaDescription: "Conheça como a personalização no marketing pode impulsionar o crescimento do seu negócio."

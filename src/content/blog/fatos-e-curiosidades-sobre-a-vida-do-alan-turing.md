@@ -5,6 +5,7 @@ pubDate: 2023-04-20
 categorias:
   - IA
 heroImage: "https://media.paulgomes.com.br/posts/legacy/alan-turing.webp"
+heroImageAlt: "Fatos e curiosidades sobre a vida do Alan Turing"
 focusKeyword: "turing"
 metaTitle: "Fatos e curiosidades sobre a vida do Alan Turing"
 metaDescription: "Alan Turing é uma das figuras mais importantes da história da computação."

@@ -28,8 +28,16 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
   const fields: string[] = [];
   const values: any[] = [];
 
-  const updatable = ['slug', 'title', 'description', 'content_md', 'hero_image_url',
+  const updatable = ['slug', 'title', 'description', 'content_md', 'hero_image_url', 'hero_image_alt',
                      'category', 'focus_keyword', 'meta_title', 'meta_description', 'scheduled_at'];
+
+  // hero_image_alt: validar max 200
+  if (body.hero_image_alt !== undefined) {
+    const v = body.hero_image_alt;
+    if (v !== null && (typeof v !== 'string' || v.length > 200)) {
+      return Response.json({ error: 'hero_image_alt inválido (max 200 chars)' }, { status: 400 });
+    }
+  }
 
   for (const f of updatable) {
     if (body[f] !== undefined) {

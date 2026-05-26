@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-3.webp"
+heroImageAlt: "Anúncios Online"
 focusKeyword: "anuncios online"
 metaTitle: "Anúncios Online"
 metaDescription: "Você deseja obter resultados excepcionais em sua estratégia de marketing digital?"

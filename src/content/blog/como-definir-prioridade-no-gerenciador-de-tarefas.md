@@ -5,6 +5,7 @@ pubDate: 2023-01-31
 categorias:
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-4-1.webp"
+heroImageAlt: "Como definir prioridade no gerenciador de tarefas"
 focusKeyword: "tarefas"
 metaTitle: "Como definir prioridade no gerenciador de tarefas"
 metaDescription: "Um gerenciador de tarefas com prioridade alta é uma ferramenta útil para quem procura manter o foco em suas tarefas mais importantes e urgentes."

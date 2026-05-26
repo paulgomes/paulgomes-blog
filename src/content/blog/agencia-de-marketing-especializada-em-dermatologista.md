@@ -5,6 +5,7 @@ pubDate: 2023-08-13
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-5.webp"
+heroImageAlt: "Agência de Marketing Especializada em Dermatologista"
 focusKeyword: "marketing"
 metaTitle: "Agência de Marketing Especializada em Dermatologista"
 metaDescription: "É aqui que a Agência Wys entra em cena, trazendo uma especialização em marketing exclusivamente focada em atender às necessidades dos dermatologistas."

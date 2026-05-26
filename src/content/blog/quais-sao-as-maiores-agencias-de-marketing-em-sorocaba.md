@@ -5,6 +5,7 @@ pubDate: 2023-08-08
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes.webp"
+heroImageAlt: "Quais são as maiores agências de marketing em Sorocaba?"
 focusKeyword: "marketing"
 metaTitle: "Quais são as maiores agências de marketing em Sorocaba?"
 metaDescription: "Uma agência que entende a natureza do seu negócio será capaz de criar as melhores estratégias de marketing para você."

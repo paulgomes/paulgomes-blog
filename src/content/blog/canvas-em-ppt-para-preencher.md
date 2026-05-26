@@ -5,6 +5,7 @@ pubDate: 2023-01-06
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/shutterstock-2152183051.webp"
+heroImageAlt: "Canvas em PPT para Preencher"
 focusKeyword: "canvas ppt"
 metaTitle: "Canvas em PPT para Preencher"
 metaDescription: "O Canvas em PPT é baseado no modelo canvas, apresentado no livro Business Model Generation."

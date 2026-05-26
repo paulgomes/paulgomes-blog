@@ -5,6 +5,7 @@ pubDate: 2020-06-12
 categorias:
   - IA
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-2.webp"
+heroImageAlt: "Brasil é um dos líderes na adoção de IA"
 focusKeyword: "brasil"
 metaTitle: "Brasil é um dos líderes na adoção de IA"
 metaDescription: "Uma pesquisa global revela que o Brasil é um dos países mais confiantes na adoção de sistemas de IA."

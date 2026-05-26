@@ -11,7 +11,8 @@ import { CATEGORIA_SLUGS, CATEGORIA_COLORS, type Categoria } from '../lib/catego
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage, categorias = [] } = Astro.props as Props & { categorias?: Categoria[] };
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categorias = [] } = Astro.props as Props & { categorias?: Categoria[] };
+const heroAlt = heroImageAlt || title;
 ---
 
 <html lang="pt-BR">
@@ -62,8 +63,8 @@ const { title, description, pubDate, updatedDate, heroImage, categorias = [] } =
           <div class="container-wide pb-12 md:pb-16">
             <div class="overflow-hidden rounded-lg" style="background-color: var(--color-subtle)">
               {typeof heroImage === 'string'
-                ? <img src={heroImage} alt={title} class="w-full" loading="eager" />
-                : <Image src={heroImage} alt={title} width={1280} height={720} class="w-full" />
+                ? <img src={heroImage} alt={heroAlt} class="w-full" loading="eager" />
+                : <Image src={heroImage} alt={heroAlt} width={1280} height={720} class="w-full" />
               }
             </div>
           </div>

@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-13.webp"
+heroImageAlt: "Como utilizar o Google Ads para impulsionar suas vendas?"
 focusKeyword: "impulsionar vendas"
 metaTitle: "Como utilizar o Google Ads para impulsionar suas vendas?"
 metaDescription: "No comércio digital acelerado, impulsionar as vendas é essencial para o sucesso do seu negócio."

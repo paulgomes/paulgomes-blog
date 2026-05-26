@@ -6,6 +6,7 @@ categorias:
   - SEO
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/base-d.webp"
+heroImageAlt: "Largest SEO Agency in Brazil"
 focusKeyword: "the"
 metaTitle: "Largest SEO Agency in Brazil"
 metaDescription: "Wys: A Journey to Becoming the Largest SEO Agency in Brazil In the vast digital landscape of Brazil, a nation known for its dynamic business environment..."

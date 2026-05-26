@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/tild6637-3665-4235-a138-366632653962-bauhaus-1.webp"
+heroImageAlt: "Na prática: o que é marketing digital para games"
 focusKeyword: "marketing"
 metaTitle: "Na prática: o que é marketing digital para games"
 metaDescription: "Para ganhar destaque, conquistar consumidores e bater a concorrência, estratégias de marketing são essenciais."

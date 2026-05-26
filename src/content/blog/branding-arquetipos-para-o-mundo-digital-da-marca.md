@@ -5,6 +5,7 @@ pubDate: 2020-10-05
 categorias:
   - SEO
 heroImage: "https://media.paulgomes.com.br/posts/legacy/5050.webp"
+heroImageAlt: "Branding – Arquétipos para o mundo digital da marca"
 focusKeyword: "marca"
 metaTitle: "Branding – Arquétipos para o mundo digital da marca"
 metaDescription: "Os 12 arquétipos de Jung e as marcas que os utilizam para posicionamento O posicionamento das marcas nas plataformas digitais vai muito além de uma..."

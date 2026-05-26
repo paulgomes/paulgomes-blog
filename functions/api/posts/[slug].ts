@@ -7,7 +7,7 @@ import { deleteFile } from '../_utils/github';
 // DELETE /api/posts/:slug — soft-delete (status='deleted')
 
 const UPDATABLE_FIELDS = [
-  'title', 'description', 'content_md', 'hero_image_url',
+  'title', 'description', 'content_md', 'hero_image_url', 'hero_image_alt',
   'focus_keyword', 'meta_title', 'meta_description'
 ];
 
@@ -46,6 +46,14 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
 
   const sets: string[] = [];
   const values: any[] = [];
+
+  // hero_image_alt: validar max 200 antes de aceitar
+  if (body.hero_image_alt !== undefined) {
+    const v = body.hero_image_alt;
+    if (v !== null && (typeof v !== 'string' || v.length > 200)) {
+      return Response.json({ error: 'hero_image_alt inválido (max 200 chars)' }, { status: 400 });
+    }
+  }
 
   for (const f of UPDATABLE_FIELDS) {
     if (body[f] !== undefined) {

@@ -6,6 +6,7 @@ categorias:
   - Negócios
   - Tecnologia
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-6.webp"
+heroImageAlt: "10 Dicas de Marketing Digital para Dermatologistas"
 focusKeyword: "marketing digital"
 metaTitle: "10 Dicas de Marketing Digital para Dermatologistas"
 metaDescription: "O marketing digital oferece um caminho valioso para criar uma presença forte e conectar-se com pacientes em potencial de maneira significativa."

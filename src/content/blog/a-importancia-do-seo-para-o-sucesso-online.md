@@ -6,6 +6,7 @@ categorias:
   - SEO
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-8.webp"
+heroImageAlt: "A Importância do SEO para o Sucesso Online"
 focusKeyword: "seo"
 metaTitle: "A Importância do SEO para o Sucesso Online"
 metaDescription: "O SEO (Search Engine Optimization) \") desempenha um papel crucial nesse processo, melhorando a visibilidade do seu site nos mecanismos de busca, como o Google."

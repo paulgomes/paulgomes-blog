@@ -5,6 +5,7 @@ pubDate: 2022-11-02
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-8.webp"
+heroImageAlt: "Como anunciar no Google"
 focusKeyword: "google"
 metaTitle: "Como anunciar no Google"
 metaDescription: "Você quer aprender como anunciar no Google? Quer aprender como iniciar sua primeira campanha no Google Ads?"

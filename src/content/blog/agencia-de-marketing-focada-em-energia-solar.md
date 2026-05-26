@@ -5,6 +5,7 @@ pubDate: 2023-01-27
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/marketing-para-energia-solar.webp"
+heroImageAlt: "Agência de marketing focada em energia solar"
 focusKeyword: "energia solar"
 metaTitle: "Agência de marketing focada em energia solar"
 metaDescription: "A agência de marketing focada em energia solar é uma empresa especializada em promover e divulgar os benefícios da energia solar."

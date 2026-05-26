@@ -5,6 +5,7 @@ pubDate: 2020-06-12
 categorias:
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-14.webp"
+heroImageAlt: "O Poder do Marketing de Influência na Era das Redes Sociais"
 focusKeyword: "marketing influencia"
 metaTitle: "O Poder do Marketing de Influência na Era das Redes Sociais"
 metaDescription: "O poder do marketing de influência na era das redes sociais é inegável."

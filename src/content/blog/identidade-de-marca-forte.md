@@ -6,6 +6,7 @@ categorias:
   - Branding
   - Negócios
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-10.webp"
+heroImageAlt: "Identidade de Marca Forte"
 focusKeyword: "identidade marca"
 metaTitle: "Identidade de Marca Forte"
 metaDescription: "Uma identidade de marca forte é um dos principais pilares para o sucesso de qualquer empresa."
