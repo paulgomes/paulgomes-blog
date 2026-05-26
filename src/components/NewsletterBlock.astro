@@ -1,61 +1,171 @@
 ---
-// Newsletter — placeholder. Quando definir provedor (ConvertKit, Mailchimp, Beehiiv, Buttondown),
-// substituir o action e o input pelo embed deles.
+// Bloco de inscricao na newsletter — reutilizavel.
+// Posta em /api/newsletter/subscribe (mesma logica do AuthorBlock, simplificada
+// pra contextos que nao tem foto/matrix).
+// Id do form precisa ser unico no documento; se a pagina ja usa AuthorBlock
+// (id="newsletterForm"), este componente usa "newsletterFormBlock" — sem conflito.
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  ctaLabel?: string;
+}
+
+const {
+  eyebrow = '◆ Newsletter',
+  title = 'Receba os próximos ensaios no seu e-mail.',
+  description = 'Sem spam. Cancele quando quiser.',
+  ctaLabel = 'Inscrever →',
+} = Astro.props;
 ---
 
-<section class="newsletter-section border-t" style="border-color: var(--color-border)">
-  <div class="container-wide py-20 md:py-28">
-    <div class="mx-auto max-w-3xl text-center">
-      <p class="mb-4 text-xs font-semibold uppercase tracking-[0.3em]" style="color: var(--color-muted)">
-        ◆ Newsletter
-      </p>
-      <h2 class="font-display text-3xl font-bold leading-tight tracking-tight md:text-5xl">
-        Receba os próximos ensaios<br class="hidden md:inline" />
-        no seu e-mail.
-      </h2>
-      <p class="mt-5 text-lg" style="color: var(--color-muted)">
-        Sem spam. Cancele quando quiser. Apenas pensamento sobre branding, tecnologia e negócios.
-      </p>
+<section class="newsletter-block border-t" style="border-color: var(--color-border)">
+  <div class="container-prose py-20 md:py-24">
+    <p class="newsletter-eyebrow">{eyebrow}</p>
+    <h2 class="newsletter-title font-display">
+      <Fragment set:html={title.replace(/\n/g, '<br>')} />
+    </h2>
+    {description && <p class="newsletter-desc">{description}</p>}
 
-      <form
-        action="#"
-        method="post"
-        class="newsletter-form mt-10 mx-auto flex max-w-xl flex-col gap-3 sm:flex-row"
-        onsubmit="event.preventDefault(); alert('Newsletter em breve! Por enquanto, me siga no LinkedIn ou Instagram.');"
-      >
-        <input
-          type="email"
-          name="email"
-          required
-          placeholder="seu@email.com"
-          aria-label="Seu e-mail"
-          class="newsletter-input flex-1 rounded-full px-6 py-4 text-base outline-none transition"
-        />
-        <button
-          type="submit"
-          class="newsletter-btn rounded-full px-7 py-4 text-sm font-medium transition-opacity hover:opacity-80"
-          style="background-color: var(--color-ink); color: var(--color-paper);"
-        >
-          Inscrever →
-        </button>
-      </form>
-    </div>
+    <form id="newsletterFormBlock" class="newsletter-form" novalidate>
+      <input
+        type="email"
+        name="email"
+        required
+        placeholder="seu@email.com"
+        aria-label="Seu e-mail"
+        class="newsletter-input"
+      />
+      <button type="submit" class="newsletter-btn">{ctaLabel}</button>
+    </form>
+    <p id="newsletterMessageBlock" class="newsletter-msg" hidden></p>
   </div>
 </section>
 
+<script>
+  const form = document.getElementById('newsletterFormBlock') as HTMLFormElement | null;
+  const msg = document.getElementById('newsletterMessageBlock') as HTMLParagraphElement | null;
+  if (form && msg) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = (form.elements.namedItem('email') as HTMLInputElement)?.value || '';
+      const button = form.querySelector('button') as HTMLButtonElement | null;
+      msg.hidden = false;
+      msg.textContent = 'Inscrevendo...';
+      msg.dataset.kind = 'pending';
+      if (button) button.disabled = true;
+      try {
+        const res = await fetch('/api/newsletter/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json() as any;
+        if (!res.ok) {
+          msg.textContent = data?.error || 'Erro. Tente novamente.';
+          msg.dataset.kind = 'error';
+        } else {
+          msg.textContent = data?.message || 'Inscrição registrada.';
+          msg.dataset.kind = 'success';
+          form.reset();
+        }
+      } catch {
+        msg.textContent = 'Erro de conexão. Tente novamente.';
+        msg.dataset.kind = 'error';
+      } finally {
+        if (button) button.disabled = false;
+      }
+    });
+  }
+</script>
+
 <style>
-  .newsletter-input {
-    background-color: var(--color-paper);
-    border: 1px solid var(--color-border);
-    color: var(--color-ink);
+  .newsletter-block {
+    text-align: center;
   }
-
-  .newsletter-input:focus {
-    border-color: var(--color-ink);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ink) 15%, transparent);
-  }
-
-  .newsletter-input::placeholder {
+  .newsletter-eyebrow {
+    margin: 0 0 1rem;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
     color: var(--color-muted);
+  }
+  .newsletter-title {
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--color-ink);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+  }
+  .newsletter-desc {
+    margin: 1.25rem auto 0;
+    max-width: 36rem;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: var(--color-muted);
+  }
+  .newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 28rem;
+    margin: 2.25rem auto 0;
+  }
+  @media (min-width: 480px) {
+    .newsletter-form { flex-direction: row; }
+  }
+  .newsletter-input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .newsletter-input::placeholder { color: var(--color-muted); }
+  .newsletter-input:focus {
+    border-color: #00b4d8;
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
+  }
+  .newsletter-btn {
+    padding: 1rem 1.75rem;
+    border-radius: 9999px;
+    border: none;
+    background: linear-gradient(135deg, #00b4d8 0%, #0096b8 100%);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .newsletter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 180, 216, 0.35);
+  }
+  .newsletter-btn:disabled { opacity: 0.6; cursor: wait; transform: none; box-shadow: none; }
+  .newsletter-msg {
+    margin: 1rem auto 0;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    transition: color 0.15s ease;
+  }
+  .newsletter-msg[data-kind="success"] { color: #00b4d8; }
+  .newsletter-msg[data-kind="error"] { color: #d33; }
+
+  :global(.dark) .newsletter-input {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+  }
+  :global(.dark) .newsletter-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
   }
 </style>

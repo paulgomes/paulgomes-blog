@@ -2,37 +2,181 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SOCIAL } from '../consts';
+import NewsletterBlock from '../components/NewsletterBlock.astro';
+import { Image } from 'astro:assets';
+import paulAvatar from '../assets/brand/paul-avatar.png';
+import signature from '../assets/brand/signature-paul-gomes.webp';
+import { SITE_TITLE } from '../consts';
 ---
 
 <!doctype html>
 <html lang="pt-BR">
   <head>
-    <BaseHead title={`Sobre — ${SITE_TITLE}`} description="Sobre Paul Gomes." />
+    <BaseHead
+      title={`Sobre — ${SITE_TITLE}`}
+      description="Paul Gomes — fundador do Grupo WYS. Ensaios sobre IA, GEO, SEO, arquitetura digital e o futuro dos negócios."
+    />
   </head>
   <body>
     <Header />
-    <main>
-      <section class="container-prose pt-16 pb-24 md:pt-24">
-        <h1 class="font-display text-5xl font-bold tracking-tight md:text-6xl">Sobre</h1>
-        <div class="mt-10 space-y-6 text-lg leading-relaxed">
-          <p>
-            Sou Paul Gomes. Escrevo aqui sobre branding, tecnologia e o futuro dos negócios.
-          </p>
-          <p>
-            Fundador e CEO do <a href="https://agenciawys.com.br" class="underline underline-offset-4">Grupo WYS</a>, ajudo marcas e empresas a se reposicionarem na era da inteligência artificial, com foco em estratégia, design e crescimento digital.
-          </p>
-          <p>
-            Este espaço é onde compartilho ideias em construção, ensaios e descobertas — sem pressa, sem fórmula.
-          </p>
-        </div>
 
-        <div class="mt-12 flex gap-6 text-sm">
-          <a href={SOCIAL.linkedin} target="_blank" rel="noopener" class="underline underline-offset-4 transition-opacity hover:opacity-60">LinkedIn →</a>
-          <a href={SOCIAL.email} class="underline underline-offset-4 transition-opacity hover:opacity-60">E-mail →</a>
-        </div>
-      </section>
+    <main class="sobre-page">
+      <header class="sobre-hero">
+        <p class="sobre-eyebrow">Paul Gomes — Thinking Forward</p>
+        <h1 class="sobre-title font-display">Sobre</h1>
+      </header>
+
+      <figure class="sobre-photo">
+        <Image
+          src={paulAvatar}
+          alt="Paul Gomes"
+          width={720}
+          widths={[360, 540, 720]}
+          sizes="(max-width: 640px) 280px, 360px"
+          loading="eager"
+          fetchpriority="high"
+          class="sobre-photo-img"
+        />
+      </figure>
+
+      <article class="sobre-body">
+        <p>Sou Paul Gomes.</p>
+
+        <p>
+          Escrevo sobre inteligência artificial, GEO, SEO, arquitetura digital
+          e as transformações que redefinem negócios, marcas e comportamento.
+        </p>
+
+        <p>
+          Fundador e CEO do
+          <a href="https://agenciawys.com.br" target="_blank" rel="noopener">Grupo WYS</a>,
+          trabalho com marcas e empresas que precisam se reposicionar dentro
+          de uma internet que deixou de ser apenas um canal — e se tornou
+          uma infraestrutura cognitiva.
+        </p>
+
+        <p>
+          Este espaço reúne ensaios, observações e leituras de movimentos
+          que a maioria ainda não percebeu.
+        </p>
+
+        <p class="sobre-manifesto">Sem pressa. Sem fórmula.</p>
+      </article>
+
+      <figure class="sobre-signature">
+        <Image
+          src={signature}
+          alt="Assinatura de Paul Gomes"
+          width={200}
+          height={67}
+          loading="lazy"
+          class="sobre-signature-img"
+        />
+      </figure>
     </main>
+
+    <NewsletterBlock
+      eyebrow="◆ Para acompanhar"
+      title="Receba os ensaios direto no seu e-mail"
+      description="Sem pressa. Sem fórmula. Apenas as ideias que importam."
+    />
+
     <Footer />
   </body>
 </html>
+
+<style>
+  .sobre-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 5rem 1.5rem 5rem;
+  }
+  @media (min-width: 768px) {
+    .sobre-page { padding: 6rem 1.5rem 6rem; }
+  }
+
+  .sobre-hero {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .sobre-eyebrow {
+    margin: 0 0 1rem;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #00b4d8;
+  }
+  .sobre-title {
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--color-ink);
+    font-size: clamp(3rem, 9vw, 5.5rem);
+  }
+
+  .sobre-photo {
+    margin: 0 0 3rem;
+    text-align: center;
+  }
+  .sobre-photo-img {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+    filter:
+      drop-shadow(0 24px 48px rgba(0, 0, 0, 0.12))
+      drop-shadow(0 8px 16px rgba(0, 0, 0, 0.06));
+  }
+
+  .sobre-body {
+    font-size: 1.1875rem; /* 19px */
+    line-height: 1.75;
+    color: var(--color-ink);
+  }
+  @media (max-width: 640px) {
+    .sobre-body { font-size: 1.0625rem; line-height: 1.7; }
+  }
+  .sobre-body p {
+    margin: 0 0 1.5em;
+  }
+  .sobre-body p:last-child {
+    margin-bottom: 0;
+  }
+  .sobre-body a {
+    color: #00b4d8;
+    border-bottom: 1px solid currentColor;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+  .sobre-body a:hover { opacity: 0.7; }
+
+  .sobre-manifesto {
+    margin: 3.5rem 0 0 !important;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3.2vw, 1.75rem);
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #00b4d8;
+  }
+
+  .sobre-signature {
+    margin: 4rem 0 0;
+    text-align: center;
+  }
+  .sobre-signature-img {
+    width: 200px;
+    height: auto;
+    margin: 0 auto;
+    opacity: 0.85;
+    display: inline-block;
+  }
+  :global(.dark) .sobre-signature-img {
+    filter: invert(1);
+  }
+</style>
