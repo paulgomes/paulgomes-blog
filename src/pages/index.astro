@@ -10,6 +10,17 @@ import AuthorBlock from '../components/AuthorBlock.astro';
 import BrandsMarquee from '../components/BrandsMarquee.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import paulAvatar from '../assets/brand/paul-avatar.png';
+
+// Preload do LCP: gera variants identicos ao <Image> do AuthorBlock
+// pra browser comecar download antes de parsear o markup do hero.
+const lcpAvatar = await getImage({
+  src: paulAvatar,
+  widths: [360, 540, 720, 1080, 1494],
+  sizes: '(max-width: 640px) 360px, (max-width: 1280px) 680px, 760px',
+  format: 'webp',
+});
 
 const allPosts = (await getCollection('blog')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -30,6 +41,15 @@ const totalPosts = allPosts.length;
 <html lang="pt-BR">
   <head>
     <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+    <!-- Preload do LCP (avatar do hero) — descoberta cedo, antes do JS/CSS parse -->
+    <link
+      rel="preload"
+      as="image"
+      href={lcpAvatar.src}
+      imagesrcset={lcpAvatar.srcSet.attribute}
+      imagesizes="(max-width: 640px) 360px, (max-width: 1280px) 680px, 760px"
+      fetchpriority="high"
+    />
   </head>
   <body>
     <Header />
