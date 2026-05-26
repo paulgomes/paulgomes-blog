@@ -9,7 +9,7 @@ declare global {
 const COLORS: Record<ToastType, string> = {
   success: '#10b981',
   error: '#ef4444',
-  info: '#00b4d8',
+  info: '#0103F9',
 };
 
 function ensureContainer(): HTMLElement {

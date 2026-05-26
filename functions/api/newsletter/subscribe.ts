@@ -30,7 +30,7 @@ async function sendConfirmEmail(env: Env, to: string, confirmUrl: string): Promi
           </p>
           <p style="line-height:1.6;margin:0 0 24px;">Para confirmar, clique no botão abaixo:</p>
           <p style="margin:0 0 32px;">
-            <a href="${confirmUrl}" style="background:#00b4d8;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;">
+            <a href="${confirmUrl}" style="background:#0103F9;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;">
               Confirmar inscrição
             </a>
           </p>

@@ -25,6 +25,14 @@
   --color-muted-dark: #a3a3a3;
   --color-subtle-dark: #171717;
   --color-border-dark: #262626;
+
+  /* Brand accent: azul eletrico (substitui ciano #00b4d8 anterior) */
+  --color-accent: #0103F9;
+  --color-accent-2: #0102CC;        /* companion para gradients */
+  --color-accent-rgb: 1, 3, 249;    /* p/ uso em rgba(var(--color-accent-rgb), .X) */
+  --color-accent-dark: #3D40FF;
+  --color-accent-2-dark: #6063FF;
+  --color-accent-rgb-dark: 61, 64, 255;
 }
 
 @layer base {
@@ -36,6 +44,9 @@
     --color-muted: var(--color-muted-dark);
     --color-subtle: var(--color-subtle-dark);
     --color-border: var(--color-border-dark);
+    --color-accent: var(--color-accent-dark);
+    --color-accent-2: var(--color-accent-2-dark);
+    --color-accent-rgb: var(--color-accent-rgb-dark);
   }
   html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   body {

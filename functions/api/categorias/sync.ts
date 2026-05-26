@@ -13,8 +13,8 @@ const MARKER_END = '// <CATEGORIAS_END>';
 
 // Paleta default: ciclica pra novas categorias sem cor especificada
 const DEFAULT_COLORS = [
-  { bg: '#00b4d8', fg: '#ffffff' },
-  { bg: '#0096b8', fg: '#ffffff' },
+  { bg: '#0103F9', fg: '#ffffff' },
+  { bg: '#0102CC', fg: '#ffffff' },
   { bg: '#0077a3', fg: '#ffffff' },
   { bg: '#005f86', fg: '#ffffff' },
   { bg: '#1f2937', fg: '#ffffff' },
@@ -25,8 +25,8 @@ const DEFAULT_COLORS = [
 
 // Cores fixas pras 6 originais — preserva visual atual
 const LEGACY_COLORS: Record<string, { bg: string; fg: string }> = {
-  'IA':         { bg: '#00b4d8', fg: '#ffffff' },
-  'GEO':        { bg: '#0096b8', fg: '#ffffff' },
+  'IA':         { bg: '#0103F9', fg: '#ffffff' },
+  'GEO':        { bg: '#0102CC', fg: '#ffffff' },
   'SEO':        { bg: '#0077a3', fg: '#ffffff' },
   'Branding':   { bg: '#005f86', fg: '#ffffff' },
   'Tecnologia': { bg: '#1f2937', fg: '#ffffff' },

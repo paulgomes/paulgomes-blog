@@ -17,8 +17,8 @@ export const CATEGORIA_SLUGS: Record<Categoria, string> = {
 };
 
 export const CATEGORIA_COLORS: Record<Categoria, { bg: string; fg: string }> = {
-  'IA': { bg: '#00b4d8', fg: '#ffffff' },
-  'GEO': { bg: '#0096b8', fg: '#ffffff' },
+  'IA': { bg: '#0103F9', fg: '#ffffff' },
+  'GEO': { bg: '#0102CC', fg: '#ffffff' },
   'SEO': { bg: '#0077a3', fg: '#ffffff' },
   'Branding': { bg: '#005f86', fg: '#ffffff' },
   'Tecnologia': { bg: '#1f2937', fg: '#ffffff' },

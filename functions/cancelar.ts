@@ -5,7 +5,7 @@ import type { Env } from './api/_utils/db';
 // Link DEVE estar em todo broadcast futuro (footer).
 
 function renderPage(title: string, body: string, success = false): string {
-  const accent = success ? '#00b4d8' : '#666';
+  const accent = success ? '#0103F9' : '#666';
   return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
