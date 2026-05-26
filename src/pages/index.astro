@@ -77,21 +77,6 @@ const totalPosts = allPosts.length;
         <TrendingPosts posts={latest.slice(0, 4)} title="Em alta" />
       )}
 
-      <!-- ESPAÇO ÚNICO DE ANÚNCIO (entre Em alta e Tema do mês) -->
-      <div class="ad-slot">
-        <div class="container-wide">
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-6639862760844520"
-               data-ad-slot=""
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-          <script is:inline>
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
-          </script>
-        </div>
-      </div>
-
       <!-- ÚLTIMAS NOTÍCIAS (8 posts visíveis + paginação que reflete arquivo total) -->
       {latestNews.length > 0 && (
         <ThemePosts
@@ -114,11 +99,6 @@ const totalPosts = allPosts.length;
         }
       }
 
-      /* Espaço de anúncio AdSense — único slot manual da home */
-      .ad-slot {
-        padding: 2rem 0;
-        min-height: 90px;
-      }
     </style>
   </body>
 </html>
