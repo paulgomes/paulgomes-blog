@@ -22,7 +22,7 @@ https://www.youtube.com/watch?v=0JW0pL0ZDiU
 
 [Ative as legendas do YouTube](https://support.google.com/youtube/answer/100078) para vê-las no seu idioma. Clique no ícone de configurações na parte inferior do player de vídeo, selecione "Legendas" e escolha seu idioma.
 
-![](https://media.paulgomes.com.br/posts/legacy/inline/dS5G8GvM6tcMr3QhO5XzF53H15UBWyasSO8J)
+![Criar uma campanha TrueView for Action](https://media.paulgomes.com.br/posts/legacy/inline/dS5G8GvM6tcMr3QhO5XzF53H15UBWyasSO8J)
 
 ## Antes de começar
 
@@ -44,7 +44,7 @@ Em campanhas que usam a estratégia de lances "Maximizar conversões", o orçame
 
 ## Diretrizes para criativos
 
-![](https://media.paulgomes.com.br/posts/legacy/inline/rC5ChcUZMoKBtQcMqqJgTD7wn6VrBc0aVWmE)
+![Criar uma campanha TrueView for Action](https://media.paulgomes.com.br/posts/legacy/inline/rC5ChcUZMoKBtQcMqqJgTD7wn6VrBc0aVWmE)
 ![Diretrizes para anúncios TrueView for Action imersivos](https://media.paulgomes.com.br/posts/legacy/inline/aVChBIwFM66shDnvIWDDKNQgxU3snqiO3NBK "Diretrizes para anúncios TrueView for Action imersivos")
 
 ## Considerações
@@ -55,7 +55,7 @@ Para conquistar os resultados ideais da sua campanha, considere itens como estra
 
 1. Faça login na sua [conta do Google Ads](https://ads.google.com/).
 2. No Menu de páginas à esquerda, escolha **Campanhas**.
-3. Clique no botão de adição ![](https://media.paulgomes.com.br/posts/legacy/inline/Ns5o4jgOAKaw8NnTPog3UMQHzmGiCUG3utl0) e escolha **Nova campanha**.
+3. Clique no botão de adição ![Criar uma campanha TrueView for Action](https://media.paulgomes.com.br/posts/legacy/inline/Ns5o4jgOAKaw8NnTPog3UMQHzmGiCUG3utl0) e escolha **Nova campanha**.
 4. Selecione a meta **Vendas**, **Leads** ou **Tráfego do site**.
    - Para o subtipo de campanha, a opção **Gerar conversões** é selecionada automaticamente.
 5. Selecione o tipo de campanha **Vídeo**.

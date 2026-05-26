@@ -28,7 +28,7 @@ Segue uma lista dos melhores chatbots 2020 para te ajudar a aplicar este serviç
 
 Não perca tempo e invista em *WhatsApp Business API*, os resultados são os melhores para sua empresa e seu cliente!
 
-![](http://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-1-2.jpg)
+![Os melhores Chatbots para WhatsApp](http://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-1-2.jpg)
 
 Quer saber mais sobre o mundo de marketing e tecnologia? Siga o Instagram do especialista Paul Gomes e fique sempre atualizado.
 @paulgomes

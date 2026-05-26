@@ -41,6 +41,6 @@ Quis ipsum suspendisse ultrices gravida.
 [Linkedin](https://www.linkedin.com/in/inpaulgomes/)
 [Instagram](https://www.instagram.com/paulgomes/)
 [Youtube](https://www.instagram.com/paulgomes/)
-![](https://media.paulgomes.com.br/posts/legacy/inline/paul-gomes-whie.webp)
+![Paul Gomes](https://media.paulgomes.com.br/posts/legacy/inline/paul-gomes-whie.webp)
 
 - Ajudamos pessoas e negócios a construir marcas mais relevantes.

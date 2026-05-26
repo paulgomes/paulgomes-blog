@@ -23,6 +23,6 @@ O *Marketing Digital* é essencial para alavancar seu negócio, quando bem elabo
 
 Com essas dicas você já está pronto para começar a impulsionar sua marca no mundo digital! E não esqueça de sempre ficar atualizado sobre as novidades que o Marketing proporciona!
 
-![](http://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-1-1.jpg)
+![Dicas de Marketing Digital para iniciantes](http://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-1-1.jpg)
 
 Quer saber mais sobre o mundo de marketing e tecnologia? Siga o Instagram do especialista Paul Gomes e fique sempre atualizado. @paulgomes

@@ -17,7 +17,7 @@ O Google Keep é um aplicativo de anotações que pode ser usado em dispositivos
 
 Uma das coisas que eu mais gosto no Google Keep é a sua facilidade de uso. É muito simples criar uma nova nota e adicionar conteúdo a ela. Além disso, a interface é intuitiva e fácil de navegar. Você pode até mesmo usar o Google Keep como uma extensão do Chrome para salvar páginas da web e ideias enquanto navega na internet.
 
-![](https://media.paulgomes.com.br/posts/legacy/inline/google-keep-edited.webp)
+![Google Keep](https://media.paulgomes.com.br/posts/legacy/inline/google-keep-edited.webp)
 
 google keep
 

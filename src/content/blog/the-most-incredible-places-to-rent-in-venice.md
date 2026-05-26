@@ -35,5 +35,5 @@ O Guia Semestral de gastos mundiais em transformação digital - organizado pelo
 Investidores e valor investido
 Os fabricantes discretos estão buscando agressivamente soluções de transformação digital e deverão gerar US$ 214 bilhões em vendas para fornecedores que atendam às suas necessidades em 2018.
 Paul Gomes fundador do Grupo Wys, hoje com sede no Brasil e ramificações de atendimento em países como EUA, Índia e Portugal, traz uma visão do que conduz o cenário de transformação digital no brasil. Conheça mais em (https://www.agenciawys.com.br)
-![](https://media.paulgomes.com.br/posts/legacy/inline/167992)
+![Transformação digital: onde vamos parar?](https://media.paulgomes.com.br/posts/legacy/inline/167992)
 Website: https://www.agenciawys.com.br

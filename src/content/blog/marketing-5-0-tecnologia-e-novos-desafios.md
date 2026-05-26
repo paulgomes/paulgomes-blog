@@ -17,7 +17,7 @@ A nova fase do Marketing é a denominada 5.0, com base nas novas tecnologias e m
 
 Para entender essa nova fase, precisamos rever os conceitos anteriores
 
-![](https://blog.agenciawys.com.br/wp-content/uploads/2021/11/MARKETING-5-0-768x507-1.png)
+![Marketing 5.0: Tecnologia e Novos desafios](https://blog.agenciawys.com.br/wp-content/uploads/2021/11/MARKETING-5-0-768x507-1.png)
 
 **Conceito de Marketing 5.0**  
 “No marketing 5.0 queremos reconhecer as novas ferramentas digitais que os profissionais de marketing usarão cada vez mais. Inteligência artificial (IA) e algoritmos, automação de marketing, robótica, sensores e Internet das Coisas, realidade virtual e aumentada, processamento de linguagem natural (Siri, Alexa), chatboxes, neuromarketing e ciência cerebral”. **(KOTLER, 2020)**  

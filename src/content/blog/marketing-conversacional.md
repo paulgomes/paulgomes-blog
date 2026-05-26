@@ -21,7 +21,7 @@ Sendo assim, o Marketing Conversacional oferece uma experiência mais agradável
 - **Otimização do tempo:** como são respostas automáticas, o tempo que levaria para um atendente responder é muito maior do que o método que é utilizado no Marketing de Conversação.
 - **Funil de Vendas:** cada etapa em crescimento conversacional leva a entender o cliente e sua necessidade, assim convencê-lo a se fidelizar com a marca ficará mais fácil.
 
-![](http://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-.jpg)
+![Marketing Conversacional](http://paulgomes.com.br/wp-content/uploads/2020/10/paul-gomes-.jpg)
 
 Quer saber mais sobre o mundo de marketing e tecnologia? Siga o Instagram do especialista Paul Gomes e fique sempre atualizado.
 @paulgomes

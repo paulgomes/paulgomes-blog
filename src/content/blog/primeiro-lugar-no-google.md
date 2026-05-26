@@ -51,7 +51,7 @@ Espero que essas dicas ajudem você em sua jornada SEO. Se quiser aprender mais,
 
 **Como fazer seu nome aparecer no Google?**
 
-![](http://paulgomes.com.br/wp-content/uploads/2023/08/paul-gomes-fundador-da-agencia-wys.png)
+![Primeiro lugar no google](http://paulgomes.com.br/wp-content/uploads/2023/08/paul-gomes-fundador-da-agencia-wys.png)
 
 Primeiro lugar no google
 

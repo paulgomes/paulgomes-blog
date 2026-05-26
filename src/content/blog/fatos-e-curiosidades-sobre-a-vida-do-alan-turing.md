@@ -13,7 +13,7 @@ metaDescription: "Alan Turing é uma das figuras mais importantes da história d
 
 Alan Turing é uma das figuras mais importantes da história da computação. Ele é considerado um pioneiro na ciência da computação, e suas contribuições na matemática e na criptografia tiveram um papel crucial na Segunda Guerra Mundial. Além disso, ele é conhecido por ser o pai da inteligência artificial e ter criado o Teste de Turing, um marco no desenvolvimento da IA. Neste artigo, vamos explorar alguns fatos e curiosidades sobre a vida deste gênio.
 
-![](http://paulgomes.com.br/wp-content/uploads/2023/04/Alan-Turing-1-1160x771.png)
+![Fatos e curiosidades sobre a vida do Alan Turing](http://paulgomes.com.br/wp-content/uploads/2023/04/Alan-Turing-1-1160x771.png)
 
 Alan turing (Foto: Divulgação)
 
