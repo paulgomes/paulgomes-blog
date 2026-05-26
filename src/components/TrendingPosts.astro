@@ -46,26 +46,6 @@ const pageIndices = Array.from({ length: totalPages }, (_, i) => i);
       ))}
     </div>
 
-    {totalPages > 1 && (
-      <nav class="trending-pagination" aria-label="Paginação dos insights">
-        <button type="button" class="pagination-btn" data-action="prev" disabled aria-label="Página anterior">
-          ← Anterior
-        </button>
-        <span class="pagination-count" aria-live="polite">
-          <span data-current>1</span> <span class="pagination-sep">/</span> {totalPages}
-        </span>
-        <button type="button" class="pagination-btn" data-action="next" aria-label="Próxima página">
-          Próximo →
-        </button>
-      </nav>
-    )}
-
-    <div class="trending-cta-wrap">
-      <a href="/blog" class="trending-cta">
-        Ver todos os insights
-        <span aria-hidden="true">→</span>
-      </a>
-    </div>
   </div>
 </section>
 
@@ -201,99 +181,13 @@ const pageIndices = Array.from({ length: totalPages }, (_, i) => i);
     margin: 0;
   }
 
-  /* Paginação prev/next */
-  .trending-pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1.25rem;
-    margin-top: 3rem;
-    flex-wrap: wrap;
-  }
-
-  .pagination-btn {
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--color-ink);
-    background: transparent;
-    border: 1px solid var(--color-border);
-    padding: 0.7rem 1.4rem;
-    border-radius: 9999px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-  }
-
-  .pagination-btn:hover:not(:disabled) {
-    background-color: var(--color-ink);
-    color: var(--color-paper);
-    border-color: var(--color-ink);
-  }
-
-  .pagination-btn:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-  }
-
-  .pagination-count {
-    font-family: var(--font-sans);
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    color: var(--color-muted);
-    min-width: 3rem;
-    text-align: center;
-  }
-
-  .pagination-sep {
-    opacity: 0.5;
-    margin: 0 0.2em;
-  }
-
-  /* CTA "Ver todos os insights" */
-  .trending-cta-wrap {
-    display: flex;
-    justify-content: center;
-    margin-top: 3rem;
-  }
-
-  .trending-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.85rem 2rem;
-    border-radius: 9999px;
-    border: 1px solid var(--color-border);
-    background-color: var(--color-paper);
-    color: var(--color-ink);
-    font-family: var(--font-sans);
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
-  }
-
-  .trending-cta:hover {
-    background-color: var(--color-ink);
-    color: var(--color-paper);
-    border-color: var(--color-ink);
-    transform: translateY(-2px);
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .trending-card,
     .trending-img,
-    .trending-hover,
-    .pagination-btn,
-    .trending-cta {
+    .trending-hover {
       transition: none;
     }
-    .trending-card:hover,
-    .trending-cta:hover {
+    .trending-card:hover {
       transform: none;
     }
     .trending-card:hover .trending-img {
@@ -301,35 +195,3 @@ const pageIndices = Array.from({ length: totalPages }, (_, i) => i);
     }
   }
 </style>
-
-<script>
-  const section = document.querySelector<HTMLElement>('.trending');
-  if (section) {
-    const pages = section.querySelectorAll<HTMLElement>('.trending-grid');
-    const prevBtn = section.querySelector<HTMLButtonElement>('[data-action="prev"]');
-    const nextBtn = section.querySelector<HTMLButtonElement>('[data-action="next"]');
-    const counter = section.querySelector<HTMLElement>('[data-current]');
-
-    if (pages.length > 1 && prevBtn && nextBtn && counter) {
-      const total = pages.length;
-      let current = 0;
-
-      const render = (idx: number) => {
-        pages.forEach((p, i) => {
-          p.hidden = i !== idx;
-        });
-        prevBtn.disabled = idx === 0;
-        nextBtn.disabled = idx === total - 1;
-        counter.textContent = String(idx + 1);
-        current = idx;
-      };
-
-      prevBtn.addEventListener('click', () => {
-        if (current > 0) render(current - 1);
-      });
-      nextBtn.addEventListener('click', () => {
-        if (current < total - 1) render(current + 1);
-      });
-    }
-  }
-</script>
