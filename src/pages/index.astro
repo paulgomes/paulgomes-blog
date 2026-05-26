@@ -72,12 +72,13 @@ const totalPosts = allPosts.length;
         </div>
       </div>
 
-      <!-- ÚLTIMAS NOTÍCIAS (8 posts + paginação que reflete arquivo total) -->
+      <!-- ÚLTIMAS NOTÍCIAS (8 posts visíveis + paginação que reflete arquivo total) -->
       {latestNews.length > 0 && (
         <ThemePosts
           posts={latestNews}
           title="Últimas notícias"
           totalCount={totalPosts}
+          perPage={8}
           archiveHref="/blog"
         />
       )}
