@@ -21,16 +21,5 @@ export const FEATURED_THEME = {
   keywords: ['inteligencia artificial', 'tecnologia', 'ia', 'gpt', 'chatgpt', 'futuro', 'inovacao'],
 };
 
-// Marcas que passaram pela WYS — placeholder em texto, substituir por logos quando estiverem prontos
-export const BRANDS = [
-  'Disney',
-  'Hummel',
-  'Celmar',
-  'Cidade Sorocaba',
-  'Peptpure',
-  'panini brasil',
-  'Pesca Facil',
-  '15K',
-  'Spotbook',
-  'ScrumBoards',
-];
+// Marcas — gerenciadas via /painel/marcas, persistidas em src/data/brands.json
+// (Removido daqui pra evitar duas fontes de verdade)

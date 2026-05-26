@@ -1,14 +1,21 @@
 ---
-import { BRANDS } from '../consts';
+import brandsData from '../data/brands.json';
 
+interface Brand {
+  name: string;
+  url: string | null;
+}
+
+const title: string = brandsData.title || 'Marcas que passaram por aqui';
+const items: Brand[] = (brandsData.items || []).filter((b) => b && b.name);
 // Duplica a lista pra criar loop infinito sem corte
-const doubled = [...BRANDS, ...BRANDS];
+const doubled = [...items, ...items];
 ---
 
 <section class="marquee-section" style="border-color: var(--color-border)">
   <div class="container-wide pt-6 pb-4 md:pt-8 md:pb-5">
     <p class="text-center text-[0.65rem] font-semibold uppercase tracking-[0.3em]" style="color: var(--color-muted)">
-      ◆ Marcas que passaram por aqui
+      ◆ {title}
     </p>
   </div>
 
@@ -16,14 +23,16 @@ const doubled = [...BRANDS, ...BRANDS];
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track">
       {doubled.map((brand) => (
-        <span class="marquee-item">{brand}</span>
+        brand.url
+          ? <a class="marquee-item marquee-link" href={brand.url} target="_blank" rel="noopener nofollow">{brand.name}</a>
+          : <span class="marquee-item">{brand.name}</span>
       ))}
     </div>
   </div>
 
   <!-- Versão acessível pra leitores de tela -->
   <ul class="sr-only">
-    {BRANDS.map((brand) => <li>{brand}</li>)}
+    {items.map((brand) => <li>{brand.name}</li>)}
   </ul>
 
   <div class="container-wide pb-6 md:pb-8"></div>
@@ -39,7 +48,6 @@ const doubled = [...BRANDS, ...BRANDS];
     position: relative;
     width: 100%;
     overflow: hidden;
-    /* Janela visível bem centralizada, fade longo nas duas pontas */
     -webkit-mask-image: linear-gradient(
       to right,
       transparent 0%,
@@ -77,12 +85,17 @@ const doubled = [...BRANDS, ...BRANDS];
     letter-spacing: 0.01em;
     color: var(--color-muted);
     opacity: 0.7;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, color 0.3s ease;
+    text-decoration: none;
   }
 
   .marquee-item:hover {
     opacity: 1;
     color: var(--color-ink);
+  }
+
+  .marquee-link:hover {
+    color: #00b4d8;
   }
 
   /* Separador "·" entre marcas */
@@ -91,6 +104,7 @@ const doubled = [...BRANDS, ...BRANDS];
     margin-left: 2.5rem;
     color: var(--color-muted);
     opacity: 0.35;
+    pointer-events: none;
   }
 
   @media (max-width: 640px) {

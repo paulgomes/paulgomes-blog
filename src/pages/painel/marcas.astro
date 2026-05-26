@@ -1,0 +1,449 @@
+---
+import PainelLayout from '../../components/painel/PainelLayout.astro';
+import '../../styles/painel.css';
+---
+
+<PainelLayout title="Marcas — Painel" description="Gerenciamento do marquee de marcas" current="marcas">
+  <section class="page-header">
+    <h1>Marcas</h1>
+    <p class="subtitle">Marcas exibidas no marquee da home. Arraste pra reordenar. Clique em "Publicar" pra propagar.</p>
+  </section>
+
+  <div class="brands-page" id="brandsPage" hidden>
+    <!-- Bloco titulo -->
+    <div class="brands-title-block">
+      <label for="brandsTitle">Título da seção</label>
+      <div class="brands-title-row">
+        <input type="text" id="brandsTitle" maxlength="120" placeholder="Marcas que passaram por aqui" />
+        <button class="painel-btn-ghost" id="btnSaveTitle" type="button">Salvar título</button>
+      </div>
+      <small id="titleHint" class="brands-hint"></small>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="brands-toolbar">
+      <button class="painel-btn-primary" id="btnAddBrand" type="button">+ Nova marca</button>
+      <div class="brands-toolbar-right">
+        <span id="syncStatus" class="brands-sync-status">—</span>
+        <button class="painel-btn-primary" id="btnSync" type="button">Publicar no site</button>
+      </div>
+    </div>
+
+    <!-- Lista -->
+    <div class="brands-list" id="brandsList"></div>
+    <p class="brands-empty" id="brandsEmpty" hidden>Nenhuma marca cadastrada. Adicione a primeira acima.</p>
+  </div>
+
+  <div class="tags-loading" id="brandsLoading">Carregando...</div>
+
+  <!-- Modal: criar/editar -->
+  <div class="menus-modal" id="modalBrand" hidden>
+    <div class="menus-modal-backdrop" id="modalBrandBackdrop"></div>
+    <div class="menus-modal-card" role="dialog" aria-modal="true">
+      <h3 id="modalBrandTitle">Nova marca</h3>
+      <div class="form-row">
+        <label for="brandName">Nome</label>
+        <input type="text" id="brandName" maxlength="60" placeholder="Ex: Disney" />
+      </div>
+      <div class="form-row">
+        <label for="brandUrl">URL (opcional)</label>
+        <input type="url" id="brandUrl" placeholder="https://exemplo.com" />
+        <small>Quando preenchida, o nome vira link clicável (abre em nova aba).</small>
+      </div>
+      <div class="menus-modal-actions">
+        <button class="painel-btn-ghost" id="btnCancelBrand" type="button">Cancelar</button>
+        <button class="painel-btn-primary" id="btnConfirmBrand" type="button">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    interface Brand { id: string; name: string; url: string | null; position: number; }
+
+    const $loading = document.getElementById('brandsLoading') as HTMLElement;
+    const $page = document.getElementById('brandsPage') as HTMLElement;
+    const $list = document.getElementById('brandsList') as HTMLElement;
+    const $empty = document.getElementById('brandsEmpty') as HTMLElement;
+    const $titleInput = document.getElementById('brandsTitle') as HTMLInputElement;
+    const $titleHint = document.getElementById('titleHint') as HTMLElement;
+    const $btnSaveTitle = document.getElementById('btnSaveTitle') as HTMLButtonElement;
+    const $btnAdd = document.getElementById('btnAddBrand') as HTMLButtonElement;
+    const $btnSync = document.getElementById('btnSync') as HTMLButtonElement;
+    const $syncStatus = document.getElementById('syncStatus') as HTMLElement;
+
+    const $modal = document.getElementById('modalBrand') as HTMLElement;
+    const $modalTitle = document.getElementById('modalBrandTitle') as HTMLElement;
+    const $modalBackdrop = document.getElementById('modalBrandBackdrop') as HTMLElement;
+    const $brandName = document.getElementById('brandName') as HTMLInputElement;
+    const $brandUrl = document.getElementById('brandUrl') as HTMLInputElement;
+    const $btnCancel = document.getElementById('btnCancelBrand') as HTMLButtonElement;
+    const $btnConfirm = document.getElementById('btnConfirmBrand') as HTMLButtonElement;
+
+    let brands: Brand[] = [];
+    let originalTitle = '';
+    let editingId: string | null = null;
+
+    function escapeHtml(s: string): string {
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    async function load() {
+      try {
+        const res = await fetch('/api/brands');
+        if (res.status === 401) { window.location.href = '/painel/login'; return; }
+        if (!res.ok) throw new Error('falha ao carregar');
+        const data = await res.json();
+        brands = data.items || [];
+        originalTitle = data.title || '';
+        $titleInput.value = originalTitle;
+        render();
+        $loading.hidden = true;
+        $page.hidden = false;
+      } catch (err) {
+        $loading.textContent = 'Erro ao carregar.';
+      }
+    }
+
+    function render() {
+      if (brands.length === 0) {
+        $list.innerHTML = '';
+        $empty.hidden = false;
+        return;
+      }
+      $empty.hidden = true;
+      $list.innerHTML = brands.map((b) => `
+        <div class="brand-row" data-id="${b.id}" draggable="true">
+          <button class="brand-drag" type="button" aria-label="Arrastar pra reordenar" title="Arrastar">⠿</button>
+          <div class="brand-info">
+            <p class="brand-name">${escapeHtml(b.name)}</p>
+            ${b.url
+              ? `<a class="brand-url" href="${escapeHtml(b.url)}" target="_blank" rel="noopener nofollow">${escapeHtml(b.url)}</a>`
+              : `<span class="brand-url-empty">sem link</span>`}
+          </div>
+          <div class="brand-actions">
+            <button class="painel-btn-ghost" data-action="edit" data-id="${b.id}" type="button">Editar</button>
+            <button class="painel-btn-ghost brand-del" data-action="delete" data-id="${b.id}" type="button">Excluir</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // === Title save ===
+    $titleInput.addEventListener('input', () => {
+      const changed = $titleInput.value.trim() !== originalTitle;
+      $titleHint.textContent = changed ? '⚠ Mudança não salva' : '';
+      $titleHint.classList.toggle('warn', changed);
+    });
+
+    $btnSaveTitle.addEventListener('click', async () => {
+      const title = $titleInput.value.trim();
+      if (!title) { (window as any).toast?.('Título não pode ficar vazio', 'error'); return; }
+      $btnSaveTitle.disabled = true;
+      try {
+        const res = await fetch('/api/brands/title', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || 'falha');
+        originalTitle = title;
+        $titleHint.textContent = '✓ Salvo (publique pra propagar)';
+        $titleHint.classList.remove('warn');
+        (window as any).toast?.('Título salvo. Publique pra propagar.', 'success');
+      } catch (err: any) {
+        (window as any).toast?.(err.message || 'Erro ao salvar título', 'error');
+      } finally {
+        $btnSaveTitle.disabled = false;
+      }
+    });
+
+    // === Add/Edit modal ===
+    function openModal(mode: 'create' | 'edit', brand?: Brand) {
+      editingId = mode === 'edit' && brand ? brand.id : null;
+      $modalTitle.textContent = mode === 'edit' ? 'Editar marca' : 'Nova marca';
+      $brandName.value = brand?.name || '';
+      $brandUrl.value = brand?.url || '';
+      $modal.hidden = false;
+      setTimeout(() => $brandName.focus(), 50);
+    }
+    function closeModal() {
+      $modal.hidden = true;
+      editingId = null;
+    }
+    $btnAdd.addEventListener('click', () => openModal('create'));
+    $modalBackdrop.addEventListener('click', closeModal);
+    $btnCancel.addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$modal.hidden) closeModal(); });
+
+    $btnConfirm.addEventListener('click', async () => {
+      const name = $brandName.value.trim();
+      const url = $brandUrl.value.trim() || null;
+      if (!name) { (window as any).toast?.('Nome obrigatório', 'error'); return; }
+      $btnConfirm.disabled = true;
+      try {
+        const isEdit = !!editingId;
+        const res = await fetch(isEdit ? `/api/brands/${editingId}` : '/api/brands', {
+          method: isEdit ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, url }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || 'falha');
+        await load();
+        closeModal();
+        (window as any).toast?.(isEdit ? 'Marca atualizada' : 'Marca criada', 'success');
+      } catch (err: any) {
+        (window as any).toast?.(err.message || 'Erro', 'error');
+      } finally {
+        $btnConfirm.disabled = false;
+      }
+    });
+
+    // === Edit/Delete actions ===
+    $list.addEventListener('click', async (e) => {
+      const btn = (e.target as HTMLElement).closest('[data-action]') as HTMLButtonElement | null;
+      if (!btn) return;
+      const id = btn.dataset.id!;
+      const action = btn.dataset.action!;
+      const brand = brands.find((b) => b.id === id);
+      if (!brand) return;
+
+      if (action === 'edit') {
+        openModal('edit', brand);
+      } else if (action === 'delete') {
+        const ok = await (window as any).confirmAction?.({
+          title: 'Excluir marca?',
+          message: `Marca "${brand.name}" será removida. Publique depois pra propagar no site.`,
+          confirmLabel: 'Excluir',
+          cancelLabel: 'Cancelar',
+          danger: true,
+        });
+        if (!ok) return;
+        try {
+          const res = await fetch(`/api/brands/${id}`, { method: 'DELETE' });
+          if (!res.ok) throw new Error('falha');
+          await load();
+          (window as any).toast?.('Marca excluída', 'success');
+        } catch {
+          (window as any).toast?.('Erro ao excluir', 'error');
+        }
+      }
+    });
+
+    // === Drag-reorder ===
+    let dragSrcId: string | null = null;
+    $list.addEventListener('dragstart', (e) => {
+      const row = (e.target as HTMLElement).closest('.brand-row') as HTMLElement | null;
+      if (!row) return;
+      dragSrcId = row.dataset.id || null;
+      row.classList.add('dragging');
+      (e as DragEvent).dataTransfer!.effectAllowed = 'move';
+    });
+    $list.addEventListener('dragend', (e) => {
+      const row = (e.target as HTMLElement).closest('.brand-row') as HTMLElement | null;
+      row?.classList.remove('dragging');
+    });
+    $list.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const target = (e.target as HTMLElement).closest('.brand-row') as HTMLElement | null;
+      if (!target || !dragSrcId || target.dataset.id === dragSrcId) return;
+      const rect = target.getBoundingClientRect();
+      const after = (e as DragEvent).clientY > rect.top + rect.height / 2;
+      const dragging = $list.querySelector('.brand-row.dragging') as HTMLElement | null;
+      if (!dragging) return;
+      if (after) target.after(dragging); else target.before(dragging);
+    });
+    $list.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      if (!dragSrcId) return;
+      dragSrcId = null;
+      const ids = Array.from($list.querySelectorAll<HTMLElement>('.brand-row')).map((r) => r.dataset.id!);
+      try {
+        const res = await fetch('/api/brands/reorder', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ids }),
+        });
+        if (!res.ok) throw new Error('falha');
+        // Atualiza brands local (positions) pra refletir nova ordem sem reload
+        brands = ids.map((id, idx) => {
+          const b = brands.find((x) => x.id === id)!;
+          return { ...b, position: idx };
+        });
+        (window as any).toast?.('Ordem atualizada. Publique pra propagar.', 'success');
+      } catch {
+        (window as any).toast?.('Erro ao reordenar', 'error');
+        await load();
+      }
+    });
+
+    // === Sync (Publish) ===
+    $btnSync.addEventListener('click', async () => {
+      $btnSync.disabled = true;
+      $syncStatus.textContent = 'Publicando...';
+      try {
+        const res = await fetch('/api/brands/sync', { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || 'falha');
+        $syncStatus.textContent = '✓ Publicado · rebuild em ~2 min';
+        (window as any).toast?.('Marcas publicadas! Rebuild em ~2 min.', 'success', 5000);
+      } catch (err: any) {
+        $syncStatus.textContent = '⚠ erro';
+        (window as any).toast?.(err.message || 'Erro ao publicar', 'error');
+      } finally {
+        $btnSync.disabled = false;
+      }
+    });
+
+    load();
+  </script>
+
+  <style is:global>
+    .brands-page {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .brands-title-block {
+      background: var(--painel-surface);
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      padding: 20px;
+    }
+    .brands-title-block label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--painel-text-secondary);
+      margin-bottom: 8px;
+    }
+    .brands-title-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .brands-title-row input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--painel-border);
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: var(--painel-font);
+      outline: 0;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .brands-title-row input:focus {
+      border-color: var(--painel-accent);
+      box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+    }
+    .brands-hint {
+      display: block;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--painel-text-secondary);
+    }
+    .brands-hint.warn { color: var(--painel-warning); }
+
+    .brands-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brands-toolbar-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brands-sync-status {
+      font-size: 13px;
+      color: var(--painel-text-secondary);
+    }
+
+    .brands-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .brand-row {
+      display: grid;
+      grid-template-columns: 32px 1fr auto;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 18px;
+      background: var(--painel-surface);
+      border: 1px solid var(--painel-border);
+      border-radius: 8px;
+      transition: background .15s, border-color .15s, opacity .2s;
+      cursor: default;
+    }
+    .brand-row.dragging {
+      opacity: 0.4;
+      border-color: var(--painel-accent);
+    }
+    .brand-drag {
+      background: transparent;
+      border: 0;
+      font-size: 18px;
+      color: var(--painel-text-disabled);
+      cursor: grab;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    .brand-drag:active { cursor: grabbing; }
+    .brand-drag:hover {
+      background: rgba(60,64,67,0.06);
+      color: var(--painel-text-secondary);
+    }
+    .brand-info {
+      min-width: 0;
+    }
+    .brand-name {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--painel-text-primary);
+    }
+    .brand-url {
+      font-size: 12px;
+      color: var(--painel-accent);
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .brand-url:hover { text-decoration: underline; }
+    .brand-url-empty {
+      font-size: 12px;
+      color: var(--painel-text-disabled);
+      font-style: italic;
+    }
+    .brand-actions {
+      display: inline-flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .brand-del {
+      color: var(--painel-danger);
+    }
+    .brands-empty {
+      text-align: center;
+      padding: 32px;
+      color: var(--painel-text-secondary);
+      font-size: 14px;
+      background: var(--painel-surface);
+      border: 1px dashed var(--painel-border);
+      border-radius: 8px;
+    }
+
+    @media (max-width: 640px) {
+      .brand-row {
+        grid-template-columns: 24px 1fr;
+        grid-template-rows: auto auto;
+      }
+      .brand-actions { grid-column: 1 / -1; justify-content: flex-end; }
+    }
+  </style>
+</PainelLayout>
