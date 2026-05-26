@@ -28,7 +28,7 @@ const SOCIAL_BLOCK = `
     </div>`;
 
 function renderPage(title: string, body: string, success = false): string {
-  const accent = success ? '#00b4d8' : '#666';
+  const accent = success ? '#0103F9' : '#666';
   return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -59,8 +59,8 @@ function renderPage(title: string, body: string, success = false): string {
       background: #f5f5f5;
     }
     .social-icons a:hover {
-      color: #00b4d8;
-      background: #e8f9fc;
+      color: #0103F9;
+      background: #e8e9ff;
       transform: translateY(-2px);
     }
   </style>
