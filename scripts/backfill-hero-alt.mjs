@@ -68,7 +68,9 @@ async function main() {
   // SQL batch UPDATE
   const now = Date.now();
   const updates = posts.map((p) =>
-    `UPDATE posts_meta SET hero_image_alt = ${sqlString(p.title)}, updated_at = ${now} WHERE slug = ${sqlString(p.slug)};`
+    // synced_at = updated_at evita falso positivo "nao sincronizado" no painel
+    // (Git ja recebe o .md no mesmo loop; D1 deve refletir esse estado)
+    `UPDATE posts_meta SET hero_image_alt = ${sqlString(p.title)}, updated_at = ${now}, synced_at = ${now} WHERE slug = ${sqlString(p.slug)};`
   );
   const sqlFile = path.join(PROJECT_ROOT, 'tmp-hero-alt-backfill.sql');
   writeFileSync(sqlFile, updates.join('\n') + '\n', 'utf-8');

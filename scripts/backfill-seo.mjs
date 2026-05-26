@@ -310,7 +310,11 @@ async function main() {
       if (!post.meta_description && metaDesc) sets.push(`meta_description = ${sqlString(metaDesc)}`);
 
       if (sets.length > 0) {
-        sets.push(`updated_at = ${Date.now()}`);
+        const now = Date.now();
+        sets.push(`updated_at = ${now}`);
+        // synced_at = updated_at evita falso positivo "nao sincronizado" no painel
+        // (script altera D1 + .md no mesmo passo; ambos refletem o mesmo estado)
+        sets.push(`synced_at = ${now}`);
         sqlUpdates.push(`UPDATE posts_meta SET ${sets.join(', ')} WHERE slug = ${sqlString(slug)};`);
       }
 

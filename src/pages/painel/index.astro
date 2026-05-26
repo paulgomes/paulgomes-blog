@@ -26,6 +26,9 @@ import '../../styles/painel.css';
       <p class="label">Não sincronizados</p>
       <p class="value" id="statUnsynced"><span class="stat-skeleton"></span></p>
       <p class="hint">Editados no painel, pendentes de Git</p>
+      <button type="button" id="bulkSyncBtn" class="bulk-sync-btn" hidden>
+        Marcar todos como sincronizados
+      </button>
     </div>
     <a href="/painel/posts?status=deleted" class="stat-card stat-card--trash" id="statDeletedCard">
       <p class="label">Lixeira</p>
@@ -70,6 +73,7 @@ import '../../styles/painel.css';
       const $p = document.getElementById('statPublished');
       const $u = document.getElementById('statUnsynced');
       const $uCard = document.getElementById('statUnsyncedCard');
+      const $bulkSync = document.getElementById('bulkSyncBtn') as HTMLButtonElement | null;
       const $del = document.getElementById('statDeleted');
       const $delCard = document.getElementById('statDeletedCard');
       const deletedCount = Number(s.deleted || 0);
@@ -78,6 +82,10 @@ import '../../styles/painel.css';
       if ($p) $p.textContent = String(s.published);
       if ($u) $u.textContent = String(s.unsynced);
       if ($uCard) $uCard.classList.toggle('stat-card--warn-active', s.unsynced > 0);
+      if ($bulkSync) {
+        $bulkSync.hidden = s.unsynced <= 0;
+        $bulkSync.dataset.count = String(s.unsynced);
+      }
       if ($del) $del.textContent = String(deletedCount);
       if ($delCard) $delCard.classList.toggle('stat-card--trash-active', deletedCount > 0);
     }
@@ -104,6 +112,41 @@ import '../../styles/painel.css';
       } catch {}
     }
     loadStats();
+
+    // === Bulk sync: marca todos como sincronizados ===
+    // Usado quando o painel detecta drift por causa de scripts antigos ou
+    // edicoes manuais no Git. Idempotente (so afeta posts realmente unsynced).
+    const $bulkSyncBtn = document.getElementById('bulkSyncBtn') as HTMLButtonElement | null;
+    $bulkSyncBtn?.addEventListener('click', async () => {
+      const count = $bulkSyncBtn.dataset.count || '0';
+      const ok = await (window as any).confirmAction?.({
+        title: 'Marcar todos como sincronizados?',
+        message: `Vai marcar ${count} post${count === '1' ? '' : 's'} como sincronizado${count === '1' ? '' : 's'}. Use quando os arquivos no Git ja estao atualizados (manualmente ou via script).`,
+        confirmLabel: 'Confirmar',
+        cancelLabel: 'Cancelar',
+      });
+      if (!ok) return;
+
+      const originalLabel = $bulkSyncBtn.textContent;
+      $bulkSyncBtn.disabled = true;
+      $bulkSyncBtn.textContent = 'Sincronizando...';
+
+      try {
+        const res = await fetch('/api/posts/sync-all', { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || 'falha');
+        (window as any).toast?.(data.message || 'Sincronizado', 'success');
+        // Invalida cache de stats e recarrega
+        try { sessionStorage.removeItem(STATS_CACHE_KEY); } catch {}
+        await loadStats(true);
+        $bulkSyncBtn.disabled = false;
+        $bulkSyncBtn.textContent = originalLabel;
+      } catch (err: any) {
+        (window as any).toast?.(err.message || 'Erro ao sincronizar', 'error');
+        $bulkSyncBtn.disabled = false;
+        $bulkSyncBtn.textContent = originalLabel;
+      }
+    });
 
     // === Atividade recente (3 últimas edições) ===
     function formatRelative(ts: number): string {
@@ -199,6 +242,24 @@ import '../../styles/painel.css';
     .stat-card--warn-active .label,
     .stat-card--warn-active .value,
     .stat-card--warn-active .hint { color: #92400e; }
+    .bulk-sync-btn {
+      margin-top: 12px;
+      padding: 6px 12px;
+      background: rgba(var(--color-accent-rgb), 0.1);
+      color: var(--color-accent);
+      border: 1px solid rgba(var(--color-accent-rgb), 0.3);
+      border-radius: 6px;
+      font-family: var(--painel-font);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+    .bulk-sync-btn:hover:not(:disabled) {
+      background: rgba(var(--color-accent-rgb), 0.18);
+      border-color: rgba(var(--color-accent-rgb), 0.5);
+    }
+    .bulk-sync-btn:disabled { opacity: 0.6; cursor: wait; }
     .stat-card--trash { border-color: var(--painel-border); }
     .stat-card--trash-active {
       background: #f6f7f8;
