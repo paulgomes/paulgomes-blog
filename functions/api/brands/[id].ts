@@ -41,6 +41,17 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
     }
   }
 
+  if (body.logo_url !== undefined) {
+    if (body.logo_url === null || body.logo_url === '') {
+      sets.push('logo_url = NULL');
+    } else {
+      const logoUrl = normalizeUrl(body.logo_url);
+      if (!logoUrl) return Response.json({ error: 'logo_url inválida (precisa começar com http:// ou https://)' }, { status: 400 });
+      sets.push('logo_url = ?');
+      values.push(logoUrl);
+    }
+  }
+
   if (sets.length === 0) {
     return Response.json({ error: 'nenhum campo pra atualizar' }, { status: 400 });
   }
@@ -58,7 +69,7 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
     return Response.json({ error: 'Falha ao atualizar' }, { status: 500 });
   }
 
-  const item = await env.DB.prepare('SELECT id, name, url, position FROM brands WHERE id = ?').bind(id).first();
+  const item = await env.DB.prepare('SELECT id, name, url, logo_url, position FROM brands WHERE id = ?').bind(id).first();
   if (!item) return Response.json({ error: 'Marca não encontrada' }, { status: 404 });
 
   return Response.json({ ok: true, item });

@@ -4,6 +4,7 @@ import brandsData from '../data/brands.json';
 interface Brand {
   name: string;
   url: string | null;
+  logo_url?: string | null;
 }
 
 const title: string = brandsData.title || 'Marcas que passaram por aqui';
@@ -22,11 +23,14 @@ const doubled = [...items, ...items];
   <!-- Marquee em scroll horizontal infinito -->
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track">
-      {doubled.map((brand) => (
-        brand.url
-          ? <a class="marquee-item marquee-link" href={brand.url} target="_blank" rel="noopener nofollow">{brand.name}</a>
-          : <span class="marquee-item">{brand.name}</span>
-      ))}
+      {doubled.map((brand) => {
+        const inner = brand.logo_url
+          ? <img src={brand.logo_url} alt={brand.name} class="marquee-logo" loading="lazy" />
+          : <span class="marquee-text">{brand.name}</span>;
+        return brand.url
+          ? <a class="marquee-item marquee-link" href={brand.url} target="_blank" rel="noopener nofollow" aria-label={brand.name}>{inner}</a>
+          : <span class="marquee-item" aria-label={brand.name}>{inner}</span>;
+      })}
     </div>
   </div>
 
@@ -79,13 +83,15 @@ const doubled = [...items, ...items];
   }
 
   .marquee-item {
+    display: inline-flex;
+    align-items: center;
     font-family: var(--font-display);
     font-size: clamp(0.9rem, 1.6vw, 1.15rem);
     font-weight: 500;
     letter-spacing: 0.01em;
     color: var(--color-muted);
     opacity: 0.7;
-    transition: opacity 0.3s ease, color 0.3s ease;
+    transition: opacity 0.3s ease, color 0.3s ease, filter 0.3s ease;
     text-decoration: none;
   }
 
@@ -94,8 +100,29 @@ const doubled = [...items, ...items];
     color: var(--color-ink);
   }
 
-  .marquee-link:hover {
+  .marquee-link:hover .marquee-text {
     color: #0103F9;
+  }
+
+  /* Logo: altura constante, mantem proporcao, dessaturado por default */
+  .marquee-logo {
+    height: clamp(22px, 2.4vw, 32px);
+    width: auto;
+    display: block;
+    object-fit: contain;
+    filter: grayscale(100%);
+    opacity: 0.75;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+  }
+  .marquee-item:hover .marquee-logo {
+    filter: grayscale(0%);
+    opacity: 1;
+  }
+  :global(.dark) .marquee-logo {
+    filter: grayscale(100%) brightness(0.95);
+  }
+  :global(.dark) .marquee-item:hover .marquee-logo {
+    filter: grayscale(0%) brightness(1);
   }
 
   /* Separador "·" entre marcas */

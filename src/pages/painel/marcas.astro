@@ -50,6 +50,26 @@ import '../../styles/painel.css';
         <input type="url" id="brandUrl" placeholder="https://exemplo.com" />
         <small>Quando preenchida, o nome vira link clicável (abre em nova aba).</small>
       </div>
+      <div class="form-row">
+        <label>Logo (opcional)</label>
+        <div class="brand-logo-uploader">
+          <div id="brandLogoPreview" class="brand-logo-preview" data-empty="true">
+            <span class="brand-logo-empty">Sem logo</span>
+            <img id="brandLogoPreviewImg" alt="" />
+          </div>
+          <div class="brand-logo-actions">
+            <input type="file" id="brandLogoFile" accept="image/svg+xml,image/png,image/webp,image/jpeg" hidden />
+            <button type="button" class="painel-btn-ghost" id="btnChooseBrandLogo">Escolher arquivo</button>
+            <button type="button" class="painel-btn-ghost" id="btnRemoveBrandLogo" hidden>Remover</button>
+          </div>
+          <input type="hidden" id="brandLogoUrl" value="" />
+          <details class="brand-logo-url-toggle">
+            <summary>Colar URL manualmente</summary>
+            <input type="url" id="brandLogoUrlInput" placeholder="https://media.paulgomes.com.br/..." />
+          </details>
+        </div>
+        <small>Se preenchido, o logo aparece no marquee no lugar do nome. PNG/SVG/WEBP recomendado, fundo transparente.</small>
+      </div>
       <div class="menus-modal-actions">
         <button class="painel-btn-ghost" id="btnCancelBrand" type="button">Cancelar</button>
         <button class="painel-btn-primary" id="btnConfirmBrand" type="button">Salvar</button>
@@ -58,7 +78,7 @@ import '../../styles/painel.css';
   </div>
 
   <script>
-    interface Brand { id: string; name: string; url: string | null; position: number; }
+    interface Brand { id: string; name: string; url: string | null; logo_url?: string | null; position: number; }
 
     const $loading = document.getElementById('brandsLoading') as HTMLElement;
     const $page = document.getElementById('brandsPage') as HTMLElement;
@@ -76,8 +96,63 @@ import '../../styles/painel.css';
     const $modalBackdrop = document.getElementById('modalBrandBackdrop') as HTMLElement;
     const $brandName = document.getElementById('brandName') as HTMLInputElement;
     const $brandUrl = document.getElementById('brandUrl') as HTMLInputElement;
+    const $brandLogoUrl = document.getElementById('brandLogoUrl') as HTMLInputElement;
+    const $brandLogoUrlInput = document.getElementById('brandLogoUrlInput') as HTMLInputElement;
+    const $brandLogoFile = document.getElementById('brandLogoFile') as HTMLInputElement;
+    const $brandLogoPreview = document.getElementById('brandLogoPreview') as HTMLElement;
+    const $brandLogoPreviewImg = document.getElementById('brandLogoPreviewImg') as HTMLImageElement;
+    const $btnChooseBrandLogo = document.getElementById('btnChooseBrandLogo') as HTMLButtonElement;
+    const $btnRemoveBrandLogo = document.getElementById('btnRemoveBrandLogo') as HTMLButtonElement;
     const $btnCancel = document.getElementById('btnCancelBrand') as HTMLButtonElement;
     const $btnConfirm = document.getElementById('btnConfirmBrand') as HTMLButtonElement;
+
+    function applyLogoValue(url: string) {
+      const trimmed = (url || '').trim();
+      $brandLogoUrl.value = trimmed;
+      if (trimmed) {
+        $brandLogoPreviewImg.src = trimmed;
+        $brandLogoPreview.dataset.empty = 'false';
+        $btnRemoveBrandLogo.hidden = false;
+      } else {
+        $brandLogoPreviewImg.removeAttribute('src');
+        $brandLogoPreview.dataset.empty = 'true';
+        $btnRemoveBrandLogo.hidden = true;
+      }
+      if ($brandLogoUrlInput && $brandLogoUrlInput.value !== trimmed) $brandLogoUrlInput.value = trimmed;
+    }
+
+    $btnChooseBrandLogo.addEventListener('click', () => $brandLogoFile.click());
+
+    $brandLogoFile.addEventListener('change', async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        (window as any).toast?.('Selecione uma imagem', 'error'); return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        (window as any).toast?.('Logo muito grande (máx 2MB)', 'error'); return;
+      }
+      $btnChooseBrandLogo.disabled = true;
+      $btnChooseBrandLogo.textContent = 'Enviando...';
+      try {
+        const fd = new FormData();
+        fd.append('file', file);
+        const res = await fetch('/api/upload', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || 'falha upload');
+        applyLogoValue(data.url);
+        (window as any).toast?.('Logo enviado', 'success');
+      } catch (err: any) {
+        (window as any).toast?.(err.message || 'Erro ao enviar', 'error');
+      } finally {
+        $btnChooseBrandLogo.disabled = false;
+        $btnChooseBrandLogo.textContent = 'Escolher arquivo';
+        $brandLogoFile.value = '';
+      }
+    });
+
+    $btnRemoveBrandLogo.addEventListener('click', () => applyLogoValue(''));
+    $brandLogoUrlInput?.addEventListener('input', (e) => applyLogoValue((e.target as HTMLInputElement).value));
 
     let brands: Brand[] = [];
     let originalTitle = '';
@@ -116,6 +191,9 @@ import '../../styles/painel.css';
       $list.innerHTML = brands.map((b) => `
         <div class="brand-row" data-id="${b.id}" draggable="true">
           <button class="brand-drag" type="button" aria-label="Arrastar pra reordenar" title="Arrastar">⠿</button>
+          <div class="brand-thumb" data-empty="${b.logo_url ? 'false' : 'true'}">
+            ${b.logo_url ? `<img src="${escapeHtml(b.logo_url)}" alt="${escapeHtml(b.name)}" />` : `<span>—</span>`}
+          </div>
           <div class="brand-info">
             <p class="brand-name">${escapeHtml(b.name)}</p>
             ${b.url
@@ -166,6 +244,7 @@ import '../../styles/painel.css';
       $modalTitle.textContent = mode === 'edit' ? 'Editar marca' : 'Nova marca';
       $brandName.value = brand?.name || '';
       $brandUrl.value = brand?.url || '';
+      applyLogoValue(brand?.logo_url || '');
       $modal.hidden = false;
       setTimeout(() => $brandName.focus(), 50);
     }
@@ -181,6 +260,7 @@ import '../../styles/painel.css';
     $btnConfirm.addEventListener('click', async () => {
       const name = $brandName.value.trim();
       const url = $brandUrl.value.trim() || null;
+      const logo_url = $brandLogoUrl.value.trim() || null;
       if (!name) { (window as any).toast?.('Nome obrigatório', 'error'); return; }
       $btnConfirm.disabled = true;
       try {
@@ -188,7 +268,7 @@ import '../../styles/painel.css';
         const res = await fetch(isEdit ? `/api/brands/${editingId}` : '/api/brands', {
           method: isEdit ? 'PUT' : 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, url }),
+          body: JSON.stringify({ name, url, logo_url }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data?.error || 'falha');
@@ -371,7 +451,7 @@ import '../../styles/painel.css';
     }
     .brand-row {
       display: grid;
-      grid-template-columns: 32px 1fr auto;
+      grid-template-columns: 32px 56px 1fr auto;
       align-items: center;
       gap: 16px;
       padding: 14px 18px;
@@ -380,6 +460,72 @@ import '../../styles/painel.css';
       border-radius: 8px;
       transition: background .15s, border-color .15s, opacity .2s;
       cursor: default;
+    }
+    .brand-thumb {
+      width: 56px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--painel-bg);
+      border: 1px solid var(--painel-border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .brand-thumb img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .brand-thumb[data-empty="true"] span {
+      color: var(--painel-text-disabled);
+      font-size: 14px;
+    }
+
+    /* Uploader no modal */
+    .brand-logo-uploader {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .brand-logo-preview {
+      width: 100%;
+      max-width: 220px;
+      height: 80px;
+      background: var(--painel-bg);
+      border: 1px dashed var(--painel-border-strong);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .brand-logo-preview[data-empty="true"] .brand-logo-empty { display: inline; color: var(--painel-text-disabled); font-size: 13px; }
+    .brand-logo-preview[data-empty="true"] img { display: none; }
+    .brand-logo-preview[data-empty="false"] .brand-logo-empty { display: none; }
+    .brand-logo-preview[data-empty="false"] img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .brand-logo-actions {
+      display: inline-flex;
+      gap: 8px;
+    }
+    .brand-logo-url-toggle {
+      font-size: 12px;
+      color: var(--painel-text-secondary);
+      margin-top: 4px;
+    }
+    .brand-logo-url-toggle summary { cursor: pointer; padding: 4px 0; user-select: none; }
+    .brand-logo-url-toggle[open] summary { margin-bottom: 6px; }
+    .brand-logo-url-toggle input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--painel-border);
+      border-radius: 4px;
+      font-size: 13px;
     }
     .brand-row.dragging {
       opacity: 0.4;
@@ -440,9 +586,10 @@ import '../../styles/painel.css';
 
     @media (max-width: 640px) {
       .brand-row {
-        grid-template-columns: 24px 1fr;
+        grid-template-columns: 24px 48px 1fr;
         grid-template-rows: auto auto;
       }
+      .brand-thumb { width: 48px; height: 36px; }
       .brand-actions { grid-column: 1 / -1; justify-content: flex-end; }
     }
   </style>

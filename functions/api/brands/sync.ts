@@ -11,7 +11,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (auth instanceof Response) return auth;
 
   const [brands, titleRow] = await Promise.all([
-    env.DB.prepare('SELECT name, url FROM brands ORDER BY position ASC, created_at ASC').all<{ name: string; url: string | null }>(),
+    env.DB.prepare('SELECT name, url, logo_url FROM brands ORDER BY position ASC, created_at ASC').all<{ name: string; url: string | null; logo_url: string | null }>(),
     env.DB.prepare("SELECT value FROM site_config WHERE key = 'brands_marquee_title'").first<{ value: string }>(),
   ]);
 
@@ -19,7 +19,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const json = JSON.stringify({
     title: titleRow?.value || 'Marcas que passaram por aqui',
     synced_at,
-    items: (brands.results || []).map((b) => ({ name: b.name, url: b.url || null })),
+    items: (brands.results || []).map((b) => ({
+      name: b.name,
+      url: b.url || null,
+      logo_url: b.logo_url || null,
+    })),
   }, null, 2) + '\n';
 
   try {
