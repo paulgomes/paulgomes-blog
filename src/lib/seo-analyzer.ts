@@ -108,24 +108,41 @@ export function generateMetaTitle(title: string, _focusKeyword: string): string 
   return truncated.slice(0, lastSpace > 30 ? lastSpace : 57) + '...';
 }
 
-// === 4. Gerar meta description (~150-160 chars), prefere paragrafo com focus keyword
+// === 4. Gerar meta description (~150-160 chars), concatena frases ate atingir tamanho ideal
+// Comeca da frase com focus keyword (se houver), senao da 1a. Concatena seguintes ate ~140-160 chars.
+// Bug evitado: keyword pode aparecer como frase standalone curta (ex: "Tecnocracia."); sozinha nao serve.
 export function generateMetaDescription(content: string, focusKeyword: string): string {
   const clean = stripMarkdown(content);
-  if (clean.length === 0) return '';
+  if (!clean) return '';
 
-  const paragraphs = clean.split(/(?<=[.!?])\s+/);
-  let target: string | null = null;
+  const sentences = clean.split(/(?<=[.!?])\s+/).filter((s) => s.trim().length > 0);
+  if (sentences.length === 0) return '';
 
+  let startIdx = 0;
   if (focusKeyword) {
-    const kwLower = focusKeyword.toLowerCase();
-    target = paragraphs.find((p) => p.toLowerCase().includes(kwLower)) || null;
+    const kw = focusKeyword.toLowerCase();
+    const idx = sentences.findIndex((s) => s.toLowerCase().includes(kw));
+    if (idx > 0) startIdx = idx;
   }
-  target = target || paragraphs[0] || clean;
 
-  if (target.length <= 160) return target;
-  const truncated = target.slice(0, 155);
-  const lastSpace = truncated.lastIndexOf(' ');
-  return truncated.slice(0, lastSpace > 100 ? lastSpace : 155) + '...';
+  let result = '';
+  for (let i = startIdx; i < sentences.length; i++) {
+    const next = result ? result + ' ' + sentences[i] : sentences[i];
+    if (next.length > 160) {
+      // 1a frase ja passa de 160: aceita e cai pro truncamento abaixo
+      if (result.length < 50) result = next;
+      break;
+    }
+    result = next;
+    if (result.length >= 140) break;
+  }
+
+  if (result.length > 160) {
+    const truncated = result.slice(0, 155);
+    const lastSpace = truncated.lastIndexOf(' ');
+    return truncated.slice(0, lastSpace > 100 ? lastSpace : 155) + '...';
+  }
+  return result;
 }
 
 // === 5. Score SEO

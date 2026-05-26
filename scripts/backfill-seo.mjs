@@ -116,18 +116,31 @@ function generateMetaTitle(title, _focusKeyword) {
 
 function generateMetaDescription(content, focusKeyword) {
   const clean = stripMarkdown(content);
-  if (clean.length === 0) return '';
-  const paragraphs = clean.split(/(?<=[.!?])\s+/);
-  let target = null;
+  if (!clean) return '';
+  const sentences = clean.split(/(?<=[.!?])\s+/).filter((s) => s.trim().length > 0);
+  if (sentences.length === 0) return '';
+  let startIdx = 0;
   if (focusKeyword) {
-    const kwLower = focusKeyword.toLowerCase();
-    target = paragraphs.find((p) => p.toLowerCase().includes(kwLower)) || null;
+    const kw = focusKeyword.toLowerCase();
+    const idx = sentences.findIndex((s) => s.toLowerCase().includes(kw));
+    if (idx > 0) startIdx = idx;
   }
-  target = target || paragraphs[0] || clean;
-  if (target.length <= 160) return target;
-  const truncated = target.slice(0, 155);
-  const lastSpace = truncated.lastIndexOf(' ');
-  return truncated.slice(0, lastSpace > 100 ? lastSpace : 155) + '...';
+  let result = '';
+  for (let i = startIdx; i < sentences.length; i++) {
+    const next = result ? result + ' ' + sentences[i] : sentences[i];
+    if (next.length > 160) {
+      if (result.length < 50) result = next;
+      break;
+    }
+    result = next;
+    if (result.length >= 140) break;
+  }
+  if (result.length > 160) {
+    const truncated = result.slice(0, 155);
+    const lastSpace = truncated.lastIndexOf(' ');
+    return truncated.slice(0, lastSpace > 100 ? lastSpace : 155) + '...';
+  }
+  return result;
 }
 
 // ============================================================
