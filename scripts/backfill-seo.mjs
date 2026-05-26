@@ -50,20 +50,30 @@ function normalize(s) {
 }
 
 function stripMarkdown(text) {
-  return String(text || '')
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`[^`]+`/g, '')
-    .replace(/!\[.*?\]\(.*?\)/g, '')
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/<[^>]+>/g, '')
-    .replace(/^#{1,6}\s+/gm, '')
-    .replace(/^\s*[-*+]\s+/gm, '')
-    .replace(/^\s*\d+\.\s+/gm, '')
-    .replace(/[*_~]+/g, '')
-    .replace(/^\s*>\s+/gm, '')
-    .replace(/^---+$/gm, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  let t = String(text || '');
+  t = t.replace(/<iframe[\s\S]*?<\/iframe>/gi, '');
+  t = t.replace(/<script[\s\S]*?<\/script>/gi, '');
+  t = t.replace(/```[\s\S]*?```/g, '');
+  t = t.replace(/`[^`]+`/g, '');
+  t = t.replace(/!\[.*?\]\(.*?\)/g, '');
+  t = t.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+  t = t.replace(/<[^>]+>/g, '');
+  t = t.replace(/^\s*import\s+.*from\s+['"][^'"]+['"]\s*;?\s*$/gm, '');
+  t = t.replace(/^\s*https?:\/\/\S+\s*$/gm, '');
+  t = t.replace(/^#{1,6}\s+/gm, '');
+  t = t.replace(/^\s*[-*+]\s+/gm, '');
+  t = t.replace(/^\s*\d+\.\s+/gm, '');
+  t = t.replace(/^\s*>\s+/gm, '');
+  t = t.replace(/^---+$/gm, '');
+  t = t.replace(/[*_~]+/g, '');
+  return t.replace(/\s+/g, ' ').trim();
+}
+
+function isJunkSentence(s) {
+  const total = s.length;
+  if (total === 0) return true;
+  const junk = (s.match(/[@#]\w+|\bhttps?:\/\/\S+/g) || []).join('').length;
+  return junk / total > 0.3;
 }
 
 function tokenize(text) {
@@ -117,7 +127,7 @@ function generateMetaTitle(title, _focusKeyword) {
 function generateMetaDescription(content, focusKeyword) {
   const clean = stripMarkdown(content);
   if (!clean) return '';
-  const sentences = clean.split(/(?<=[.!?])\s+/).filter((s) => s.trim().length > 0);
+  const sentences = clean.split(/(?<=[.!?])\s+/).filter((s) => s.trim().length > 0 && !isJunkSentence(s));
   if (sentences.length === 0) return '';
   let startIdx = 0;
   if (focusKeyword) {
@@ -140,6 +150,7 @@ function generateMetaDescription(content, focusKeyword) {
     const lastSpace = truncated.lastIndexOf(' ');
     return truncated.slice(0, lastSpace > 100 ? lastSpace : 155) + '...';
   }
+  if (!result || result.trim().length < 20) return '';
   return result;
 }
 
@@ -267,7 +278,28 @@ async function main() {
 
       const focusKw = post.focus_keyword || detectFocusKeyword(post.title || '', content);
       const metaTitle = post.meta_title || generateMetaTitle(post.title || '', focusKw);
-      const metaDesc = post.meta_description || generateMetaDescription(content, focusKw);
+      let metaDesc = post.meta_description || generateMetaDescription(content, focusKw);
+
+      // Fallback: usar description do D1 se generate nao conseguiu (post sem prose util)
+      if (!metaDesc || metaDesc.trim().length < 20) {
+        if (post.description && post.description.trim().length > 0) {
+          const desc = post.description.trim();
+          if (desc.length > 160) {
+            const truncated = desc.slice(0, 155);
+            const lastSpace = truncated.lastIndexOf(' ');
+            metaDesc = truncated.slice(0, lastSpace > 100 ? lastSpace : 155) + '...';
+          } else {
+            metaDesc = desc;
+          }
+        }
+      }
+
+      // Se AINDA vazio (sem description e sem prose), pula esse post
+      if (!metaDesc) {
+        console.log(`⏭ ${post.slug}: sem meta_description geravel, pulando`);
+        analyzed++;
+        continue;
+      }
 
       analyzed++;
 

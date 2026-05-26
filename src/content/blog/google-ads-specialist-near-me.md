@@ -7,7 +7,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/1.webp"
 focusKeyword: "and"
 metaTitle: "Google Ads specialist near me"
-metaDescription: "We help people and businesses build more relevant brands."
+metaDescription: "We help people and businesses build more relevant brands. A clinical look to the future brings exceptional baggage to the present."
 ---
 
 We help people and businesses build more relevant brands.

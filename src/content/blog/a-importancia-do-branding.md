@@ -8,7 +8,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-15.webp"
 focusKeyword: "branding"
 metaTitle: "A Importância do Branding"
-metaDescription: "O branding é fundamental para o sucesso de qualquer negócio."
+metaDescription: "O branding é fundamental para o sucesso de qualquer negócio. Trata-se do conjunto de ações que visa construir e fortalecer a imagem e a identidade da marca."
 ---
 
 O [branding](https://agenciawys.com.br/solucoes/ "branding") é fundamental para o sucesso de qualquer negócio. Trata-se do conjunto de ações que visa construir e fortalecer a imagem e a identidade da marca. É mais do que apenas um [logotipo](https://agenciawys.com.br/solucoes/ "logotipo ") bonito; é a forma como uma empresa se apresenta ao mundo e como é percebida pelos consumidores.

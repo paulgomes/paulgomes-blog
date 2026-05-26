@@ -7,7 +7,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paulgomes.webp"
 focusKeyword: "google ads"
 metaTitle: "Google Ads Expert in Dubai"
-metaDescription: "Are You Finding Professional Google ads Specialist in Dubai ?"
+metaDescription: "Are You Finding Professional Google ads Specialist in Dubai ? I am Paul Gomes who is Google Ads Specialist in Dubai."
 ---
 
 Are You Finding Professional Google ads Specialist in Dubai ?  

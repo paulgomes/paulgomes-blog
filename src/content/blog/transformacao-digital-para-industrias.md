@@ -7,7 +7,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/807049.webp"
 focusKeyword: "digitalizacao"
 metaTitle: "Transformação digital para indústrias"
-metaDescription: "Por que investir na digitalização da sua empresa?"
+metaDescription: "Por que investir na digitalização da sua empresa? A digitalização das marcas já é algo inevitável."
 ---
 
 *Por que investir na digitalização da sua empresa?*

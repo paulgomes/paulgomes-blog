@@ -7,7 +7,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/sem-titulo-1.webp"
 focusKeyword: "paulgomes"
 metaTitle: "6 fotos que você precisa ver"
-metaDescription: "#resultados @paulgomes #@paulgomes @agenciawys @paulgomes @paulgomes @paulgomes"
+metaDescription: "Eu acredito na sorte, mas não somente na sorte. Mas eu acredito muito mais na consistência do trabalho e dedicação."
 ---
 
 Eu acredito na sorte, mas não somente na sorte. Mas eu acredito muito mais na consistência do trabalho e dedicação.

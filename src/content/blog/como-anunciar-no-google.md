@@ -7,7 +7,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-8.webp"
 focusKeyword: "google"
 metaTitle: "Como anunciar no Google"
-metaDescription: "Você quer aprender como anunciar no Google?"
+metaDescription: "Você quer aprender como anunciar no Google? Quer aprender como iniciar sua primeira campanha no Google Ads?"
 ---
 
 Você quer aprender como anunciar no Google? Quer aprender como iniciar sua primeira campanha no Google Ads? Como explorar todo o potencial da maior rede de publicidade online? Você está no lugar certo.

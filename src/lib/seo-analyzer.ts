@@ -39,20 +39,37 @@ function normalize(s: string): string {
 
 // === 1. Strip markdown/HTML
 export function stripMarkdown(text: string): string {
-  return String(text || '')
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`[^`]+`/g, '')
-    .replace(/!\[.*?\]\(.*?\)/g, '')
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/<[^>]+>/g, '')
-    .replace(/^#{1,6}\s+/gm, '')
-    .replace(/^\s*[-*+]\s+/gm, '')
-    .replace(/^\s*\d+\.\s+/gm, '')
-    .replace(/[*_~]+/g, '')
-    .replace(/^\s*>\s+/gm, '')
-    .replace(/^---+$/gm, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  let t = String(text || '');
+  // Multi-line blocks (antes do strip de tags HTML simples)
+  t = t.replace(/<iframe[\s\S]*?<\/iframe>/gi, '');
+  t = t.replace(/<script[\s\S]*?<\/script>/gi, '');
+  t = t.replace(/```[\s\S]*?```/g, '');
+  // Inline / single-line
+  t = t.replace(/`[^`]+`/g, '');
+  t = t.replace(/!\[.*?\]\(.*?\)/g, '');
+  t = t.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+  t = t.replace(/<[^>]+>/g, '');
+  // Line-based (precisa rodar antes do collapse de \s+)
+  t = t.replace(/^\s*import\s+.*from\s+['"][^'"]+['"]\s*;?\s*$/gm, '');
+  t = t.replace(/^\s*https?:\/\/\S+\s*$/gm, '');
+  t = t.replace(/^#{1,6}\s+/gm, '');
+  t = t.replace(/^\s*[-*+]\s+/gm, '');
+  t = t.replace(/^\s*\d+\.\s+/gm, '');
+  t = t.replace(/^\s*>\s+/gm, '');
+  t = t.replace(/^---+$/gm, '');
+  // Inline markers
+  t = t.replace(/[*_~]+/g, '');
+  // Collapse + trim
+  return t.replace(/\s+/g, ' ').trim();
+}
+
+// Detecta frases lixo (URLs, hashtags, mencoes — >30% sao tokens simbolicos)
+// Regex captura @palavra ou #palavra inteira (nao so o simbolo) + URLs completas.
+function isJunkSentence(s: string): boolean {
+  const total = s.length;
+  if (total === 0) return true;
+  const junk = (s.match(/[@#]\w+|\bhttps?:\/\/\S+/g) || []).join('').length;
+  return junk / total > 0.3;
 }
 
 function tokenize(text: string): string[] {
@@ -115,7 +132,7 @@ export function generateMetaDescription(content: string, focusKeyword: string): 
   const clean = stripMarkdown(content);
   if (!clean) return '';
 
-  const sentences = clean.split(/(?<=[.!?])\s+/).filter((s) => s.trim().length > 0);
+  const sentences = clean.split(/(?<=[.!?])\s+/).filter((s) => s.trim().length > 0 && !isJunkSentence(s));
   if (sentences.length === 0) return '';
 
   let startIdx = 0;
@@ -142,6 +159,8 @@ export function generateMetaDescription(content: string, focusKeyword: string): 
     const lastSpace = truncated.lastIndexOf(' ');
     return truncated.slice(0, lastSpace > 100 ? lastSpace : 155) + '...';
   }
+  // Fallback: se ficou muito curta apos filtros, deixa caller decidir (retorna vazio)
+  if (!result || result.trim().length < 20) return '';
   return result;
 }
 
