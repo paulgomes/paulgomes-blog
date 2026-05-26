@@ -13,6 +13,44 @@ type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categorias = [] } = Astro.props as Props & { categorias?: Categoria[] };
 const heroAlt = heroImageAlt || title;
+
+// === Schema.org Article (GEO/AEO) ===
+const heroImageUrl = heroImage
+  ? (typeof heroImage === 'string' ? heroImage : new URL(heroImage.src, Astro.site).toString())
+  : undefined;
+const publishedISO = new Date(pubDate).toISOString();
+const modifiedISO = updatedDate ? new Date(updatedDate).toISOString() : publishedISO;
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  ...(heroImageUrl ? { image: [heroImageUrl] } : {}),
+  datePublished: publishedISO,
+  dateModified: modifiedISO,
+  author: {
+    '@type': 'Person',
+    name: 'Paul Gomes',
+    url: 'https://paulgomes.com.br/sobre',
+    sameAs: [
+      'https://www.linkedin.com/in/inpaulgomes/',
+      'https://www.instagram.com/paulgomes/',
+      'https://www.youtube.com/@paulgomesx',
+    ],
+  },
+  publisher: {
+    '@type': 'Person',
+    name: 'Paul Gomes',
+    url: 'https://paulgomes.com.br',
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': Astro.url.href,
+  },
+  ...(categorias.length ? { keywords: categorias.join(', '), articleSection: categorias[0] } : {}),
+  inLanguage: 'pt-BR',
+};
 ---
 
 <html lang="pt-BR">
@@ -23,7 +61,18 @@ const heroAlt = heroImageAlt || title;
       image={heroImage
         ? (typeof heroImage === 'string' ? heroImage : heroImage.src)
         : undefined}
+      ogType="article"
     />
+
+    <!-- Schema.org Article (GEO/AEO) -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+
+    <!-- Open Graph article-specific (BaseHead ja emitiu og:type=article via prop) -->
+    <meta property="article:published_time" content={publishedISO} />
+    <meta property="article:modified_time" content={modifiedISO} />
+    <meta property="article:author" content="https://paulgomes.com.br/sobre" />
+    {categorias[0] && <meta property="article:section" content={categorias[0]} />}
+    {categorias.map((cat) => <meta property="article:tag" content={cat} />)}
   </head>
   <body>
     <Header />

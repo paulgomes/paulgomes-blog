@@ -5,10 +5,11 @@ interface Props {
   title: string;
   description: string;
   image?: string;
+  ogType?: 'website' | 'article';
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const { title, description, image = '/og-image.png' } = Astro.props;
+const { title, description, image = '/og-image.png', ogType = 'website' } = Astro.props;
 const ogImageURL = new URL(image, Astro.url).toString();
 ---
 
@@ -31,7 +32,11 @@ const ogImageURL = new URL(image, Astro.url).toString();
 <meta name="title" content={title} />
 <meta name="description" content={description} />
 
-<meta property="og:type" content="website" />
+<!-- GEO/AEO metadata (autor + idioma — Open Graph article-specific vive em BlogPost.astro) -->
+<meta name="author" content="Paul Gomes" />
+<link rel="author" href="https://paulgomes.com.br/sobre" />
+
+<meta property="og:type" content={ogType} />
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />

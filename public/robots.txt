@@ -4,5 +4,24 @@ Allow: /
 Disallow: /painel
 Disallow: /painel/
 
+# LLM crawlers — permitidos explicitamente pra GEO/AEO
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
 Sitemap: https://paulgomes.com.br/sitemap-index.xml
 Sitemap: https://paulgomes.com.br/video-sitemap.xml
