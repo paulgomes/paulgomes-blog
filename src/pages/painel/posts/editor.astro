@@ -16,12 +16,12 @@ const currentNav = isEditing ? 'posts' : 'new';
     </a>
     <div class="editor-header__spacer"></div>
     <span id="saveStatus" class="save-status"></span>
-    <button id="deleteBtn" class="ed-btn ed-btn--danger" style="display: none;" type="button">
+    <button id="deleteBtn" class="btn-neu btn-md btn-danger" style="display: none;" type="button">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
       Excluir
     </button>
-    <button id="publishBtn" class="ed-btn ed-btn--primary" type="button">Publicar</button>
-    <button id="btnSavePost" class="ed-btn ed-btn--primary" style="display: none;" title="Salva e publica direto no site (rebuild em ~1-2 min)" type="button">
+    <button id="publishBtn" class="btn-neu btn-md btn-primary" type="button">Publicar</button>
+    <button id="btnSavePost" class="btn-neu btn-lg btn-primary" style="display: none;" title="Salva e publica direto no site (rebuild em ~1-2 min)" type="button">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
       Salvar
     </button>
@@ -70,11 +70,11 @@ const currentNav = isEditing ? 'posts' : 'new';
 
           <div class="hero-actions">
             <input type="file" id="heroFileInput" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
-            <button type="button" class="hero-btn" id="heroChooseBtn">
+            <button type="button" class="btn-neu btn-sm" id="heroChooseBtn">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               <span id="heroChooseBtnLabel">Escolher arquivo</span>
             </button>
-            <button type="button" class="hero-btn hero-btn-ghost" id="heroRemoveBtn" hidden>
+            <button type="button" class="btn-neu btn-sm btn-danger" id="heroRemoveBtn" hidden>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
               Remover
             </button>
@@ -108,7 +108,7 @@ const currentNav = isEditing ? 'posts' : 'new';
         <label class="side-label" for="publishedAtInput">Data de publicação</label>
         <div class="date-row">
           <input type="datetime-local" id="publishedAtInput" class="side-input date-input" />
-          <button type="button" id="publishedAtNow" class="btn-link" title="Usar agora">Agora</button>
+          <button type="button" id="publishedAtNow" class="btn-neu btn-sm" title="Usar agora">Agora</button>
         </div>
         <p class="field-hint" id="publishedAtHint">
           Datas no passado/presente. Futuro será suportado em breve.

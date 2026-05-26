@@ -75,3 +75,108 @@
     --header-height: 5rem;
   }
 }
+
+/* ─────────────────────────────────────────────────
+   Botão neumórfico (estilo Uiverse adaptado pra brand)
+   Hover em var(--color-accent). Variantes: lg/md/sm + danger/primary.
+   ───────────────────────────────────────────────── */
+.btn-neu {
+  position: relative;
+  padding: 0;
+  border: 2px solid #888;
+  outline: none;
+  background-color: #f4f5f6;
+  border-radius: 20px;
+  box-shadow:
+    -3px -10px 15px #ffffff,
+    -3px -5px 8px #ffffff,
+    -10px 0px 15px #ffffff,
+    3px 10px 12px rgba(0, 0, 0, 0.15);
+  transition: 0.3s ease-in-out;
+  cursor: pointer;
+  font-family: inherit;
+  color: #555;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
+  line-height: 1;
+}
+.btn-neu:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: scale(1.04);
+  box-shadow:
+    -3px -15px 20px #ffffff,
+    -3px -10px 10px #ffffff,
+    -10px 0px 15px #ffffff,
+    5px 15px 15px rgba(var(--color-accent-rgb), 0.15);
+}
+.btn-neu:active:not(:disabled) {
+  transform: scale(0.96);
+  box-shadow: none;
+}
+.btn-neu:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-neu.btn-lg { padding: 12px 28px; font-size: 15px; border-radius: 16px; }
+.btn-neu.btn-md { padding: 10px 20px; font-size: 14px; border-radius: 14px; }
+.btn-neu.btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 10px; }
+
+/* Variante DANGER: vermelho */
+.btn-neu.btn-danger { color: #c0392b; border-color: #d6a09a; }
+.btn-neu.btn-danger:hover:not(:disabled) {
+  border-color: #c0392b;
+  color: #c0392b;
+  box-shadow:
+    -3px -15px 20px #ffffff,
+    -3px -10px 10px #ffffff,
+    -10px 0px 15px #ffffff,
+    5px 15px 15px rgba(192, 57, 43, 0.18);
+}
+
+/* Variante PRIMARY: fill com accent */
+.btn-neu.btn-primary {
+  background-color: var(--color-accent);
+  color: #ffffff;
+  border-color: var(--color-accent);
+}
+.btn-neu.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-accent-2);
+  color: #ffffff;
+  border-color: var(--color-accent-2);
+}
+
+/* Dark mode */
+.dark .btn-neu {
+  background-color: #1f1f1f;
+  border-color: #555;
+  color: #ddd;
+  box-shadow:
+    -3px -10px 15px rgba(255, 255, 255, 0.02),
+    -3px -5px 8px rgba(255, 255, 255, 0.02),
+    -10px 0px 15px rgba(255, 255, 255, 0.02),
+    3px 10px 12px rgba(0, 0, 0, 0.4);
+}
+.dark .btn-neu:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  box-shadow:
+    -3px -15px 20px rgba(255, 255, 255, 0.03),
+    -3px -10px 10px rgba(255, 255, 255, 0.03),
+    -10px 0px 15px rgba(255, 255, 255, 0.03),
+    5px 15px 15px rgba(var(--color-accent-rgb), 0.25);
+}
+.dark .btn-neu.btn-primary { background-color: var(--color-accent); color: #fff; }
+.dark .btn-neu.btn-primary:hover:not(:disabled) { background-color: var(--color-accent-2); color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-neu,
+  .btn-neu:hover,
+  .btn-neu:active { transition: none; transform: none; }
+}

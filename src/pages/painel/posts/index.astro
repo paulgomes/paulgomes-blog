@@ -43,12 +43,12 @@ import '../../../styles/painel.css';
   </div>
 
   <div id="pagination" class="posts-pagination hidden">
-    <button id="prevPage" class="pag-btn" disabled>
+    <button id="prevPage" class="btn-neu btn-sm" disabled>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       Anterior
     </button>
     <span id="pageInfo" class="pag-info"></span>
-    <button id="nextPage" class="pag-btn" disabled>
+    <button id="nextPage" class="btn-neu btn-sm" disabled>
       Próximo
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
@@ -180,8 +180,8 @@ import '../../../styles/painel.css';
                 </div>
               </div>
               <div class="post-row__trash-actions">
-                <button class="btn-restore" data-restore="${escapeHtml(it.slug)}" data-title="${title}">★ Restaurar</button>
-                <button class="btn-purge" data-purge="${escapeHtml(it.slug)}" data-title="${title}">✕ Excluir Permanentemente</button>
+                <button class="btn-neu btn-sm btn-primary" data-restore="${escapeHtml(it.slug)}" data-title="${title}">★ Restaurar</button>
+                <button class="btn-neu btn-sm btn-danger" data-purge="${escapeHtml(it.slug)}" data-title="${title}">✕ Excluir Permanentemente</button>
               </div>
             </article>
           `;

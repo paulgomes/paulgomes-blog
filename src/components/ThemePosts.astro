@@ -53,13 +53,13 @@ const hasArchiveOverflow = displayTotalPages > totalPages;
         data-internal-pages={totalPages}
         data-has-overflow={hasArchiveOverflow ? '1' : '0'}
       >
-        <button type="button" class="pagination-btn" data-action="prev" disabled aria-label="Página anterior">
+        <button type="button" class="btn-neu btn-sm" data-action="prev" disabled aria-label="Página anterior">
           ← Anterior
         </button>
         <span class="pagination-count" aria-live="polite">
           <span data-current>1</span> <span class="pagination-sep">/</span> {displayTotalPages}
         </span>
-        <button type="button" class="pagination-btn" data-action="next" aria-label="Próxima página">
+        <button type="button" class="btn-neu btn-sm" data-action="next" aria-label="Próxima página">
           Próximo →
         </button>
       </nav>

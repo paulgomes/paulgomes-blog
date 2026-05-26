@@ -15,17 +15,17 @@ import '../../styles/painel.css';
       <label for="brandsTitle">Título da seção</label>
       <div class="brands-title-row">
         <input type="text" id="brandsTitle" maxlength="120" placeholder="Marcas que passaram por aqui" />
-        <button class="painel-btn-ghost" id="btnSaveTitle" type="button">Salvar título</button>
+        <button class="btn-neu btn-md" id="btnSaveTitle" type="button">Salvar título</button>
       </div>
       <small id="titleHint" class="brands-hint"></small>
     </div>
 
     <!-- Toolbar -->
     <div class="brands-toolbar">
-      <button class="painel-btn-primary" id="btnAddBrand" type="button">+ Nova marca</button>
+      <button class="btn-neu btn-md btn-primary" id="btnAddBrand" type="button">+ Nova marca</button>
       <div class="brands-toolbar-right">
         <span id="syncStatus" class="brands-sync-status">—</span>
-        <button class="painel-btn-primary" id="btnSync" type="button">Publicar no site</button>
+        <button class="btn-neu btn-md btn-primary" id="btnSync" type="button">Publicar no site</button>
       </div>
     </div>
 
@@ -59,8 +59,8 @@ import '../../styles/painel.css';
           </div>
           <div class="brand-logo-actions">
             <input type="file" id="brandLogoFile" accept="image/svg+xml,image/png,image/webp,image/jpeg" hidden />
-            <button type="button" class="painel-btn-ghost" id="btnChooseBrandLogo">Escolher arquivo</button>
-            <button type="button" class="painel-btn-ghost" id="btnRemoveBrandLogo" hidden>Remover</button>
+            <button type="button" class="btn-neu btn-sm" id="btnChooseBrandLogo">Escolher arquivo</button>
+            <button type="button" class="btn-neu btn-sm btn-danger" id="btnRemoveBrandLogo" hidden>Remover</button>
           </div>
           <input type="hidden" id="brandLogoUrl" value="" />
           <details class="brand-logo-url-toggle">
@@ -71,8 +71,8 @@ import '../../styles/painel.css';
         <small>Se preenchido, o logo aparece no marquee no lugar do nome. PNG/SVG/WEBP recomendado, fundo transparente.</small>
       </div>
       <div class="menus-modal-actions">
-        <button class="painel-btn-ghost" id="btnCancelBrand" type="button">Cancelar</button>
-        <button class="painel-btn-primary" id="btnConfirmBrand" type="button">Salvar</button>
+        <button class="btn-neu btn-md" id="btnCancelBrand" type="button">Cancelar</button>
+        <button class="btn-neu btn-md btn-primary" id="btnConfirmBrand" type="button">Salvar</button>
       </div>
     </div>
   </div>
@@ -201,8 +201,8 @@ import '../../styles/painel.css';
               : `<span class="brand-url-empty">sem link</span>`}
           </div>
           <div class="brand-actions">
-            <button class="painel-btn-ghost" data-action="edit" data-id="${b.id}" type="button">Editar</button>
-            <button class="painel-btn-ghost brand-del" data-action="delete" data-id="${b.id}" type="button">Excluir</button>
+            <button class="btn-neu btn-sm" data-action="edit" data-id="${b.id}" type="button">Editar</button>
+            <button class="btn-neu btn-sm btn-danger" data-action="delete" data-id="${b.id}" type="button">Excluir</button>
           </div>
         </div>
       `).join('');

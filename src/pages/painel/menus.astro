@@ -22,7 +22,7 @@ import '../../styles/painel.css';
 
   <div class="menus-toolbar">
     <div class="menus-toolbar-left">
-      <button class="painel-btn-primary" id="btnAddItem" type="button">+ Adicionar item</button>
+      <button class="btn-neu btn-md btn-primary" id="btnAddItem" type="button">+ Adicionar item</button>
       <span class="menus-help">Clique num item pra editar. Submenus aparecem indentados.</span>
     </div>
     <span id="menuSyncIndicator" class="menus-sync-indicator">Cada salvar publica no site</span>
@@ -54,8 +54,8 @@ import '../../styles/painel.css';
         </select>
       </div>
       <div class="menus-modal-actions">
-        <button class="painel-btn-ghost" id="btnCancelCreate" type="button">Cancelar</button>
-        <button class="painel-btn-primary" id="btnConfirmCreate" type="button">Criar</button>
+        <button class="btn-neu btn-md" id="btnCancelCreate" type="button">Cancelar</button>
+        <button class="btn-neu btn-md btn-primary" id="btnConfirmCreate" type="button">Criar</button>
       </div>
     </div>
   </div>
@@ -171,7 +171,7 @@ import '../../styles/painel.css';
             <span class="menus-item-label">${escapeHtml(item.label)}</span>
             <span class="menus-item-url">${escapeHtml(item.url)}</span>
             ${newTabBadge} ${hiddenBadge}
-            <button class="menus-item-edit-btn" type="button">${isExpanded ? 'Fechar' : 'Editar'}</button>
+            <button class="btn-neu btn-sm" type="button">${isExpanded ? 'Fechar' : 'Editar'}</button>
             <button class="menus-item-delete-btn" type="button" data-delete="${item.id}" aria-label="Excluir">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
             </button>
@@ -204,8 +204,8 @@ import '../../styles/painel.css';
             </label>
           </div>
           <div class="menus-item-actions">
-            <button class="painel-btn-ghost" type="button" data-cancel="${item.id}">Cancelar</button>
-            <button class="painel-btn-primary" type="button" data-save="${item.id}">Salvar</button>
+            <button class="btn-neu btn-sm" type="button" data-cancel="${item.id}">Cancelar</button>
+            <button class="btn-neu btn-sm btn-primary" type="button" data-save="${item.id}">Salvar</button>
           </div>
         </div>
       `;

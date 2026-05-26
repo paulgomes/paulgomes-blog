@@ -16,7 +16,7 @@ import '../../styles/painel.css';
 
   <div class="cats-toolbar">
     <div class="cats-toolbar-left">
-      <button class="painel-btn-primary" id="btnAddCat" type="button">+ Nova categoria</button>
+      <button class="btn-neu btn-md btn-primary" id="btnAddCat" type="button">+ Nova categoria</button>
     </div>
     <span id="catsSyncIndicator" class="menus-sync-indicator">Cada salvar publica no site</span>
   </div>
@@ -42,8 +42,8 @@ import '../../styles/painel.css';
         <small>O slug será gerado automaticamente.</small>
       </div>
       <div class="menus-modal-actions">
-        <button class="painel-btn-ghost" id="btnCancelCreate" type="button">Cancelar</button>
-        <button class="painel-btn-primary" id="btnConfirmCreate" type="button">Criar</button>
+        <button class="btn-neu btn-md" id="btnCancelCreate" type="button">Cancelar</button>
+        <button class="btn-neu btn-md btn-primary" id="btnConfirmCreate" type="button">Criar</button>
       </div>
     </div>
   </div>
@@ -59,8 +59,8 @@ import '../../styles/painel.css';
       </div>
       <div id="editCatWarn" class="cats-rename-warn" hidden></div>
       <div class="menus-modal-actions">
-        <button class="painel-btn-ghost" id="btnCancelEdit" type="button">Cancelar</button>
-        <button class="painel-btn-primary" id="btnConfirmEdit" type="button">Salvar</button>
+        <button class="btn-neu btn-md" id="btnCancelEdit" type="button">Cancelar</button>
+        <button class="btn-neu btn-md btn-primary" id="btnConfirmEdit" type="button">Salvar</button>
       </div>
     </div>
   </div>
@@ -167,8 +167,8 @@ import '../../styles/painel.css';
           <span class="cat-row__count">${c.count_posts} ${c.count_posts === 1 ? 'post' : 'posts'}</span>
           <div class="cat-row__actions">
             <a href="/categoria/${encodeURIComponent(c.slug)}/" target="_blank" rel="noopener" class="cat-row__btn cat-row__btn--ghost" title="Ver no blog">↗</a>
-            <button class="cat-row__btn" data-edit="${escapeHtml(c.id)}" type="button">Editar</button>
-            <button class="cat-row__btn cat-row__btn--danger" data-delete="${escapeHtml(c.id)}" data-count="${c.count_posts}" data-name="${escapeHtml(c.name)}" type="button">Excluir</button>
+            <button class="btn-neu btn-sm" data-edit="${escapeHtml(c.id)}" type="button">Editar</button>
+            <button class="btn-neu btn-sm btn-danger" data-delete="${escapeHtml(c.id)}" data-count="${c.count_posts}" data-name="${escapeHtml(c.name)}" type="button">Excluir</button>
           </div>
         </div>
       `).join('');
