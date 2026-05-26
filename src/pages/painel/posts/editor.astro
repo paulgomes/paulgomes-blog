@@ -89,6 +89,17 @@ const currentNav = isEditing ? 'posts' : 'new';
         </div>
       </section>
 
+      <section class="side-section" id="publishedAtBlock" hidden>
+        <label class="side-label" for="publishedAtInput">Data de publicação</label>
+        <div class="date-row">
+          <input type="datetime-local" id="publishedAtInput" class="side-input date-input" />
+          <button type="button" id="publishedAtNow" class="btn-link" title="Usar agora">Agora</button>
+        </div>
+        <p class="field-hint" id="publishedAtHint">
+          Datas no passado/presente. Futuro será suportado em breve.
+        </p>
+      </section>
+
       <section class="side-section" id="featuredBlock" hidden>
         <label class="side-label">Destaque</label>
         <div class="featured-toggle">
@@ -196,6 +207,12 @@ const currentNav = isEditing ? 'posts' : 'new';
     const $isFeatured = document.getElementById('isFeatured') as HTMLInputElement;
     const $featuredHint = document.getElementById('featuredHint') as HTMLElement;
 
+    // === Data de publicacao — so aparece em modo post publicado ===
+    const $publishedAtBlock = document.getElementById('publishedAtBlock') as HTMLElement;
+    const $publishedAtInput = document.getElementById('publishedAtInput') as HTMLInputElement;
+    const $publishedAtNowBtn = document.getElementById('publishedAtNow') as HTMLButtonElement;
+    const $publishedAtHint = document.getElementById('publishedAtHint') as HTMLElement;
+
     // ===== Setup modo post =====
     if (mode === 'post') {
       $banner.style.display = 'flex';
@@ -207,6 +224,7 @@ const currentNav = isEditing ? 'posts' : 'new';
       $category.placeholder = 'IA, SEO, Branding';
       $deleteBtn.style.display = 'inline-flex';
       $featuredBlock.hidden = false;
+      $publishedAtBlock.hidden = false;
     }
 
     // ===== Ponte com o Editor =====
@@ -361,6 +379,42 @@ const currentNav = isEditing ? 'posts' : 'new';
       return s.split(',').map((t) => t.trim()).filter(Boolean);
     }
 
+    // ===== Data de publicacao: helpers + validador =====
+    // datetime-local opera em horario LOCAL do navegador (sem timezone).
+    // tsToLocalInput/localInputToTs usam getHours()/new Date() pra preservar local.
+    function tsToLocalInput(ts: number | string | null | undefined): string {
+      if (!ts) return '';
+      const d = new Date(typeof ts === 'string' ? Number(ts) || ts : ts);
+      if (Number.isNaN(d.getTime())) return '';
+      const pad = (n: number) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+    function localInputToTs(value: string): number | null {
+      if (!value) return null;
+      const ts = new Date(value).getTime();
+      return Number.isFinite(ts) ? ts : null;
+    }
+    function validatePublishedAt(value: string): { ok: boolean; msg?: string } {
+      if (!value) return { ok: true };
+      const ts = localInputToTs(value);
+      if (ts === null) return { ok: false, msg: 'Data inválida' };
+      // Tolerancia de 60s pro caso de "agora" ser clicado entre tick e validacao
+      if (ts > Date.now() + 60_000) {
+        return { ok: false, msg: 'Datas futuras serão suportadas em breve (agendamento).' };
+      }
+      return { ok: true };
+    }
+    function refreshPublishedAtHint() {
+      const v = validatePublishedAt($publishedAtInput.value);
+      if (v.ok) {
+        $publishedAtHint.textContent = 'Datas no passado/presente. Futuro será suportado em breve.';
+        $publishedAtHint.classList.remove('warn');
+      } else {
+        $publishedAtHint.textContent = `⚠ ${v.msg}`;
+        $publishedAtHint.classList.add('warn');
+      }
+    }
+
     // ===== Load =====
     async function loadDraft() {
       if (!initialId) return;
@@ -412,6 +466,8 @@ const currentNav = isEditing ? 'posts' : 'new';
       applyHeroValue(post.hero_image_url || '');
       currentContent = post.content_md || '';
       $isFeatured.checked = Boolean(post.is_featured);
+      $publishedAtInput.value = tsToLocalInput(post.published_at);
+      refreshPublishedAtHint();
       setEditorContent(currentContent);
       updateSeoPreview();
       updateSeoAnalysis();
@@ -459,7 +515,7 @@ const currentNav = isEditing ? 'posts' : 'new';
     }
 
     function buildPostPayload() {
-      return {
+      const payload: Record<string, any> = {
         title: $title.value,
         description: $description.value,
         hero_image_url: $heroImage.value,
@@ -469,6 +525,14 @@ const currentNav = isEditing ? 'posts' : 'new';
         meta_title: $metaTitle.value,
         meta_description: $metaDescription.value,
       };
+      // Soft-fail: se published_at invalido (futuro), nao envia — hint visual avisa.
+      // Resto do post continua salvando normal.
+      const pubValidation = validatePublishedAt($publishedAtInput.value);
+      if (pubValidation.ok) {
+        const ts = localInputToTs($publishedAtInput.value);
+        if (ts !== null) payload.published_at = ts;
+      }
+      return payload;
     }
 
     function hasAnyContent(): boolean {
@@ -661,6 +725,17 @@ const currentNav = isEditing ? 'posts' : 'new';
     $heroImageUrl?.addEventListener('input', (e) => {
       const v = (e.target as HTMLInputElement).value;
       applyHeroValue(v, { schedule: true });
+    });
+
+    // ===== Data de publicacao: listeners =====
+    $publishedAtNowBtn?.addEventListener('click', () => {
+      $publishedAtInput.value = tsToLocalInput(Date.now());
+      refreshPublishedAtHint();
+      scheduleAutoSave();
+    });
+    $publishedAtInput?.addEventListener('input', () => {
+      refreshPublishedAtHint();
+      scheduleAutoSave();
     });
 
     // ===== Salvar = Publicar (post mode only) =====
@@ -1068,6 +1143,44 @@ const currentNav = isEditing ? 'posts' : 'new';
       letter-spacing: 0.05em;
       color: var(--painel-text-secondary);
       margin: 0 0 12px;
+    }
+
+    /* === DATA DE PUBLICACAO === */
+    .date-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .date-input {
+      flex: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .btn-link {
+      padding: 6px 10px;
+      background: transparent;
+      border: 1px solid var(--painel-border);
+      border-radius: 6px;
+      color: var(--painel-text-secondary);
+      font-family: var(--painel-font);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .btn-link:hover {
+      background: var(--painel-bg);
+      color: var(--painel-text-primary);
+      border-color: var(--painel-border-strong);
+    }
+    .field-hint {
+      margin: 6px 0 0;
+      font-size: 12px;
+      color: var(--painel-text-secondary);
+      line-height: 1.4;
+      transition: color .15s;
+    }
+    .field-hint.warn {
+      color: var(--painel-warning);
     }
 
     /* === FEATURED TOGGLE === */

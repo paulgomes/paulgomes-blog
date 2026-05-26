@@ -59,6 +59,19 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
     values.push(typeof body.categorias === 'string' ? body.categorias : JSON.stringify(body.categorias));
   }
 
+  // published_at: aceita timestamp ms; passado/presente apenas (futuro = fase 2).
+  if (body.published_at !== undefined && body.published_at !== null) {
+    const v = Number(body.published_at);
+    if (!Number.isFinite(v) || v <= 0) {
+      return Response.json({ error: 'published_at inválido' }, { status: 400 });
+    }
+    if (v > now + 60_000) {
+      return Response.json({ error: 'published_at no futuro ainda não é suportado (fase 2)' }, { status: 400 });
+    }
+    sets.push('published_at = ?');
+    values.push(v);
+  }
+
   if (sets.length === 0) {
     return Response.json({ error: 'Nenhum campo pra atualizar' }, { status: 400 });
   }
