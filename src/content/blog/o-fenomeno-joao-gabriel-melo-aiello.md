@@ -4,6 +4,7 @@ description: ""
 pubDate: 2026-05-27
 heroImage: "https://media.paulgomes.com.br/2026/05/58c6c1e3-b182-44ef-b933-3b11b9e038ad.png"
 heroImageAlt: "O fenômeno João Gabriel Melo Aiello"
+featured: true
 focusKeyword: "aiello"
 metaTitle: "O fenômeno João Gabriel Melo Aiello"
 metaDescription: "A figura específica vai desaparecer ou se reinventar, como acontece com a maioria desses personagens virais. "
