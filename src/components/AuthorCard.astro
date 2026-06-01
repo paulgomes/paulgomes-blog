@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { AUTHOR_CARD } from '../consts';
-import authorPhoto from '../assets/brand/paul-avatar.png';
+import authorPhoto from '../assets/brand/paul-ai.jpeg';
 
 const ICONS: Record<string, string> = {
   linkedin:
@@ -100,6 +100,7 @@ const ARIA: Record<string, string> = {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: 38% center; /* prioriza o rosto (lado esquerdo da imagem) */
     display: block;
   }
 

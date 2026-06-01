@@ -23,10 +23,10 @@ export const AUTHOR_CARD = {
   location: 'Sorocaba · Brasil',
   bio: 'Fundador e CEO do Grupo WYS. Escrevo sobre IA, branding e o futuro dos negócios.',
   socials: [
-    { platform: 'linkedin', url: SOCIAL.linkedin, count: '—', label: 'Seguidores' },
-    { platform: 'instagram', url: SOCIAL.instagram, count: '—', label: 'Seguidores' },
-    { platform: 'youtube', url: SOCIAL.youtube, count: '—', label: 'Inscritos' },
-    { platform: 'x', url: SOCIAL.x, count: '—', label: 'Seguidores' },
+    { platform: 'linkedin', url: SOCIAL.linkedin, count: '20k', label: 'Seguidores' },
+    { platform: 'instagram', url: SOCIAL.instagram, count: '57,3k', label: 'Seguidores' },
+    { platform: 'youtube', url: SOCIAL.youtube, count: '1,48k', label: 'Inscritos' },
+    { platform: 'x', url: SOCIAL.x, count: '185', label: 'Seguidores' },
   ],
 } as const;
 
