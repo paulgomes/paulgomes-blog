@@ -3,7 +3,7 @@
 // O resto do arquivo (SLUG_TO_CATEGORIA derivado) eh preservado pelo sync.
 
 // <CATEGORIAS_BEGIN>
-export const CATEGORIAS = ['IA', 'GEO', 'SEO', 'Branding', 'Tecnologia', 'Negócios', 'Em Alta', 'ASI', 'Cybersecurity'] as const;
+export const CATEGORIAS = ['IA', 'GEO', 'SEO', 'Branding', 'Tecnologia', 'Negócios', 'Em Alta', 'ASI', 'Cybersecurity', 'Podcasts'] as const;
 export type Categoria = typeof CATEGORIAS[number];
 
 export const CATEGORIA_SLUGS: Record<Categoria, string> = {
@@ -16,6 +16,7 @@ export const CATEGORIA_SLUGS: Record<Categoria, string> = {
   'Em Alta': 'em-alta',
   'ASI': 'asi',
   'Cybersecurity': 'cybersecurity',
+  'Podcasts': 'podcasts',
 };
 
 export const CATEGORIA_COLORS: Record<Categoria, { bg: string; fg: string }> = {
@@ -28,6 +29,7 @@ export const CATEGORIA_COLORS: Record<Categoria, { bg: string; fg: string }> = {
   'Em Alta': { bg: '#6b7280', fg: '#ffffff' },
   'ASI': { bg: '#374151', fg: '#ffffff' },
   'Cybersecurity': { bg: '#0103F9', fg: '#ffffff' },
+  'Podcasts': { bg: '#0102CC', fg: '#ffffff' },
 };
 // <CATEGORIAS_END>
 
