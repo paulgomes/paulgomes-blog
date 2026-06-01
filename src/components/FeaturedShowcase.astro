@@ -1,0 +1,55 @@
+---
+import FeaturedCarousel from './FeaturedCarousel.astro';
+import AuthorCard from './AuthorCard.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+}
+
+const { posts } = Astro.props;
+---
+
+<section class="featured-showcase">
+  <div class="container-wide">
+    <div class="showcase-grid">
+      <div class="showcase-carousel">
+        <FeaturedCarousel posts={posts} />
+      </div>
+      <div class="showcase-author">
+        <AuthorCard />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .featured-showcase {
+    padding: 3rem 0;
+  }
+
+  @media (min-width: 768px) {
+    .featured-showcase {
+      padding: 4rem 0;
+    }
+  }
+
+  .showcase-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  @media (min-width: 1024px) {
+    .showcase-grid {
+      grid-template-columns: minmax(0, 2.15fr) minmax(280px, 0.95fr);
+      gap: 2.5rem;
+    }
+  }
+
+  /* min-width:0 evita que o carrossel estoure o grid */
+  .showcase-carousel {
+    min-width: 0;
+  }
+</style>

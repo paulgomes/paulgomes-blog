@@ -4,17 +4,11 @@ import { requireAuth } from '../../_utils/require-auth';
 // POST /api/posts/:slug/feature
 // Body: { is_featured: boolean }
 //
-// is_featured=true:
-//   1. Desmarca featured atual (se existir e for outro post)
-//   2. Marca este post como featured
-//   3. Retorna { ok, previous: { slug, title } | null }
+// Multiplos destaques: marcar/desmarcar este post NAO afeta os demais.
+// O carrossel da home exibe todos os posts com is_featured=1.
 //
-// is_featured=false:
-//   1. Desmarca este post
-//   2. Retorna { ok }
-//
-// Atomicidade: D1 batch executa o par de UPDATEs em sequencia atomica —
-// nunca ficamos com 0 featured intermediarios visiveis.
+// is_featured=true:  marca este post como featured -> { ok }
+// is_featured=false: desmarca este post           -> { ok }
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }) => {
   const auth = await requireAuth(request, env);
@@ -50,35 +44,17 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }
       );
     }
 
-    let previous: { slug: string; title: string } | null = null;
     const now = Date.now();
 
-    if (isFeatured === 1) {
-      const current = await env.DB
-        .prepare(`SELECT slug, title FROM posts_meta WHERE is_featured = 1 AND slug != ? LIMIT 1`)
-        .bind(slug)
-        .first<{ slug: string; title: string }>();
-
-      if (current) {
-        previous = { slug: current.slug, title: current.title };
-      }
-
-      await env.DB.batch([
-        env.DB.prepare(`UPDATE posts_meta SET is_featured = 0, updated_at = ? WHERE is_featured = 1 AND slug != ?`).bind(now, slug),
-        env.DB.prepare(`UPDATE posts_meta SET is_featured = 1, updated_at = ? WHERE slug = ?`).bind(now, slug),
-      ]);
-    } else {
-      await env.DB
-        .prepare(`UPDATE posts_meta SET is_featured = 0, updated_at = ? WHERE slug = ?`)
-        .bind(now, slug)
-        .run();
-    }
+    await env.DB
+      .prepare(`UPDATE posts_meta SET is_featured = ?, updated_at = ? WHERE slug = ?`)
+      .bind(isFeatured, now, slug)
+      .run();
 
     return Response.json({
       ok: true,
       slug,
       is_featured: isFeatured === 1,
-      previous,
     });
   } catch (err: any) {
     console.error('Feature toggle error:', err);

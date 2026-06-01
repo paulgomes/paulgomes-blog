@@ -125,7 +125,7 @@ const currentNav = isEditing ? 'posts' : 'new';
           </label>
         </div>
         <small id="featuredHint" class="featured-hint">
-          Apenas 1 post pode estar em destaque por vez.
+          Vários posts podem ficar em destaque no carrossel da home.
         </small>
       </section>
 
@@ -512,23 +512,23 @@ const currentNav = isEditing ? 'posts' : 'new';
     async function updateFeaturedHint() {
       if (!$featuredHint) return;
       if ($isFeatured.checked) {
-        $featuredHint.textContent = '★ Este é o post em destaque na home.';
+        $featuredHint.textContent = '★ Este post aparece no carrossel de destaques da home.';
         $featuredHint.style.color = 'var(--painel-success)';
         return;
       }
       try {
         const res = await fetch('/api/posts/featured');
         const data = await res.json();
-        if (!data.featured) {
+        const featured = Array.isArray(data.featured) ? data.featured : [];
+        const others = featured.filter((f: any) => f.slug !== postSlug);
+        if (others.length === 0) {
           $featuredHint.textContent = 'Nenhum post em destaque no momento.';
-        } else if (data.featured.slug !== postSlug) {
-          $featuredHint.textContent = `Atualmente em destaque: "${data.featured.title}"`;
         } else {
-          $featuredHint.textContent = 'Apenas 1 post pode estar em destaque por vez.';
+          $featuredHint.textContent = `${others.length} post(s) em destaque no carrossel.`;
         }
         $featuredHint.style.color = 'var(--painel-text-secondary)';
       } catch {
-        $featuredHint.textContent = 'Apenas 1 post pode estar em destaque por vez.';
+        $featuredHint.textContent = 'Vários posts podem ficar em destaque no carrossel da home.';
         $featuredHint.style.color = 'var(--painel-text-secondary)';
       }
     }
@@ -892,7 +892,7 @@ const currentNav = isEditing ? 'posts' : 'new';
 
     // === Featured toggle handler ===
     // Click no checkbox dispara API imediatamente (independe do botao Salvar).
-    // Se ja existir outro featured: confirmAction "Trocar post em destaque?" antes.
+    // Multiplos destaques: marcar/desmarcar este post nao afeta os demais.
     $isFeatured?.addEventListener('change', async (e) => {
       const cb = e.target as HTMLInputElement;
       const willFeature = cb.checked;
@@ -900,27 +900,6 @@ const currentNav = isEditing ? 'posts' : 'new';
       if (!postSlug || mode !== 'post') {
         cb.checked = false;
         return;
-      }
-
-      if (willFeature) {
-        try {
-          const checkRes = await fetch('/api/posts/featured');
-          const checkData = await checkRes.json();
-          if (checkData.featured && checkData.featured.slug !== postSlug) {
-            const confirmed = await window.confirmAction!({
-              title: 'Trocar post em destaque?',
-              message: `O post "${checkData.featured.title}" perderá o destaque. Continuar?`,
-              confirmLabel: 'Sim, destacar este',
-              cancelLabel: 'Cancelar',
-            });
-            if (!confirmed) {
-              cb.checked = false;
-              return;
-            }
-          }
-        } catch (err) {
-          console.warn('Erro ao buscar featured atual', err);
-        }
       }
 
       cb.disabled = true;
@@ -947,22 +926,8 @@ const currentNav = isEditing ? 'posts' : 'new';
           return;
         }
 
-        // Sync do previous (se houver) — remove "featured: true" do .md antigo.
-        // Falha aqui nao bloqueia: o novo featured ja chegou no Git.
-        if (data.previous && data.previous.slug) {
-          try {
-            await fetch(`/api/posts/${encodeURIComponent(data.previous.slug)}/sync`, { method: 'POST' });
-          } catch (prevErr) {
-            console.warn('Sync do post anterior falhou:', prevErr);
-          }
-        }
-
         if (willFeature) {
-          if (data.previous) {
-            window.toast?.(`★ Destaque alterado. "${data.previous.title}" perdeu o destaque. Rebuild em ~2 min.`, 'success', 6000);
-          } else {
-            window.toast?.('★ Post destacado! Rebuild em ~2 min.', 'success', 5000);
-          }
+          window.toast?.('★ Post adicionado ao carrossel de destaques! Rebuild em ~2 min.', 'success', 5000);
         } else {
           window.toast?.('Destaque removido. Rebuild em ~2 min.', 'info', 5000);
         }

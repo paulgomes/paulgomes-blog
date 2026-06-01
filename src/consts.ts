@@ -11,8 +11,24 @@ export const SOCIAL = {
   linkedin: 'https://www.linkedin.com/in/inpaulgomes/',
   instagram: 'https://www.instagram.com/paulgomes/',
   youtube: 'https://www.youtube.com/@paulgomesx',
+  x: 'https://x.com/paullgomes',
   email: 'mailto:paulgomes@wys.com.br',
 };
+
+// Card do autor exibido ao lado do carrossel de destaques na home.
+// PLACEHOLDER: troque `count` pelos números reais de seguidores quando tiver.
+export const AUTHOR_CARD = {
+  greeting: 'Bem-vindo ao blog',
+  name: SITE_AUTHOR,
+  location: 'Sorocaba · Brasil',
+  bio: 'Fundador e CEO do Grupo WYS. Escrevo sobre IA, branding e o futuro dos negócios.',
+  socials: [
+    { platform: 'linkedin', url: SOCIAL.linkedin, count: '—', label: 'Seguidores' },
+    { platform: 'instagram', url: SOCIAL.instagram, count: '—', label: 'Seguidores' },
+    { platform: 'youtube', url: SOCIAL.youtube, count: '—', label: 'Inscritos' },
+    { platform: 'x', url: SOCIAL.x, count: '—', label: 'Seguidores' },
+  ],
+} as const;
 
 export const FEATURED_THEME = {
   label: 'Tecnologia & IA',

@@ -1,0 +1,152 @@
+---
+import { CATEGORIAS, CATEGORIA_SLUGS } from '../lib/categorias';
+
+const items = CATEGORIAS.map((c) => ({
+  label: c,
+  href: `/categoria/${CATEGORIA_SLUGS[c]}/`,
+}));
+---
+
+<nav class="cat-bar" aria-label="Categorias">
+  <div class="container-wide cat-bar-inner">
+    <button type="button" class="cat-arrow cat-arrow-prev" data-prev aria-label="Categorias anteriores" hidden>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M15 18l-6-6 6-6"></path>
+      </svg>
+    </button>
+
+    <ul class="cat-track" data-track>
+      <li><a href="/blog" class="cat-pill">Todos</a></li>
+      {items.map((item) => (
+        <li><a href={item.href} class="cat-pill">{item.label}</a></li>
+      ))}
+    </ul>
+
+    <button type="button" class="cat-arrow cat-arrow-next" data-next aria-label="Mais categorias">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 18l6-6-6-6"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<style>
+  .cat-bar {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .cat-bar-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .cat-track {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    flex: 1;
+    min-width: 0;
+  }
+
+  .cat-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cat-pill {
+    display: inline-block;
+    white-space: nowrap;
+    padding: 0.6rem 1.25rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .cat-pill:hover {
+    border-color: #0103F9;
+    color: #0103F9;
+  }
+
+  .cat-arrow {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .cat-arrow:hover {
+    border-color: #0103F9;
+    color: #0103F9;
+  }
+
+  .cat-arrow[hidden] {
+    display: none;
+  }
+
+  :global(.dark) .cat-pill,
+  :global(.dark) .cat-arrow {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  :global(.dark) .cat-pill:hover,
+  :global(.dark) .cat-arrow:hover {
+    border-color: #3d40ff;
+    color: #3d40ff;
+  }
+</style>
+
+<script>
+  (function () {
+    const bars = document.querySelectorAll<HTMLElement>('.cat-bar');
+    bars.forEach((bar) => {
+      const track = bar.querySelector<HTMLElement>('[data-track]');
+      const prev = bar.querySelector<HTMLButtonElement>('[data-prev]');
+      const next = bar.querySelector<HTMLButtonElement>('[data-next]');
+      if (!track) return;
+
+      function updateArrows() {
+        if (!track) return;
+        const maxScroll = track.scrollWidth - track.clientWidth;
+        const atStart = track.scrollLeft <= 1;
+        const atEnd = track.scrollLeft >= maxScroll - 1;
+        const overflowing = maxScroll > 2;
+        if (prev) prev.hidden = !overflowing || atStart;
+        if (next) next.hidden = !overflowing || atEnd;
+      }
+
+      function scrollByAmount(dir: number) {
+        if (!track) return;
+        track.scrollBy({ left: dir * Math.max(track.clientWidth * 0.7, 200), behavior: 'smooth' });
+      }
+
+      prev?.addEventListener('click', () => scrollByAmount(-1));
+      next?.addEventListener('click', () => scrollByAmount(1));
+      track.addEventListener('scroll', updateArrows, { passive: true });
+      window.addEventListener('resize', updateArrows);
+      updateArrows();
+    });
+  })();
+</script>

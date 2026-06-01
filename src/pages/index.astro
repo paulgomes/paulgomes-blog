@@ -3,7 +3,8 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import AIPromptBar from '../components/AIPromptBar.astro';
 import Footer from '../components/Footer.astro';
-import FeaturedPost from '../components/FeaturedPost.astro';
+import FeaturedShowcase from '../components/FeaturedShowcase.astro';
+import CategoryBar from '../components/CategoryBar.astro';
 import TrendingPosts from '../components/TrendingPosts.astro';
 import ThemePosts from '../components/ThemePosts.astro';
 import AuthorBlock from '../components/AuthorBlock.astro';
@@ -26,14 +27,17 @@ const allPosts = (await getCollection('blog')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
-// Prioridade: post explicitamente marcado como featured no painel ->
-// fallback pro mais recente com hero -> ultimo recurso primeiro overall
-const featured =
-  allPosts.find((p) => p.data.featured === true) ||
-  allPosts.find((p) => p.data.heroImage) ||
-  allPosts[0];
-const latest = allPosts.filter((p) => p.id !== featured?.id).slice(0, 6);
-const latestNews = allPosts.filter((p) => p.id !== featured?.id).slice(0, 8);
+// Destaques: TODOS os posts marcados como featured no painel (ordem: mais recente
+// primeiro, herdada do sort acima). Fallback pro mais recente com hero -> primeiro
+// overall, garantindo que o carrossel sempre tenha ao menos 1 slide.
+const featuredPosts = allPosts.filter((p) => p.data.featured === true);
+const carouselPosts =
+  featuredPosts.length > 0
+    ? featuredPosts
+    : [allPosts.find((p) => p.data.heroImage) || allPosts[0]].filter(Boolean);
+const featuredIds = new Set(carouselPosts.map((p) => p!.id));
+const latest = allPosts.filter((p) => !featuredIds.has(p.id)).slice(0, 6);
+const latestNews = allPosts.filter((p) => !featuredIds.has(p.id)).slice(0, 8);
 const totalPosts = allPosts.length;
 ---
 
@@ -62,20 +66,21 @@ const totalPosts = allPosts.length;
         <AIPromptBar />
       </div>
 
-      <!-- MARCAS QUE PASSARAM POR AQUI -->
-      <BrandsMarquee />
+      <!-- BARRA DE CATEGORIAS (pills roláveis com setas) -->
+      <CategoryBar />
 
-      <!-- EM DESTAQUE (banner com cantos arredondados) -->
-      {featured && (
-        <section style="border-color: var(--color-border)">
-          <FeaturedPost post={featured} />
-        </section>
+      <!-- EM DESTAQUE (carrossel + card do autor) -->
+      {carouselPosts.length > 0 && (
+        <FeaturedShowcase posts={carouselPosts} />
       )}
 
       <!-- EM ALTA (trending posts) -->
       {latest.length > 0 && (
         <TrendingPosts posts={latest.slice(0, 4)} title="Em alta" />
       )}
+
+      <!-- MARCAS QUE PASSARAM POR AQUI -->
+      <BrandsMarquee />
 
       <!-- ÚLTIMAS NOTÍCIAS (8 posts visíveis + paginação que reflete arquivo total) -->
       {latestNews.length > 0 && (
