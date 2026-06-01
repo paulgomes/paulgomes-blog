@@ -69,12 +69,12 @@ const multiple = slides.length > 1;
   {multiple && (
     <>
       <button type="button" class="nav nav-prev" data-prev aria-label="Post anterior">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M15 18l-6-6 6-6"></path>
         </svg>
       </button>
       <button type="button" class="nav nav-next" data-next aria-label="Próximo post">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M9 18l6-6-6-6"></path>
         </svg>
       </button>
@@ -227,51 +227,49 @@ const multiple = slides.length > 1;
     overflow: hidden;
   }
 
-  /* === SETAS (aparecem no hover do carrossel) === */
+  /* === SETAS — slim, deslizam a partir da borda do post no hover === */
   .nav {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
     z-index: 4;
-    width: 52px;
-    height: 52px;
+    width: 38px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     cursor: pointer;
+    background: #fff;
+    color: #555;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
     opacity: 0;
-    transition: opacity 0.3s ease, transform 0.2s ease, background-color 0.2s ease;
+    transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+    will-change: transform, opacity;
   }
 
+  /* Estado escondido: encolhidas contra a borda (esquerda/direita) */
   .nav-prev {
-    left: 1.25rem;
-    background: #fff;
-    color: #111;
+    left: 0.85rem;
+    transform: translate(-150%, -50%);
   }
 
   .nav-next {
-    right: 1.25rem;
-    background: #111;
-    color: #fff;
+    right: 0.85rem;
+    transform: translate(150%, -50%);
   }
 
-  .carousel:hover .nav,
-  .carousel:focus-within .nav {
+  /* Hover do carrossel: deslizam pra dentro */
+  .carousel:hover .nav-prev,
+  .carousel:focus-within .nav-prev,
+  .carousel:hover .nav-next,
+  .carousel:focus-within .nav-next {
     opacity: 1;
+    transform: translate(0, -50%);
   }
 
   .nav:hover {
-    transform: translateY(-50%) scale(1.06);
-  }
-
-  .nav-prev:hover {
-    background: #f0f0f0;
-  }
-
-  .nav-next:hover {
-    background: #0103f9;
+    color: #0103f9;
   }
 
   @media (max-width: 768px) {
@@ -282,14 +280,21 @@ const multiple = slides.length > 1;
     .slide-content {
       padding: 1.5rem 1.5rem 1.75rem;
     }
-    /* Touch: setas sempre visíveis */
+    /* Touch (sem hover): setas sempre visíveis e já posicionadas */
     .nav {
-      opacity: 1;
-      width: 44px;
-      height: 44px;
+      width: 36px;
+      height: 56px;
     }
-    .nav-prev { left: 0.75rem; }
-    .nav-next { right: 0.75rem; }
+    .nav-prev {
+      left: 0.6rem;
+      opacity: 1;
+      transform: translate(0, -50%);
+    }
+    .nav-next {
+      right: 0.6rem;
+      opacity: 1;
+      transform: translate(0, -50%);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
