@@ -19,7 +19,10 @@ function readingTime(body: string | undefined): number {
 const slides = posts.map((post) => ({
   post,
   href: `/${post.id}/`,
-  categoria: post.data.categorias?.[0] ?? null,
+  // Primeira categoria do post; fallback "Insight" pra o badge nunca ficar vazio
+  // (espelha o tempo de leitura do outro lado). Categorias reais aparecem
+  // automaticamente quando atribuídas pelo painel.
+  categoria: post.data.categorias?.[0] ?? 'Insight',
   minutes: readingTime(post.body),
 }));
 
@@ -44,7 +47,7 @@ const multiple = slides.length > 1;
 
           <div class="slide-overlay" aria-hidden="true"></div>
 
-          {categoria && <span class="slide-badge">{categoria}</span>}
+          <span class="slide-badge">{categoria}</span>
 
           <span class="slide-readtime">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
