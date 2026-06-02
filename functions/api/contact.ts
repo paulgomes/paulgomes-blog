@@ -23,7 +23,7 @@ const CONTROL_ALL = new RegExp('[\\x00-\\x1F\\x7F]+', 'g');
 const CONTROL_KEEP_LF = new RegExp('[\\x00-\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F]+', 'g');
 
 const TO = 'paulgomes@wys.com.br';
-const FROM = { email: 'contato@paulgomes.com.br', name: 'Site Paul Gomes' };
+const FROM = { email: 'no-reply@paulgomes.com.br', name: 'Site Paul Gomes' };
 
 const LIMITS = {
   name: { min: 2, max: 100 },
