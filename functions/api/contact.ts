@@ -3,7 +3,8 @@ import type { Env } from './_utils/db';
 // POST /api/contact
 // Body: { name, email, subject?, message, company? }
 // Envia a mensagem do formulário de contato pro inbox do Paul usando o
-// Cloudflare Email Service (Email Sending — public beta) via env.EMAIL.send().
+// Cloudflare Email Service (Email Sending — public beta) via API REST.
+// (O binding send_email só existe em Workers; em Pages usamos a API REST.)
 //
 // Camadas de segurança:
 //  1. Honeypot (`company`): se vier preenchido, é bot -> finge sucesso, não envia.
@@ -111,14 +112,34 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       `Nova mensagem pelo formulário de contato\n\n` +
       `Nome: ${name}\nEmail: ${email}\n${subject ? `Assunto: ${subject}\n` : ''}\n${message}\n`;
 
-    await env.EMAIL.send({
-      to: TO,
-      from: FROM,
-      replyTo: { email, name },
-      subject: subjectLine,
-      html,
-      text,
+    // Cloudflare Email Service — API REST (binding send_email não existe em Pages).
+    if (!env.EMAIL_API_TOKEN || !env.CLOUDFLARE_ACCOUNT_ID) {
+      console.error('Contact: EMAIL_API_TOKEN/CLOUDFLARE_ACCOUNT_ID ausente.');
+      return Response.json({ error: 'Envio temporariamente indisponível.' }, { status: 503 });
+    }
+
+    const endpoint = `https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/email/sending/send`;
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.EMAIL_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        to: TO,
+        from: FROM,
+        replyTo: { email, name },
+        subject: subjectLine,
+        html,
+        text,
+      }),
     });
+
+    if (!res.ok) {
+      const detail = await res.text().catch(() => '');
+      console.error(`Email Service ${res.status}:`, detail.slice(0, 300));
+      return Response.json({ error: 'Não consegui enviar agora. Tente novamente em instantes.' }, { status: 502 });
+    }
 
     return Response.json({ message: 'Mensagem enviada ✓ Em breve retorno o contato.' });
   } catch (err: any) {

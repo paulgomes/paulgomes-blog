@@ -1,26 +1,3 @@
-// Cloudflare Email Service — Email Sending (public beta).
-// O binding `send_email` (nome "EMAIL") expõe .send() com este shape.
-// Os tipos oficiais de workers-types ainda apontam pra API antiga (EmailMessage),
-// então declaramos o contrato do beta aqui pra ter type-safety no env.EMAIL.
-export interface EmailAddress {
-  email: string;
-  name?: string;
-}
-export interface EmailSendMessage {
-  to: string | EmailAddress | (string | EmailAddress)[];
-  from: string | EmailAddress;
-  subject: string;
-  html?: string;
-  text?: string;
-  cc?: string | EmailAddress | (string | EmailAddress)[];
-  bcc?: string | EmailAddress | (string | EmailAddress)[];
-  replyTo?: string | EmailAddress;
-  headers?: Record<string, string>;
-}
-export interface EmailBinding {
-  send(message: EmailSendMessage): Promise<{ messageId: string }>;
-}
-
 export type Env = {
   DB: D1Database;
   MEDIA: R2Bucket;
@@ -33,8 +10,10 @@ export type Env = {
   RESEND_API_KEY: string;
   RESEND_AUDIENCE_ID: string;
   SITE_URL: string;
-  // Contato (Cloudflare Email Service — beta)
-  EMAIL: EmailBinding;
+  // Contato (Cloudflare Email Service — beta, via API REST).
+  // O binding send_email não é suportado em Pages, então usamos a API REST.
+  CLOUDFLARE_ACCOUNT_ID: string;
+  EMAIL_API_TOKEN: string; // secret configurado no painel das Pages
 };
 
 export function getDB(env: Env): D1Database {
