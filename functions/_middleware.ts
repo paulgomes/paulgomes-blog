@@ -6,11 +6,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   // Proteger rotas /painel (exceto /painel/login)
   const isPainelRoute = url.pathname.startsWith('/painel') && !url.pathname.startsWith('/painel/login');
-  // Proteger rotas /api (exceto auth + newsletter publica)
+  // Proteger rotas /api (exceto auth + newsletter publica + contato publico)
   const isProtectedApi = url.pathname.startsWith('/api/') &&
     !url.pathname.startsWith('/api/auth/login') &&
     !url.pathname.startsWith('/api/auth/me') &&
-    !url.pathname.startsWith('/api/newsletter/');
+    !url.pathname.startsWith('/api/newsletter/') &&
+    !url.pathname.startsWith('/api/contact');
 
   if (isPainelRoute || isProtectedApi) {
     const sessionId = getCookieSessionId(context.request);
