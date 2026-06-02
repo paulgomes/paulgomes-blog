@@ -11,6 +11,13 @@ database_id = "cde7e049-faf1-4a18-8410-df2439bf226f"
 binding = "MEDIA"
 bucket_name = "paulgomes-uploads"
 
+# Cloudflare Email Service — Email Sending (public beta).
+# Envia emails transacionais direto do Worker via env.EMAIL.send(), sem API key.
+# Pré-requisito: verificar o domínio remetente (paulgomes.com.br) no painel
+# Cloudflare → Email → Email Service. Requer plano Workers Paid.
+[[send_email]]
+name = "EMAIL"
+
 [vars]
 PUBLIC_R2_DOMAIN = "https://media.paulgomes.com.br"
 GITHUB_REPO = "paulgomes/paulgomes-blog"
