@@ -4,15 +4,34 @@ import type { Env } from './_utils/db';
 // Body: { name, email, subject?, message, company? }
 // Envia a mensagem do formulário de contato pro inbox do Paul usando o
 // Cloudflare Email Service (Email Sending — public beta) via env.EMAIL.send().
-// `company` é honeypot anti-spam: se vier preenchido, fingimos sucesso e não enviamos.
+//
+// Camadas de segurança:
+//  1. Honeypot (`company`): se vier preenchido, é bot -> finge sucesso, não envia.
+//  2. Sanitização: remove caracteres de controle (\n, \r, NUL...) dos campos de 1
+//     linha -> impede injeção de cabeçalho / display-name no e-mail.
+//  3. Escape de HTML na renderização -> <script>/inject viram texto literal (anti-XSS).
+//  4. Validação de formato e tamanho (min/max) server-side.
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const HAS_LETTER = /\p{L}/u; // exige ao menos uma letra (bloqueia "123" / "!!!" como nome)
+
+// Construídos via new RegExp pra usar só ASCII no código-fonte (sem chars de controle literais).
+// Controles C0 (0x00-0x1F) + DEL (0x7F).
+const CONTROL_ALL = new RegExp('[\\x00-\\x1F\\x7F]+', 'g');
+// Idem, mas preservando a quebra de linha \n (0x0A).
+const CONTROL_KEEP_LF = new RegExp('[\\x00-\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F]+', 'g');
 
 const TO = 'paulgomes@wys.com.br';
 const FROM = { email: 'contato@paulgomes.com.br', name: 'Site Paul Gomes' };
 
-const LIMITS = { name: 100, subject: 150, message: 5000 } as const;
+const LIMITS = {
+  name: { min: 2, max: 100 },
+  email: { max: 254 },
+  subject: { max: 150 },
+  message: { min: 10, max: 5000 },
+} as const;
 
+// Escapa HTML pra neutralizar qualquer <script>/inject ao renderizar o e-mail.
 function esc(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -21,31 +40,56 @@ function esc(s: string): string {
     .replace(/"/g, '&quot;');
 }
 
+// Campo de 1 linha (nome, e-mail, assunto): remove TODO caractere de controle
+// — incluindo \n e \r — e colapsa espaços. Impede injeção de cabeçalho.
+function cleanLine(s: string): string {
+  return s.replace(CONTROL_ALL, ' ').replace(/\s+/g, ' ').trim();
+}
+
+// Corpo da mensagem: preserva \n (parágrafos), remove os demais controles invisíveis.
+function cleanText(s: string): string {
+  return s.replace(/\r\n/g, '\n').replace(CONTROL_KEEP_LF, '').trim();
+}
+
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   try {
-    const body = (await request.json().catch(() => null)) as any;
-    if (!body || typeof body !== 'object') {
-      return Response.json({ error: 'Requisição inválida' }, { status: 400 });
+    if (!/application\/json/i.test(request.headers.get('content-type') || '')) {
+      return Response.json({ error: 'Formato inválido.' }, { status: 415 });
     }
 
-    // Honeypot: bot preencheu campo oculto → responde OK sem enviar nada.
+    const body = (await request.json().catch(() => null)) as any;
+    if (!body || typeof body !== 'object') {
+      return Response.json({ error: 'Requisição inválida.' }, { status: 400 });
+    }
+
+    // Honeypot: bot preencheu campo oculto -> responde OK sem enviar nada.
     if (String(body.company || '').trim()) {
       return Response.json({ message: 'Mensagem enviada ✓' });
     }
 
-    const name = String(body.name || '').trim();
-    const email = String(body.email || '').toLowerCase().trim();
-    const subject = String(body.subject || '').trim();
-    const message = String(body.message || '').trim();
+    const name = cleanLine(String(body.name || ''));
+    const email = cleanLine(String(body.email || '')).toLowerCase();
+    const subject = cleanLine(String(body.subject || ''));
+    const message = cleanText(String(body.message || ''));
 
-    if (!name) return Response.json({ error: 'Informe seu nome.' }, { status: 400 });
-    if (!email || !EMAIL_REGEX.test(email)) {
-      return Response.json({ error: 'Email inválido.' }, { status: 400 });
+    // Nome: 2–100 chars e ao menos uma letra de verdade.
+    if (name.length < LIMITS.name.min || name.length > LIMITS.name.max || !HAS_LETTER.test(name)) {
+      return Response.json({ error: 'Informe um nome válido.' }, { status: 400 });
     }
-    if (!message) return Response.json({ error: 'Escreva sua mensagem.' }, { status: 400 });
-
-    if (name.length > LIMITS.name || subject.length > LIMITS.subject || message.length > LIMITS.message) {
-      return Response.json({ error: 'Conteúdo muito longo.' }, { status: 400 });
+    // E-mail: formato + comprimento.
+    if (email.length > LIMITS.email.max || !EMAIL_REGEX.test(email)) {
+      return Response.json({ error: 'E-mail inválido.' }, { status: 400 });
+    }
+    // Assunto: opcional, só limite de tamanho.
+    if (subject.length > LIMITS.subject.max) {
+      return Response.json({ error: 'Assunto muito longo.' }, { status: 400 });
+    }
+    // Mensagem: 10–5000 chars.
+    if (message.length < LIMITS.message.min) {
+      return Response.json({ error: 'Escreva uma mensagem com mais detalhes.' }, { status: 400 });
+    }
+    if (message.length > LIMITS.message.max) {
+      return Response.json({ error: 'Mensagem muito longa.' }, { status: 400 });
     }
 
     const ip = request.headers.get('CF-Connecting-IP') || '';
