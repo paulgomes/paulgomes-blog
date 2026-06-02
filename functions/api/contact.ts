@@ -137,8 +137,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
     if (!res.ok) {
       const detail = await res.text().catch(() => '');
-      console.error(`Email Service ${res.status}:`, detail.slice(0, 300));
-      return Response.json({ error: 'Não consegui enviar agora. Tente novamente em instantes.' }, { status: 502 });
+      console.error(`Email Service ${res.status}:`, detail.slice(0, 500));
+      // DIAGNÓSTICO TEMPORÁRIO: expõe o erro real da API (status 200 pra não ser mascarado).
+      return Response.json({ error: 'Não consegui enviar agora. Tente novamente em instantes.', _debug: { upstreamStatus: res.status, upstreamBody: detail.slice(0, 500) } }, { status: 200 });
     }
 
     return Response.json({ message: 'Mensagem enviada ✓ Em breve retorno o contato.' });
