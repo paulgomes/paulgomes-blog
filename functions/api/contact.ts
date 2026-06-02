@@ -127,8 +127,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       },
       body: JSON.stringify({
         to: TO,
-        from: FROM,
-        replyTo: { email, name },
+        from: { address: FROM.email, name: FROM.name },
+        reply_to: email,
         subject: subjectLine,
         html,
         text,
@@ -138,8 +138,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     if (!res.ok) {
       const detail = await res.text().catch(() => '');
       console.error(`Email Service ${res.status}:`, detail.slice(0, 500));
-      // DIAGNÓSTICO TEMPORÁRIO: expõe o erro real da API (status 200 pra não ser mascarado).
-      return Response.json({ error: 'Não consegui enviar agora. Tente novamente em instantes.', _debug: { upstreamStatus: res.status, upstreamBody: detail.slice(0, 500) } }, { status: 200 });
+      // 503 (não 502): a Cloudflare mascara 502/504 do origin com página própria,
+      // o que quebraria o JSON no cliente. 503 passa direto.
+      return Response.json({ error: 'Não consegui enviar agora. Tente novamente em instantes.' }, { status: 503 });
     }
 
     return Response.json({ message: 'Mensagem enviada ✓ Em breve retorno o contato.' });
