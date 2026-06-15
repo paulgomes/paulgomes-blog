@@ -8,4 +8,4 @@ metaTitle: "a"
 metaDescription: "sudo \"/Applications/Install macOS Ventura.app/Contents/Resources/startoinstall\" --volume \"/Volume/ventura\""
 ---
 
-sudo "/Applications/Install macOS Ventura.app/Contents/Resources/startoinstall" --volume "/Volume/ventura"
+sudo "/Applications/Install macOS Ventura.app/Contents/Resources/startosinstall" --volume "/Volumes/ventura"
