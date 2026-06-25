@@ -360,6 +360,11 @@ import authorPhoto from '../assets/brand/paul-avatar.png';
       max-width: 360px;
       margin: 0 auto;
       padding: 0 1.5rem;
+      /* altura natural: evita letterbox (faixa vazia) do object-fit contain */
+      aspect-ratio: auto;
+    }
+    .cinematic-photo .photo-img {
+      height: auto;
     }
     .ai-prompt-mobile {
       display: block;
