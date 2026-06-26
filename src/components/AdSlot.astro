@@ -1,0 +1,70 @@
+---
+// Espaço reservado para banner ads (leaderboard / billboard responsivo).
+// Por enquanto mostra um placeholder "Publicidade". Para ativar um anúncio real:
+//   • AdSense: colar o <ins class="adsbygoogle" ...> dentro de [data-ad-slot] e
+//     incluir o loader do AdSense (atualmente removido do <head> por performance).
+//   • Outra rede / banner próprio: substituir o conteúdo de [data-ad-slot] pelo markup.
+interface Props {
+  label?: string;
+}
+const { label = 'Publicidade' } = Astro.props;
+---
+
+<aside class="adslot" aria-label="Publicidade">
+  <div class="container-wide">
+    <p class="adslot-eyebrow">{label}</p>
+    <div class="adslot-inner" data-ad-slot>
+      <!-- Insira aqui o código do banner (728x90 / 970x250 responsivo). -->
+      <span class="adslot-placeholder">Espaço para banner</span>
+    </div>
+  </div>
+</aside>
+
+<style>
+  .adslot {
+    padding: 1.5rem 0 2.25rem;
+  }
+
+  .adslot-eyebrow {
+    text-align: center;
+    margin: 0 0 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    opacity: 0.55;
+  }
+
+  .adslot-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 970px;
+    margin: 0 auto;
+    min-height: 90px;
+    border: 1px dashed var(--color-border);
+    border-radius: 12px;
+    background: var(--color-subtle);
+    overflow: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .adslot-inner {
+      min-height: 120px;
+    }
+  }
+
+  .adslot-placeholder {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    opacity: 0.5;
+  }
+
+  :global(.dark) .adslot-inner {
+    background: rgba(255, 255, 255, 0.03);
+  }
+</style>

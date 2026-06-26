@@ -1,0 +1,261 @@
+---
+// Card "o tempo agora" — dados da Open-Meteo (https://open-meteo.com).
+// Grátis, sem chave e sem cadastro; CORS liberado, então busca direto do navegador.
+// Fica oculto até a resposta chegar: se a API falhar/estiver offline, simplesmente
+// não aparece (sem caixa quebrada). Local: São Paulo capital.
+---
+
+<section class="weather-band" aria-label="Tempo agora">
+  <div class="container-wide weather-wrap">
+    <div class="weather-card" data-weather hidden>
+      <span class="weather-icon-chip" data-w-icon aria-hidden="true"></span>
+
+      <div class="weather-temp-wrap">
+        <span class="weather-temp"><span data-w-temp>—</span><span class="weather-deg">°C</span></span>
+        <span class="weather-cond" data-w-cond></span>
+      </div>
+
+      <span class="weather-sep" aria-hidden="true"></span>
+
+      <div class="weather-meta">
+        <span class="weather-loc" data-w-loc>São Paulo · Brasil</span>
+        <span class="weather-extra" data-w-extra></span>
+      </div>
+
+      <a class="weather-credit" href="https://open-meteo.com/" target="_blank" rel="noopener nofollow">dados · Open-Meteo</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .weather-band {
+    padding: 1.75rem 0;
+  }
+
+  .weather-wrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  .weather-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1.4rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-paper);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    max-width: 100%;
+    animation: weather-in 0.5s ease both;
+  }
+
+  .weather-card[hidden] {
+    display: none;
+  }
+
+  @keyframes weather-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .weather-icon-chip {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: rgba(1, 3, 249, 0.06);
+    color: #0103F9;
+  }
+
+  .weather-icon-chip :global(svg) {
+    width: 28px;
+    height: 28px;
+  }
+
+  .weather-temp-wrap {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+
+  .weather-temp {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+  }
+
+  .weather-deg {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    margin-left: 0.1em;
+  }
+
+  .weather-cond {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--color-muted);
+  }
+
+  .weather-sep {
+    width: 1px;
+    align-self: stretch;
+    margin: 0.2rem 0;
+    background: var(--color-border);
+  }
+
+  .weather-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    line-height: 1.2;
+  }
+
+  .weather-loc {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .weather-extra {
+    font-size: 0.72rem;
+    color: var(--color-muted);
+  }
+
+  .weather-extra:empty {
+    display: none;
+  }
+
+  .weather-credit {
+    align-self: flex-start;
+    margin-left: 0.25rem;
+    font-size: 0.58rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+    opacity: 0.5;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .weather-credit:hover {
+    opacity: 0.9;
+  }
+
+  :global(.dark) .weather-card {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: none;
+  }
+
+  :global(.dark) .weather-icon-chip {
+    background: rgba(61, 64, 255, 0.16);
+    color: #3d40ff;
+  }
+
+  @media (max-width: 480px) {
+    .weather-card {
+      gap: 0.75rem;
+      padding: 0.7rem 1rem;
+    }
+    .weather-temp {
+      font-size: 1.35rem;
+    }
+    .weather-credit {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .weather-card {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  (async function () {
+    const card = document.querySelector<HTMLElement>('[data-weather]');
+    if (!card) return;
+
+    // São Paulo (capital). Open-Meteo: grátis, sem chave, CORS liberado.
+    const URL_API =
+      'https://api.open-meteo.com/v1/forecast' +
+      '?latitude=-23.5505&longitude=-46.6333' +
+      '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,is_day' +
+      '&timezone=America%2FSao_Paulo';
+
+    // Ícones SVG (line, herdam a cor via currentColor).
+    const S = (inner: string) =>
+      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+    const ICONS: Record<string, string> = {
+      sun: S('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+      moon: S('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'),
+      partly: S('<circle cx="8" cy="8" r="3"/><path d="M8 1.8v1.2M2.6 8H3.8M4.2 4.2l.9.9M11.8 4.2l-.9.9"/><path d="M18 13.5h-1.05A6 6 0 1 0 9 21h9a3.75 3.75 0 0 0 0-7.5z"/>'),
+      cloud: S('<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>'),
+      rain: S('<line x1="8" y1="19" x2="8" y2="21"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="16" y1="19" x2="16" y2="21"/><path d="M20 16.6A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.3"/>'),
+      snow: S('<path d="M20 16.6A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.3"/><path d="M8 18h.01M12 20h.01M16 18h.01M10 21h.01M14 21h.01"/>'),
+      thunder: S('<path d="M19 16.9A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 5 16"/><polyline points="13 11 9 17 14 17 10 22"/>'),
+      fog: S('<line x1="3" y1="8" x2="21" y2="8"/><line x1="5" y1="12" x2="19" y2="12"/><line x1="4" y1="16" x2="20" y2="16"/><line x1="7" y1="20" x2="15" y2="20"/>'),
+    };
+
+    // WMO weather_code -> { rótulo pt-BR, ícone }
+    function mapCode(code: number, isDay: boolean): { label: string; icon: string } {
+      if (code === 0) return { label: isDay ? 'Céu limpo' : 'Noite limpa', icon: isDay ? 'sun' : 'moon' };
+      if (code === 1) return { label: 'Predomínio de sol', icon: isDay ? 'sun' : 'moon' };
+      if (code === 2) return { label: 'Parcialmente nublado', icon: 'partly' };
+      if (code === 3) return { label: 'Nublado', icon: 'cloud' };
+      if (code === 45 || code === 48) return { label: 'Névoa', icon: 'fog' };
+      if (code >= 51 && code <= 57) return { label: 'Garoa', icon: 'rain' };
+      if (code >= 61 && code <= 67) return { label: 'Chuva', icon: 'rain' };
+      if (code >= 71 && code <= 77) return { label: 'Neve', icon: 'snow' };
+      if (code >= 80 && code <= 82) return { label: 'Pancadas de chuva', icon: 'rain' };
+      if (code === 85 || code === 86) return { label: 'Pancadas de neve', icon: 'snow' };
+      if (code >= 95) return { label: 'Tempestade', icon: 'thunder' };
+      return { label: 'Tempo', icon: 'cloud' };
+    }
+
+    try {
+      const res = await fetch(URL_API, { headers: { Accept: 'application/json' } });
+      if (!res.ok) return;
+
+      const data = (await res.json()) as any;
+      const c = data?.current;
+      const tempC = Math.round(Number(c?.temperature_2m));
+      if (!c || Number.isNaN(tempC)) return;
+
+      const isDay = c.is_day === 1;
+      const { label, icon } = mapCode(Number(c.weather_code), isDay);
+
+      const set = (sel: string, val: string) => {
+        const el = card.querySelector<HTMLElement>(sel);
+        if (el) el.textContent = val;
+      };
+
+      set('[data-w-temp]', String(tempC));
+      set('[data-w-cond]', label);
+
+      const iconEl = card.querySelector<HTMLElement>('[data-w-icon]');
+      if (iconEl) iconEl.innerHTML = ICONS[icon] || ICONS.cloud;
+
+      const bits: string[] = [];
+      const feels = Math.round(Number(c.apparent_temperature));
+      if (!Number.isNaN(feels)) bits.push(`Sensação ${feels}°`);
+      if (typeof c.relative_humidity_2m === 'number') bits.push(`Umidade ${c.relative_humidity_2m}%`);
+      set('[data-w-extra]', bits.join('  ·  '));
+
+      card.hidden = false;
+    } catch {
+      /* silencioso: sem tempo, o card só não aparece */
+    }
+  })();
+</script>

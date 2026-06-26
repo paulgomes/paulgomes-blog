@@ -9,6 +9,8 @@ import TrendingPosts from '../components/TrendingPosts.astro';
 import ThemePosts from '../components/ThemePosts.astro';
 import AuthorBlock from '../components/AuthorBlock.astro';
 import BrandsMarquee from '../components/BrandsMarquee.astro';
+import WeatherWidget from '../components/WeatherWidget.astro';
+import AdSlot from '../components/AdSlot.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
@@ -82,6 +84,9 @@ const totalPosts = allPosts.length;
       <!-- MARCAS QUE PASSARAM POR AQUI -->
       <BrandsMarquee />
 
+      <!-- O TEMPO AGORA (Open-Meteo, grátis e sem chave; oculto se indisponível) -->
+      <WeatherWidget />
+
       <!-- ÚLTIMAS NOTÍCIAS (8 posts visíveis + paginação que reflete arquivo total) -->
       {latestNews.length > 0 && (
         <ThemePosts
@@ -92,6 +97,9 @@ const totalPosts = allPosts.length;
           archiveHref="/blog"
         />
       )}
+
+      <!-- ESPAÇO PARA BANNER ADS (placeholder; pronto pra receber o código do anúncio) -->
+      <AdSlot />
 
     </main>
     <Footer />
