@@ -20,7 +20,7 @@ export const SOCIAL = {
 export const AUTHOR_CARD = {
   greeting: 'Bem-vindo ao blog',
   name: SITE_AUTHOR,
-  location: 'Sorocaba · Brasil',
+  location: 'São Paulo · Brasil',
   bio: 'Fundador e CEO do Grupo WYS. Escrevo sobre IA, branding e o futuro dos negócios.',
   socials: [
     { platform: 'linkedin', url: SOCIAL.linkedin, count: '20k', label: 'Seguidores' },
