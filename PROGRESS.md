@@ -6,6 +6,12 @@ Log cronológico do trabalho na Core Platform. Mais recente no topo.
 
 ---
 
+## 2026-06-27 — Fase 0 concluída · Fase 1 iniciada (modo autônomo)
+
+- **Fase 0 concluída:** `ARQUITETURA-ATUAL.md` e `ROADMAP.md` produzidos a partir da auditoria de 5 subsistemas. Roadmap priorizado em 6 fases (Fase 1 = fundação de configuração; Fase 2 = i18n; Fase 3 = backend limpo/hardening; Fase 4 = multi-tenant; Fase 5 = SEO/GEO; Fase 6+ = épicos).
+- **Fase 1 · fatia 1.1 (feita):** criada a fonte única `src/config/site.ts` (`TenantConfig`) e `src/lib/schema.ts` passou a consumir domínio+identidade dela. **Build verde, saída byte-idêntica** (grafo JSON-LD e canonical inalterados — limite inviolável #1 preservado). Primeiro passo pra eliminar os 19+ literais de domínio.
+- ADRs novos: ver `DECISIONS.md`.
+
 ## 2026-06-27 — Fase 0 iniciada (modo autônomo Core Platform)
 
 - **Auditoria arquitetural multi-agente** disparada (5 subsistemas: pipeline de conteúdo D1→Git, superfície de API, painel/editor, render/SEO, prontidão multi-tenant/i18n) para gerar `ARQUITETURA-ATUAL.md` + `ROADMAP.md`.

@@ -5,6 +5,12 @@ Mais recente no topo. Reversível — o humano pode discordar e reverter.
 
 ---
 
+## ADR-007 — Fonte única de configuração em `src/config/site.ts` (FASE 1)
+- **Contexto:** domínio/identidade `paulgomes.com.br` hardcoded em ~19 arquivos — bloqueia multi-tenant e ameaça o limite #1 (canonical/sitemap/RSS quebram se o domínio mudar).
+- **Decisão:** um módulo tipado `TenantConfig` como fonte única (domínio, marca, autor, organização, social). Consumidores migram incrementalmente, exigindo **saída de build byte-idêntica** a cada fatia. Multi-tenant depois = trocar/parametrizar este objeto.
+- **Alternativa descartada:** ler tudo de env vars (não cobre identidade estruturada nem schema) e refactor big-bang dos 19 arquivos de uma vez (risco ao site no ar).
+- **Status:** em execução — fatia 1.1 (`schema.ts`) feita e verificada.
+
 ## ADR-006 — i18n: dicionário tipado + roteamento i18n do Astro (PROPOSTA, pós-Fase 0)
 - **Contexto:** mandato exige toda string visível internacionalizável (PT-BR/EN/ES), zero hardcode. Hoje as strings PT-BR estão espalhadas nos `.astro`.
 - **Decisão (proposta, a confirmar no `ARQUITETURA-PROPOSTA.md`):** camada `src/i18n/` com dicionários tipados por locale + helper `t(key, locale)`, e roteamento i18n nativo do Astro. Migração incremental (componente a componente), nunca big-bang.
