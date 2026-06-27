@@ -47,6 +47,9 @@ const totalPosts = allPosts.length;
 <html lang="pt-BR">
   <head>
     <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+    <!-- Open-Meteo: conexão antecipada pro widget de tempo (fetch client-side) -->
+    <link rel="preconnect" href="https://api.open-meteo.com" crossorigin />
+    <link rel="dns-prefetch" href="https://api.open-meteo.com" />
     <!-- Preload do LCP (avatar do hero) — descoberta cedo, antes do JS/CSS parse -->
     <link
       rel="preload"

@@ -1,0 +1,13 @@
+# Headers HTTP (Cloudflare Pages). Conservador: sem CSP restritiva pra nao quebrar
+# scripts inline do Astro nem futuros embeds (AdSense). Foco em hardening seguro.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# Assets com hash no nome (Astro) sao imutaveis -> cache agressivo de 1 ano
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
