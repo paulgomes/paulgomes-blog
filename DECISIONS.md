@@ -5,6 +5,12 @@ Mais recente no topo. Reversível — o humano pode discordar e reverter.
 
 ---
 
+## ADR-008 — Adiar uso de `metaTitle`/`metaDescription` do frontmatter (FASE 5.1)
+- **Contexto:** a auditoria sugeriu usar `metaTitle`/`metaDescription` do frontmatter no render. Mas o `content.config.ts` (Zod) **não declara** esses campos → eles são descartados no build; e há `metaTitle` truncado com "…" em post(s) legados.
+- **Decisão:** **não** habilitar agora. Habilitar exigiria (a) adicionar os campos ao schema e (b) revisar/limpar os valores legados — senão alguns títulos de SERP pioram, violando o princípio #1 (não quebrar SEO).
+- **Alternativa descartada:** adicionar ao schema e preferir `metaTitle ?? title` cegamente (degrada títulos ruins).
+- **Status:** adiado; entra como tarefa de conteúdo (revisar metaTitle/description antes de ativar).
+
 ## ADR-007 — Fonte única de configuração em `src/config/site.ts` (FASE 1)
 - **Contexto:** domínio/identidade `paulgomes.com.br` hardcoded em ~19 arquivos — bloqueia multi-tenant e ameaça o limite #1 (canonical/sitemap/RSS quebram se o domínio mudar).
 - **Decisão:** um módulo tipado `TenantConfig` como fonte única (domínio, marca, autor, organização, social). Consumidores migram incrementalmente, exigindo **saída de build byte-idêntica** a cada fatia. Multi-tenant depois = trocar/parametrizar este objeto.

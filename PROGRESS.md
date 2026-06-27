@@ -6,6 +6,15 @@ Log cronológico do trabalho na Core Platform. Mais recente no topo.
 
 ---
 
+## 2026-06-27 — Modo turbo (execução contínua, sem push)
+
+Fatias entregues (cada uma: build verde + dist-diff em superfície de SEO + commit atômico):
+- **Fase 1.2 — domínio→config:** feeds `llms.txt`/`llms-full.txt`/`video-sitemap.xml` e BreadcrumbList (post + categoria) passam a derivar o domínio de `SITE_CONFIG`. Saída byte-idêntica (llms 39 URLs, loc do video-sitemap e breadcrumbs intactos). Commits `067023f`, `4b560f1`.
+- **Fase 5.2 — Leia também:** novo `RelatedPosts.astro` (ranqueia por sobreposição de categorias, fallback mais recentes), 3 cards no fim do artigo. Internal linking + dwell time. Commit `5ba5aa5`.
+- **Fase 5.1 ADIADA (ver ADR-008):** `content.config.ts` não declara `metaTitle`/`metaDescription` (são descartados no build) e a auditoria achou `metaTitle` truncado com "…" em post(s); habilitar cegamente pioraria títulos → fere o princípio #1 (não quebrar SEO). Precisa de revisão de conteúdo.
+
+Restante do ROADMAP que **não** avancei nesta sessão (motivo): Fase 2 i18n (escopo grande, ~200 strings — próxima sessão), Fase 3.4 rate-limit (⛔ precisa KV, `FILA-HUMANA`), Fase 4 multi-tenant (⛔ decisões de negócio, `FILA-HUMANA`).
+
 ## 2026-06-27 — Fase 0 concluída · Fase 1 iniciada (modo autônomo)
 
 - **Fase 0 concluída:** `ARQUITETURA-ATUAL.md` e `ROADMAP.md` produzidos a partir da auditoria de 5 subsistemas. Roadmap priorizado em 6 fases (Fase 1 = fundação de configuração; Fase 2 = i18n; Fase 3 = backend limpo/hardening; Fase 4 = multi-tenant; Fase 5 = SEO/GEO; Fase 6+ = épicos).
