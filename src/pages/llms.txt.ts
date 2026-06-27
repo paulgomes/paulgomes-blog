@@ -1,8 +1,9 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { CATEGORIAS, CATEGORIA_SLUGS } from '../lib/categorias';
+import { SITE_CONFIG } from '../config/site';
 
-const SITE_URL = 'https://paulgomes.com.br';
+const SITE_URL = SITE_CONFIG.url;
 
 // Padrao llmstxt.org — sumario curto + links pros principais ensaios e categorias.
 // Conteudo completo dos ensaios fica em /llms-full.txt

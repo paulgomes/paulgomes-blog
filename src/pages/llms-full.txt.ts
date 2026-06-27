@@ -1,7 +1,8 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { SITE_CONFIG } from '../config/site';
 
-const SITE_URL = 'https://paulgomes.com.br';
+const SITE_URL = SITE_CONFIG.url;
 
 // Conteudo bruto de TODOS os ensaios em markdown — alvo: GEO/AEO.
 // .mdx vem com JSX (componentes Astro) — mantemos bruto porque LLMs lidam bem

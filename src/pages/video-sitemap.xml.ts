@@ -1,7 +1,8 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { SITE_CONFIG } from '../config/site';
 
-const SITE = 'https://paulgomes.com.br';
+const SITE = SITE_CONFIG.url;
 
 // Regex pra extrair IDs de YouTube
 const YT_RE = /https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
