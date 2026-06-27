@@ -1,6 +1,9 @@
 // JSON-LD reutilizavel (GEO/AEO). Grafo base (WebSite + Organization + Person) com
 // @id cruzados, injetado globalmente via BaseHead, + helpers de BreadcrumbList e FAQPage.
-const SITE = 'https://paulgomes.com.br';
+// FASE 1: dominio e identidade vem de src/config/site.ts (fonte unica), nao mais hardcoded.
+import { SITE_CONFIG } from '../config/site';
+
+const SITE = SITE_CONFIG.url;
 
 export const SCHEMA_ID = {
   website: `${SITE}/#website`,
@@ -10,15 +13,15 @@ export const SCHEMA_ID = {
 
 /** Entidades raiz do site (mesmo em toda pagina) — autoridade de marca/autor pra Google e LLMs. */
 export function siteGraph() {
+  const { author, organization } = SITE_CONFIG;
   return [
     {
       '@type': 'WebSite',
       '@id': SCHEMA_ID.website,
       url: `${SITE}/`,
-      name: 'Paul Gomes — Thinking Forward',
-      description:
-        'Branding, tecnologia e o futuro dos negócios. Ensaios de Paul Gomes sobre IA, GEO, SEO e arquitetura digital.',
-      inLanguage: 'pt-BR',
+      name: SITE_CONFIG.title,
+      description: SITE_CONFIG.description,
+      inLanguage: SITE_CONFIG.locale,
       publisher: { '@id': SCHEMA_ID.organization },
       creator: { '@id': SCHEMA_ID.person },
       potentialAction: {
@@ -30,37 +33,23 @@ export function siteGraph() {
     {
       '@type': 'Organization',
       '@id': SCHEMA_ID.organization,
-      name: 'Grupo WYS',
-      url: 'https://agenciawys.com.br',
+      name: organization.name,
+      url: organization.url,
       description: 'Agência de marketing e inovação criativa.',
-      logo: `${SITE}/logo-wys.webp`,
+      logo: organization.logo,
       founder: { '@id': SCHEMA_ID.person },
-      sameAs: ['https://agenciawys.com.br'],
+      sameAs: organization.sameAs,
     },
     {
       '@type': 'Person',
       '@id': SCHEMA_ID.person,
-      name: 'Paul Gomes',
-      url: `${SITE}/sobre`,
-      description:
-        'Fundador e CEO do Grupo WYS. Escreve sobre inteligência artificial, GEO, SEO, branding e o futuro dos negócios.',
-      jobTitle: 'Fundador e CEO',
+      name: author.name,
+      url: author.url,
+      description: author.bio,
+      jobTitle: author.jobTitle,
       worksFor: { '@id': SCHEMA_ID.organization },
-      knowsAbout: [
-        'Inteligência Artificial',
-        'GEO',
-        'SEO',
-        'Branding',
-        'Marketing Digital',
-        'Tecnologia',
-        'Negócios',
-      ],
-      sameAs: [
-        'https://www.linkedin.com/in/inpaulgomes/',
-        'https://www.instagram.com/paulgomes/',
-        'https://www.youtube.com/@paulgomesx',
-        'https://x.com/paullgomes',
-      ],
+      knowsAbout: author.knowsAbout,
+      sameAs: author.sameAs,
     },
   ];
 }
