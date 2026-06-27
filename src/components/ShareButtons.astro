@@ -1,0 +1,135 @@
+---
+// Botões de compartilhamento do artigo (Facebook, X, LinkedIn, e-mail, copiar/compartilhar).
+interface Props {
+  url: string;
+  title: string;
+}
+const { url, title } = Astro.props;
+const u = encodeURIComponent(url);
+const t = encodeURIComponent(title);
+
+const links = {
+  facebook: `https://www.facebook.com/sharer/sharer.php?u=${u}`,
+  x: `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
+  linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
+  email: `mailto:?subject=${t}&body=${u}`,
+};
+---
+
+<aside class="share" aria-label="Compartilhar este artigo">
+  <p class="share-label">Compartilhe a matéria em suas redes:</p>
+  <div class="share-row">
+    <a class="share-btn" href={links.facebook} target="_blank" rel="noopener noreferrer" aria-label="Compartilhar no Facebook">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+    </a>
+    <a class="share-btn" href={links.x} target="_blank" rel="noopener noreferrer" aria-label="Compartilhar no X">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-btn" href={links.linkedin} target="_blank" rel="noopener noreferrer" aria-label="Compartilhar no LinkedIn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+    </a>
+    <a class="share-btn" href={links.email} aria-label="Compartilhar por e-mail">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+    </a>
+    <button class="share-btn" type="button" data-share-native data-url={url} data-title={title} aria-label="Copiar link ou compartilhar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+    </button>
+    <span class="share-toast" role="status" hidden>Link copiado ✓</span>
+  </div>
+</aside>
+
+<style>
+  .share {
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .share-label {
+    margin: 0 0 1rem;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--color-muted);
+  }
+
+  .share-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+
+  .share-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: translateY(-2px);
+  }
+
+  .share-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .share-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .share-toast {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    margin-left: 0.35rem;
+  }
+
+  :global(.dark) .share-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .share-btn { transition: none; }
+    .share-btn:hover { transform: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-share-native]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const url = btn.dataset.url || window.location.href;
+      const title = btn.dataset.title || document.title;
+      const toast = btn.parentElement?.querySelector<HTMLElement>('.share-toast');
+      if (navigator.share) {
+        try { await navigator.share({ title, url }); } catch { /* cancelado */ }
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+        if (toast) {
+          toast.hidden = false;
+          window.setTimeout(() => { toast.hidden = true; }, 1800);
+        }
+      } catch { /* sem clipboard */ }
+    });
+  });
+</script>

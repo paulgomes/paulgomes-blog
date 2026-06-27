@@ -4,15 +4,20 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import ShareButtons from '../components/ShareButtons.astro';
 import { Image } from 'astro:assets';
 import { SITE_AUTHOR } from '../consts';
 import authorPhoto from '../assets/brand/paul-gomes.webp';
 import { CATEGORIA_SLUGS, CATEGORIA_COLORS, type Categoria } from '../lib/categorias';
+import { breadcrumbList, SCHEMA_ID } from '../lib/schema';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & { minutes?: number };
 
-const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categorias = [] } = Astro.props as Props & { categorias?: Categoria[] };
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categorias = [], minutes } = Astro.props as Props & { categorias?: Categoria[]; minutes?: number };
 const heroAlt = heroImageAlt || title;
+
+// URL canônica absoluta para os botões de compartilhamento.
+const shareUrl = new URL(Astro.url.pathname, Astro.site).href;
 
 // === Schema.org Article (GEO/AEO) ===
 const heroImageUrl = heroImage
@@ -26,24 +31,13 @@ const articleSchema = {
   '@type': 'Article',
   headline: title,
   description,
-  ...(heroImageUrl ? { image: [heroImageUrl] } : {}),
+  ...(heroImageUrl
+    ? { image: [{ '@type': 'ImageObject', url: heroImageUrl, width: 1280, height: 720, caption: heroAlt }] }
+    : {}),
   datePublished: publishedISO,
   dateModified: modifiedISO,
-  author: {
-    '@type': 'Person',
-    name: 'Paul Gomes',
-    url: 'https://paulgomes.com.br/sobre',
-    sameAs: [
-      'https://www.linkedin.com/in/inpaulgomes/',
-      'https://www.instagram.com/paulgomes/',
-      'https://www.youtube.com/@paulgomesx',
-    ],
-  },
-  publisher: {
-    '@type': 'Person',
-    name: 'Paul Gomes',
-    url: 'https://paulgomes.com.br',
-  },
+  author: { '@id': SCHEMA_ID.person },
+  publisher: { '@id': SCHEMA_ID.organization },
   mainEntityOfPage: {
     '@type': 'WebPage',
     '@id': Astro.url.href,
@@ -51,6 +45,17 @@ const articleSchema = {
   ...(categorias.length ? { keywords: categorias.join(', '), articleSection: categorias[0] } : {}),
   inLanguage: 'pt-BR',
 };
+
+// BreadcrumbList (Home > Blog > Categoria > Post) — navegacao estruturada pro Google.
+const cats = categorias as Categoria[];
+const breadcrumbSchema = breadcrumbList([
+  { name: 'Home', item: 'https://paulgomes.com.br/' },
+  { name: 'Blog', item: 'https://paulgomes.com.br/blog/' },
+  ...(cats.length
+    ? [{ name: cats[0], item: `https://paulgomes.com.br/categoria/${CATEGORIA_SLUGS[cats[0]]}/` }]
+    : []),
+  { name: title, item: Astro.url.href },
+]);
 ---
 
 <html lang="pt-BR">
@@ -67,6 +72,9 @@ const articleSchema = {
     <!-- Schema.org Article (GEO/AEO) -->
     <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
 
+    <!-- BreadcrumbList -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
     <!-- Open Graph article-specific (BaseHead ja emitiu og:type=article via prop) -->
     <meta property="article:published_time" content={publishedISO} />
     <meta property="article:modified_time" content={modifiedISO} />
@@ -81,8 +89,9 @@ const articleSchema = {
         <header class="container-prose pt-16 pb-12 md:pt-24">
           <div class="text-xs uppercase tracking-widest" style="color: var(--color-muted)">
             <FormattedDate date={pubDate} />
+            {minutes && <span class="ml-3">· {minutes} min de leitura</span>}
             {updatedDate && (
-              <span class="ml-3">— atualizado em <FormattedDate date={updatedDate} /></span>
+              <span class="ml-3">· atualizado em <FormattedDate date={updatedDate} /></span>
             )}
           </div>
           <h1 class="mt-4 font-display text-4xl font-bold leading-[1.1] md:text-6xl">
@@ -126,10 +135,10 @@ const articleSchema = {
         </div>
 
         {categorias.length > 0 && (
-          <div class="container-prose pb-24">
+          <div class="container-prose pb-12">
             <div class="post-tags">
               <span class="post-tags-label">Categorias:</span>
-              {categorias.map((categoria) => (
+              {cats.map((categoria) => (
                 <a
                   href={`/categoria/${CATEGORIA_SLUGS[categoria]}/`}
                   class="tag-chip"
@@ -141,6 +150,10 @@ const articleSchema = {
             </div>
           </div>
         )}
+
+        <div class="container-prose pb-24">
+          <ShareButtons url={shareUrl} title={title} />
+        </div>
       </article>
     </main>
     <Footer />
