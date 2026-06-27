@@ -7,6 +7,7 @@ import SectionHeader from '../../components/SectionHeader.astro';
 import PostCard from '../../components/PostCard.astro';
 import { CATEGORIAS, CATEGORIA_SLUGS, type Categoria } from '../../lib/categorias';
 import { breadcrumbList } from '../../lib/schema';
+import { SITE_CONFIG } from '../../config/site';
 import { SITE_TITLE } from '../../consts';
 
 export async function getStaticPaths() {
@@ -28,8 +29,8 @@ const count = posts.length;
 const description = `${count} ${count === 1 ? 'ensaio' : 'ensaios'} sobre ${categoria}`;
 
 const breadcrumbSchema = breadcrumbList([
-  { name: 'Home', item: 'https://paulgomes.com.br/' },
-  { name: 'Blog', item: 'https://paulgomes.com.br/blog/' },
+  { name: 'Home', item: `${SITE_CONFIG.url}/` },
+  { name: 'Blog', item: `${SITE_CONFIG.url}/blog/` },
   { name: categoria, item: Astro.url.href },
 ]);
 ---

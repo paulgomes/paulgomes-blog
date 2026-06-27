@@ -10,6 +10,7 @@ import { SITE_AUTHOR } from '../consts';
 import authorPhoto from '../assets/brand/paul-gomes.webp';
 import { CATEGORIA_SLUGS, CATEGORIA_COLORS, type Categoria } from '../lib/categorias';
 import { breadcrumbList, SCHEMA_ID } from '../lib/schema';
+import { SITE_CONFIG } from '../config/site';
 
 type Props = CollectionEntry<'blog'>['data'] & { minutes?: number };
 
@@ -49,10 +50,10 @@ const articleSchema = {
 // BreadcrumbList (Home > Blog > Categoria > Post) — navegacao estruturada pro Google.
 const cats = categorias as Categoria[];
 const breadcrumbSchema = breadcrumbList([
-  { name: 'Home', item: 'https://paulgomes.com.br/' },
-  { name: 'Blog', item: 'https://paulgomes.com.br/blog/' },
+  { name: 'Home', item: `${SITE_CONFIG.url}/` },
+  { name: 'Blog', item: `${SITE_CONFIG.url}/blog/` },
   ...(cats.length
-    ? [{ name: cats[0], item: `https://paulgomes.com.br/categoria/${CATEGORIA_SLUGS[cats[0]]}/` }]
+    ? [{ name: cats[0], item: `${SITE_CONFIG.url}/categoria/${CATEGORIA_SLUGS[cats[0]]}/` }]
     : []),
   { name: title, item: Astro.url.href },
 ]);
