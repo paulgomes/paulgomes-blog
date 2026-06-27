@@ -3,6 +3,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SOCIAL } from '../consts';
+import { faqPage } from '../lib/schema';
 
 const PAGE_TITLE = 'Agência de Marketing em Sorocaba | Agência WYS';
 const PAGE_DESC =
@@ -88,6 +89,8 @@ const jsonLd = {
   founder: { '@type': 'Person', name: 'Paul Gomes', url: 'https://paulgomes.com.br/sobre' },
   sameAs: ['https://agenciawys.com.br', SOCIAL.linkedin, SOCIAL.instagram],
 };
+
+const faqSchema = faqPage(faqs);
 ---
 
 <!doctype html>
@@ -95,6 +98,7 @@ const jsonLd = {
   <head>
     <BaseHead title={PAGE_TITLE} description={PAGE_DESC} />
     <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
   </head>
   <body>
     <Header />

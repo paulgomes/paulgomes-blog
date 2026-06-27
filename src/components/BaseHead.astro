@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { baseSchemaDocument } from '../lib/schema';
 
 interface Props {
   title: string;
@@ -11,6 +12,9 @@ interface Props {
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const { title, description, image = '/og-image.png', ogType = 'website' } = Astro.props;
 const ogImageURL = new URL(image, Astro.url).toString();
+
+// Grafo JSON-LD base (WebSite + Organization + Person) — presente em todas as paginas.
+const baseSchema = baseSchemaDocument();
 ---
 
 <meta charset="utf-8" />
@@ -63,3 +67,6 @@ const ogImageURL = new URL(image, Astro.url).toString();
   else document.documentElement.classList.remove('dark');
   window.localStorage.setItem('theme', theme);
 </script>
+
+<!-- Grafo JSON-LD base: WebSite + Organization + Person (GEO/AEO, em toda pagina) -->
+<script type="application/ld+json" is:inline set:html={JSON.stringify(baseSchema)} />
