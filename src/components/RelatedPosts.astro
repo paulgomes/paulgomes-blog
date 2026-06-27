@@ -1,0 +1,73 @@
+---
+// "Leia também" — posts relacionados por sobreposição de categorias (internal linking).
+// Fallback pros mais recentes quando não há overlap suficiente. Build-time (getCollection).
+import { getCollection } from 'astro:content';
+import PostCard from './PostCard.astro';
+import type { Categoria } from '../lib/categorias';
+
+interface Props {
+  currentId: string;
+  categorias?: Categoria[];
+  limit?: number;
+}
+const { currentId, categorias = [], limit = 3 } = Astro.props;
+
+const all = await getCollection('blog');
+const catSet = new Set(categorias);
+
+const byOverlap = all
+  .filter((p) => p.id !== currentId)
+  .map((p) => ({
+    p,
+    overlap: (p.data.categorias || []).filter((c) => catSet.has(c as Categoria)).length,
+  }))
+  .filter((x) => x.overlap > 0)
+  .sort((a, b) => b.overlap - a.overlap || b.p.data.pubDate.valueOf() - a.p.data.pubDate.valueOf())
+  .slice(0, limit)
+  .map((x) => x.p);
+
+let related = byOverlap;
+if (related.length < limit) {
+  const have = new Set(related.map((p) => p.id));
+  const fillers = all
+    .filter((p) => p.id !== currentId && !have.has(p.id))
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    .slice(0, limit - related.length);
+  related = [...related, ...fillers];
+}
+---
+
+{related.length > 0 && (
+  <aside class="related container-wide" aria-label="Leia também">
+    <h2 class="related-title font-display">Leia também</h2>
+    <div class="related-grid">
+      {related.map((post) => <PostCard post={post} />)}
+    </div>
+  </aside>
+)}
+
+<style>
+  .related {
+    padding-top: 2.5rem;
+    padding-bottom: 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .related-title {
+    margin: 0 0 1.75rem;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+  .related-grid {
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) {
+    .related-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .related-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

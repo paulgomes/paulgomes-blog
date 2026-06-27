@@ -5,6 +5,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import ShareButtons from '../components/ShareButtons.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
 import { Image } from 'astro:assets';
 import { SITE_AUTHOR } from '../consts';
 import authorPhoto from '../assets/brand/paul-gomes.webp';
@@ -12,9 +13,9 @@ import { CATEGORIA_SLUGS, CATEGORIA_COLORS, type Categoria } from '../lib/catego
 import { breadcrumbList, SCHEMA_ID } from '../lib/schema';
 import { SITE_CONFIG } from '../config/site';
 
-type Props = CollectionEntry<'blog'>['data'] & { minutes?: number };
+type Props = CollectionEntry<'blog'>['data'] & { minutes?: number; id?: string };
 
-const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categorias = [], minutes } = Astro.props as Props & { categorias?: Categoria[]; minutes?: number };
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categorias = [], minutes, id } = Astro.props as Props & { categorias?: Categoria[]; minutes?: number; id?: string };
 const heroAlt = heroImageAlt || title;
 
 // URL canônica absoluta para os botões de compartilhamento.
@@ -134,6 +135,8 @@ const breadcrumbSchema = breadcrumbList([
             <slot />
           </div>
         </div>
+
+        <RelatedPosts currentId={id ?? ''} categorias={cats} />
 
         {categorias.length > 0 && (
           <div class="container-prose pb-12">
