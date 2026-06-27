@@ -6,6 +6,10 @@ Log cronológico do trabalho na Core Platform. Mais recente no topo.
 
 ---
 
+## 2026-06-27 — Deploy autorizado e publicado
+
+- Push de **11 commits** (`b5e857f..f8fe824`) → Cloudflare Pages. **Verificado em produção:** grafo JSON-LD (WebSite/Org/Person), "Leia também", headers de segurança (nosniff/Referrer-Policy/X-Frame-Options/Permissions-Policy/HSTS) e canonical intacto (limite #1 preservado). `FILA-HUMANA` item 1 resolvido.
+
 ## 2026-06-27 — Modo turbo (execução contínua, sem push)
 
 Fatias entregues (cada uma: build verde + dist-diff em superfície de SEO + commit atômico):

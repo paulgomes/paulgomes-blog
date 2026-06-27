@@ -7,10 +7,9 @@ Resolva em lote, de forma assíncrona. Eu sigo trabalhando no que não depende d
 
 ---
 
-## 🔴 1. Autorizar push/deploy para produção
-- **Contexto:** há **4 commits locais** prontos e com build verde (lote SEO/GEO/segurança), ainda não pushados (ADR-001).
-- **O que fazer:** me dizer "pode dar push" (ou "deploy"). Aí eu faço `git push origin main` e o Cloudflare Pages publica em ~1-3 min.
-- **Risco:** baixo (tudo verificado em build; não altera URLs/redirects). Mas afeta produção, então é sua decisão.
+## ✅ 1. Autorizar push/deploy para produção — RESOLVIDO (2026-06-27)
+- Autorizado e publicado: 11 commits (`b5e857f..f8fe824`). Deploy verificado em produção (grafo JSON-LD, "Leia também", headers de segurança, canonical intacto).
+- Próximos pushes voltam a aguardar seu aviso (ADR-001 segue valendo).
 
 ## 🔴 2. Search Console — validar correções (após o deploy do item 1)
 - **Onde:** Google Search Console → Indexação → Páginas.
