@@ -1,0 +1,213 @@
+---
+import PainelLayout from '../../components/painel/PainelLayout.astro';
+import '../../styles/painel.css';
+---
+
+<PainelLayout title="Importar — Painel" description="Importar conteúdo de outras plataformas" current="import">
+  <section class="page-header">
+    <h1>Importar conteúdo</h1>
+    <p class="subtitle">Traga posts de outra plataforma (WordPress, etc.) — o conteúdo é convertido para o formato nativo e mostrado em prévia, tudo no seu navegador.</p>
+  </section>
+
+  <section class="imp-card">
+    <div class="imp-row">
+      <label class="imp-field">
+        <span class="imp-label">Origem</span>
+        <select id="impConnector" class="imp-input">
+          <option value="wordpress-xml">WordPress (export XML / WXR)</option>
+        </select>
+      </label>
+      <label class="imp-field">
+        <span class="imp-label">Limite (opcional)</span>
+        <input id="impLimit" class="imp-input" type="number" min="1" placeholder="todos" />
+      </label>
+    </div>
+
+    <label class="imp-drop" id="impDrop">
+      <input id="impFile" type="file" accept=".xml,application/xml,text/xml" hidden />
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span class="imp-drop-text" id="impDropText">Clique para escolher o arquivo .xml</span>
+    </label>
+
+    <div class="imp-actions">
+      <button type="button" id="impAnalyze" class="imp-btn imp-btn--primary" disabled>Analisar</button>
+      <span id="impStatus" class="imp-status"></span>
+    </div>
+  </section>
+
+  <section id="impResult" hidden>
+    <div class="imp-summary" id="impSummary"></div>
+    <div class="imp-toolbar">
+      <button type="button" id="impDownloadAll" class="imp-btn">Baixar todos os .md</button>
+      <span class="imp-note">A prévia é só leitura. Para <strong>publicar no repositório</strong> (commit + redirects 301), use o CLI: <code>node dist/cli/import.js --source &lt;arquivo&gt; --publish</code></span>
+    </div>
+    <div class="imp-table-wrap">
+      <table class="imp-table">
+        <thead>
+          <tr><th>Título</th><th>Slug</th><th>Data</th><th>Categorias</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody id="impRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <script>
+    import { runImport, KNOWN_CATEGORIES } from '../../lib/migration-engine.browser.js';
+
+    const $connector = document.getElementById('impConnector') as HTMLSelectElement;
+    const $limit = document.getElementById('impLimit') as HTMLInputElement;
+    const $file = document.getElementById('impFile') as HTMLInputElement;
+    const $drop = document.getElementById('impDrop') as HTMLElement;
+    const $dropText = document.getElementById('impDropText') as HTMLElement;
+    const $analyze = document.getElementById('impAnalyze') as HTMLButtonElement;
+    const $status = document.getElementById('impStatus') as HTMLElement;
+    const $result = document.getElementById('impResult') as HTMLElement;
+    const $summary = document.getElementById('impSummary') as HTMLElement;
+    const $rows = document.getElementById('impRows') as HTMLElement;
+    const $downloadAll = document.getElementById('impDownloadAll') as HTMLButtonElement;
+
+    const noopLogger: any = { debug() {}, info() {}, warn() {}, error() {}, child() { return noopLogger; } };
+    let lastPosts: any[] = [];
+
+    function esc(s: string): string {
+      return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] as string));
+    }
+
+    function download(name: string, content: string) {
+      const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = name; document.body.appendChild(a); a.click();
+      a.remove(); URL.revokeObjectURL(url);
+    }
+
+    $file.addEventListener('change', () => {
+      const f = $file.files && $file.files[0];
+      $dropText.textContent = f ? f.name : 'Clique para escolher o arquivo .xml';
+      $analyze.disabled = !f;
+    });
+
+    $analyze.addEventListener('click', async () => {
+      const f = $file.files && $file.files[0];
+      if (!f) return;
+      $analyze.disabled = true;
+      $status.textContent = 'Analisando…';
+      $result.hidden = true;
+      try {
+        const xml = await f.text();
+        const limit = $limit.value ? Number($limit.value) : undefined;
+        const result = await runImport({
+          connectorId: $connector.value,
+          source: f.name,
+          sourceContent: xml,
+          categoryMapping: {},
+          allowedCategories: KNOWN_CATEGORIES,
+          limit,
+          logger: noopLogger,
+          signal: AbortSignal.timeout(120000),
+          secrets: { get: async () => undefined },
+        });
+        lastPosts = result.posts;
+        const r = result.report;
+        $summary.innerHTML =
+          `<span class="imp-stat"><b>${r.totals.posts}</b> artigos</span>` +
+          `<span class="imp-stat"><b>${r.seoPreserved}</b> com data</span>` +
+          `<span class="imp-stat"><b>${r.duplicated}</b> duplicados</span>` +
+          `<span class="imp-stat ${r.errors ? 'imp-stat--err' : ''}"><b>${r.errors}</b> erros</span>` +
+          `<span class="imp-stat">${r.durationMs} ms</span>`;
+
+        $rows.innerHTML = result.posts.map((p: any) => {
+          const cats = p.categorias.length ? p.categorias.map((c: string) => `<span class="imp-chip">${esc(c)}</span>`).join('') : '<span class="imp-muted">—</span>';
+          const st = p.status === 'ok' ? 'ok' : (p.status === 'needs-review' ? 'rev' : p.status);
+          const pub = (p.content.match(/pubDate:\s*([0-9-]+)/) || [])[1] || '';
+          return `<tr>
+            <td class="imp-title">${esc(p.title)}</td>
+            <td><code>${esc(p.slug)}</code></td>
+            <td>${esc(pub)}</td>
+            <td>${cats}</td>
+            <td><span class="imp-badge imp-badge--${st}">${esc(p.status)}</span></td>
+            <td><button type="button" class="imp-btn imp-btn--sm" data-slug="${esc(p.slug)}">Baixar</button></td>
+          </tr>`;
+        }).join('');
+
+        $rows.querySelectorAll('button[data-slug]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const slug = (btn as HTMLElement).dataset.slug;
+            const post = lastPosts.find((x) => x.slug === slug);
+            if (post) download(slug + '.md', post.content);
+          });
+        });
+
+        $result.hidden = false;
+        $status.textContent = `Concluído: ${r.totals.posts} artigos.`;
+      } catch (err: any) {
+        $status.textContent = 'Erro: ' + (err && err.message ? err.message : String(err));
+      } finally {
+        $analyze.disabled = false;
+      }
+    });
+
+    $downloadAll.addEventListener('click', () => {
+      lastPosts.forEach((p, i) => setTimeout(() => download(p.slug + '.md', p.content), i * 60));
+    });
+  </script>
+
+  <style>
+    .imp-card {
+      background: var(--painel-surface);
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .imp-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+    .imp-field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 180px; }
+    .imp-label { font-size: 12px; font-weight: 600; color: var(--painel-text-secondary); text-transform: uppercase; letter-spacing: .04em; }
+    .imp-input {
+      font-family: var(--painel-font); font-size: 14px; padding: 9px 12px;
+      border: 1px solid var(--painel-border); border-radius: 8px;
+      background: var(--painel-bg); color: var(--painel-text-primary);
+    }
+    .imp-drop {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      padding: 32px; border: 1.5px dashed var(--painel-border-strong, var(--painel-border));
+      border-radius: 10px; color: var(--painel-text-secondary); cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+    .imp-drop:hover { background: rgba(2,3,252,0.03); border-color: var(--painel-accent, #0203fc); }
+    .imp-drop-text { font-size: 14px; }
+    .imp-actions { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
+    .imp-status { font-size: 13px; color: var(--painel-text-secondary); }
+    .imp-btn {
+      font-family: var(--painel-font); font-size: 14px; font-weight: 500; cursor: pointer;
+      padding: 9px 18px; border-radius: 999px; border: 1px solid var(--painel-border);
+      background: var(--painel-surface); color: var(--painel-text-primary);
+      transition: background .15s, border-color .15s, opacity .15s;
+    }
+    .imp-btn:hover { background: rgba(60,64,67,0.05); }
+    .imp-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .imp-btn--primary { background: var(--painel-accent, #0203fc); color: #fff; border-color: transparent; }
+    .imp-btn--primary:hover { filter: brightness(1.08); background: var(--painel-accent, #0203fc); }
+    .imp-btn--sm { padding: 5px 12px; font-size: 12px; }
+    .imp-summary { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 16px; }
+    .imp-stat { font-size: 14px; color: var(--painel-text-secondary); }
+    .imp-stat b { font-size: 20px; color: var(--painel-text-primary); margin-right: 5px; }
+    .imp-stat--err b { color: #c0392b; }
+    .imp-toolbar { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 14px; }
+    .imp-note { font-size: 12.5px; color: var(--painel-text-secondary); }
+    .imp-note code { background: var(--painel-bg); padding: 2px 6px; border-radius: 5px; font-size: 12px; }
+    .imp-table-wrap { overflow-x: auto; border: 1px solid var(--painel-border); border-radius: var(--painel-radius); }
+    .imp-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .imp-table th, .imp-table td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--painel-border); vertical-align: middle; }
+    .imp-table th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--painel-text-secondary); font-weight: 600; }
+    .imp-table tr:last-child td { border-bottom: 0; }
+    .imp-title { font-weight: 500; max-width: 320px; }
+    .imp-table code { font-size: 12px; color: var(--painel-text-secondary); }
+    .imp-chip { display: inline-block; background: var(--painel-accent-soft, rgba(2,3,252,.08)); color: var(--painel-accent, #0203fc); font-size: 11px; padding: 2px 8px; border-radius: 999px; margin: 1px 3px 1px 0; }
+    .imp-muted { color: var(--painel-text-secondary); }
+    .imp-badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+    .imp-badge--ok { background: rgba(39,174,96,.12); color: #1e8449; }
+    .imp-badge--rev { background: rgba(243,156,18,.15); color: #b9770e; }
+    .imp-badge--empty { background: rgba(192,57,43,.12); color: #c0392b; }
+  </style>
+</PainelLayout>

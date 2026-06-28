@@ -3,7 +3,6 @@
  * Implementa SourceConnector: le e entrega RawEntity cru (item do WXR).
  * A conversao para CanonicalPost vive em ./transform.ts (no core/conector, nao acoplada ao resto).
  */
-import { readFile } from 'node:fs/promises';
 import { XMLParser } from 'fast-xml-parser';
 import type {
   SourceConnector,
@@ -66,7 +65,12 @@ export class WordPressXmlConnector implements SourceConnector {
   async connect(ctx: ConnectorContext, config: ConnectorConfig): Promise<void> {
     this.ctx = ctx;
     this.config = config;
-    const xml = await readFile(config.source, 'utf-8');
+    // Conteudo deve vir carregado (upload/leitura feita pelo chamador — CLI ou painel).
+    // O conector NUNCA toca no filesystem, pra ser browser/Functions-safe.
+    const xml = config.sourceContent;
+    if (xml === undefined) {
+      throw new Error('WordPressXmlConnector: forneca config.sourceContent (conteudo do XML).');
+    }
     const parser = new XMLParser({
       ignoreAttributes: false,
       attributeNamePrefix: '@_',

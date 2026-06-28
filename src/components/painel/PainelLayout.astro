@@ -1,7 +1,7 @@
 ---
 import BaseHead from '../BaseHead.astro';
 
-type NavKey = 'home' | 'posts' | 'new' | 'categorias' | 'menus' | 'marcas' | 'stats';
+type NavKey = 'home' | 'posts' | 'new' | 'import' | 'categorias' | 'menus' | 'marcas' | 'stats';
 
 interface Props {
   title?: string;
@@ -19,6 +19,7 @@ const navItems: { key: NavKey; href: string; label: string; icon: string }[] = [
   { key: 'home',  href: '/painel',              label: 'Home',         icon: 'home' },
   { key: 'posts', href: '/painel/posts',        label: 'Posts',        icon: 'doc' },
   { key: 'new',   href: '/painel/posts/editor', label: 'Novo post',    icon: 'plus' },
+  { key: 'import', href: '/painel/importacoes',  label: 'Importar',     icon: 'upload' },
   { key: 'categorias', href: '/painel/categorias', label: 'Categorias', icon: 'tag' },
   { key: 'menus', href: '/painel/menus',        label: 'Menus',        icon: 'menu' },
   { key: 'marcas', href: '/painel/marcas',      label: 'Marcas',       icon: 'star' },
@@ -60,6 +61,7 @@ const navItems: { key: NavKey; href: string; label: string; icon: string }[] = [
             {icon === 'home'  && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>}
             {icon === 'doc'   && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>}
             {icon === 'plus'  && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>}
+            {icon === 'upload' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>}
             {icon === 'tag'   && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>}
             {icon === 'menu'  && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>}
             {icon === 'star'  && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>}

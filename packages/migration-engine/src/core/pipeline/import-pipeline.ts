@@ -14,7 +14,10 @@ import { assertCategoriesInEnum } from '../validators/categories.js';
 
 export interface ImportOptions {
   connectorId: string;
+  /** rotulo da origem (caminho/URL) — so para logs/relatorio. */
   source: string;
+  /** conteudo ja carregado (XML do upload, ou lido do disco pelo CLI). */
+  sourceContent?: string;
   categoryMapping: Record<string, string>;
   allowedCategories: readonly string[];
   limit?: number;
@@ -49,7 +52,7 @@ export async function runImport(opts: ImportOptions): Promise<ImportResult> {
   const connector = createConnector(opts.connectorId);
   await connector.connect(
     { logger: log, signal: opts.signal, secrets: opts.secrets },
-    { source: opts.source },
+    { source: opts.source, sourceContent: opts.sourceContent },
   );
 
   // 2. validate

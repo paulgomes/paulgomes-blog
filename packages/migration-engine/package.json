@@ -13,7 +13,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "import:wp": "node dist/cli/import.js"
+    "import:wp": "node dist/cli/import.js",
+    "build:browser": "tsc -p tsconfig.json && esbuild dist/browser.js --bundle --format=esm --platform=browser --target=es2022 --legal-comments=none --outfile=../../src/lib/migration-engine.browser.js"
   },
   "dependencies": {
     "fast-xml-parser": "^4.5.1",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@types/node": "^22.10.0",
     "@types/turndown": "^5.0.5",
+    "esbuild": "^0.24.2",
     "typescript": "^5.7.2"
   }
 }

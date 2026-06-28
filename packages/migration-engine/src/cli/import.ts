@@ -46,9 +46,11 @@ async function main(): Promise<number> {
     categoryMapping = JSON.parse(await readFile(values.mapping, 'utf-8')) as Record<string, string>;
   }
 
+  const sourceContent = await readFile(values.source, 'utf-8');
   const result = await runImport({
     connectorId: values.connector ?? 'wordpress-xml',
     source: values.source,
+    sourceContent,
     categoryMapping,
     allowedCategories: KNOWN_CATEGORIES,
     limit: values.limit ? Number(values.limit) : undefined,

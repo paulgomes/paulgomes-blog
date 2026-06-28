@@ -22,8 +22,14 @@ export interface ConnectorCapabilities {
 }
 
 export interface ConnectorConfig {
-  /** caminho de arquivo, URL de API, etc. — especifico do conector. */
+  /** rotulo/origem (caminho de arquivo, URL de API) — usado em logs. */
   source: string;
+  /**
+   * Conteudo ja carregado (ex: XML enviado via upload no painel).
+   * Quando presente, o conector usa isto e NAO toca no filesystem —
+   * o que permite rodar o engine no navegador / em Cloudflare Functions.
+   */
+  sourceContent?: string;
   /** opcoes livres por conector (sem segredos; segredos vem do SecretResolver). */
   options?: Record<string, unknown>;
 }
