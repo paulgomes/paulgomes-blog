@@ -1,0 +1,27 @@
+{
+  "name": "@paulgomes/migration-engine",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Migration Engine — importacao/exportacao/sync de conteudo entre CMSs (arquitetura de conectores). Pacote TS standalone, agnostico de ambiente.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "bin": {
+    "migrate": "./dist/cli/import.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "import:wp": "node dist/cli/import.js"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^4.5.1",
+    "turndown": "^7.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/turndown": "^5.0.5",
+    "typescript": "^5.7.2"
+  }
+}
