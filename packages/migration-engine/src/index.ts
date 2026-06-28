@@ -8,6 +8,8 @@ export { createConnector, CONNECTORS } from './connectors/index.js';
 export { WordPressXmlConnector } from './connectors/wordpress/xml.js';
 export { wpItemToCanonical } from './connectors/wordpress/transform.js';
 export { runImport } from './core/pipeline/import-pipeline.js';
+export type { PublishablePost, ImportResult } from './core/pipeline/import-pipeline.js';
+export { publishPosts, redirectLinesFor } from './core/publish/publish.js';
 export { renderMarkdown, MarkdownExporter } from './core/transformers/canonical-to-markdown.js';
 export { htmlToMarkdown } from './core/transformers/html.js';
 export { markdownToBlocks, blocksToMarkdown } from './core/transformers/blocks.js';

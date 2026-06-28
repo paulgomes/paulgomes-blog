@@ -4,7 +4,6 @@
  * aqui o foco e o caminho ponta-a-ponta verificavel (CLI / Anel 3).
  */
 import type { StructuredLogger, SecretResolver } from '../types/ports.js';
-import type { ExportArtifact } from '../types/connector.js';
 import type { MigrationReport } from '../types/reports.js';
 import { emptyReport } from '../types/reports.js';
 import { createConnector } from '../../connectors/index.js';
@@ -24,26 +23,26 @@ export interface ImportOptions {
   secrets: SecretResolver;
 }
 
-export interface PerPost {
+export interface PublishablePost {
   slug: string;
   title: string;
+  originalUrl: string | null;
+  content: string;
   status: string;
   categorias: string[];
   warnings: number;
 }
 
 export interface ImportResult {
-  artifacts: ExportArtifact[];
+  posts: PublishablePost[];
   report: MigrationReport;
-  perPost: PerPost[];
 }
 
 export async function runImport(opts: ImportOptions): Promise<ImportResult> {
   const startedAt = Date.now();
   const log = opts.logger.child({ connector: opts.connectorId });
   const report = emptyReport('cli', opts.connectorId);
-  const artifacts: ExportArtifact[] = [];
-  const perPost: PerPost[] = [];
+  const posts: PublishablePost[] = [];
   const seenSlugs = new Set<string>();
 
   // 1. connect
@@ -60,7 +59,7 @@ export async function runImport(opts: ImportOptions): Promise<ImportResult> {
     report.errors += validation.diagnostics.filter((d) => d.level === 'error').length;
     report.durationMs = Date.now() - startedAt;
     await connector.disconnect();
-    return { artifacts, report, perPost };
+    return { posts, report };
   }
 
   // 3..10 read -> convert -> render
@@ -97,12 +96,19 @@ export async function runImport(opts: ImportOptions): Promise<ImportResult> {
     if (post.publishedAt) report.seoPreserved++;
 
     const content = renderMarkdown(post);
-    artifacts.push({ path: `src/content/blog/${post.slug}.md`, content, mime: 'text/markdown' });
-    perPost.push({ slug: post.slug, title: post.title, status: post.status, categorias: post.mappedCategories, warnings: post.warnings.length });
+    posts.push({
+      slug: post.slug,
+      title: post.title,
+      originalUrl: post.originalUrl,
+      content,
+      status: post.status,
+      categorias: post.mappedCategories,
+      warnings: post.warnings.length,
+    });
     report.totals.posts++;
   }
 
   await connector.disconnect();
   report.durationMs = Date.now() - startedAt;
-  return { artifacts, report, perPost };
+  return { posts, report };
 }

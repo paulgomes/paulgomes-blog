@@ -1,19 +1,19 @@
 /**
- * CLI do Migration Engine (Anel 3 — runner Node, cargas pesadas).
+ * CLI do Migration Engine (Anel 3 — runner Node).
  *
- * Uso:
- *   node dist/cli/import.js --connector wordpress-xml --source migration/wordpress-export.xml \
- *        [--out .out] [--mapping mapa.json] [--limit N]
+ * Preview (default): escreve os .md em --out (staging seguro), nunca toca no blog.
+ *   node dist/cli/import.js --connector wordpress-xml --source ../../migration/wordpress-export.xml
  *
- * Por seguranca, escreve os .md gerados em --out (preview/staging), NUNCA em
- * src/content/blog. A publicacao (commit Git-primeiro + gate + redirects) e o
- * passo 14, integrado ao painel/Worker — fora do escopo deste runner de preview.
+ * Publish (passo 14): escreve em src/content/blog (pulando slugs existentes),
+ *   gera redirects 301 em public/_redirects, SEM git/push (voce revisa + builda).
+ *   node dist/cli/import.js --connector wordpress-xml --source X.xml --publish [--overwrite]
  */
 import { parseArgs } from 'node:util';
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { createLogger } from '../core/utils/logger.js';
 import { runImport } from '../core/pipeline/import-pipeline.js';
+import { publishPosts } from '../core/publish/publish.js';
 import { KNOWN_CATEGORIES } from '../core/validators/categories.js';
 import type { SecretResolver } from '../core/types/ports.js';
 
@@ -27,6 +27,11 @@ async function main(): Promise<number> {
       out: { type: 'string', default: '.out' },
       mapping: { type: 'string' },
       limit: { type: 'string' },
+      publish: { type: 'boolean', default: false },
+      'blog-dir': { type: 'string' },
+      redirects: { type: 'string' },
+      'site-url': { type: 'string', default: 'https://paulgomes.com.br' },
+      overwrite: { type: 'boolean', default: false },
     },
   });
 
@@ -52,21 +57,10 @@ async function main(): Promise<number> {
     secrets: envSecrets,
   });
 
-  // escreve artifacts no diretorio de preview
-  const outDir = resolve(values.out ?? '.out');
-  await mkdir(outDir, { recursive: true });
-  for (const a of result.artifacts) {
-    const dest = join(outDir, a.path);
-    await mkdir(dirname(dest), { recursive: true });
-    await writeFile(dest, a.content, 'utf-8');
-  }
-  await writeFile(join(outDir, 'migration-report.json'), JSON.stringify(result.report, null, 2), 'utf-8');
-
-  // resumo humano em stdout
   const r = result.report;
-  const lines = [
+  const summary: string[] = [
     '',
-    '=== Migration Engine — relatorio (preview) ===',
+    '=== Migration Engine — relatorio ===',
     `conector:        ${r.connectorId}`,
     `artigos:         ${r.totals.posts}`,
     `duplicados:      ${r.duplicated}`,
@@ -74,14 +68,45 @@ async function main(): Promise<number> {
     `erros:           ${r.errors}`,
     `avisos:          ${r.warnings}`,
     `tempo:           ${r.durationMs} ms`,
-    `saida:           ${outDir}/src/content/blog/`,
-    '',
-    'amostra (ate 5):',
-    ...result.perPost.slice(0, 5).map((p) => `  - ${p.slug}  [${p.status}]  cats=[${p.categorias.join(', ')}]`),
-    '',
   ];
-  process.stdout.write(lines.join('\n') + '\n');
 
+  if (values.publish) {
+    const blogDir = resolve(values['blog-dir'] ?? '../../src/content/blog');
+    const redirectsFile = resolve(values.redirects ?? '../../public/_redirects');
+    const pub = await publishPosts(result.posts, {
+      blogDir,
+      redirectsFile,
+      siteUrl: values['site-url'] ?? 'https://paulgomes.com.br',
+      allowedCategories: KNOWN_CATEGORIES,
+      overwrite: values.overwrite ?? false,
+      logger,
+    });
+    summary.push(
+      '--- PUBLISH ---',
+      `escritos:        ${pub.written.length}`,
+      `pulados (ja existem): ${pub.skipped.length}`,
+      `bloqueados (gate):    ${pub.blocked.length}`,
+      `redirects 301:   ${pub.redirectsAdded.length}`,
+      `blog:            ${blogDir}`,
+      '',
+      'PROXIMO PASSO: revise, rode `npm run build` (na raiz) e commite. Push e seu (ADR-001).',
+      '',
+    );
+  } else {
+    // preview: escreve em --out
+    const outDir = resolve(values.out ?? '.out');
+    await mkdir(outDir, { recursive: true });
+    for (const p of result.posts) {
+      const dest = join(outDir, 'src/content/blog', `${p.slug}.md`);
+      await mkdir(dirname(dest), { recursive: true });
+      await writeFile(dest, p.content, 'utf-8');
+    }
+    await writeFile(join(outDir, 'migration-report.json'), JSON.stringify(r, null, 2), 'utf-8');
+    summary.push(`saida (preview): ${outDir}/src/content/blog/`, '', 'amostra (ate 5):',
+      ...result.posts.slice(0, 5).map((p) => `  - ${p.slug}  [${p.status}]  cats=[${p.categorias.join(', ')}]`), '');
+  }
+
+  process.stdout.write(summary.join('\n') + '\n');
   return r.errors > 0 ? 1 : 0;
 }
 
