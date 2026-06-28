@@ -32,7 +32,10 @@ export interface PublishablePost {
   originalUrl: string | null;
   content: string;
   status: string;
+  /** categorias ja mapeadas para o enum. */
   categorias: string[];
+  /** categorias cruas da origem (p/ UI de mapeamento). */
+  rawCategories: string[];
   warnings: number;
 }
 
@@ -106,6 +109,7 @@ export async function runImport(opts: ImportOptions): Promise<ImportResult> {
       content,
       status: post.status,
       categorias: post.mappedCategories,
+      rawCategories: post.rawCategories,
       warnings: post.warnings.length,
     });
     report.totals.posts++;

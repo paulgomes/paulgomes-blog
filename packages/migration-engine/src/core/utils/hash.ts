@@ -16,7 +16,8 @@ function cyrb53(input: string | Uint8Array, seed: number): number {
   h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
   h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
   h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-  return (h2 >>> 0) * 4294967296 + (h1 >>> 0);
+  // mascara h2 em 21 bits -> resultado 53-bit (precisao exata de Number).
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 }
 
 export function contentHash(input: string | Uint8Array): string {

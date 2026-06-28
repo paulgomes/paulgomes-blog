@@ -36,6 +36,12 @@ import '../../styles/painel.css';
   </section>
 
   <section id="impResult" hidden>
+    <div class="imp-mapping" id="impMapping" hidden>
+      <p class="imp-map-title">Mapear categorias da origem → categorias do site <span class="imp-muted">(as não mapeadas ficam sem categoria)</span></p>
+      <div class="imp-map-grid" id="impMapGrid"></div>
+      <button type="button" id="impReapply" class="imp-btn imp-btn--primary imp-btn--sm">Reaplicar mapeamento</button>
+    </div>
+
     <div class="imp-summary" id="impSummary"></div>
     <div class="imp-toolbar">
       <button type="button" id="impDownloadAll" class="imp-btn">Baixar todos os .md</button>
@@ -54,25 +60,28 @@ import '../../styles/painel.css';
   <script>
     import { runImport, KNOWN_CATEGORIES } from '../../lib/migration-engine.browser.js';
 
-    const $connector = document.getElementById('impConnector') as HTMLSelectElement;
-    const $limit = document.getElementById('impLimit') as HTMLInputElement;
-    const $file = document.getElementById('impFile') as HTMLInputElement;
-    const $drop = document.getElementById('impDrop') as HTMLElement;
-    const $dropText = document.getElementById('impDropText') as HTMLElement;
-    const $analyze = document.getElementById('impAnalyze') as HTMLButtonElement;
-    const $status = document.getElementById('impStatus') as HTMLElement;
-    const $result = document.getElementById('impResult') as HTMLElement;
-    const $summary = document.getElementById('impSummary') as HTMLElement;
-    const $rows = document.getElementById('impRows') as HTMLElement;
-    const $downloadAll = document.getElementById('impDownloadAll') as HTMLButtonElement;
+    const byId = (id: string) => document.getElementById(id)!;
+    const $connector = byId('impConnector') as HTMLSelectElement;
+    const $limit = byId('impLimit') as HTMLInputElement;
+    const $file = byId('impFile') as HTMLInputElement;
+    const $dropText = byId('impDropText');
+    const $analyze = byId('impAnalyze') as HTMLButtonElement;
+    const $status = byId('impStatus');
+    const $result = byId('impResult');
+    const $summary = byId('impSummary');
+    const $rows = byId('impRows');
+    const $downloadAll = byId('impDownloadAll');
+    const $mapping = byId('impMapping');
+    const $mapGrid = byId('impMapGrid');
+    const $reapply = byId('impReapply');
 
     const noopLogger: any = { debug() {}, info() {}, warn() {}, error() {}, child() { return noopLogger; } };
     let lastPosts: any[] = [];
+    let lastXml = '';
 
     function esc(s: string): string {
       return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] as string));
     }
-
     function download(name: string, content: string) {
       const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
       const url = URL.createObjectURL(blob);
@@ -87,64 +96,89 @@ import '../../styles/painel.css';
       $analyze.disabled = !f;
     });
 
-    $analyze.addEventListener('click', async () => {
-      const f = $file.files && $file.files[0];
-      if (!f) return;
-      $analyze.disabled = true;
-      $status.textContent = 'Analisando…';
-      $result.hidden = true;
+    async function analyze(xml: string, mapping: Record<string, string>) {
+      $analyze.disabled = true; $status.textContent = 'Analisando…';
       try {
-        const xml = await f.text();
         const limit = $limit.value ? Number($limit.value) : undefined;
         const result = await runImport({
-          connectorId: $connector.value,
-          source: f.name,
-          sourceContent: xml,
-          categoryMapping: {},
-          allowedCategories: KNOWN_CATEGORIES,
-          limit,
-          logger: noopLogger,
-          signal: AbortSignal.timeout(120000),
-          secrets: { get: async () => undefined },
+          connectorId: $connector.value, source: 'upload', sourceContent: xml,
+          categoryMapping: mapping, allowedCategories: KNOWN_CATEGORIES, limit,
+          logger: noopLogger, signal: AbortSignal.timeout(120000), secrets: { get: async () => undefined },
         });
-        lastPosts = result.posts;
-        const r = result.report;
-        $summary.innerHTML =
-          `<span class="imp-stat"><b>${r.totals.posts}</b> artigos</span>` +
-          `<span class="imp-stat"><b>${r.seoPreserved}</b> com data</span>` +
-          `<span class="imp-stat"><b>${r.duplicated}</b> duplicados</span>` +
-          `<span class="imp-stat ${r.errors ? 'imp-stat--err' : ''}"><b>${r.errors}</b> erros</span>` +
-          `<span class="imp-stat">${r.durationMs} ms</span>`;
-
-        $rows.innerHTML = result.posts.map((p: any) => {
-          const cats = p.categorias.length ? p.categorias.map((c: string) => `<span class="imp-chip">${esc(c)}</span>`).join('') : '<span class="imp-muted">—</span>';
-          const st = p.status === 'ok' ? 'ok' : (p.status === 'needs-review' ? 'rev' : p.status);
-          const pub = (p.content.match(/pubDate:\s*([0-9-]+)/) || [])[1] || '';
-          return `<tr>
-            <td class="imp-title">${esc(p.title)}</td>
-            <td><code>${esc(p.slug)}</code></td>
-            <td>${esc(pub)}</td>
-            <td>${cats}</td>
-            <td><span class="imp-badge imp-badge--${st}">${esc(p.status)}</span></td>
-            <td><button type="button" class="imp-btn imp-btn--sm" data-slug="${esc(p.slug)}">Baixar</button></td>
-          </tr>`;
-        }).join('');
-
-        $rows.querySelectorAll('button[data-slug]').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            const slug = (btn as HTMLElement).dataset.slug;
-            const post = lastPosts.find((x) => x.slug === slug);
-            if (post) download(slug + '.md', post.content);
-          });
-        });
-
+        lastPosts = result.posts; lastXml = xml;
+        renderSummary(result.report);
+        renderRows(result.posts);
+        renderMapping(result.posts, mapping);
         $result.hidden = false;
-        $status.textContent = `Concluído: ${r.totals.posts} artigos.`;
+        $status.textContent = `Concluído: ${result.report.totals.posts} artigos.`;
       } catch (err: any) {
         $status.textContent = 'Erro: ' + (err && err.message ? err.message : String(err));
       } finally {
         $analyze.disabled = false;
       }
+    }
+
+    function renderSummary(r: any) {
+      $summary.innerHTML =
+        `<span class="imp-stat"><b>${r.totals.posts}</b> artigos</span>` +
+        `<span class="imp-stat"><b>${r.seoPreserved}</b> com data</span>` +
+        `<span class="imp-stat"><b>${r.duplicated}</b> duplicados</span>` +
+        `<span class="imp-stat ${r.errors ? 'imp-stat--err' : ''}"><b>${r.errors}</b> erros</span>` +
+        `<span class="imp-stat">${r.durationMs} ms</span>`;
+    }
+
+    function renderRows(posts: any[]) {
+      $rows.innerHTML = posts.map((p) => {
+        const cats = p.categorias.length ? p.categorias.map((c: string) => `<span class="imp-chip">${esc(c)}</span>`).join('') : '<span class="imp-muted">—</span>';
+        const st = p.status === 'ok' ? 'ok' : (p.status === 'needs-review' ? 'rev' : 'empty');
+        const pub = (p.content.match(/pubDate:\s*([0-9-]+)/) || [])[1] || '';
+        return `<tr>
+          <td class="imp-title">${esc(p.title)}</td>
+          <td><code>${esc(p.slug)}</code></td>
+          <td>${esc(pub)}</td>
+          <td>${cats}</td>
+          <td><span class="imp-badge imp-badge--${st}">${esc(p.status)}</span></td>
+          <td><button type="button" class="imp-btn imp-btn--sm" data-slug="${esc(p.slug)}">Baixar</button></td>
+        </tr>`;
+      }).join('');
+      $rows.querySelectorAll('button[data-slug]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const slug = (btn as HTMLElement).dataset.slug as string;
+          const post = lastPosts.find((x) => x.slug === slug);
+          if (post) download(slug + '.md', post.content);
+        });
+      });
+    }
+
+    function renderMapping(posts: any[], mapping: Record<string, string>) {
+      const enumSet = new Set(KNOWN_CATEGORIES as readonly string[]);
+      const raw = new Set<string>();
+      posts.forEach((p) => p.rawCategories.forEach((c: string) => { if (!enumSet.has(c)) raw.add(c); }));
+      const list = [...raw].sort();
+      if (!list.length) { $mapping.hidden = true; return; }
+      $mapGrid.innerHTML = list.map((c) => {
+        const opts = ['<option value="">— ignorar —</option>']
+          .concat((KNOWN_CATEGORIES as readonly string[]).map((k) => `<option value="${esc(k)}"${mapping[c] === k ? ' selected' : ''}>${esc(k)}</option>`))
+          .join('');
+        return `<label class="imp-map-row"><span class="imp-map-raw">${esc(c)}</span><select class="imp-input" data-raw="${esc(c)}">${opts}</select></label>`;
+      }).join('');
+      $mapping.hidden = false;
+    }
+
+    $analyze.addEventListener('click', async () => {
+      const f = $file.files && $file.files[0];
+      if (!f) return;
+      await analyze(await f.text(), {});
+    });
+
+    $reapply.addEventListener('click', () => {
+      const mapping: Record<string, string> = {};
+      $mapGrid.querySelectorAll('select[data-raw]').forEach((sel) => {
+        const raw = (sel as HTMLElement).dataset.raw as string;
+        const val = (sel as HTMLSelectElement).value;
+        if (val) mapping[raw] = val;
+      });
+      analyze(lastXml, mapping);
     });
 
     $downloadAll.addEventListener('click', () => {
@@ -153,42 +187,28 @@ import '../../styles/painel.css';
   </script>
 
   <style>
-    .imp-card {
-      background: var(--painel-surface);
-      border: 1px solid var(--painel-border);
-      border-radius: var(--painel-radius);
-      padding: 24px;
-      margin-bottom: 24px;
-    }
+    .imp-card { background: var(--painel-surface); border: 1px solid var(--painel-border); border-radius: var(--painel-radius); padding: 24px; margin-bottom: 24px; }
     .imp-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
     .imp-field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 180px; }
     .imp-label { font-size: 12px; font-weight: 600; color: var(--painel-text-secondary); text-transform: uppercase; letter-spacing: .04em; }
-    .imp-input {
-      font-family: var(--painel-font); font-size: 14px; padding: 9px 12px;
-      border: 1px solid var(--painel-border); border-radius: 8px;
-      background: var(--painel-bg); color: var(--painel-text-primary);
-    }
-    .imp-drop {
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
-      padding: 32px; border: 1.5px dashed var(--painel-border-strong, var(--painel-border));
-      border-radius: 10px; color: var(--painel-text-secondary); cursor: pointer;
-      transition: background .15s, border-color .15s;
-    }
+    .imp-input { font-family: var(--painel-font); font-size: 14px; padding: 9px 12px; border: 1px solid var(--painel-border); border-radius: 8px; background: var(--painel-bg); color: var(--painel-text-primary); }
+    .imp-drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 32px; border: 1.5px dashed var(--painel-border-strong, var(--painel-border)); border-radius: 10px; color: var(--painel-text-secondary); cursor: pointer; transition: background .15s, border-color .15s; }
     .imp-drop:hover { background: rgba(2,3,252,0.03); border-color: var(--painel-accent, #0203fc); }
     .imp-drop-text { font-size: 14px; }
     .imp-actions { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
     .imp-status { font-size: 13px; color: var(--painel-text-secondary); }
-    .imp-btn {
-      font-family: var(--painel-font); font-size: 14px; font-weight: 500; cursor: pointer;
-      padding: 9px 18px; border-radius: 999px; border: 1px solid var(--painel-border);
-      background: var(--painel-surface); color: var(--painel-text-primary);
-      transition: background .15s, border-color .15s, opacity .15s;
-    }
+    .imp-btn { font-family: var(--painel-font); font-size: 14px; font-weight: 500; cursor: pointer; padding: 9px 18px; border-radius: 999px; border: 1px solid var(--painel-border); background: var(--painel-surface); color: var(--painel-text-primary); transition: background .15s, border-color .15s, opacity .15s; }
     .imp-btn:hover { background: rgba(60,64,67,0.05); }
     .imp-btn:disabled { opacity: .5; cursor: not-allowed; }
     .imp-btn--primary { background: var(--painel-accent, #0203fc); color: #fff; border-color: transparent; }
     .imp-btn--primary:hover { filter: brightness(1.08); background: var(--painel-accent, #0203fc); }
     .imp-btn--sm { padding: 5px 12px; font-size: 12px; }
+    .imp-mapping { background: var(--painel-surface); border: 1px solid var(--painel-border); border-radius: var(--painel-radius); padding: 18px 20px; margin-bottom: 20px; }
+    .imp-map-title { font-size: 13px; font-weight: 600; margin: 0 0 14px; color: var(--painel-text-primary); }
+    .imp-map-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px 16px; margin-bottom: 16px; }
+    .imp-map-row { display: flex; align-items: center; gap: 10px; }
+    .imp-map-raw { flex: 1; font-size: 13px; color: var(--painel-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .imp-map-row select { flex: 0 0 150px; }
     .imp-summary { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 16px; }
     .imp-stat { font-size: 14px; color: var(--painel-text-secondary); }
     .imp-stat b { font-size: 20px; color: var(--painel-text-primary); margin-right: 5px; }
