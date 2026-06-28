@@ -3453,8 +3453,10 @@ async function runImport(opts) {
     posts.push({
       slug: post.slug,
       title: post.title,
+      description: post.description,
       originalUrl: post.originalUrl,
       content,
+      bodyMarkdown: blocksToMarkdown(post.body),
       status: post.status,
       categorias: post.mappedCategories,
       rawCategories: post.rawCategories,

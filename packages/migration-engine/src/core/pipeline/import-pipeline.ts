@@ -10,6 +10,7 @@ import { createConnector } from '../../connectors/index.js';
 import { wpItemToCanonical } from '../../connectors/wordpress/transform.js';
 import type { WpItem } from '../../connectors/wordpress/xml.js';
 import { renderMarkdown } from '../transformers/canonical-to-markdown.js';
+import { blocksToMarkdown } from '../transformers/blocks.js';
 import { assertCategoriesInEnum } from '../validators/categories.js';
 
 export interface ImportOptions {
@@ -29,8 +30,12 @@ export interface ImportOptions {
 export interface PublishablePost {
   slug: string;
   title: string;
+  description: string;
   originalUrl: string | null;
+  /** arquivo .md completo (frontmatter + corpo). */
   content: string;
+  /** so o corpo em markdown (sem frontmatter) — p/ criar rascunho via /api/drafts. */
+  bodyMarkdown: string;
   status: string;
   /** categorias ja mapeadas para o enum. */
   categorias: string[];
@@ -105,8 +110,10 @@ export async function runImport(opts: ImportOptions): Promise<ImportResult> {
     posts.push({
       slug: post.slug,
       title: post.title,
+      description: post.description,
       originalUrl: post.originalUrl,
       content,
+      bodyMarkdown: blocksToMarkdown(post.body),
       status: post.status,
       categorias: post.mappedCategories,
       rawCategories: post.rawCategories,

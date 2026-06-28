@@ -44,9 +44,11 @@ import '../../styles/painel.css';
 
     <div class="imp-summary" id="impSummary"></div>
     <div class="imp-toolbar">
+      <button type="button" id="impCreateDrafts" class="imp-btn imp-btn--primary">Criar rascunhos no painel</button>
       <button type="button" id="impDownloadAll" class="imp-btn">Baixar todos os .md</button>
-      <span class="imp-note">A prévia é só leitura. Para <strong>publicar no repositório</strong> (commit + redirects 301), use o CLI: <code>node dist/cli/import.js --source &lt;arquivo&gt; --publish</code></span>
+      <span id="impCreateStatus" class="imp-status"></span>
     </div>
+    <p class="imp-note">Os rascunhos aparecem em <a href="/painel/posts?status=draft">Posts → Rascunhos</a> para você revisar e publicar pelo fluxo normal — nada vai ao ar sem sua revisão. (Para commitar direto no repositório via CLI: <code>node dist/cli/import.js --source &lt;arquivo&gt; --publish</code>.)</p>
     <div class="imp-table-wrap">
       <table class="imp-table">
         <thead>
@@ -71,6 +73,8 @@ import '../../styles/painel.css';
     const $summary = byId('impSummary');
     const $rows = byId('impRows');
     const $downloadAll = byId('impDownloadAll');
+    const $createDrafts = byId('impCreateDrafts') as HTMLButtonElement;
+    const $createStatus = byId('impCreateStatus');
     const $mapping = byId('impMapping');
     const $mapGrid = byId('impMapGrid');
     const $reapply = byId('impReapply');
@@ -183,6 +187,29 @@ import '../../styles/painel.css';
 
     $downloadAll.addEventListener('click', () => {
       lastPosts.forEach((p, i) => setTimeout(() => download(p.slug + '.md', p.content), i * 60));
+    });
+
+    // Cria um rascunho por post via /api/drafts (endpoint existente, auth-protegido).
+    // Reusa o fluxo testado: NAO publica direto — entra em Posts > Rascunhos para revisao.
+    $createDrafts.addEventListener('click', async () => {
+      if (!lastPosts.length) return;
+      if (!confirm(`Criar ${lastPosts.length} rascunho(s) no painel?`)) return;
+      $createDrafts.disabled = true; $downloadAll.disabled = true;
+      let ok = 0, fail = 0;
+      for (let i = 0; i < lastPosts.length; i++) {
+        const p = lastPosts[i];
+        try {
+          const res = await fetch('/api/drafts', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ slug: p.slug, title: p.title, description: p.description, content_md: p.bodyMarkdown, categorias: p.categorias }),
+          });
+          if (res.ok) ok++; else fail++;
+        } catch { fail++; }
+        $createStatus.textContent = `Criando rascunhos… ${i + 1}/${lastPosts.length}`;
+      }
+      $createStatus.innerHTML = `✓ ${ok} rascunho(s) criado(s)${fail ? `, ${fail} falha(s)` : ''}. <a href="/painel/posts?status=draft">Ver rascunhos →</a>`;
+      $createDrafts.disabled = false; $downloadAll.disabled = false;
     });
   </script>
 
