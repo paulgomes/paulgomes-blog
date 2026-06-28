@@ -15,20 +15,13 @@ const ogImageURL = new URL(image, Astro.url).toString();
 
 // Grafo JSON-LD base (WebSite + Organization + Person) — presente em todas as paginas.
 const baseSchema = baseSchemaDocument();
-
-// Cloudflare Web Analytics (gratis, privacy-friendly). Sem custo e sem cookies.
-// No-op enquanto o token nao for definido -> saida byte-identica (LIMITE #1 preservado).
-// Para ativar: defina PUBLIC_CF_ANALYTICS_TOKEN nas env vars do Cloudflare Pages
-// (Dashboard -> Web Analytics -> adicionar site -> copiar o token).
-const cfAnalyticsToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
+// Nota: Cloudflare Web Analytics ja e injetado automaticamente na borda (RUM),
+// entao nao ha snippet de analytics aqui de proposito.
 ---
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="google-site-verification" content="0FY8vPWeMOMZPUFq8-IQu323gZpIzByhfQpmPQBNb-0" />
-{cfAnalyticsToken && (
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={`{"token": "${cfAnalyticsToken}"}`}></script>
-)}
 
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png" />
