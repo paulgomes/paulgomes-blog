@@ -19,7 +19,7 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !page.includes('/painel'),
+      filter: (page) => !page.includes('/painel') && !page.includes('/og/'),
     }),
     react(),
   ],

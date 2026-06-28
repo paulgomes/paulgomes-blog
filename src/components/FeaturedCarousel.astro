@@ -29,7 +29,7 @@ const multiple = slides.length > 1;
     {slides.map(({ post, href, categoria, minutes }) => {
       const { title, description, pubDate, heroImage } = post.data;
       return (
-        <a class="slide" href={href} aria-label={`Ler: ${title}`}>
+        <a class:list={['slide', { 'slide--plain': !heroImage }]} href={href} aria-label={`Ler: ${title}`}>
           {heroImage ? (
             typeof heroImage === 'string' ? (
               <img src={heroImage} alt="" width="1280" height="800" loading="lazy" class="slide-bg" />
@@ -132,7 +132,12 @@ const multiple = slides.length > 1;
   }
 
   .slide-bg-fallback {
-    background: linear-gradient(135deg, #1a1a2e 0%, #0a0a1a 50%, #0103f9 200%);
+    background: #0203fc;
+  }
+
+  /* Sem foto de capa: mostra o #0203FC puro (sem o overlay escuro de legibilidade). */
+  .slide--plain .slide-overlay {
+    display: none;
   }
 
   .slide-overlay {

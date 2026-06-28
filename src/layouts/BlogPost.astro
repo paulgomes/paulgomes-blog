@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import ShareButtons from '../components/ShareButtons.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
+import CoverFallback from '../components/CoverFallback.astro';
 import { Image } from 'astro:assets';
 import { SITE_AUTHOR } from '../consts';
 import authorPhoto from '../assets/brand/paul-gomes.webp';
@@ -25,6 +26,10 @@ const shareUrl = new URL(Astro.url.pathname, Astro.site).href;
 const heroImageUrl = heroImage
   ? (typeof heroImage === 'string' ? heroImage : new URL(heroImage.src, Astro.site).toString())
   : undefined;
+// Capa-fallback gerada (#0203FC + título) para posts sem heroImage — usada como
+// imagem OG/social e no schema. Posts COM capa não mudam (continuam usando heroImage).
+const ogFallbackUrl = id ? new URL(`/og/${id}.png`, Astro.site).toString() : undefined;
+const articleImageUrl = heroImageUrl ?? ogFallbackUrl;
 const publishedISO = new Date(pubDate).toISOString();
 const modifiedISO = updatedDate ? new Date(updatedDate).toISOString() : publishedISO;
 
@@ -33,8 +38,8 @@ const articleSchema = {
   '@type': 'Article',
   headline: title,
   description,
-  ...(heroImageUrl
-    ? { image: [{ '@type': 'ImageObject', url: heroImageUrl, width: 1280, height: 720, caption: heroAlt }] }
+  ...(articleImageUrl
+    ? { image: [{ '@type': 'ImageObject', url: articleImageUrl, width: heroImageUrl ? 1280 : 1200, height: heroImageUrl ? 720 : 630, caption: heroAlt }] }
     : {}),
   datePublished: publishedISO,
   dateModified: modifiedISO,
@@ -67,7 +72,7 @@ const breadcrumbSchema = breadcrumbList([
       description={description}
       image={heroImage
         ? (typeof heroImage === 'string' ? heroImage : heroImage.src)
-        : undefined}
+        : (id ? `/og/${id}.png` : undefined)}
       ogType="article"
     />
 
@@ -119,13 +124,19 @@ const breadcrumbSchema = breadcrumbList([
           </div>
         </header>
 
-        {heroImage && (
+        {heroImage ? (
           <div class="container-wide pb-12 md:pb-16">
             <div class="overflow-hidden rounded-lg" style="background-color: var(--color-subtle)">
               {typeof heroImage === 'string'
                 ? <img src={heroImage} alt={heroAlt} class="w-full" loading="eager" />
                 : <Image src={heroImage} alt={heroAlt} width={1280} height={720} class="w-full" />
               }
+            </div>
+          </div>
+        ) : (
+          <div class="container-wide pb-12 md:pb-16">
+            <div class="aspect-[16/9] overflow-hidden rounded-lg">
+              <CoverFallback title={title} />
             </div>
           </div>
         )}

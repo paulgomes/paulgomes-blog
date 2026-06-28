@@ -1,0 +1,54 @@
+---
+/**
+ * Capa-fallback gerada automaticamente quando o post não tem `heroImage`.
+ * Fundo sólido #0203FC com o título do artigo em branco por cima.
+ *
+ * Preenche 100% do contêiner pai (que define o aspect-ratio), então pode ser
+ * usado em cards (16:9 / 4:3) ou no hero do post. O texto é `aria-hidden`
+ * porque o título já aparece como heading real ao lado/abaixo — evita leitura
+ * duplicada por leitores de tela.
+ */
+interface Props {
+  title: string;
+  class?: string;
+}
+
+const { title, class: className = '' } = Astro.props;
+---
+
+<div class:list={['cover-fallback', className]} aria-hidden="true">
+  <span class="cover-fallback__title">{title}</span>
+</div>
+
+<style>
+  .cover-fallback {
+    /* vira contêiner de query pra fonte escalar conforme o tamanho do card */
+    container-type: size;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
+    padding: 1.4rem 1.6rem;
+    background-color: #0203fc;
+  }
+
+  .cover-fallback__title {
+    color: #fff;
+    font-family: var(--font-display, system-ui, -apple-system, sans-serif);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    text-align: center;
+    text-wrap: balance;
+    /* escala com a largura do contêiner; limites pra card pequeno e hero grande */
+    font-size: clamp(0.95rem, 7cqi, 2.6rem);
+    /* nunca deixa o título estourar a capa */
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

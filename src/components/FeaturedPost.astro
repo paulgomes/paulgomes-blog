@@ -15,7 +15,7 @@ const href = `/${post.id}/`;
 
 <div class="featured-wrap">
   <div class="container-wide">
-    <a href={href} class="featured-banner" aria-label={`Ler ensaio: ${title}`}>
+    <a href={href} class:list={['featured-banner', { 'banner--plain': !heroImage }]} aria-label={`Ler ensaio: ${title}`}>
       {heroImage ? (
         typeof heroImage === 'string'
           ? <img src={heroImage} alt="" width="1920" height="840" loading="lazy" class="banner-bg" />
@@ -76,7 +76,12 @@ const href = `/${post.id}/`;
   }
 
   .banner-bg-fallback {
-    background: linear-gradient(135deg, #1a1a2e 0%, #0a0a1a 50%, #0103F9 200%);
+    background: #0203fc;
+  }
+
+  /* Sem foto de capa: mostra o #0203FC puro (sem o overlay escuro de legibilidade). */
+  .banner--plain .banner-overlay {
+    display: none;
   }
 
   .featured-banner:hover .banner-bg {
