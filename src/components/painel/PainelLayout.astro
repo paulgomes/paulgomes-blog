@@ -84,6 +84,10 @@ const navGroups: { label: string | null; items: NavItem[] }[] = [
     </header>
 
     <aside class="painel-l-sidebar" id="painelSidebar" aria-label="Navegação do painel">
+      <a href="/" target="_blank" rel="noopener" class="painel-l-viewsite" title="Abrir o site público em nova aba">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        <span class="painel-l-viewsite-txt">Ver site <small>paulgomes.com.br</small></span>
+      </a>
       <nav>
         {navGroups.map((group) => (
           <div class="painel-l-nav-group">
@@ -285,6 +289,20 @@ const navGroups: { label: string | null; items: NavItem[] }[] = [
         transition: filter .15s;
       }
       .painel-l-newpost:hover { filter: brightness(1.08); text-decoration: none; }
+
+      /* === Link rápido "Ver site" (topo da sidebar) === */
+      .painel-l-viewsite {
+        display: flex; align-items: center; gap: 9px;
+        margin: 8px 12px 10px; padding: 9px 14px;
+        border: 1px solid var(--painel-border); border-radius: 10px;
+        color: var(--painel-text-secondary); text-decoration: none;
+        font-size: 13px; font-weight: 500;
+        transition: background .15s, border-color .15s, color .15s;
+      }
+      .painel-l-viewsite:hover { background: var(--painel-accent-soft); border-color: var(--painel-accent); color: var(--painel-accent); }
+      .painel-l-viewsite svg { flex-shrink: 0; }
+      .painel-l-viewsite-txt { display: flex; flex-direction: column; line-height: 1.2; }
+      .painel-l-viewsite-txt small { font-size: 10.5px; color: var(--painel-text-disabled); font-weight: 400; }
 
       /* === Grupos da sidebar === */
       .painel-l-nav-group { margin-bottom: 4px; }
