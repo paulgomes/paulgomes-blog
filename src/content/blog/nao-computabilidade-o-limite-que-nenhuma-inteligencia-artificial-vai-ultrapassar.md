@@ -2,7 +2,6 @@
 title: "Não computabilidade: o limite que nenhuma inteligência artificial vai ultrapassar"
 description: ""
 pubDate: 2026-06-07
-heroImage: "https://media.paulgomes.com.br/2026/06/8e6c9712-b915-45e0-b739-9932c42f2868.png"
 focusKeyword: "Não computabilidade"
 metaTitle: "Não computabilidade: o limite que nenhuma inteligência..."
 metaDescription: "A não computabilidade é o nome desse limite, e ela importa mais hoje do que em qualquer momento desde que foi formulada, porque vivemos uma época que..."
