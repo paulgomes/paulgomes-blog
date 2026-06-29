@@ -15,17 +15,27 @@ const {
   current = 'home',
 } = Astro.props;
 
-const navItems: { key: NavKey; href: string; label: string; icon: string }[] = [
-  { key: 'home',  href: '/painel',              label: 'Home',         icon: 'home' },
-  { key: 'posts', href: '/painel/posts',        label: 'Posts',        icon: 'doc' },
-  { key: 'new',   href: '/painel/posts/editor', label: 'Novo post',    icon: 'plus' },
-  { key: 'import', href: '/painel/importacoes',  label: 'Importar',     icon: 'upload' },
-  { key: 'ia',    href: '/painel/ia',           label: 'IA',           icon: 'ai' },
-  { key: 'categorias', href: '/painel/categorias', label: 'Categorias', icon: 'tag' },
-  { key: 'menus', href: '/painel/menus',        label: 'Menus',        icon: 'menu' },
-  { key: 'marcas', href: '/painel/marcas',      label: 'Marcas',       icon: 'star' },
-  { key: 'newsletter', href: '/painel/newsletter', label: 'Newsletter', icon: 'mail' },
-  { key: 'stats', href: '/painel/stats',        label: 'Estatísticas', icon: 'chart' },
+type NavItem = { key: NavKey; href: string; label: string; icon: string };
+// Sidebar em grupos (premium): rótulos discretos agrupando por função.
+const navGroups: { label: string | null; items: NavItem[] }[] = [
+  { label: null, items: [
+    { key: 'home', href: '/painel', label: 'Home', icon: 'home' },
+  ] },
+  { label: 'Conteúdo', items: [
+    { key: 'posts', href: '/painel/posts', label: 'Posts', icon: 'doc' },
+    { key: 'new', href: '/painel/posts/editor', label: 'Novo post', icon: 'plus' },
+    { key: 'import', href: '/painel/importacoes', label: 'Importar', icon: 'upload' },
+    { key: 'ia', href: '/painel/ia', label: 'IA', icon: 'ai' },
+  ] },
+  { label: 'Estrutura', items: [
+    { key: 'categorias', href: '/painel/categorias', label: 'Categorias', icon: 'tag' },
+    { key: 'menus', href: '/painel/menus', label: 'Menus', icon: 'menu' },
+    { key: 'marcas', href: '/painel/marcas', label: 'Marcas', icon: 'star' },
+  ] },
+  { label: 'Crescimento', items: [
+    { key: 'newsletter', href: '/painel/newsletter', label: 'Newsletter', icon: 'mail' },
+    { key: 'stats', href: '/painel/stats', label: 'Estatísticas', icon: 'chart' },
+  ] },
 ];
 ---
 
@@ -49,7 +59,24 @@ const navItems: { key: NavKey; href: string; label: string; icon: string }[] = [
         <img src="/logo-paulgomes.webp?v=2" alt="Paul Gomes" height="28" />
         <span>Painel</span>
       </a>
+
+      <form class="painel-l-search" id="painelSearch" role="search" action="/painel/posts">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" name="q" id="painelSearchInput" placeholder="Buscar posts…" aria-label="Buscar posts" autocomplete="off" />
+      </form>
+
       <div class="painel-l-spacer"></div>
+
+      <a href="/painel/posts" class="painel-l-sync" id="painelSync" title="Status de sincronização com o Git" hidden>
+        <span class="painel-l-sync-dot"></span>
+        <span id="painelSyncText">Sincronizado</span>
+      </a>
+
+      <a href="/painel/posts/editor" class="painel-l-newpost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Novo post</span>
+      </a>
+
       <div class="painel-l-user">
         <span id="painelUserName" class="painel-l-user-name">…</span>
         <button id="painelLogoutBtn" class="btn-neu btn-sm" type="button">Sair</button>
@@ -58,7 +85,10 @@ const navItems: { key: NavKey; href: string; label: string; icon: string }[] = [
 
     <aside class="painel-l-sidebar" id="painelSidebar" aria-label="Navegação do painel">
       <nav>
-        {navItems.map(({ key, href, label, icon }) => (
+        {navGroups.map((group) => (
+          <div class="painel-l-nav-group">
+            {group.label && <p class="painel-l-nav-label">{group.label}</p>}
+            {group.items.map(({ key, href, label, icon }) => (
           <a href={href} class:list={['painel-l-nav-item', { active: current === key }]}>
             {icon === 'home'  && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>}
             {icon === 'doc'   && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>}
@@ -72,6 +102,8 @@ const navItems: { key: NavKey; href: string; label: string; icon: string }[] = [
             {icon === 'chart' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6"  y1="20" x2="6"  y2="14"/></svg>}
             <span>{label}</span>
           </a>
+            ))}
+          </div>
         ))}
       </nav>
     </aside>
@@ -98,6 +130,26 @@ const navItems: { key: NavKey; href: string; label: string; icon: string }[] = [
         .catch(() => {
           window.location.href = '/painel/login';
         });
+
+      // === Status de sincronização (topbar) — reusa /api/stats (campo unsynced) ===
+      fetch('/api/stats')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((s) => {
+          const $sync = document.getElementById('painelSync');
+          const $txt = document.getElementById('painelSyncText');
+          if (!$sync || !$txt || !s) return;
+          const unsynced = Number(s.unsynced || 0);
+          $sync.hidden = false;
+          if (unsynced > 0) {
+            $sync.classList.add('is-pending');
+            $txt.textContent = `${unsynced} pendente${unsynced > 1 ? 's' : ''} de sync`;
+            $sync.setAttribute('href', '/painel/posts?status=published');
+          } else {
+            $sync.classList.add('is-ok');
+            $txt.textContent = 'Sincronizado';
+          }
+        })
+        .catch(() => {});
 
       document.getElementById('painelLogoutBtn')?.addEventListener('click', async () => {
         await fetch('/api/auth/logout', { method: 'POST' });
@@ -187,6 +239,60 @@ const navItems: { key: NavKey; href: string; label: string; icon: string }[] = [
         border-radius: 4px;
       }
       .painel-l-spacer { flex: 1; }
+
+      /* === Busca global === */
+      .painel-l-search {
+        display: flex; align-items: center; gap: 8px;
+        background: var(--painel-bg);
+        border: 1px solid var(--painel-border);
+        border-radius: 999px;
+        padding: 0 14px; height: 38px;
+        max-width: 340px; flex: 1 1 200px;
+        color: var(--painel-text-secondary);
+        transition: border-color .15s, box-shadow .15s;
+      }
+      .painel-l-search:focus-within {
+        border-color: var(--painel-accent);
+        box-shadow: 0 0 0 3px var(--painel-accent-soft);
+      }
+      .painel-l-search svg { flex-shrink: 0; }
+      .painel-l-search input {
+        border: 0; background: transparent; outline: 0; width: 100%;
+        font-family: var(--painel-font); font-size: 14px; color: var(--painel-text-primary);
+      }
+      .painel-l-search input::placeholder { color: var(--painel-text-disabled); }
+
+      /* === Status de sync === */
+      .painel-l-sync {
+        display: inline-flex; align-items: center; gap: 7px;
+        font-size: 12.5px; font-weight: 500; text-decoration: none; white-space: nowrap;
+        padding: 6px 12px; border-radius: 999px;
+        border: 1px solid var(--painel-border); color: var(--painel-text-secondary);
+        transition: background .15s;
+      }
+      .painel-l-sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--painel-text-disabled); }
+      .painel-l-sync.is-ok { color: #1e8e3e; border-color: rgba(30,142,62,.3); }
+      .painel-l-sync.is-ok .painel-l-sync-dot { background: #1e8e3e; }
+      .painel-l-sync.is-pending { color: #b9770e; border-color: rgba(249,171,0,.4); background: rgba(249,171,0,.06); }
+      .painel-l-sync.is-pending .painel-l-sync-dot { background: #f9ab00; }
+
+      /* === CTA Novo post === */
+      .painel-l-newpost {
+        display: inline-flex; align-items: center; gap: 7px;
+        background: var(--painel-accent); color: #fff;
+        font-family: var(--painel-font); font-size: 13.5px; font-weight: 600;
+        padding: 8px 15px; border-radius: 999px; text-decoration: none; white-space: nowrap;
+        transition: filter .15s;
+      }
+      .painel-l-newpost:hover { filter: brightness(1.08); text-decoration: none; }
+
+      /* === Grupos da sidebar === */
+      .painel-l-nav-group { margin-bottom: 4px; }
+      .painel-l-nav-label {
+        font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: .08em; color: var(--painel-text-disabled);
+        margin: 16px 24px 6px; user-select: none;
+      }
       .painel-l-user {
         display: inline-flex;
         align-items: center;
@@ -317,6 +423,10 @@ const navItems: { key: NavKey; href: string; label: string; icon: string }[] = [
         }
         .painel-l-user-name { display: none; }
         .painel-l-brand span { display: none; }
+        .painel-l-search { display: none; }
+        .painel-l-sync { display: none; }
+        .painel-l-newpost span { display: none; }
+        .painel-l-newpost { padding: 8px; }
       }
 
       @media (prefers-reduced-motion: reduce) {

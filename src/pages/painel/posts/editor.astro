@@ -34,7 +34,7 @@ const currentNav = isEditing ? 'posts' : 'new';
 
   <div class="editor-grid">
     <article class="editor-main">
-      <input id="title" class="title-input" placeholder="Título do post" />
+      <textarea id="title" class="title-input" rows="1" placeholder="Título do post"></textarea>
       <input id="description" class="desc-input" placeholder="Descrição curta (aparece em listagens)" />
 
       <Editor client:load />
@@ -188,7 +188,15 @@ const currentNav = isEditing ? 'posts' : 'new';
     let pendingContent: string | null = null;
 
     // ===== Refs DOM =====
-    const $title = document.getElementById('title') as HTMLInputElement;
+    const $title = document.getElementById('title') as HTMLTextAreaElement;
+    // Titulo: textarea auto-crescente — quebra linha em vez de cortar titulos longos.
+    function autoGrowTitle() {
+      $title.style.height = 'auto';
+      $title.style.height = $title.scrollHeight + 'px';
+    }
+    $title.addEventListener('input', autoGrowTitle);
+    // Enter no titulo nao insere quebra de linha (o wrap e automatico/visual).
+    $title.addEventListener('keydown', (e) => { if (e.key === 'Enter') e.preventDefault(); });
     const $description = document.getElementById('description') as HTMLInputElement;
     const $slug = document.getElementById('slug') as HTMLInputElement;
     const $category = document.getElementById('category') as HTMLInputElement;
@@ -456,6 +464,7 @@ const currentNav = isEditing ? 'posts' : 'new';
       }
       const { draft } = await res.json();
       $title.value = draft.title || '';
+      autoGrowTitle();
       $description.value = draft.description || '';
       $slug.value = draft.slug || '';
       $category.value = draft.category || '';
@@ -489,6 +498,7 @@ const currentNav = isEditing ? 'posts' : 'new';
       }
       const { post } = await res.json();
       $title.value = post.title || '';
+      autoGrowTitle();
       $description.value = post.description || '';
       $slug.value = post.slug || '';
       $category.value = categoriasToString(post.categorias);
@@ -1058,6 +1068,13 @@ const currentNav = isEditing ? 'posts' : 'new';
       line-height: 1.2;
       color: var(--painel-text-primary);
       margin-bottom: 8px;
+      /* textarea auto-crescente: quebra linha sem cortar titulos longos */
+      display: block;
+      resize: none;
+      overflow: hidden;
+      field-sizing: content;
+      min-height: 1.2em;
+      letter-spacing: -0.01em;
     }
     .title-input::placeholder { color: var(--painel-text-disabled); }
 
