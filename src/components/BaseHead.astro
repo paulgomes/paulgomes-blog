@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { baseSchemaDocument } from '../lib/schema';
+import { HEAD_SNIPPET } from '../consts';
 
 interface Props {
   title: string;
@@ -22,6 +23,7 @@ const baseSchema = baseSchemaDocument();
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="google-site-verification" content="0FY8vPWeMOMZPUFq8-IQu323gZpIzByhfQpmPQBNb-0" />
+{HEAD_SNIPPET && <Fragment set:html={HEAD_SNIPPET} />}
 
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png" />

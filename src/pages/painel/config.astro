@@ -1,0 +1,157 @@
+---
+import PainelLayout from '../../components/painel/PainelLayout.astro';
+import '../../styles/painel.css';
+---
+
+<PainelLayout title="Configurações — Painel" description="Snippets de tracking e redes sociais" current="config">
+  <section class="page-header">
+    <h1>Configurações do site</h1>
+    <p class="subtitle">Códigos de tracking e links de redes sociais. Salve e depois publique no site.</p>
+  </section>
+
+  <div id="cfgPage" hidden>
+    <!-- Snippets de tracking -->
+    <section class="cfg-card">
+      <h2 class="cfg-title">Códigos de tracking</h2>
+      <p class="cfg-desc">Cole aqui o código de <strong>Google Analytics (GA4)</strong>, <strong>Meta Pixel</strong>, <strong>Google Tag Manager</strong> ou similar. É injetado no <code>&lt;head&gt;</code> de todas as páginas públicas.</p>
+      <textarea id="cfgHeadSnippet" class="cfg-textarea" rows="10" placeholder="<!-- Ex: Google tag (gtag.js) -->&#10;<script async src=&quot;https://www.googletagmanager.com/gtag/js?id=G-XXXX&quot;></script>&#10;<script>...</script>" spellcheck="false"></textarea>
+      <p class="cfg-hint">⚠ Esse código roda em todas as páginas. Cole apenas snippets de fontes confiáveis (seu próprio GA/Pixel/GTM).</p>
+    </section>
+
+    <!-- Redes sociais -->
+    <section class="cfg-card">
+      <h2 class="cfg-title">Redes sociais</h2>
+      <p class="cfg-desc">Links usados no site (cabeçalho, rodapé, schema). Deixe em branco para ocultar.</p>
+      <div class="cfg-social-grid">
+        <label class="cfg-field"><span>LinkedIn</span><input type="url" id="soLinkedin" placeholder="https://linkedin.com/in/…" /></label>
+        <label class="cfg-field"><span>Instagram</span><input type="url" id="soInstagram" placeholder="https://instagram.com/…" /></label>
+        <label class="cfg-field"><span>YouTube</span><input type="url" id="soYoutube" placeholder="https://youtube.com/@…" /></label>
+        <label class="cfg-field"><span>X (Twitter)</span><input type="url" id="soX" placeholder="https://x.com/…" /></label>
+        <label class="cfg-field"><span>E-mail</span><input type="text" id="soEmail" placeholder="mailto:contato@…" /></label>
+      </div>
+    </section>
+
+    <div class="cfg-actions">
+      <button class="btn-neu btn-md" id="cfgSave" type="button">Salvar</button>
+      <button class="btn-neu btn-md btn-primary" id="cfgPublish" type="button">Publicar no site</button>
+      <span id="cfgStatus" class="cfg-status"></span>
+    </div>
+  </div>
+
+  <div class="tags-loading" id="cfgLoading">Carregando...</div>
+
+  <script>
+    const $page = document.getElementById('cfgPage') as HTMLElement;
+    const $loading = document.getElementById('cfgLoading') as HTMLElement;
+    const $head = document.getElementById('cfgHeadSnippet') as HTMLTextAreaElement;
+    const $status = document.getElementById('cfgStatus') as HTMLElement;
+    const social = {
+      linkedin: document.getElementById('soLinkedin') as HTMLInputElement,
+      instagram: document.getElementById('soInstagram') as HTMLInputElement,
+      youtube: document.getElementById('soYoutube') as HTMLInputElement,
+      x: document.getElementById('soX') as HTMLInputElement,
+      email: document.getElementById('soEmail') as HTMLInputElement,
+    };
+
+    function collect() {
+      return {
+        head_snippet: $head.value,
+        social: {
+          linkedin: social.linkedin.value.trim(),
+          instagram: social.instagram.value.trim(),
+          youtube: social.youtube.value.trim(),
+          x: social.x.value.trim(),
+          email: social.email.value.trim(),
+        },
+      };
+    }
+
+    async function load() {
+      try {
+        const res = await fetch('/api/config');
+        if (res.status === 401) { window.location.href = '/painel/login'; return; }
+        const data = await res.json();
+        $head.value = data.head_snippet || '';
+        const s = data.social || {};
+        social.linkedin.value = s.linkedin || '';
+        social.instagram.value = s.instagram || '';
+        social.youtube.value = s.youtube || '';
+        social.x.value = s.x || '';
+        social.email.value = s.email || '';
+        $loading.hidden = true;
+        $page.hidden = false;
+      } catch {
+        $loading.textContent = 'Erro ao carregar configurações.';
+      }
+    }
+
+    async function save(): Promise<boolean> {
+      const res = await fetch('/api/config', {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(collect()),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        (window as any).toast?.(d.error || 'Erro ao salvar', 'error');
+        return false;
+      }
+      return true;
+    }
+
+    document.getElementById('cfgSave')?.addEventListener('click', async () => {
+      $status.textContent = 'Salvando…';
+      const ok = await save();
+      $status.textContent = ok ? 'Salvo (ainda não publicado).' : '';
+      if (ok) (window as any).toast?.('Salvo', 'success');
+    });
+
+    document.getElementById('cfgPublish')?.addEventListener('click', async () => {
+      const okConf = await (window as any).confirmAction?.({
+        title: 'Publicar no site?',
+        message: 'Salva e regenera a config no Git — o site será reconstruído em ~1-2 min com os novos códigos/links.',
+        confirmLabel: 'Publicar', cancelLabel: 'Cancelar',
+      });
+      if (!okConf) return;
+      $status.textContent = 'Salvando…';
+      if (!(await save())) { $status.textContent = ''; return; }
+      $status.textContent = 'Publicando…';
+      const res = await fetch('/api/config/sync', { method: 'POST' });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok) {
+        (window as any).toast?.('Publicado! Rebuild em ~2 min', 'success', 5000);
+        $status.textContent = 'Publicado. Rebuild em ~2 min.';
+      } else {
+        (window as any).toast?.(d.error || 'Erro ao publicar', 'error');
+        $status.textContent = '';
+      }
+    });
+
+    load();
+  </script>
+
+  <style>
+    .cfg-card { background: var(--painel-surface); border: 1px solid var(--painel-border); border-radius: var(--painel-radius); padding: 22px 24px; margin-bottom: 20px; }
+    .cfg-title { font-size: 16px; font-weight: 600; margin: 0 0 6px; color: var(--painel-text-primary); }
+    .cfg-desc { font-size: 13.5px; color: var(--painel-text-secondary); margin: 0 0 14px; line-height: 1.5; }
+    .cfg-desc code { background: var(--painel-bg); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+    .cfg-textarea {
+      width: 100%; box-sizing: border-box; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12.5px; line-height: 1.5; padding: 12px 14px;
+      border: 1px solid var(--painel-border); border-radius: 8px; background: var(--painel-bg);
+      color: var(--painel-text-primary); resize: vertical;
+    }
+    .cfg-textarea:focus { outline: 0; border-color: var(--painel-accent); }
+    .cfg-hint { font-size: 12px; color: var(--painel-text-secondary); margin: 8px 0 0; }
+    .cfg-social-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px 18px; }
+    .cfg-field { display: flex; flex-direction: column; gap: 5px; }
+    .cfg-field span { font-size: 12px; font-weight: 600; color: var(--painel-text-secondary); }
+    .cfg-field input {
+      font-family: var(--painel-font); font-size: 14px; padding: 9px 12px;
+      border: 1px solid var(--painel-border); border-radius: 8px; background: var(--painel-bg); color: var(--painel-text-primary);
+    }
+    .cfg-field input:focus { outline: 0; border-color: var(--painel-accent); }
+    .cfg-actions { display: flex; align-items: center; gap: 14px; }
+    .cfg-status { font-size: 13px; color: var(--painel-text-secondary); }
+  </style>
+</PainelLayout>

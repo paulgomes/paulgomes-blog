@@ -7,13 +7,22 @@ export const SITE_SIGNATURE = 'Thinking Forward · Made by Human';
 export const SITE_LANG = 'pt-BR';
 export const SITE_LOCALE = 'pt_BR';
 
+// Config editável pelo painel (/painel/config → grava no D1 → sync gera este JSON).
+import siteConfig from './data/site-config.json';
+const _cfgSocial = ((siteConfig as { social?: Record<string, string> }).social) || {};
+
+// SOCIAL: usa o valor configurado quando houver, senão o default.
 export const SOCIAL = {
-  linkedin: 'https://www.linkedin.com/in/inpaulgomes/',
-  instagram: 'https://www.instagram.com/paulgomes/',
-  youtube: 'https://www.youtube.com/@paulgomesx',
-  x: 'https://x.com/paullgomes',
-  email: 'mailto:paulgomes@wys.com.br',
+  linkedin: _cfgSocial.linkedin || 'https://www.linkedin.com/in/inpaulgomes/',
+  instagram: _cfgSocial.instagram || 'https://www.instagram.com/paulgomes/',
+  youtube: _cfgSocial.youtube || 'https://www.youtube.com/@paulgomesx',
+  x: _cfgSocial.x || 'https://x.com/paullgomes',
+  email: _cfgSocial.email || 'mailto:paulgomes@wys.com.br',
 };
+
+// Código de tracking (GA4, Meta Pixel, GTM…) injetado no <head> público.
+// Definido pelo dono no painel; vazio por padrão.
+export const HEAD_SNIPPET: string = (siteConfig as { head_snippet?: string }).head_snippet || '';
 
 // Card do autor exibido ao lado do carrossel de destaques na home.
 // PLACEHOLDER: troque `count` pelos números reais de seguidores quando tiver.
