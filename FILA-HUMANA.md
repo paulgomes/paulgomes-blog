@@ -19,9 +19,9 @@ Resolva em lote, de forma assíncrona. Eu sigo trabalhando no que não depende d
 - **Contexto:** `GET /api/stats` só tem contadores (total/publicados/rascunhos…). Não há views/pageviews/bounce/top-posts.
 - **O que fazer:** escolher a fonte — **Cloudflare Web Analytics** (já ativo no site, mas sem API de leitura fácil) vs **Analytics Engine**/GA4 — e me dar acesso/credencial. Sem isso, a UI de "estatísticas avançadas" fica só scaffolding.
 
-## 🟡 9. Histórico de versões dos posts (FASE 3)
-- **Contexto:** `audit_logs` existe (migration 0014) mas sem endpoint de leitura, e não há snapshots de versões.
-- **O que fazer:** decidir a abordagem — usar o **histórico de commits do GitHub** (já temos `github_sha` por post) vs **tabela `posts_versions`** no D1. Aí eu implemento o `GET /api/posts/:slug/history` + UI.
+## ✅ 9. Histórico de versões dos posts — RESOLVIDO (2026-06-29)
+- **Decisão (autônoma):** usar o **histórico de commits do GitHub** (fonte da verdade do build), sem tabela nova.
+- **Feito:** `GET /api/posts/:slug/history` (read-only, lista commits que tocaram o `.md`) + painel **"Histórico de versões"** no editor (data/autor/mensagem + link pro commit). Deployado.
 
 > Itens 7-9 são as dependências de backend/decisão que travam partes das FASES 2-3 do CMS. A camada visual/estrutural pode ser entregue com `// TODO` enquanto isso.
 

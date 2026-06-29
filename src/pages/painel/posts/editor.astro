@@ -163,6 +163,11 @@ const currentNav = isEditing ? 'posts' : 'new';
           <ul class="seo-checks" id="seoChecks"></ul>
         </div>
       </section>
+
+      <section class="side-section" id="historyBlock" hidden>
+        <label class="side-label">Histórico de versões</label>
+        <div id="historyList" class="history-list"><p class="history-empty">Carregando…</p></div>
+      </section>
     </aside>
   </div>
 
@@ -516,6 +521,31 @@ const currentNav = isEditing ? 'posts' : 'new';
       updateSeoPreview();
       updateSeoAnalysis();
       updateFeaturedHint();
+      loadHistory();
+    }
+
+    // === Histórico de versões (commits do Git via /api/posts/:slug/history) ===
+    async function loadHistory() {
+      const block = document.getElementById('historyBlock') as HTMLElement | null;
+      const list = document.getElementById('historyList') as HTMLElement | null;
+      if (!block || !list || !initialSlug) return;
+      block.hidden = false;
+      try {
+        const res = await fetch(`/api/posts/${encodeURIComponent(initialSlug)}/history?limit=15`);
+        if (!res.ok) { list.innerHTML = '<p class="history-empty">Não foi possível carregar o histórico.</p>'; return; }
+        const { versions } = await res.json();
+        if (!versions || !versions.length) { list.innerHTML = '<p class="history-empty">Sem histórico ainda.</p>'; return; }
+        const esc = (s: string) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] as string));
+        list.innerHTML = versions.map((v: any) => {
+          const date = v.date ? new Date(v.date).toLocaleString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+          return `<a class="history-item" href="${esc(v.url)}" target="_blank" rel="noopener" title="Ver commit no GitHub">
+            <span class="history-msg">${esc(v.message || '(sem mensagem)')}</span>
+            <span class="history-meta">${esc(date)}${v.author ? ' · ' + esc(v.author) : ''} · <code>${esc(v.shortSha)}</code></span>
+          </a>`;
+        }).join('');
+      } catch {
+        list.innerHTML = '<p class="history-empty">Erro ao carregar histórico.</p>';
+      }
     }
 
     // === Featured hint ===
@@ -1077,6 +1107,19 @@ const currentNav = isEditing ? 'posts' : 'new';
       letter-spacing: -0.01em;
     }
     .title-input::placeholder { color: var(--painel-text-disabled); }
+
+    /* === Histórico de versões === */
+    .history-list { display: flex; flex-direction: column; gap: 6px; }
+    .history-empty { font-size: 13px; color: var(--painel-text-secondary); margin: 0; }
+    .history-item {
+      display: flex; flex-direction: column; gap: 2px;
+      padding: 8px 10px; border: 1px solid var(--painel-border); border-radius: 8px;
+      text-decoration: none; transition: background .15s, border-color .15s;
+    }
+    .history-item:hover { background: var(--painel-bg); border-color: var(--painel-accent); text-decoration: none; }
+    .history-msg { font-size: 13px; font-weight: 500; color: var(--painel-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-meta { font-size: 11px; color: var(--painel-text-secondary); }
+    .history-meta code { font-size: 10.5px; }
 
     .desc-input {
       width: 100%;
