@@ -6,9 +6,10 @@ import '../../styles/painel.css';
 <PainelLayout title="Estatísticas — Painel" description="Métricas do blog" current="stats">
   <section class="page-header">
     <h1>Estatísticas</h1>
-    <p class="subtitle">Números reais do conteúdo do blog (D1 ao vivo).</p>
+    <p class="subtitle">Conteúdo (D1 ao vivo) e visitas reais (Cloudflare Web Analytics).</p>
   </section>
 
+  <!-- Contadores de conteúdo -->
   <section class="stats-grid">
     <a href="/painel/posts" class="stat-card">
       <p class="label">Total</p>
@@ -37,51 +38,133 @@ import '../../styles/painel.css';
     </a>
   </section>
 
-  <div class="stats-traffic">
-    <div class="stats-traffic-icon">📈</div>
-    <div>
-      <p class="stats-traffic-title">Tráfego e visualizações</p>
-      <p class="stats-traffic-desc">
-        As visitas do site são coletadas pelo <strong>Cloudflare Web Analytics</strong> (já ativo, sem cookies).
-        Veja o relatório em <a href="https://dash.cloudflare.com/?to=/:account/web-analytics" target="_blank" rel="noopener">dash.cloudflare.com → Web Analytics</a>.
-      </p>
-      <p class="stats-traffic-note">Em breve: pageviews e top posts puxados direto aqui via API de Analytics.</p>
+  <!-- Tráfego real -->
+  <section class="traffic">
+    <div class="traffic-head">
+      <h2>Tráfego do site</h2>
+      <div class="traffic-range" id="trafficRange" role="tablist">
+        <button class="traffic-pill is-active" data-days="7" type="button">7 dias</button>
+        <button class="traffic-pill" data-days="30" type="button">30 dias</button>
+      </div>
     </div>
-  </div>
+    <div id="trafficBody">
+      <div class="traffic-loading">Carregando tráfego…</div>
+    </div>
+  </section>
 
   <script>
+    // ===== Contadores de conteúdo =====
     fetch('/api/stats')
-      .then((r) => {
-        if (r.status === 401) { window.location.href = '/painel/login'; throw new Error('401'); }
-        return r.json();
-      })
+      .then((r) => { if (r.status === 401) { window.location.href = '/painel/login'; throw new Error('401'); } return r.json(); })
       .then((s: any) => {
-        const set = (id: string, v: number) => {
-          const el = document.getElementById(id);
-          if (el) el.textContent = String(v ?? 0);
-        };
-        set('stTotal', s.total);
-        set('stPublished', s.published);
-        set('stDrafts', s.drafts);
-        set('stScheduled', s.scheduled);
-        set('stUnsynced', s.unsynced);
-        set('stDeleted', s.deleted ?? 0);
+        const set = (id: string, v: number) => { const el = document.getElementById(id); if (el) el.textContent = String(v ?? 0); };
+        set('stTotal', s.total); set('stPublished', s.published); set('stDrafts', s.drafts);
+        set('stScheduled', s.scheduled); set('stUnsynced', s.unsynced); set('stDeleted', s.deleted ?? 0);
         const card = document.getElementById('stUnsyncedCard');
         if (card && Number(s.unsynced || 0) > 0) card.classList.add('stat-card--warn-active');
       })
       .catch(() => {});
+
+    // ===== Tráfego real (Cloudflare Web Analytics) =====
+    const $body = document.getElementById('trafficBody') as HTMLElement;
+    const fmt = (n: number) => new Intl.NumberFormat('pt-BR').format(n || 0);
+
+    function renderConnect(missing: string[], error?: string) {
+      $body.innerHTML = `
+        <div class="traffic-connect">
+          <p class="tc-title">📈 Conecte as visitas reais</p>
+          <p class="tc-desc">O Cloudflare Web Analytics já coleta as visitas do site. Para mostrá-las aqui, defina estes
+          segredos no Cloudflare Pages (projeto <code>paulgomes-blog</code> → Settings → Variables and Secrets):</p>
+          <ul class="tc-list">
+            <li><code>CF_ANALYTICS_TOKEN</code> — API token com permissão <em>Account Analytics: Read</em></li>
+            <li><code>CF_ACCOUNT_ID</code> — ID da conta Cloudflare</li>
+            <li><code>CF_RUM_SITE_TAG</code> — opcional (autodescoberto se omitido)</li>
+          </ul>
+          ${missing?.length ? `<p class="tc-missing">Faltando: ${missing.join(', ')}</p>` : ''}
+          ${error ? `<p class="tc-missing">Erro: ${error}</p>` : ''}
+        </div>`;
+    }
+
+    function renderTraffic(d: any) {
+      const series = Array.isArray(d.series) ? d.series : [];
+      const max = Math.max(1, ...series.map((p: any) => p.pageviews || 0));
+      const bars = series.map((p: any) => {
+        const h = Math.round(((p.pageviews || 0) / max) * 100);
+        const label = (p.date || '').slice(5); // MM-DD
+        return `<div class="tb-col" title="${p.date}: ${fmt(p.pageviews)} views, ${fmt(p.visits)} visitas">
+          <div class="tb-bar" style="height:${h}%"></div><span class="tb-x">${label}</span></div>`;
+      }).join('');
+      const top = (d.topPages || []).map((t: any) =>
+        `<li><span class="tp-path">${t.path}</span><span class="tp-n">${fmt(t.pageviews)}</span></li>`).join('');
+
+      $body.innerHTML = `
+        <div class="traffic-cards">
+          <div class="tcard"><p class="tcard-l">Pageviews</p><p class="tcard-v">${fmt(d.pageviews)}</p></div>
+          <div class="tcard"><p class="tcard-l">Visitas</p><p class="tcard-v">${fmt(d.visits)}</p></div>
+          <div class="tcard"><p class="tcard-l">Período</p><p class="tcard-v tcard-v--sm">${d.days} dias</p></div>
+        </div>
+        <div class="traffic-chart">${bars || '<p class="traffic-loading">Sem dados no período.</p>'}</div>
+        ${top ? `<div class="traffic-top"><p class="tt-title">Top páginas</p><ul class="tt-list">${top}</ul></div>` : ''}`;
+    }
+
+    let days = 7;
+    function loadTraffic() {
+      $body.innerHTML = '<div class="traffic-loading">Carregando tráfego…</div>';
+      fetch(`/api/stats/traffic?days=${days}`)
+        .then((r) => r.json())
+        .then((d: any) => {
+          if (d.configured === false) return renderConnect(d.missing || [], d.error);
+          if (d.error) return renderConnect([], d.error);
+          renderTraffic(d);
+        })
+        .catch(() => renderConnect([], 'falha de rede'));
+    }
+
+    document.getElementById('trafficRange')?.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest('.traffic-pill') as HTMLElement | null;
+      if (!btn) return;
+      document.querySelectorAll('.traffic-pill').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      days = Number(btn.dataset.days) || 7;
+      loadTraffic();
+    });
+
+    loadTraffic();
   </script>
 
   <style>
-    .stats-traffic {
-      display: flex; gap: 16px; align-items: flex-start;
-      background: var(--painel-surface); border: 1px solid var(--painel-border);
-      border-radius: var(--painel-radius); padding: 20px 22px; margin-top: 24px;
-    }
-    .stats-traffic-icon { font-size: 26px; line-height: 1; flex-shrink: 0; }
-    .stats-traffic-title { font-weight: 600; margin: 0 0 4px; color: var(--painel-text-primary); }
-    .stats-traffic-desc { font-size: 14px; margin: 0 0 6px; color: var(--painel-text-secondary); line-height: 1.5; }
-    .stats-traffic-desc a { color: var(--painel-accent); }
-    .stats-traffic-note { font-size: 12.5px; margin: 0; color: var(--painel-text-disabled); }
+    .traffic { margin-top: 28px; background: var(--painel-surface); border: 1px solid var(--painel-border); border-radius: var(--painel-radius); padding: 20px 22px; }
+    .traffic-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    .traffic-head h2 { font-size: 16px; font-weight: 600; margin: 0; color: var(--painel-text-primary); }
+    .traffic-range { display: inline-flex; gap: 4px; }
+    .traffic-pill { font: inherit; font-size: 12.5px; padding: 5px 12px; border: 1px solid var(--painel-border); background: var(--painel-bg); color: var(--painel-text-secondary); border-radius: 999px; cursor: pointer; }
+    .traffic-pill.is-active { background: var(--painel-accent); border-color: var(--painel-accent); color: #fff; }
+    .traffic-loading { font-size: 14px; color: var(--painel-text-secondary); padding: 18px 0; }
+
+    .traffic-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
+    .tcard { background: var(--painel-bg); border: 1px solid var(--painel-border); border-radius: 10px; padding: 14px 16px; }
+    .tcard-l { font-size: 12px; color: var(--painel-text-secondary); margin: 0 0 4px; }
+    .tcard-v { font-size: 26px; font-weight: 700; margin: 0; color: var(--painel-text-primary); }
+    .tcard-v--sm { font-size: 18px; }
+
+    .traffic-chart { display: flex; align-items: flex-end; gap: 4px; height: 120px; padding-top: 8px; overflow-x: auto; }
+    .tb-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; flex: 1 0 14px; height: 100%; gap: 4px; }
+    .tb-bar { width: 70%; min-height: 2px; background: var(--painel-accent); border-radius: 3px 3px 0 0; transition: height .3s; }
+    .tb-x { font-size: 9px; color: var(--painel-text-disabled); white-space: nowrap; }
+
+    .traffic-top { margin-top: 20px; }
+    .tt-title { font-size: 13px; font-weight: 600; color: var(--painel-text-secondary); margin: 0 0 8px; }
+    .tt-list { list-style: none; margin: 0; padding: 0; }
+    .tt-list li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--painel-border); font-size: 13.5px; }
+    .tt-list li:last-child { border-bottom: 0; }
+    .tp-path { color: var(--painel-text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tp-n { color: var(--painel-text-secondary); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+
+    .traffic-connect { font-size: 13.5px; color: var(--painel-text-secondary); line-height: 1.55; }
+    .tc-title { font-weight: 600; color: var(--painel-text-primary); margin: 0 0 6px; }
+    .tc-desc { margin: 0 0 10px; }
+    .tc-list { margin: 0 0 8px; padding-left: 18px; }
+    .tc-list code, .traffic-connect code { background: var(--painel-bg); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+    .tc-missing { color: #b91c1c; font-size: 12.5px; margin: 6px 0 0; }
   </style>
 </PainelLayout>
