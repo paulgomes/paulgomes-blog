@@ -11,8 +11,11 @@ const title: string = brandsData.title || 'Marcas que passaram por aqui';
 const items: Brand[] = (brandsData.items || []).filter((b) => b && b.name);
 // Duplica a lista pra criar loop infinito sem corte
 const doubled = [...items, ...items];
+// Visibilidade da seção controlada pelo painel (Marcas → olho). Default: visível.
+const visible: boolean = (brandsData as { visible?: boolean }).visible !== false;
 ---
 
+{visible && (
 <section class="marquee-section" style="border-color: var(--color-border)">
   <div class="container-wide pt-6 pb-4 md:pt-8 md:pb-5">
     <p class="text-center text-[0.65rem] font-semibold uppercase tracking-[0.3em]" style="color: var(--color-muted)">
@@ -41,6 +44,7 @@ const doubled = [...items, ...items];
 
   <div class="container-wide pb-6 md:pb-8"></div>
 </section>
+)}
 
 <style>
   .marquee-section {

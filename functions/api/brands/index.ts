@@ -17,13 +17,15 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const auth = await requireAuth(request, env);
   if (auth instanceof Response) return auth;
 
-  const [brands, titleRow] = await Promise.all([
+  const [brands, titleRow, hiddenRow] = await Promise.all([
     env.DB.prepare('SELECT id, name, url, logo_url, position FROM brands ORDER BY position ASC, created_at ASC').all<{ id: string; name: string; url: string | null; logo_url: string | null; position: number }>(),
     env.DB.prepare("SELECT value FROM site_config WHERE key = 'brands_marquee_title'").first<{ value: string }>(),
+    env.DB.prepare("SELECT value FROM site_config WHERE key = 'brands_marquee_hidden'").first<{ value: string }>(),
   ]);
 
   return Response.json({
     title: titleRow?.value || 'Marcas que passaram por aqui',
+    hidden: hiddenRow?.value === '1',
     items: brands.results || [],
   });
 };

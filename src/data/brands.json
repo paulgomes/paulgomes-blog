@@ -1,5 +1,6 @@
 {
   "title": "Marcas que passaram por aqui",
+  "visible": true,
   "synced_at": 0,
   "items": [
     { "name": "Disney", "url": null, "logo_url": null },
