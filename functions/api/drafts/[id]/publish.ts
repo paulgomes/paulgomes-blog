@@ -30,8 +30,17 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }
   }
 
   const now = Date.now();
+
+  // Backdate opcional: o editor pode enviar published_at (data "anterior" escolhida no calendário).
+  // Só aceita passado/presente — data futura é agendamento (status='scheduled'), não publicação agora.
+  let publishedAt = now;
+  const body = (await request.json().catch(() => null)) as { published_at?: number } | null;
+  if (body && typeof body.published_at === 'number' && Number.isFinite(body.published_at) && body.published_at <= now + 60_000) {
+    publishedAt = body.published_at;
+  }
+
   const githubPath = `src/content/blog/${draft.slug}.md`;
-  const markdown = buildMarkdown({ ...draft, published_at: now });
+  const markdown = buildMarkdown({ ...draft, published_at: publishedAt });
 
   try {
     // 1. Commita .md no Git
@@ -77,7 +86,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }
       draft.hero_image_alt ?? null,
       categorias,
       draft.author_id ?? null,
-      now,          // published_at (so usado em INSERT — ON CONFLICT preserva original)
+      publishedAt,  // published_at: backdate se informado (so usado em INSERT — ON CONFLICT preserva original)
       now,          // updated_at
       githubPath,
       sha,
@@ -98,7 +107,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }
     return Response.json({
       success: true,
       slug: draft.slug,
-      published_at: now,
+      published_at: publishedAt,
       preview_url: `https://paulgomes.com.br/${draft.slug}`,
       commit_url: commitResult.html_url,
       message: 'Post publicado. Cloudflare rebuild em ~1-2 min.',

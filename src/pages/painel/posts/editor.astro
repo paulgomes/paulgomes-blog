@@ -924,7 +924,13 @@ const currentNav = isEditing ? 'posts' : 'new';
       $publishBtn.disabled = true;
       $publishBtn.textContent = 'Publicando...';
       try {
-        const res = await fetch(`/api/drafts/${draftId}/publish`, { method: 'POST' });
+        // Envia a data escolhida (passada/presente) p/ backdate; vazio = publica agora.
+        const pickedTs = localInputToTs($publishedAtInput.value);
+        const res = await fetch(`/api/drafts/${draftId}/publish`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(pickedTs !== null ? { published_at: pickedTs } : {}),
+        });
         const data = await res.json();
         if (!res.ok) {
           window.toast?.('Erro: ' + (data.error || 'desconhecido'), 'error');
