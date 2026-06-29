@@ -6,6 +6,28 @@ Log cronológico do trabalho na Core Platform. Mais recente no topo.
 
 ---
 
+## 2026-06-29 — CMS /painel: evolução editorial premium (FASE 1 parcial)
+
+### Auditoria (inventário — o que JÁ existe, fonte: repo + D1)
+CMS já é **premium (~80%)**. Mapeado por workflow de 5 agentes:
+- **Listagem** (`src/pages/painel/posts/index.astro`): card (thumb/status/sync badge/categoria/data/título/desc), filtros por status (pills com contador), categoria, busca (debounce), paginação (50/pág), editar/excluir/restaurar/purgar, empty states, URL state. UNION `posts_meta`+`drafts` via `GET /api/posts`.
+- **Editor** (`editor.astro` 1472 linhas + `Editor.tsx` TipTap island): autosave (1.5s, retry), upload R2 (paste/drop), wordcount+readTime, bloco SEO premium (score/SERP/checklist via `seo-analyzer.ts`), hero com preview/alt, datetime + "Agora", destaque com sync, feedback multi-estado.
+- **Layout** (`PainelLayout.astro` + `painel.css` 958 linhas): sidebar (10 itens), topbar, drawer mobile, toast/confirm globais, tokens de design, badges, btn-neu.
+- **Backend** (`functions/api/**`): publicar, voltar-a-rascunho, sync/sync-all, feature, restore, purge (admin), upload, stats (contadores). RBAC base (requireRole) + audit_logs.
+- **Libs**: `seo-analyzer.ts` (analyzeSEO/score/checks/generate*), `categorias.ts` (enum gate), `reading-time.ts`.
+
+### O que foi FEITO nesta sessão (build verde, SEM push)
+- **Editor — título cortado CORRIGIDO**: `<input>` (linha única, cortava títulos longos) → `<textarea>` auto-crescente (quebra/wrap + `field-sizing:content` + autoGrow JS + Enter sem newline).
+- **Layout premium**: sidebar reorganizada em **grupos** (Conteúdo/Estrutura/Crescimento) com rótulos; **topbar** ganhou **busca global** (form GET → `/painel/posts?q=`), **status de sync** (pill reusando `GET /api/stats.unsynced`: verde "Sincronizado" / âmbar "N pendentes") e CTA **"Novo post"**. Responsivo (mobile esconde busca/sync).
+- **Listagem — ações rápidas**: cada post publicado ganhou **Copiar link** (clipboard) e **Duplicar** (`POST /api/posts/:slug/duplicate` → cria rascunho-cópia e abre no editor), além do Excluir. Hover do excluir preservado (vermelho).
+- **Listagem — indicadores no card**: badge **★ Destaque** (`is_featured`) e badge **SEO ✓/!** (completo = meta title+description+palavra-chave) por post. `GET /api/posts` passou a retornar `is_featured` + `seo_ok` (colunas aditivas, sem mexer em WHERE/bindings).
+- **Backend aditivo**: novo endpoint `functions/api/posts/[slug]/duplicate.ts` (espelha o INSERT de `drafts/index.ts`, cria rascunho cópia, audita).
+
+### O que ficou para próximas fatias (ver `FILA-HUMANA.md`)
+Listagem (bulk-select, ⋯ menu completo, indicador SEO/⭐ no card, filtros data/SEO/imagem/destaque, ordenação), editor (accordions na coluna lateral, preview, histórico), agendamento (precisa cron Worker), métricas reais (analytics), newsletter no editor, calendário editorial. **Motivo do recorte:** páginas do painel ficam atrás de login → não dá pra QA visual headless; priorizei o que é verificável por build + baixo risco de quebrar features existentes.
+
+---
+
 ## 2026-06-27 — Deploy autorizado e publicado
 
 - Push de **11 commits** (`b5e857f..f8fe824`) → Cloudflare Pages. **Verificado em produção:** grafo JSON-LD (WebSite/Org/Person), "Leia também", headers de segurança (nosniff/Referrer-Policy/X-Frame-Options/Permissions-Policy/HSTS) e canonical intacto (limite #1 preservado). `FILA-HUMANA` item 1 resolvido.

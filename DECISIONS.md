@@ -5,6 +5,16 @@ Mais recente no topo. Reversível — o humano pode discordar e reverter.
 
 ---
 
+## ADR-010 — CMS premium: recorte por verificabilidade (login-gated)
+- **Contexto:** brief pede FASE 1 do CMS "completa". Páginas `/painel/*` ficam atrás de login → não dá QA visual headless (só build verde). Inviolável: "não quebrar features".
+- **Decisão:** priorizar o que é **verificável por build + baixo risco** (fix do título, topbar/sidebar do `PainelLayout`, ações de listagem aditivas, endpoint `duplicate`) e **documentar** o redesign maior (listagem bulk/⋯, accordions do editor, agendamento) em `FILA-HUMANA.md` em vez de reescrever JS complexo sem poder testar.
+- **Alternativa descartada:** reescrever os 1472 linhas de `posts/index.astro`/`editor.astro` num passo só (alto risco de quebrar features sem QA visual).
+
+## ADR-009 — `duplicate` cria RASCUNHO (não publica)
+- **Contexto:** "Duplicar" precisava de backend (não existia). Brief: não inventar conexão fake; reusar infra testada.
+- **Decisão:** `POST /api/posts/:slug/duplicate` cria um **rascunho** cópia (slug `-copia`, título "(cópia)"), reusando exatamente o INSERT de `drafts/index.ts`. Nunca publica direto — entra no fluxo normal de revisão. Audita a ação.
+- **Alternativa descartada:** duplicar já publicando (arriscado, cria post público sem revisão).
+
 ## ADR-008 — Adiar uso de `metaTitle`/`metaDescription` do frontmatter (FASE 5.1)
 - **Contexto:** a auditoria sugeriu usar `metaTitle`/`metaDescription` do frontmatter no render. Mas o `content.config.ts` (Zod) **não declara** esses campos → eles são descartados no build; e há `metaTitle` truncado com "…" em post(s) legados.
 - **Decisão:** **não** habilitar agora. Habilitar exigiria (a) adicionar os campos ao schema e (b) revisar/limpar os valores legados — senão alguns títulos de SERP pioram, violando o princípio #1 (não quebrar SEO).
