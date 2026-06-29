@@ -29,7 +29,12 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env, params })
   const values: any[] = [];
 
   const updatable = ['slug', 'title', 'description', 'content_md', 'hero_image_url', 'hero_image_alt',
-                     'category', 'focus_keyword', 'meta_title', 'meta_description', 'scheduled_at'];
+                     'category', 'focus_keyword', 'meta_title', 'meta_description', 'scheduled_at', 'status'];
+
+  // status por aqui só alterna entre 'draft' e 'scheduled' (publicar/deletar têm fluxos próprios)
+  if (body.status !== undefined && body.status !== 'draft' && body.status !== 'scheduled') {
+    return Response.json({ error: 'status inválido (use draft|scheduled)' }, { status: 400 });
+  }
 
   // hero_image_alt: validar max 200
   if (body.hero_image_alt !== undefined) {

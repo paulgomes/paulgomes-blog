@@ -21,77 +21,87 @@ import { SITE_TITLE } from '../consts';
     <Header />
 
     <main class="sobre-page">
-      <header class="sobre-hero">
-        <p class="sobre-eyebrow">Paul Gomes — Thinking Forward</p>
-        <h1 class="sobre-title font-display">Sobre</h1>
-      </header>
+      <div class="sobre-grid">
+        <!-- Coluna esquerda: texto -->
+        <div class="sobre-content">
+          <p class="sobre-eyebrow">Paul Gomes — Thinking Forward</p>
+          <h1 class="sobre-title font-display">Sobre</h1>
 
-      <figure class="sobre-photo">
-        <Image
-          src={paulAvatar}
-          alt="Paul Gomes"
-          width={720}
-          widths={[360, 540, 720]}
-          sizes="(max-width: 640px) 280px, 360px"
-          loading="eager"
-          fetchpriority="high"
-          class="sobre-photo-img"
-        />
-      </figure>
+          <article class="sobre-body">
+            <p class="sobre-lead">Sou Paul Gomes.</p>
 
-      <article class="sobre-body">
-        <p>Sou Paul Gomes.</p>
+            <p>
+              Escrevo sobre inteligência artificial, internet, negócios, marcas,
+              comportamento humano e tudo aquilo que acontece entre a tecnologia
+              e a vida real.
+            </p>
 
-        <p>
-          Escrevo sobre inteligência artificial, internet, negócios, marcas,
-          comportamento humano e tudo aquilo que acontece entre a tecnologia
-          e a vida real.
-        </p>
+            <p>
+              Fundador e CEO do
+              <a href="https://agenciawys.com.br" target="_blank" rel="noopener">Grupo WYS</a>,
+              acompanho diariamente as mudanças que estão transformando a forma
+              como pessoas pensam, trabalham, compram, criam e se relacionam.
+            </p>
 
-        <p>
-          Fundador e CEO do
-          <a href="https://agenciawys.com.br" target="_blank" rel="noopener">Grupo WYS</a>,
-          acompanho diariamente as mudanças que estão transformando a forma
-          como pessoas pensam, trabalham, compram, criam e se relacionam.
-        </p>
+            <p>Mas este não é apenas um espaço sobre mercado.</p>
 
-        <p>Mas este não é apenas um espaço sobre mercado.</p>
+            <p>
+              Aqui também compartilho observações, ideias inacabadas, experiências
+              pessoais, bastidores, aprendizados, erros, inquietações e reflexões
+              que surgem no caminho.
+            </p>
 
-        <p>
-          Aqui também compartilho observações, ideias inacabadas, experiências
-          pessoais, bastidores, aprendizados, erros, inquietações e reflexões
-          que surgem no caminho.
-        </p>
+            <p>
+              Alguns textos serão sobre GEO, SEO, arquitetura digital e inteligência
+              artificial. Outros serão sobre criatividade, futuro, viagens,
+              empreendedorismo, cultura, relacionamentos ou simplesmente pensamentos
+              que merecem ser registrados.
+            </p>
 
-        <p>
-          Alguns textos serão sobre GEO, SEO, arquitetura digital e inteligência
-          artificial. Outros serão sobre criatividade, futuro, viagens,
-          empreendedorismo, cultura, relacionamentos ou simplesmente pensamentos
-          que merecem ser registrados.
-        </p>
+            <p>Não escrevo para seguir tendências.</p>
 
-        <p>Não escrevo para seguir tendências.</p>
+            <p>
+              Escrevo para documentar transformações que considero importantes —
+              tanto as que acontecem no mundo quanto as que acontecem dentro de nós.
+            </p>
 
-        <p>
-          Escrevo para documentar transformações que considero importantes —
-          tanto as que acontecem no mundo quanto as que acontecem dentro de nós.
-        </p>
+            <p>Este é um espaço para quem gosta de pensar além da superfície.</p>
 
-        <p>Este é um espaço para quem gosta de pensar além da superfície.</p>
+            <p class="sobre-manifesto">Thinking Forward.</p>
+          </article>
 
-        <p class="sobre-manifesto">Thinking Forward.</p>
-      </article>
+          <figure class="sobre-signature">
+            <Image
+              src={signature}
+              alt="Assinatura de Paul Gomes"
+              width={200}
+              height={67}
+              loading="lazy"
+              class="sobre-signature-img"
+            />
+          </figure>
+        </div>
 
-      <figure class="sobre-signature">
-        <Image
-          src={signature}
-          alt="Assinatura de Paul Gomes"
-          width={200}
-          height={67}
-          loading="lazy"
-          class="sobre-signature-img"
-        />
-      </figure>
+        <!-- Coluna direita: foto como painel sticky -->
+        <aside class="sobre-aside">
+          <figure class="sobre-photo">
+            <Image
+              src={paulAvatar}
+              alt="Paul Gomes"
+              width={720}
+              widths={[360, 540, 720]}
+              sizes="(max-width: 900px) 100vw, 440px"
+              loading="eager"
+              fetchpriority="high"
+              class="sobre-photo-img"
+            />
+            <figcaption class="sobre-photo-cap">
+              <span class="sobre-photo-name">Paul Gomes</span>
+              <span class="sobre-photo-role">Fundador & CEO — Grupo WYS</span>
+            </figcaption>
+          </figure>
+        </aside>
+      </div>
     </main>
 
     <NewsletterBlock
@@ -106,96 +116,139 @@ import { SITE_TITLE } from '../consts';
 
 <style>
   .sobre-page {
-    max-width: 720px;
+    max-width: 1180px;
     margin: 0 auto;
-    padding: 5rem 1.5rem 5rem;
+    padding: 4rem 1.5rem 5rem;
   }
   @media (min-width: 768px) {
-    .sobre-page { padding: 6rem 1.5rem 6rem; }
+    .sobre-page { padding: 6rem 2rem 6rem; }
   }
 
-  .sobre-hero {
-    text-align: center;
-    margin-bottom: 3rem;
+  /* === Grid de duas colunas: texto (esq) + foto sticky (dir) === */
+  .sobre-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
   }
+  @media (min-width: 900px) {
+    .sobre-grid {
+      grid-template-columns: minmax(0, 1fr) 440px;
+      gap: 4.5rem;
+      align-items: start;
+    }
+  }
+
+  /* === Coluna de texto === */
+  .sobre-content { min-width: 0; max-width: 620px; }
+
   .sobre-eyebrow {
-    margin: 0 0 1rem;
     font-family: var(--font-sans);
     font-size: 0.72rem;
     font-weight: 600;
-    letter-spacing: 0.28em;
     text-transform: uppercase;
+    letter-spacing: 0.28em;
     color: #0103F9;
+    margin: 0 0 0.75rem;
   }
+  :global(.dark) .sobre-eyebrow { color: #3D40FF; }
+
   .sobre-title {
-    margin: 0;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1;
+    font-size: clamp(2.75rem, 6vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: 0 0 2rem;
     color: var(--color-ink);
-    font-size: clamp(3rem, 9vw, 5.5rem);
+  }
+
+  .sobre-body { font-size: 1.075rem; line-height: 1.75; color: var(--color-ink); }
+  .sobre-body p { margin: 0 0 1.35rem; }
+  .sobre-body a {
+    color: #0103F9;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  :global(.dark) .sobre-body a { color: #3D40FF; }
+
+  .sobre-lead {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-ink);
+  }
+
+  .sobre-manifesto {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #0103F9;
+    margin-top: 2.5rem !important;
+  }
+  :global(.dark) .sobre-manifesto { color: #3D40FF; }
+
+  .sobre-signature { margin: 2.5rem 0 0; }
+  .sobre-signature-img { height: 56px; width: auto; opacity: 0.85; }
+  :global(.dark) .sobre-signature-img { filter: invert(1) brightness(1.6); opacity: 0.9; }
+
+  /* === Foto: painel sticky à direita === */
+  .sobre-aside { min-width: 0; }
+  @media (min-width: 900px) {
+    .sobre-aside { position: sticky; top: 6rem; }
   }
 
   .sobre-photo {
-    margin: 0 0 3rem;
-    text-align: center;
+    position: relative;
+    margin: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--color-subtle, #f0f0f3);
+    box-shadow: 0 24px 60px -28px rgba(1, 3, 249, 0.35), 0 4px 14px -8px rgba(0, 0, 0, 0.2);
+    aspect-ratio: 4 / 5;
   }
+
   .sobre-photo-img {
     width: 100%;
-    max-width: 360px;
-    height: auto;
-    margin: 0 auto;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
     display: block;
-    filter:
-      drop-shadow(0 24px 48px rgba(0, 0, 0, 0.12))
-      drop-shadow(0 8px 16px rgba(0, 0, 0, 0.06));
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .sobre-photo:hover .sobre-photo-img { transform: scale(1.04); }
+
+  /* Legenda sobre a foto (gradiente pra legibilidade) */
+  .sobre-photo-cap {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 2.5rem 1.5rem 1.25rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+    color: #fff;
+  }
+  .sobre-photo-name { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; }
+  .sobre-photo-role {
+    font-family: var(--font-sans);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
   }
 
-  .sobre-body {
-    font-size: 1.1875rem; /* 19px */
-    line-height: 1.75;
-    color: var(--color-ink);
-  }
-  @media (max-width: 640px) {
-    .sobre-body { font-size: 1.0625rem; line-height: 1.7; }
-  }
-  .sobre-body p {
-    margin: 0 0 1.5em;
-  }
-  .sobre-body p:last-child {
-    margin-bottom: 0;
-  }
-  .sobre-body a {
-    color: #0103F9;
-    border-bottom: 1px solid currentColor;
-    text-decoration: none;
-    transition: opacity 0.15s ease;
-  }
-  .sobre-body a:hover { opacity: 0.7; }
-
-  .sobre-manifesto {
-    margin: 3.5rem 0 0 !important;
-    text-align: center;
-    font-family: var(--font-display);
-    font-size: clamp(1.4rem, 3.2vw, 1.75rem);
-    font-style: italic;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: #0103F9;
+  /* Mobile: foto antes do texto, sem sticky */
+  @media (max-width: 899px) {
+    .sobre-aside { order: -1; }
+    .sobre-photo { max-width: 420px; margin: 0 auto; aspect-ratio: 4 / 5; }
   }
 
-  .sobre-signature {
-    margin: 4rem 0 0;
-    text-align: center;
-  }
-  .sobre-signature-img {
-    width: 200px;
-    height: auto;
-    margin: 0 auto;
-    opacity: 0.85;
-    display: inline-block;
-  }
-  :global(.dark) .sobre-signature-img {
-    filter: invert(1);
+  @media (prefers-reduced-motion: reduce) {
+    .sobre-photo-img { transition: none; }
+    .sobre-photo:hover .sobre-photo-img { transform: none; }
   }
 </style>

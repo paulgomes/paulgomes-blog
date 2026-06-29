@@ -6,11 +6,82 @@ import '../../styles/painel.css';
 <PainelLayout title="Estatísticas — Painel" description="Métricas do blog" current="stats">
   <section class="page-header">
     <h1>Estatísticas</h1>
-    <p class="subtitle">Visualizações, posts por mês, performance por tag.</p>
+    <p class="subtitle">Números reais do conteúdo do blog (D1 ao vivo).</p>
   </section>
 
-  <div class="empty-state">
-    <span class="icon">📊</span>
-    Em desenvolvimento. Aqui vão entrar gráficos de tráfego (Plausible/GA), top posts por views e distribuição por tag.
+  <section class="stats-grid">
+    <a href="/painel/posts" class="stat-card">
+      <p class="label">Total</p>
+      <p class="value" id="stTotal"><span class="stat-skeleton"></span></p>
+    </a>
+    <a href="/painel/posts?status=published" class="stat-card">
+      <p class="label">Publicados</p>
+      <p class="value" id="stPublished"><span class="stat-skeleton"></span></p>
+    </a>
+    <a href="/painel/posts?status=draft" class="stat-card">
+      <p class="label">Rascunhos</p>
+      <p class="value" id="stDrafts"><span class="stat-skeleton"></span></p>
+    </a>
+    <a href="/painel/posts?status=scheduled" class="stat-card">
+      <p class="label">Agendados</p>
+      <p class="value" id="stScheduled"><span class="stat-skeleton"></span></p>
+    </a>
+    <div class="stat-card stat-card--warn" id="stUnsyncedCard">
+      <p class="label">Não sincronizados</p>
+      <p class="value" id="stUnsynced"><span class="stat-skeleton"></span></p>
+      <p class="hint">Editados no painel, pendentes de Git</p>
+    </div>
+    <a href="/painel/posts?status=deleted" class="stat-card stat-card--trash">
+      <p class="label">Lixeira</p>
+      <p class="value" id="stDeleted"><span class="stat-skeleton"></span></p>
+    </a>
+  </section>
+
+  <div class="stats-traffic">
+    <div class="stats-traffic-icon">📈</div>
+    <div>
+      <p class="stats-traffic-title">Tráfego e visualizações</p>
+      <p class="stats-traffic-desc">
+        As visitas do site são coletadas pelo <strong>Cloudflare Web Analytics</strong> (já ativo, sem cookies).
+        Veja o relatório em <a href="https://dash.cloudflare.com/?to=/:account/web-analytics" target="_blank" rel="noopener">dash.cloudflare.com → Web Analytics</a>.
+      </p>
+      <p class="stats-traffic-note">Em breve: pageviews e top posts puxados direto aqui via API de Analytics.</p>
+    </div>
   </div>
+
+  <script>
+    fetch('/api/stats')
+      .then((r) => {
+        if (r.status === 401) { window.location.href = '/painel/login'; throw new Error('401'); }
+        return r.json();
+      })
+      .then((s: any) => {
+        const set = (id: string, v: number) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = String(v ?? 0);
+        };
+        set('stTotal', s.total);
+        set('stPublished', s.published);
+        set('stDrafts', s.drafts);
+        set('stScheduled', s.scheduled);
+        set('stUnsynced', s.unsynced);
+        set('stDeleted', s.deleted ?? 0);
+        const card = document.getElementById('stUnsyncedCard');
+        if (card && Number(s.unsynced || 0) > 0) card.classList.add('stat-card--warn-active');
+      })
+      .catch(() => {});
+  </script>
+
+  <style>
+    .stats-traffic {
+      display: flex; gap: 16px; align-items: flex-start;
+      background: var(--painel-surface); border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius); padding: 20px 22px; margin-top: 24px;
+    }
+    .stats-traffic-icon { font-size: 26px; line-height: 1; flex-shrink: 0; }
+    .stats-traffic-title { font-weight: 600; margin: 0 0 4px; color: var(--painel-text-primary); }
+    .stats-traffic-desc { font-size: 14px; margin: 0 0 6px; color: var(--painel-text-secondary); line-height: 1.5; }
+    .stats-traffic-desc a { color: var(--painel-accent); }
+    .stats-traffic-note { font-size: 12.5px; margin: 0; color: var(--painel-text-disabled); }
+  </style>
 </PainelLayout>

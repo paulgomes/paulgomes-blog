@@ -268,6 +268,11 @@ const currentNav = isEditing ? 'posts' : 'new';
       $deleteBtn.style.display = 'inline-flex';
       $featuredBlock.hidden = false;
       $publishedAtBlock.hidden = false;
+    } else {
+      // modo rascunho: também mostra o calendário de data — futura = agendar, passada = retroativa
+      $publishedAtBlock.hidden = false;
+      refreshPublishedAtHint();
+      refreshPublishButton();
     }
 
     // ===== Ponte com o Editor =====
@@ -437,25 +442,34 @@ const currentNav = isEditing ? 'posts' : 'new';
       const ts = new Date(value).getTime();
       return Number.isFinite(ts) ? ts : null;
     }
+    function isFuturePublishedAt(value: string): boolean {
+      const ts = localInputToTs(value);
+      return ts !== null && ts > Date.now() + 60_000;
+    }
     function validatePublishedAt(value: string): { ok: boolean; msg?: string } {
       if (!value) return { ok: true };
       const ts = localInputToTs(value);
       if (ts === null) return { ok: false, msg: 'Data inválida' };
-      // Tolerancia de 60s pro caso de "agora" ser clicado entre tick e validacao
-      if (ts > Date.now() + 60_000) {
-        return { ok: false, msg: 'Datas futuras serão suportadas em breve (agendamento).' };
-      }
+      // Passado (retroativo) E futuro (agendado) sao permitidos.
       return { ok: true };
     }
     function refreshPublishedAtHint() {
-      const v = validatePublishedAt($publishedAtInput.value);
-      if (v.ok) {
-        $publishedAtHint.textContent = 'Datas no passado/presente. Futuro será suportado em breve.';
-        $publishedAtHint.classList.remove('warn');
-      } else {
+      const value = $publishedAtInput.value;
+      const v = validatePublishedAt(value);
+      if (!v.ok) {
         $publishedAtHint.textContent = `⚠ ${v.msg}`;
         $publishedAtHint.classList.add('warn');
+        return;
       }
+      $publishedAtHint.classList.remove('warn');
+      if (isFuturePublishedAt(value)) {
+        const d = new Date(localInputToTs(value) as number);
+        $publishedAtHint.textContent = `🗓 Agendado para ${d.toLocaleString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}.`;
+      } else {
+        $publishedAtHint.textContent = 'Escolha qualquer data — passada (retroativa) ou futura (agenda o post).';
+      }
+      // Reflete no botao de publicar (Publicar agora ↔ Agendar)
+      if (typeof refreshPublishButton === 'function') refreshPublishButton();
     }
 
     // ===== Load =====
@@ -850,13 +864,52 @@ const currentNav = isEditing ? 'posts' : 'new';
       }
     });
 
-    // ===== Publicar (draft mode only) =====
+    // Relabel do botao conforme a data: futura = "Agendar", senão "Publicar".
+    function refreshPublishButton() {
+      if (mode !== 'draft') return;
+      $publishBtn.textContent = isFuturePublishedAt($publishedAtInput.value) ? 'Agendar' : 'Publicar';
+    }
+
+    // ===== Publicar / Agendar (draft mode only) =====
     $publishBtn.addEventListener('click', async () => {
       if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
       if (hasChanges) await autoSave();
 
       if (!draftId) {
         window.toast?.('Adicione título e conteúdo antes de publicar', 'error');
+        return;
+      }
+
+      // === Agendamento: data futura → salva como "scheduled" (não publica agora) ===
+      if (isFuturePublishedAt($publishedAtInput.value)) {
+        const whenTs = localInputToTs($publishedAtInput.value) as number;
+        const when = new Date(whenTs).toLocaleString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const okSch = await window.confirmAction!({
+          title: 'Agendar publicação?',
+          message: `O post fica como "Agendado" para ${when}. A publicação automática no horário depende do agendador (ver FILA-HUMANA #7); até lá, o post aguarda em Agendados.`,
+          confirmLabel: 'Agendar',
+          cancelLabel: 'Cancelar',
+        });
+        if (!okSch) return;
+        $publishBtn.disabled = true;
+        $publishBtn.textContent = 'Agendando...';
+        try {
+          const res = await fetch(`/api/drafts/${draftId}`, {
+            method: 'PUT',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ status: 'scheduled', scheduled_at: whenTs }),
+          });
+          if (!res.ok) {
+            window.toast?.('Erro ao agendar', 'error');
+          } else {
+            window.toast?.(`Post agendado para ${when}`, 'success', 5000);
+          }
+        } catch {
+          window.toast?.('Erro de rede ao agendar', 'error');
+        } finally {
+          $publishBtn.disabled = false;
+          refreshPublishButton();
+        }
         return;
       }
 
