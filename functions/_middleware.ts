@@ -13,7 +13,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     !url.pathname.startsWith('/api/auth/login') &&
     !url.pathname.startsWith('/api/auth/me') &&
     !url.pathname.startsWith('/api/newsletter/subscribe') &&
-    !url.pathname.startsWith('/api/contact');
+    !url.pathname.startsWith('/api/contact') &&
+    // /api/cron/* é chamado pelo GitHub Actions (sem sessão); autentica por CRON_SECRET no próprio handler.
+    !url.pathname.startsWith('/api/cron/');
 
   if (isPainelRoute || isProtectedApi) {
     const sessionId = getCookieSessionId(context.request);

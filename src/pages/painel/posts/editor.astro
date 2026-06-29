@@ -886,7 +886,7 @@ const currentNav = isEditing ? 'posts' : 'new';
         const when = new Date(whenTs).toLocaleString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         const okSch = await window.confirmAction!({
           title: 'Agendar publicação?',
-          message: `O post fica como "Agendado" para ${when}. A publicação automática no horário depende do agendador (ver FILA-HUMANA #7); até lá, o post aguarda em Agendados.`,
+          message: `O post fica como "Agendado" para ${when} e será publicado automaticamente nesse horário (o robô verifica a cada ~15 min).`,
           confirmLabel: 'Agendar',
           cancelLabel: 'Cancelar',
         });
