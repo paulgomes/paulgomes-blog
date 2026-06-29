@@ -1,0 +1,244 @@
+---
+import PainelLayout from '../../components/painel/PainelLayout.astro';
+import '../../styles/painel.css';
+---
+
+<PainelLayout title="IA — Painel" description="Enriquecimento de conteúdo por IA" current="ia">
+  <section class="page-header">
+    <h1>Enriquecimento por IA</h1>
+    <p class="subtitle">Gere meta descriptions, FAQs, resumos e mais a partir de um texto. Revise antes de usar.</p>
+  </section>
+
+  <p class="tags-hint">
+    ℹ️ Cole o texto base (título, trecho do post, descrição de imagem…), escolha o tipo de saída e clique em Gerar.
+    O resultado é uma sugestão — sempre revise antes de aplicar.
+  </p>
+
+  <div class="ia-grid">
+    <div class="ia-form">
+      <div class="form-row">
+        <label for="iaKind">Tipo de saída</label>
+        <select id="iaKind">
+          <option value="meta-description">Meta description (SEO, máx. 155 caracteres)</option>
+          <option value="faq">FAQ (3-5 perguntas e respostas)</option>
+          <option value="tldr">TL;DR (1 frase)</option>
+          <option value="resumo">Resumo (2-3 frases)</option>
+          <option value="alt-text">Alt text de imagem</option>
+          <option value="key-points">Pontos-chave (3-5 itens)</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="iaInput">Texto base</label>
+        <textarea id="iaInput" rows="8" placeholder="Cole aqui o texto, título ou descrição base…"></textarea>
+        <small id="iaHint">Para alt text, descreva o que aparece na imagem.</small>
+      </div>
+
+      <div class="ia-actions">
+        <button class="btn-neu btn-md btn-primary" id="btnGerar" type="button">Gerar</button>
+        <span id="iaStatus" class="ia-status"></span>
+      </div>
+    </div>
+
+    <div class="ia-result">
+      <div class="ia-result-head">
+        <h2>Resultado</h2>
+        <button class="btn-neu btn-sm" id="btnCopiar" type="button" hidden>Copiar</button>
+      </div>
+      <div class="ia-result-body" id="iaResult">
+        <p class="ia-result-empty">Nenhum resultado ainda. Preencha o texto e clique em Gerar.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $kind = document.getElementById('iaKind') as HTMLSelectElement;
+    const $input = document.getElementById('iaInput') as HTMLTextAreaElement;
+    const $btnGerar = document.getElementById('btnGerar') as HTMLButtonElement;
+    const $btnCopiar = document.getElementById('btnCopiar') as HTMLButtonElement;
+    const $status = document.getElementById('iaStatus') as HTMLSpanElement;
+    const $result = document.getElementById('iaResult') as HTMLDivElement;
+
+    let lastSuggestion = '';
+
+    function setStatus(text: string, color = 'var(--painel-text-secondary)') {
+      $status.textContent = text;
+      $status.style.color = color;
+    }
+
+    function escapeHtml(s: string): string {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+      } as Record<string, string>)[c]);
+    }
+
+    function renderResult(text: string) {
+      lastSuggestion = text;
+      $result.innerHTML = `<pre class="ia-result-text">${escapeHtml(text)}</pre>`;
+      $btnCopiar.hidden = false;
+    }
+
+    function renderEmpty(msg: string) {
+      lastSuggestion = '';
+      $result.innerHTML = `<p class="ia-result-empty">${escapeHtml(msg)}</p>`;
+      $btnCopiar.hidden = true;
+    }
+
+    async function gerar() {
+      const kind = $kind.value;
+      const input = $input.value.trim();
+      if (!input) {
+        window.toast?.('Preencha o texto base.', 'error');
+        $input.focus();
+        return;
+      }
+
+      $btnGerar.disabled = true;
+      setStatus('↻ Gerando…', 'var(--painel-accent)');
+      renderEmpty('Gerando…');
+
+      try {
+        const res = await fetch('/api/ai/enrich', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ kind, input }),
+        });
+        if (res.status === 401) { window.location.href = '/painel/login'; return; }
+        const data = await res.json();
+
+        if (!res.ok) {
+          const msg = data?.error || 'Falha ao gerar';
+          if (msg === 'ANTHROPIC_API_KEY nao configurada') {
+            setStatus('⚠ IA não configurada', 'var(--painel-danger)');
+            renderEmpty('A chave da IA (ANTHROPIC_API_KEY) ainda não foi configurada pelo administrador. Configure o secret no Cloudflare Pages para ativar esta função.');
+            window.toast?.('IA não configurada: defina o secret ANTHROPIC_API_KEY.', 'error', 6000);
+            return;
+          }
+          throw new Error(msg);
+        }
+
+        renderResult(data.suggestion || '');
+        setStatus('✓ Pronto', 'var(--painel-success)');
+        window.toast?.('Sugestão gerada · revise antes de usar.', 'success', 3000);
+      } catch (err: any) {
+        setStatus('⚠ Erro', 'var(--painel-danger)');
+        renderEmpty(err?.message || 'Erro ao gerar sugestão.');
+        window.toast?.(err?.message || 'Erro ao gerar sugestão.', 'error', 5000);
+      } finally {
+        $btnGerar.disabled = false;
+      }
+    }
+
+    async function copiar() {
+      if (!lastSuggestion) return;
+      try {
+        await navigator.clipboard.writeText(lastSuggestion);
+        window.toast?.('Copiado para a área de transferência.', 'success', 2000);
+      } catch {
+        window.toast?.('Não consegui copiar automaticamente. Selecione e copie manualmente.', 'error', 4000);
+      }
+    }
+
+    $btnGerar.addEventListener('click', gerar);
+    $btnCopiar.addEventListener('click', copiar);
+
+    // Ctrl/Cmd+Enter no textarea dispara Gerar
+    $input.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        gerar();
+      }
+    });
+  </script>
+
+  <style is:global>
+    .ia-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+      align-items: start;
+    }
+
+    .ia-form,
+    .ia-result {
+      background: var(--painel-surface);
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      padding: 20px;
+    }
+
+    .ia-form .form-row { margin-bottom: 18px; }
+    .ia-form .form-row:last-of-type { margin-bottom: 16px; }
+
+    .ia-form select,
+    .ia-form textarea {
+      width: 100%;
+      box-sizing: border-box;
+      font-family: var(--painel-font);
+      font-size: 14px;
+      color: var(--painel-text-primary);
+      background: var(--painel-bg);
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      padding: 10px 12px;
+    }
+    .ia-form textarea {
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.5;
+    }
+    .ia-form select:focus,
+    .ia-form textarea:focus {
+      outline: none;
+      border-color: var(--painel-accent);
+    }
+
+    .ia-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .ia-status {
+      font-size: 13px;
+      color: var(--painel-text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ia-result-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .ia-result-head h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--painel-text-primary);
+      margin: 0;
+    }
+    .ia-result-body {
+      min-height: 160px;
+    }
+    .ia-result-empty {
+      color: var(--painel-text-secondary);
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 0;
+    }
+    .ia-result-text {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: var(--painel-font);
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--painel-text-primary);
+      margin: 0;
+    }
+
+    @media (max-width: 880px) {
+      .ia-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</PainelLayout>

@@ -1,0 +1,216 @@
+---
+import PainelLayout from '../../components/painel/PainelLayout.astro';
+import '../../styles/painel.css';
+---
+
+<PainelLayout title="Newsletter — Painel" description="Campanhas de newsletter" current="newsletter">
+  <section class="page-header">
+    <h1>Newsletter</h1>
+    <p class="subtitle">Escreva e dispare campanhas para os inscritos. Envie um teste antes de mandar para todos.</p>
+  </section>
+
+  <p class="tags-hint">
+    ℹ️ O corpo é <strong>HTML</strong> — cole o markup do email. O "Enviar teste" manda só para o email
+    informado. O "Enviar para todos" dispara um broadcast para a audiência inteira via Resend e é irreversível.
+  </p>
+
+  <div class="nl-form">
+    <div class="form-row">
+      <label for="nlSubject">Assunto</label>
+      <input type="text" id="nlSubject" maxlength="200" placeholder="Ex: Novidades de junho — Thinking Forward" />
+    </div>
+
+    <div class="form-row">
+      <label for="nlHtml">Corpo (HTML)</label>
+      <textarea id="nlHtml" class="nl-textarea" rows="14" placeholder="<h1>Olá!</h1>&#10;<p>Conteúdo da campanha...</p>"></textarea>
+      <small>Cole o HTML do email. Tags como &lt;h1&gt;, &lt;p&gt;, &lt;a&gt; são renderizadas no cliente de email.</small>
+    </div>
+
+    <div class="form-row">
+      <label for="nlTestTo">Email de teste</label>
+      <input type="email" id="nlTestTo" placeholder="voce@exemplo.com" />
+      <small>Usado apenas pelo botão "Enviar teste".</small>
+    </div>
+
+    <div class="nl-actions">
+      <button class="btn-neu btn-md" id="btnTest" type="button">Enviar teste</button>
+      <button class="btn-neu btn-md btn-primary" id="btnSendAll" type="button">Enviar para todos</button>
+    </div>
+
+    <div class="nl-result" id="nlResult" hidden></div>
+  </div>
+
+  <script>
+    const $subject = document.getElementById('nlSubject') as HTMLInputElement;
+    const $html = document.getElementById('nlHtml') as HTMLTextAreaElement;
+    const $testTo = document.getElementById('nlTestTo') as HTMLInputElement;
+    const $btnTest = document.getElementById('btnTest') as HTMLButtonElement;
+    const $btnSendAll = document.getElementById('btnSendAll') as HTMLButtonElement;
+    const $result = document.getElementById('nlResult') as HTMLDivElement;
+
+    const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    function showResult(text: string, kind: 'success' | 'error' | 'info') {
+      $result.hidden = false;
+      $result.textContent = text;
+      $result.className = `nl-result nl-result--${kind}`;
+    }
+
+    function validateBase(): { subject: string; html: string } | null {
+      const subject = $subject.value.trim();
+      const html = $html.value.trim();
+      if (!subject) {
+        window.toast?.('Informe o assunto.', 'error');
+        showResult('Informe o assunto.', 'error');
+        return null;
+      }
+      if (!html) {
+        window.toast?.('Informe o corpo (HTML).', 'error');
+        showResult('Informe o corpo (HTML) da campanha.', 'error');
+        return null;
+      }
+      return { subject, html };
+    }
+
+    function setBusy(busy: boolean) {
+      $btnTest.disabled = busy;
+      $btnSendAll.disabled = busy;
+    }
+
+    async function postCampaign(payload: Record<string, unknown>) {
+      const res = await fetch('/api/newsletter/campaign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res.status === 401) {
+        window.location.href = '/painel/login';
+        throw new Error('Não autenticado');
+      }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error((data as any).error || `Falha no envio (HTTP ${res.status})`);
+      }
+      return data as any;
+    }
+
+    // === ENVIAR TESTE ===
+    $btnTest.addEventListener('click', async () => {
+      const base = validateBase();
+      if (!base) return;
+
+      const testTo = $testTo.value.trim().toLowerCase();
+      if (!testTo || !EMAIL_REGEX.test(testTo)) {
+        window.toast?.('Informe um email de teste válido.', 'error');
+        showResult('Informe um email de teste válido.', 'error');
+        $testTo.focus();
+        return;
+      }
+
+      setBusy(true);
+      showResult('Enviando teste...', 'info');
+      try {
+        const data = await postCampaign({ ...base, testTo });
+        const to = data.to || testTo;
+        window.toast?.(`Teste enviado para ${to}`, 'success', 4000);
+        showResult(`✓ Teste enviado para ${to}.`, 'success');
+      } catch (err: any) {
+        window.toast?.(err?.message || 'Erro ao enviar teste', 'error', 6000);
+        showResult(`Erro: ${err?.message || 'falha ao enviar teste'}`, 'error');
+      } finally {
+        setBusy(false);
+      }
+    });
+
+    // === ENVIAR PARA TODOS ===
+    $btnSendAll.addEventListener('click', async () => {
+      const base = validateBase();
+      if (!base) return;
+
+      if (!confirm('Enviar para TODOS os inscritos?')) return;
+
+      setBusy(true);
+      showResult('Disparando broadcast...', 'info');
+      try {
+        const data = await postCampaign(base);
+        window.toast?.('Campanha enviada para a audiência ✓', 'success', 5000);
+        showResult(`✓ Broadcast disparado para todos os inscritos.${data.id ? ` (id: ${data.id})` : ''}`, 'success');
+      } catch (err: any) {
+        window.toast?.(err?.message || 'Erro ao enviar campanha', 'error', 6000);
+        showResult(`Erro: ${err?.message || 'falha ao disparar broadcast'}`, 'error');
+      } finally {
+        setBusy(false);
+      }
+    });
+  </script>
+
+  <style is:global>
+    .nl-form {
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+    }
+    .nl-textarea {
+      padding: 10px 12px;
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      font-family: ui-monospace, 'Cascadia Code', Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      background: var(--painel-surface);
+      color: var(--painel-text-primary);
+      resize: vertical;
+      min-height: 200px;
+    }
+    .nl-textarea:focus {
+      outline: 2px solid var(--painel-accent);
+      outline-offset: -1px;
+      border-color: var(--painel-accent);
+    }
+    .form-row input[type="email"] {
+      padding: 8px 12px;
+      border: 1px solid var(--painel-border);
+      border-radius: var(--painel-radius);
+      font-family: var(--painel-font);
+      font-size: 14px;
+      background: var(--painel-surface);
+      color: var(--painel-text-primary);
+    }
+    .form-row input[type="email"]:focus {
+      outline: 2px solid var(--painel-accent);
+      outline-offset: -1px;
+      border-color: var(--painel-accent);
+    }
+    .nl-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .nl-result {
+      margin-top: 18px;
+      padding: 12px 14px;
+      border-radius: var(--painel-radius);
+      font-size: 13px;
+      line-height: 1.5;
+      border: 1px solid var(--painel-border);
+      background: var(--painel-bg);
+      color: var(--painel-text-primary);
+    }
+    .nl-result--success {
+      background: #e7f6ec;
+      border-color: #b7e1c4;
+      color: #14532d;
+    }
+    .nl-result--error {
+      background: #fce8e6;
+      border-color: #f5b5ae;
+      color: #7f1d1d;
+    }
+    .nl-result--info {
+      background: var(--painel-accent-soft);
+      border-color: var(--painel-border-strong);
+      color: var(--painel-accent);
+    }
+  </style>
+</PainelLayout>

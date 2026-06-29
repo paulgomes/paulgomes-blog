@@ -1,5 +1,6 @@
 import type { Env } from '../_utils/db';
-import { requireAuth } from '../_utils/require-auth';
+import { requireRole } from '../_utils/require-role';
+import { audit } from '../_utils/audit';
 import { commitFile } from '../_utils/github';
 
 // POST /api/categorias/sync
@@ -81,7 +82,7 @@ async function getCurrentCategoriasContent(env: Env): Promise<string> {
 }
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
-  const auth = await requireAuth(request, env);
+  const auth = await requireRole(request, env, 'admin');
   if (auth instanceof Response) return auth;
 
   try {
@@ -120,6 +121,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       content: newContent,
       message: `chore(categorias): sync de ${cats.length} categoria(s)`,
     });
+
+    await audit(env, { userId: auth.user.id, action: 'categorias.sync', entity: 'categorias', after: { count: cats.length } });
 
     return Response.json({
       ok: true,

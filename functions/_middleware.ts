@@ -6,11 +6,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   // Proteger rotas /painel (exceto /painel/login)
   const isPainelRoute = url.pathname.startsWith('/painel') && !url.pathname.startsWith('/painel/login');
-  // Proteger rotas /api (exceto auth + newsletter publica + contato publico)
+  // Proteger rotas /api (exceto auth + inscricao publica na newsletter + contato publico).
+  // ATENCAO: liberar apenas /api/newsletter/subscribe (publico). /api/newsletter/campaign
+  // e admin -> fica PROTEGIDO pelo middleware (alem do requireAuth interno).
   const isProtectedApi = url.pathname.startsWith('/api/') &&
     !url.pathname.startsWith('/api/auth/login') &&
     !url.pathname.startsWith('/api/auth/me') &&
-    !url.pathname.startsWith('/api/newsletter/') &&
+    !url.pathname.startsWith('/api/newsletter/subscribe') &&
     !url.pathname.startsWith('/api/contact');
 
   if (isPainelRoute || isProtectedApi) {

@@ -1,5 +1,6 @@
 import type { Env } from '../../_utils/db';
-import { requireAuth } from '../../_utils/require-auth';
+import { requireRole } from '../../_utils/require-role';
+import { audit } from '../../_utils/audit';
 import { deleteFile } from '../../_utils/github';
 
 // DELETE /api/posts/:slug/purge
@@ -8,7 +9,7 @@ import { deleteFile } from '../../_utils/github';
 // Ordem: Git primeiro -> D1 (se Git falhar, D1 fica intacto pra retry).
 
 export const onRequestDelete: PagesFunction<Env> = async ({ request, env, params }) => {
-  const auth = await requireAuth(request, env);
+  const auth = await requireRole(request, env, 'admin');
   if (auth instanceof Response) return auth;
 
   const slug = params.slug as string;
