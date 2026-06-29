@@ -1,5 +1,5 @@
 {
-  "head_snippet": "",
+  "head_snippet": "<!-- Google tag (gtag.js) -->\n<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-14L3H4ENKW\"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'G-14L3H4ENKW');\n</script>",
   "social": {
     "linkedin": "https://www.linkedin.com/in/inpaulgomes/",
     "instagram": "https://www.instagram.com/paulgomes/",
@@ -7,5 +7,5 @@
     "x": "https://x.com/paullgomes",
     "email": "mailto:paulgomes@wys.com.br"
   },
-  "synced_at": 0
+  "synced_at": 1782757811808
 }
