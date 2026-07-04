@@ -3,10 +3,14 @@ import { Image } from 'astro:assets';
 import SocialIcons from './SocialIcons.astro';
 import signature from '../assets/brand/signature-paul-gomes.webp';
 import menuFooter from '../data/menu-footer.json';
+import { getTopicGroups } from '../lib/topics';
 
 const year = new Date().getFullYear();
 // Defesa em profundidade: filtra /privacidade aqui tambem (ja filtrado no sync)
 const navItems = (menuFooter.items || []).filter((i) => i.url !== '/privacidade');
+
+// Índice temático (mesma fonte do mega menu): reforça links internos para o Google/IA.
+const { groups: topicGroups } = await getTopicGroups();
 ---
 
 <footer class="mt-24 border-t" style="border-color: var(--color-border)">
@@ -32,6 +36,31 @@ const navItems = (menuFooter.items || []).filter((i) => i.url !== '/privacidade'
         />
       </div>
     </div>
+
+    <hr class="my-10 border-0 border-t" style="border-color: var(--color-border)" />
+
+    <!-- Índice temático (links internos por tópico) -->
+    <nav class="footer-topics" aria-label="Tópicos do blog">
+      {topicGroups.map((g) => (
+        <div class="footer-topics-col">
+          <p class="footer-topics-title">{g.title}</p>
+          <ul>
+            {g.items.map((it) => (
+              <li><a href={it.href}>{it.label}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      <div class="footer-topics-col">
+        <p class="footer-topics-title">Navegar</p>
+        <ul>
+          <li><a href="/blog">Todos os insights</a></li>
+          <li><a href="/sobre">Sobre</a></li>
+          <li><a href="/parceiros">Parceiros</a></li>
+          <li><a href="/contato">Contato</a></li>
+        </ul>
+      </div>
+    </nav>
 
     <hr class="my-10 border-0 border-t" style="border-color: var(--color-border)" />
 
@@ -65,6 +94,24 @@ const navItems = (menuFooter.items || []).filter((i) => i.url !== '/privacidade'
   :global(.dark) .signature-img {
     filter: invert(1);
   }
+
+  /* Índice temático (links internos) */
+  .footer-topics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.75rem 2rem;
+  }
+  .footer-topics-title {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--color-ink); margin: 0 0 0.7rem;
+  }
+  .footer-topics-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+  .footer-topics-col a {
+    font-size: 0.875rem; color: var(--color-muted); text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .footer-topics-col a:hover { color: #0103F9; }
+  :global(.dark) .footer-topics-col a:hover { color: #3D40FF; }
 
   /* Selo "Projeto criado por" + logo WYS animado (igual ao baterias-okm).
      O anel girando vem do próprio .webp animado; aqui é só o enquadramento. */
