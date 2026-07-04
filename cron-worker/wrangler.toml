@@ -1,0 +1,12 @@
+# Worker de cron do blog — dispara a publicação de posts agendados.
+# Substitui o gatilho da GitHub Action (.github/workflows/publish-scheduled.yml),
+# que dependia de um secret no GitHub e do agendador (instável) do GitHub Actions.
+# Este Worker roda no próprio Cloudflare e chama o endpoint /api/cron/publish-scheduled
+# das Pages Functions, autenticado pelo CRON_SECRET (mesmo valor do projeto Pages).
+name = "paulgomes-cron"
+main = "src/index.js"
+compatibility_date = "2026-05-01"
+
+# A cada 15 minutos. O endpoint é idempotente (publica só drafts 'scheduled' vencidos).
+[triggers]
+crons = ["*/15 * * * *"]
