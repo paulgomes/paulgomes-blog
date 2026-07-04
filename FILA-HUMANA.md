@@ -11,9 +11,10 @@ Resolva em lote, de forma assíncrona. Eu sigo trabalhando no que não depende d
 - **Contexto:** modo autônomo deixou tudo pronto e **build verde**, mas a regra é não pushar sem você (ADR-001). Inclui também um endpoint NOVO (`/api/posts/:slug/duplicate`) que só passa a existir em produção após deploy.
 - **O que fazer:** revisar o diff e dar o OK pro push. Mensagens de commit sugeridas no resumo do chat.
 
-## 🟡 7. Agendamento de posts — precisa de Cron Worker (FASE 2/3)
-- **Contexto:** a coluna `scheduled_at` e o status `scheduled` já existem, mas **nenhum job dispara a publicação no horário**. Hoje agendar é só visual.
-- **O que fazer:** autorizar criar um **Cloudflare Cron Trigger / Worker** que a cada ~5min busca `drafts WHERE status='scheduled' AND scheduled_at<=now()` e chama o publish. Precisa de acesso/criação no Cloudflare (como o KV do item 4).
+## ✅ 7. Agendamento de posts — RESOLVIDO (2026-07-04)
+- **Contexto:** a coluna `scheduled_at` e o status `scheduled` já existiam, mas nenhum job disparava a publicação. A GitHub Action `publish-scheduled.yml` nunca funcionou (secret `CRON_SECRET` não configurado nos GitHub Actions secrets + agendador instável do GitHub).
+- **Feito:** criado o Worker **`paulgomes-cron`** (pasta `cron-worker/`) com **Cron Trigger `*/15`** que chama `/api/cron/publish-scheduled` autenticado por `CRON_SECRET` (rotacionado no Pages e no Worker). Independe do GitHub Actions. Validado ponta a ponta: um draft `scheduled` vencido foi publicado sozinho (commit no Git + deploy) e depois removido. Ver **ADR-011**.
+- **Pendência menor:** a GitHub Action antiga ficou redundante (responde 401 com o secret antigo, não publica nada). Pode ser desabilitada/removida quando quiser.
 
 ## 🟡 8. Métricas reais de acesso (FASE 3 — estatísticas avançadas)
 - **Contexto:** `GET /api/stats` só tem contadores (total/publicados/rascunhos…). Não há views/pageviews/bounce/top-posts.
@@ -23,7 +24,7 @@ Resolva em lote, de forma assíncrona. Eu sigo trabalhando no que não depende d
 - **Decisão (autônoma):** usar o **histórico de commits do GitHub** (fonte da verdade do build), sem tabela nova.
 - **Feito:** `GET /api/posts/:slug/history` (read-only, lista commits que tocaram o `.md`) + painel **"Histórico de versões"** no editor (data/autor/mensagem + link pro commit). Deployado.
 
-> Itens 7-9 são as dependências de backend/decisão que travam partes das FASES 2-3 do CMS. A camada visual/estrutural pode ser entregue com `// TODO` enquanto isso.
+> Item 8 é a dependência de backend que ainda trava parte das FASES 2-3 do CMS (itens 7 e 9 já resolvidos). A camada visual/estrutural pode ser entregue com `// TODO` enquanto isso.
 
 ---
 

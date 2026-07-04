@@ -5,6 +5,11 @@ Mais recente no topo. Reversível — o humano pode discordar e reverter.
 
 ---
 
+## ADR-011 — Agendamento via Worker Cron do Cloudflare (não GitHub Actions)
+- **Contexto:** a publicação de posts `scheduled` dependia da GitHub Action `publish-scheduled.yml`, que nunca funcionou (secret `CRON_SECRET` ausente nos GitHub Actions secrets + cron do GitHub instável/atrasado). O endpoint `/api/cron/publish-scheduled` estava ok (secret presente no Pages).
+- **Decisão:** migrar o **gatilho** para um Worker próprio do Cloudflare — **`paulgomes-cron`** (`cron-worker/`), Cron Trigger `*/15`, que chama o endpoint autenticado por `CRON_SECRET` (rotacionado e idêntico nos dois lados). Fica tudo no Cloudflare, sem dependência do GitHub. Validado ponta a ponta em 2026-07-04.
+- **Alternativa descartada:** consertar a GitHub Action (setar o secret no GitHub) — mantinha a dependência do agendador instável do GitHub Actions e exigia acesso ao GitHub que não estava disponível na sessão.
+
 ## ADR-010 — CMS premium: recorte por verificabilidade (login-gated)
 - **Contexto:** brief pede FASE 1 do CMS "completa". Páginas `/painel/*` ficam atrás de login → não dá QA visual headless (só build verde). Inviolável: "não quebrar features".
 - **Decisão:** priorizar o que é **verificável por build + baixo risco** (fix do título, topbar/sidebar do `PainelLayout`, ações de listagem aditivas, endpoint `duplicate`) e **documentar** o redesign maior (listagem bulk/⋯, accordions do editor, agendamento) em `FILA-HUMANA.md` em vez de reescrever JS complexo sem poder testar.

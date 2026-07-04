@@ -6,6 +6,17 @@ Log cronológico do trabalho na Core Platform. Mais recente no topo.
 
 ---
 
+## 2026-07-04 — Publicação em lote (IA avançada) + conserto do agendamento
+
+### Conteúdo publicado
+- **11 posts** sobre Claude Fable 5 / Mythos 5 (lançamento + suspensão/retomada pelo governo dos EUA), apurados em fontes primárias.
+- **30 artigos** de IA avançada em 10 clusters (arquiteturas, treino/alinhamento, inferência, raciocínio, agentes, RAG, multimodal, interpretabilidade/segurança, avaliação, sistemas), gerados por workflow multi-agente (escrita + verificação factual adversarial) + revisão ortográfica pt-BR. Publicados de uma vez (decisão do dono, pois o cron ainda estava quebrado na hora). Build verde (208 páginas), categorias no enum, canonical/sitemap/RSS ok.
+
+### Agendamento CONSERTADO (resolve item 7 da FILA-HUMANA)
+- **Diagnóstico:** a GitHub Action `publish-scheduled.yml` não publicava nada (secret `CRON_SECRET` ausente nos GitHub Actions secrets); endpoint no Pages estava ok.
+- **Fix:** Worker **`paulgomes-cron`** (`cron-worker/`) com Cron Trigger `*/15` → `/api/cron/publish-scheduled`; `CRON_SECRET` rotacionado no Pages e no Worker. Ver **ADR-011**.
+- **Validação real:** um draft `scheduled` vencido foi publicado sozinho pelo Worker (commit `feat(post): publica…` + deploy), depois removido. D1 limpo (0 `scheduled`).
+
 ## 2026-06-29 — CMS /painel: evolução editorial premium (FASE 1 parcial)
 
 ### Auditoria (inventário — o que JÁ existe, fonte: repo + D1)
