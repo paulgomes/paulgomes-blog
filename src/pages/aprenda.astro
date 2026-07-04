@@ -1,0 +1,107 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+
+// Trilhas apontam para páginas de categoria que já existem (nada vazio).
+const trilhas = [
+  { nome: 'Inteligência Artificial', desc: 'Como a IA molda comportamento, trabalho e decisão.', href: '/categoria/ia' },
+  { nome: 'GEO', desc: 'Ser encontrado pelos modelos de IA, não só pelo Google.', href: '/categoria/geo' },
+  { nome: 'SEO', desc: 'A camada técnica e estratégica da descoberta na web.', href: '/categoria/seo' },
+  { nome: 'Branding', desc: 'Marca, percepção e autoridade na era algorítmica.', href: '/categoria/branding' },
+  { nome: 'Tecnologia', desc: 'A arquitetura invisível que sustenta a internet.', href: '/categoria/tecnologia' },
+  { nome: 'Negócios', desc: 'Estratégia e futuro para quem decide.', href: '/categoria/negocios' },
+];
+
+// Guias aprofundados (pillar pages) em produção. Ainda sem página: exibidos como roadmap, não como link.
+const guias = ['Guia de GEO', 'Guia de SEO', 'Guia de IA', 'Guia de Branding', 'Guia de Marketing', 'Guia de Cloudflare', 'Guia de Astro'];
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <BaseHead
+      title={`Aprenda — ${SITE_TITLE}`}
+      description="Trilhas e guias sobre inteligência artificial, GEO, SEO, branding e o futuro digital. Aprenda a ler as mudanças estruturais da internet com Paul Gomes."
+    />
+  </head>
+  <body>
+    <Header />
+
+    <main class="container-wide pt-16 pb-24 md:pt-24">
+      <header class="max-w-3xl">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #0103F9">Aprenda</p>
+        <h1 class="mt-3 font-display text-4xl font-bold tracking-tight md:text-6xl">Aprenda a ler as mudanças antes da maioria</h1>
+        <p class="mt-6 text-lg leading-relaxed" style="color: var(--color-muted)">
+          Não é sobre acompanhar notícias de tecnologia. É sobre entender a lógica por trás do que está sendo construído. Comece pelas trilhas por tema e acompanhe os guias aprofundados que estão sendo produzidos.
+        </p>
+      </header>
+
+      <!-- Trilhas -->
+      <section class="mt-16">
+        <h2 class="font-display text-2xl font-bold md:text-3xl">Trilhas por tema</h2>
+        <p class="mt-2 text-sm" style="color: var(--color-muted)">Comece por aqui. Cada trilha reúne os ensaios sobre o tema.</p>
+        <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {trilhas.map((t) => (
+            <a href={t.href} class="card group">
+              <h3 class="font-display text-xl font-bold">{t.nome}</h3>
+              <p class="mt-3 text-base leading-relaxed" style="color: var(--color-muted)">{t.desc}</p>
+              <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold cta-link">Ver ensaios <span aria-hidden="true">&rarr;</span></span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- Guias em produção -->
+      <section class="mt-20">
+        <h2 class="font-display text-2xl font-bold md:text-3xl">Guias aprofundados</h2>
+        <p class="mt-2 max-w-2xl text-sm" style="color: var(--color-muted)">
+          Conteúdos de referência, densos, ligando dezenas de ensaios num só lugar. Em produção.
+        </p>
+        <ul class="mt-8 flex flex-wrap gap-3">
+          {guias.map((g) => (
+            <li class="guia-chip">{g}<span class="guia-badge">em produção</span></li>
+          ))}
+        </ul>
+      </section>
+    </main>
+
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .card {
+    display: block;
+    border: 1px solid var(--color-border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-paper) 60%, transparent);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .card:hover { border-color: color-mix(in srgb, #0103F9 40%, var(--color-border)); transform: translateY(-2px); }
+  :global(.dark) .card:hover { border-color: color-mix(in srgb, #3D40FF 45%, var(--color-border)); }
+  .cta-link { color: #0103F9; }
+  :global(.dark) .cta-link { color: #3D40FF; }
+
+  .guia-chip {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    border: 1px solid var(--color-border); border-radius: 999px;
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    font-size: 0.9rem; font-weight: 500; color: var(--color-ink);
+  }
+  .guia-badge {
+    font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--color-muted);
+    background: color-mix(in srgb, var(--color-ink) 7%, transparent);
+    padding: 2px 8px; border-radius: 999px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card { transition: none; }
+    .card:hover { transform: none; }
+  }
+</style>

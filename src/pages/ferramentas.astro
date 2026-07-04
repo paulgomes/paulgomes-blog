@@ -1,0 +1,91 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+
+// Ferramentas em construção: cards honestos (não linkam para página vazia).
+const ferramentas = [
+  { nome: 'Glossário de IA', desc: 'Os termos que definem a nova era, explicados sem jargão.' },
+  { nome: 'Glossário de SEO', desc: 'Do técnico ao estratégico, o vocabulário da descoberta.' },
+  { nome: 'Prompts', desc: 'Prompts prontos para trabalho real com modelos de linguagem.' },
+  { nome: 'Checklists', desc: 'Passos objetivos para SEO, GEO e publicação de conteúdo.' },
+  { nome: 'Templates', desc: 'Estruturas prontas para acelerar execução.' },
+  { nome: 'Calculadoras', desc: 'Estimativas rápidas para decisões de marketing e conteúdo.' },
+];
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <BaseHead
+      title={`Ferramentas — ${SITE_TITLE}`}
+      description="Ferramentas práticas para trabalhar com IA, SEO e conteúdo: prompts, checklists, glossários, templates e calculadoras. Por Paul Gomes."
+    />
+  </head>
+  <body>
+    <Header />
+
+    <main class="container-wide pt-16 pb-24 md:pt-24">
+      <header class="max-w-3xl">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #0103F9">Ferramentas</p>
+        <h1 class="mt-3 font-display text-4xl font-bold tracking-tight md:text-6xl">Do abstrato para a execução</h1>
+        <p class="mt-6 text-lg leading-relaxed" style="color: var(--color-muted)">
+          Ferramentas práticas para trabalhar com IA, SEO e conteúdo. Prompts, checklists, glossários e calculadoras que traduzem o que é conceitual em algo que você usa hoje. Sendo construídas uma a uma.
+        </p>
+      </header>
+
+      <section class="mt-14">
+        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {ferramentas.map((f) => (
+            <article class="card">
+              <div class="flex items-start justify-between gap-3">
+                <h3 class="font-display text-xl font-bold">{f.nome}</h3>
+                <span class="badge">em breve</span>
+              </div>
+              <p class="mt-3 text-base leading-relaxed" style="color: var(--color-muted)">{f.desc}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="mt-16 rounded-3xl p-10 md:p-14" style="background: color-mix(in srgb, #0103F9 8%, transparent)">
+        <h2 class="font-display text-2xl font-bold md:text-3xl">Qual dessas te ajudaria primeiro?</h2>
+        <p class="mt-4 max-w-2xl text-base leading-relaxed" style="color: var(--color-muted)">
+          A ordem de construção segue quem mais precisa. Diga qual ferramenta faria diferença no seu trabalho.
+        </p>
+        <a href="/contato" class="cta mt-7 inline-flex items-center gap-2">Sugerir uma ferramenta <span aria-hidden="true">&rarr;</span></a>
+      </section>
+    </main>
+
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .card {
+    border: 1px solid var(--color-border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    background: color-mix(in srgb, var(--color-paper) 60%, transparent);
+  }
+  .badge {
+    flex-shrink: 0;
+    font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--color-muted);
+    background: color-mix(in srgb, var(--color-ink) 7%, transparent);
+    padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+  }
+  .cta {
+    background: #0103F9; color: #fff;
+    font-weight: 600; font-size: 0.95rem;
+    padding: 0.75rem 1.4rem; border-radius: 999px; text-decoration: none;
+    transition: filter 0.2s ease, transform 0.2s ease;
+  }
+  .cta:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  :global(.dark) .cta { background: #3D40FF; }
+  @media (prefers-reduced-motion: reduce) {
+    .cta { transition: none; }
+    .cta:hover { transform: none; }
+  }
+</style>
