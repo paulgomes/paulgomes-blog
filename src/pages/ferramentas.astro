@@ -4,14 +4,14 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE } from '../consts';
 
-// Ferramentas em construção: cards honestos (não linkam para página vazia).
+// Ferramentas: cards com href linkam para o artigo-ferramenta; sem href = "em breve".
 const ferramentas = [
-  { nome: 'Glossário de IA', desc: 'Os termos que definem a nova era, explicados sem jargão.' },
-  { nome: 'Glossário de SEO', desc: 'Do técnico ao estratégico, o vocabulário da descoberta.' },
-  { nome: 'Prompts', desc: 'Prompts prontos para trabalho real com modelos de linguagem.' },
-  { nome: 'Checklists', desc: 'Passos objetivos para SEO, GEO e publicação de conteúdo.' },
-  { nome: 'Templates', desc: 'Estruturas prontas para acelerar execução.' },
-  { nome: 'Calculadoras', desc: 'Estimativas rápidas para decisões de marketing e conteúdo.' },
+  { nome: 'Glossário de IA', desc: 'Os termos que definem a nova era, explicados sem jargão.', href: '/glossario-de-ia/' },
+  { nome: 'Glossário de SEO', desc: 'Do técnico ao estratégico, o vocabulário da descoberta.', href: '/glossario-de-seo/' },
+  { nome: 'Prompts', desc: 'Prompts prontos para trabalho real com modelos de linguagem.', href: '/biblioteca-de-prompts-para-trabalho-real/' },
+  { nome: 'Checklists', desc: 'Passos objetivos para SEO, GEO e publicação de conteúdo.', href: '/checklists-de-seo-geo-e-publicacao/' },
+  { nome: 'Templates', desc: 'Estruturas prontas para acelerar execução.', href: '/templates-de-conteudo-e-marketing/' },
+  { nome: 'Calculadoras', desc: 'Estimativas rápidas para decisões de marketing e conteúdo.', href: '/calculadoras-de-marketing-as-contas-essenciais/' },
 ];
 ---
 
@@ -31,26 +31,37 @@ const ferramentas = [
         <p class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #0103F9">Ferramentas</p>
         <h1 class="mt-3 font-display text-4xl font-bold tracking-tight md:text-6xl">Do abstrato para a execução</h1>
         <p class="mt-6 text-lg leading-relaxed" style="color: var(--color-muted)">
-          Ferramentas práticas para trabalhar com IA, SEO e conteúdo. Prompts, checklists, glossários e calculadoras que traduzem o que é conceitual em algo que você usa hoje. Sendo construídas uma a uma.
+          Ferramentas práticas para trabalhar com IA, SEO e conteúdo. Prompts, checklists, glossários e calculadoras que traduzem o que é conceitual em algo que você usa hoje.
         </p>
       </header>
 
       <section class="mt-14">
         <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {ferramentas.map((f) => (
-            <article class="card">
-              <div class="flex items-start justify-between gap-3">
-                <h3 class="font-display text-xl font-bold">{f.nome}</h3>
-                <span class="badge">em breve</span>
-              </div>
-              <p class="mt-3 text-base leading-relaxed" style="color: var(--color-muted)">{f.desc}</p>
-            </article>
+            f.href ? (
+              <a href={f.href} class="card card--link">
+                <div class="flex items-start justify-between gap-3">
+                  <h3 class="font-display text-xl font-bold">{f.nome}</h3>
+                  <span class="badge badge--live">disponível</span>
+                </div>
+                <p class="mt-3 text-base leading-relaxed" style="color: var(--color-muted)">{f.desc}</p>
+                <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold" style="color: #0103F9">Abrir <span aria-hidden="true">&rarr;</span></span>
+              </a>
+            ) : (
+              <article class="card">
+                <div class="flex items-start justify-between gap-3">
+                  <h3 class="font-display text-xl font-bold">{f.nome}</h3>
+                  <span class="badge">em breve</span>
+                </div>
+                <p class="mt-3 text-base leading-relaxed" style="color: var(--color-muted)">{f.desc}</p>
+              </article>
+            )
           ))}
         </div>
       </section>
 
       <section class="mt-16 rounded-3xl p-10 md:p-14" style="background: color-mix(in srgb, #0103F9 8%, transparent)">
-        <h2 class="font-display text-2xl font-bold md:text-3xl">Qual dessas te ajudaria primeiro?</h2>
+        <h2 class="font-display text-2xl font-bold md:text-3xl">Qual ferramenta falta aqui?</h2>
         <p class="mt-4 max-w-2xl text-base leading-relaxed" style="color: var(--color-muted)">
           A ordem de construção segue quem mais precisa. Diga qual ferramenta faria diferença no seu trabalho.
         </p>
@@ -68,6 +79,21 @@ const ferramentas = [
     border-radius: 1rem;
     padding: 1.5rem;
     background: color-mix(in srgb, var(--color-paper) 60%, transparent);
+  }
+  .card--link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .card--link:hover { border-color: #0103F9; transform: translateY(-2px); }
+  @media (prefers-reduced-motion: reduce) {
+    .card--link { transition: none; }
+    .card--link:hover { transform: none; }
+  }
+  .badge--live {
+    color: #0103F9;
+    background: color-mix(in srgb, #0103F9 10%, transparent);
   }
   .badge {
     flex-shrink: 0;
