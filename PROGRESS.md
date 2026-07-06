@@ -6,6 +6,17 @@ Log cronológico do trabalho na Core Platform. Mais recente no topo.
 
 ---
 
+## 2026-07-05 — Seção /ferramentas/ útil + série regional agendada retroativa
+
+### /ferramentas/ (commit `ce75f88`)
+- **6 artigos-ferramenta** publicados e linkados nos cards (badge "disponível", zero "em breve"): Glossário de IA (56 termos, 36 links internos p/ os artigos profundos), Glossário de SEO/GEO (59 termos), Biblioteca de 12 prompts, 3 checklists (43 itens), 5 templates, 7 calculadoras com exemplos conferidos aritmeticamente na revisão adversarial.
+
+### Série regional (31 artigos, Sorocaba/Votorantim/Boituva/Araçoiaba da Serra)
+- Gerados por workflow (escrita + verificação adversarial de fatos locais), heros de stock (Magnific/Freepik) redimensionados e hospedados no R2 (`media.paulgomes.com.br/2026/07/blog-regiao-*.jpg`).
+- **Publicados pelo mecanismo NATIVO de agendamento** (drafts `scheduled` no D1 → Worker `paulgomes-cron` → publishDraft), em lotes de 10/15min (~61 min de dreno). Por decisão do dono, com **datas retroativas 1/dia de janeiro/2026** (pubDate 01–31/jan; `published_at` = dia agendado). Estes 31 estão em `posts_meta` → **visíveis/editáveis no painel** (diferente dos 41 de 2026-07-04, que foram direto no Git).
+- Verificação: 31/31 URLs 200, pubDates de janeiro renderizadas, heros ok, sitemap ok, 0 `scheduled` restantes no D1.
+- ⚠️ Nota de risco registrada: datas retroativas podem divergir da data de descoberta pelo Google (sinal de spam potencial); reversível editando os posts no painel.
+
 ## 2026-07-04 — Publicação em lote (IA avançada) + conserto do agendamento
 
 ### Conteúdo publicado
