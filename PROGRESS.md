@@ -6,6 +6,13 @@ Log cronológico do trabalho na Core Platform. Mais recente no topo.
 
 ---
 
+## 2026-07-08 — Cluster "contratar agência" agendado 1/dia (futuro)
+
+- **5 artigos satélite** da palavra-chave comercial "agência de marketing Sorocaba" (como escolher, quanto custa, perguntas antes de contratar, agência vs. equipe interna, o que uma agência entrega), todos funelando com CTA para a LP `/agencia-de-marketing-em-sorocaba/` — sem canibalizar (intenção informacional; LP segue dona da intenção transacional).
+- Verificação adversarial aplicou: disclosure da WYS limitado a 1 menção no fechamento, zero preços de mercado inventados, links só da allowlist.
+- Heros de stock no R2 (`blog-agencia-*.jpg`), build verde (253 páginas).
+- **Agendados no D1 (fluxo nativo): 1/dia, 09→13/07/2026 às 12:00 UTC (9h BRT)**. O Worker `paulgomes-cron` publica sozinho — mecanismo já validado 2x em produção (teste unitário + dreno dos 31 regionais).
+
 ## 2026-07-05 — Seção /ferramentas/ útil + série regional agendada retroativa
 
 ### /ferramentas/ (commit `ce75f88`)
