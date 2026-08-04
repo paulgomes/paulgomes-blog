@@ -2,6 +2,7 @@
 title: "Não computabilidade: o limite que nenhuma inteligência artificial vai ultrapassar"
 description: ""
 pubDate: 2026-06-07
+featured: true
 focusKeyword: "Não computabilidade"
 metaTitle: "Não computabilidade: o limite que nenhuma inteligência..."
 metaDescription: "A não computabilidade é o nome desse limite, e ela importa mais hoje do que em qualquer momento desde que foi formulada, porque vivemos uma época que..."
