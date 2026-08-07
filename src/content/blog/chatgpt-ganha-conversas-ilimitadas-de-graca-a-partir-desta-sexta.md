@@ -3,6 +3,7 @@ title: "ChatGPT ganha conversas ilimitadas de graça a partir desta sexta\n"
 description: ""
 pubDate: 2026-08-07
 heroImage: "https://media.paulgomes.com.br/2026/08/dfd96368-f739-475c-ba47-c7886ef333dc.png"
+featured: true
 focusKeyword: "chatgpt, gpt, ai"
 metaTitle: "ChatGPT ganha conversas ilimitadas de graça a partir..."
 metaDescription: "Quando algo se torna ilimitado e gratuito, o preço parou de ser cobrado em dinheiro."
