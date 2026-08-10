@@ -1,0 +1,57 @@
+---
+// Seletor de idioma PT<->EN.
+//
+// REGRA: so renderiza quando existe a contraparte publicada de fato. Um post
+// sem traducao nao ganha link para uma URL que nao existe — mesmo criterio do
+// hreflang em BaseHead (ver src/i18n/README.md).
+import { useTranslations, BCP47, type Alternate, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  alternates?: Alternate[];
+}
+
+const { lang, alternates = [] } = Astro.props;
+
+// A contraparte e qualquer alternate que NAO seja o idioma da pagina atual.
+const other = alternates.find((a) => a.lang !== lang);
+// Rotulo escrito no idioma de DESTINO — quem le a pagina EN e quer PT enxerga
+// o convite no idioma que procura.
+const targetT = other ? useTranslations(other.lang) : null;
+---
+
+{other && targetT && (
+  <a class="lang-switcher" href={other.path} hreflang={BCP47[other.lang]} lang={BCP47[other.lang]}>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M2 12h20" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+    <span>{targetT('lang.trocar')}</span>
+  </a>
+)}
+
+<style>
+  .lang-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.9rem;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .lang-switcher:hover,
+  .lang-switcher:focus-visible {
+    color: var(--color-ink);
+    border-color: var(--color-ink);
+  }
+</style>

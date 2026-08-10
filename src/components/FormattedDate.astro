@@ -1,13 +1,17 @@
 ---
+import { DEFAULT_LANG, BCP47, type Lang } from '../i18n';
+
 interface Props {
   date: Date;
+  /** Default `pt` — datas ja renderizadas no site nao mudam. */
+  lang?: Lang;
 }
-const { date } = Astro.props;
+const { date, lang = DEFAULT_LANG } = Astro.props;
 ---
 
 <time datetime={date.toISOString()}>
   {
-    date.toLocaleDateString('pt-BR', {
+    date.toLocaleDateString(BCP47[lang], {
       year: 'numeric',
       month: 'long',
       day: 'numeric',

@@ -10,7 +10,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "favicons": "node scripts/generate-favicons.mjs"
+    "favicons": "node scripts/generate-favicons.mjs",
+    "translate": "node scripts/translate-posts.mjs",
+    "translate:test": "node scripts/translate-posts.test.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",

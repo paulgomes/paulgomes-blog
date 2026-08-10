@@ -1,62 +1,72 @@
-# i18n — Fundação PT/EN (aditiva, ainda não adotada)
+# i18n — PT/EN
 
-Este diretório é **apenas a infraestrutura** de internacionalização. Ele **não
-traduz o site** nem é consumido por nenhuma página hoje. O blog público continua
-**100% em PT**, com as mesmas URLs, o mesmo SEO e o mesmo comportamento de antes.
+PT (`pt`) é o idioma padrão e a **fonte de verdade**. EN vive sob `/en/` como
+rotas **novas**: nenhuma URL PT muda, e canonical/`_redirects`/sitemap/RSS do
+site PT seguem exatamente como antes.
 
-> Regra de ouro: PT (`pt`) é o idioma padrão e a **fonte de verdade**. Nada aqui
-> deve alterar o site PT atual. Adote por partes, sem big-bang.
+> Status: **adotado** para os posts e para o chrome do site público.
+> O `/painel` continua em PT (os dicionários `painel.*` existem mas ainda não
+> são consumidos pelas telas).
 
-## O que existe
+## Peças
 
 - **`ui.ts`** — dicionários tipados `{ pt, en }`. As chaves vivem em `pt`
-  (fonte de verdade); `en` é validado em compile-time via `satisfies` para não
-  faltar/sobrar chave. Exporta `type Lang = 'pt' | 'en'` e `DEFAULT_LANG = 'pt'`.
+  (fonte de verdade); `en` é validado em compile-time via `satisfies`, então
+  esquecer uma tradução quebra o `tsc`, não a página.
 - **`index.ts`** — helpers sem dependências:
-  - `useTranslations(lang)` → retorna `t(key)` com **fallback para PT**.
-  - `getLangFromUrl(url)` → lê o prefixo `/en/` do pathname; default `pt`.
-  - `isLang(value)` → type guard.
+  - `useTranslations(lang)` → `t(key)` com fallback para PT.
+  - `getLangFromUrl(url)` → lê o prefixo `/en/`; default `pt`.
+  - `postPath(slug, lang)` → `/slug/` em PT, `/en/slug/` em EN.
+  - `postAlternates(slug, langs)` → pares para `hreflang`/seletor.
+  - `BCP47` / `OG_LOCALE` → tags de idioma para `<html lang>`, `inLanguage`,
+    `hreflang` e `og:locale`.
 
-```ts
-import { useTranslations, getLangFromUrl } from '../i18n';
+## Como o par PT↔EN se forma
 
-const lang = getLangFromUrl(Astro.url); // 'pt' por padrão
-const t = useTranslations(lang);
-t('blog.leia_tambem'); // 'Leia também' (pt) | 'Read also' (en)
+O **slug é a chave**. Um post em `src/content/blog/<slug>.md` ganha versão EN
+quando existe `src/content/blog-en/<slug>.md` — mesmo nome de arquivo.
+
+A partir daí, e **somente** a partir daí:
+
+- `BaseHead` emite `hreflang` `pt-BR` + `en` + `x-default` (apontando pro PT);
+- `LangSwitcher` renderiza o link entre as duas versões;
+- `/en/<slug>/` é gerada por `src/pages/en/[...slug].astro`.
+
+Post sem tradução não emite `hreflang` nenhum e não mostra seletor — evita
+sinal inconsistente pro Google e link para URL que não existe. A rota EN também
+descarta traduções órfãs (sem original PT), então o par é sempre real nos dois
+sentidos.
+
+## Traduzindo posts
+
+```bash
+ANTHROPIC_API_KEY=sk-... npm run translate -- --dry-run   # simula, não chama API
+ANTHROPIC_API_KEY=sk-... npm run translate -- --limit 5   # piloto
+ANTHROPIC_API_KEY=sk-... npm run translate                # tudo que falta
+npm run translate:test                                     # pipeline com fetch mockado
 ```
 
-## Como adotar incrementalmente (sem quebrar o PT)
+O script (`scripts/translate-posts.mjs`) é idempotente: guarda o hash do
+original em `scripts/translation-manifest.json` e só retraduz o que mudou.
 
-1. **Trocar strings hardcoded por `t(...)` — só em PT, primeiro.**
-   Num componente, use `useTranslations('pt')` (ou `getLangFromUrl`, que já
-   resolve para `pt`). O texto renderizado fica idêntico ao de hoje; você só
-   centralizou a string. Zero mudança de URL, zero mudança de SEO.
-
-2. **Adicionar páginas EN sob `/en/` — como rotas NOVAS.**
-   Crie `src/pages/en/...` espelhando as páginas que quiser traduzir. As rotas
-   PT existentes (`/sobre/`, `/categoria/...`) **não mudam**. `getLangFromUrl`
-   passa a devolver `'en'` apenas dentro de `/en/`.
-
-3. **`hreflang` e `<html lang>` — só quando houver par PT↔EN real.**
-   Ao publicar uma página EN equivalente a uma PT, adicione `hreflang` ligando
-   as duas (e `x-default` apontando para PT). Enquanto não houver o par, **não**
-   emita `hreflang` — evita sinal de SEO inconsistente.
-
-4. **Expandir os dicionários conforme a necessidade.**
-   Acrescente chaves em `pt` (e o TypeScript exige a tradução `en`
-   correspondente). Comece pelas strings comuns já cobertas: nav do painel,
-   `Leia também`, `Compartilhar`, `Autor`, `min de leitura`.
+**Nunca traduza `categorias`.** É chave de taxonomia e o enum em
+`src/lib/categorias.ts` é gate de build — categoria traduzida quebra o build.
+O script preserva `categorias`, `pubDate`, `updatedDate`, `heroImage` e
+`featured` byte a byte; traduz `title`, `description`, `heroImageAlt`,
+`metaTitle`, `metaDescription` e `focusKeyword`, além do corpo.
 
 ## O que NÃO fazer
 
-- **Não** prefixar/redirecionar as rotas PT atuais (nada de `/pt/...`). PT é o
-  raiz e deve continuar assim para preservar canonical, `_redirects` e sitemap.
+- **Não** prefixar/redirecionar as rotas PT atuais (nada de `/pt/...`).
 - **Não** emitir `hreflang` para idioma sem página equivalente publicada.
-- **Não** assumir que `en` está completo: é tradução de referência inicial, não
-  uma tradução final revisada do site.
+- **Não** misturar idiomas numa mesma página (`RelatedPosts` já filtra por
+  idioma; mantenha assim).
+- **Não** tratar o EN como revisado: hoje é **tradução de máquina**, sinalizada
+  como tal em `/en/` via `listagem.traduzido_aviso`.
 
-## Escopo
+## Pendente
 
-Isto é **fundação, não tradução completa**. O conjunto de strings é pequeno e
-intencionalmente focado nas comuns de UI. A tradução de conteúdo (posts) e a
-cobertura total de UI são trabalho futuro, fora desta base.
+- Chrome do `/painel` ainda em PT.
+- Sem páginas EN para `/sobre`, `/contato`, `/categoria/*` — o `Header`/`Footer`
+  numa página EN ainda linkam para as versões PT.
+- RSS e `feed.json` continuam só-PT.

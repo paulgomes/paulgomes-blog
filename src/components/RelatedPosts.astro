@@ -1,18 +1,27 @@
 ---
 // "Leia também" — posts relacionados por sobreposição de categorias (internal linking).
 // Fallback pros mais recentes quando não há overlap suficiente. Build-time (getCollection).
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import PostCard from './PostCard.astro';
 import type { Categoria } from '../lib/categorias';
+import { DEFAULT_LANG, useTranslations, type Lang } from '../i18n';
 
 interface Props {
   currentId: string;
   categorias?: Categoria[];
   limit?: number;
+  /** Default `pt`. Em EN os relacionados saem da colecao traduzida. */
+  lang?: Lang;
 }
-const { currentId, categorias = [], limit = 3 } = Astro.props;
+const { currentId, categorias = [], limit = 3, lang = DEFAULT_LANG } = Astro.props;
+const t = useTranslations(lang);
 
-const all = await getCollection('blog');
+// Relacionados sempre no MESMO idioma da pagina — nunca misturar PT e EN.
+// `blog` e `blogEn` compartilham exatamente o mesmo schema (src/content.config.ts),
+// entao o cast unifica os dois tipos de entrada sem perder nada.
+const all = (lang === DEFAULT_LANG
+  ? await getCollection('blog')
+  : await getCollection('blogEn')) as CollectionEntry<'blog'>[];
 const catSet = new Set(categorias);
 
 const byOverlap = all
@@ -38,10 +47,10 @@ if (related.length < limit) {
 ---
 
 {related.length > 0 && (
-  <aside class="related container-wide" aria-label="Leia também">
-    <h2 class="related-title font-display">Leia também</h2>
+  <aside class="related container-wide" aria-label={t('blog.leia_tambem')}>
+    <h2 class="related-title font-display">{t('blog.leia_tambem')}</h2>
     <div class="related-grid">
-      {related.map((post) => <PostCard post={post} />)}
+      {related.map((post) => <PostCard post={post} lang={lang} />)}
     </div>
   </aside>
 )}

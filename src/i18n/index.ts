@@ -49,3 +49,46 @@ export function getLangFromUrl(url: URL): Lang {
   if (first && isLang(first)) return first;
   return DEFAULT_LANG;
 }
+
+/** Tag BCP-47 usada em `<html lang>`, `inLanguage` e `hreflang`. */
+export const BCP47: Record<Lang, string> = {
+  pt: 'pt-BR',
+  en: 'en',
+};
+
+/** Locale no formato Open Graph (`og:locale`). */
+export const OG_LOCALE: Record<Lang, string> = {
+  pt: 'pt_BR',
+  en: 'en_US',
+};
+
+/**
+ * Monta o caminho de um post no idioma dado. PT e a raiz (`/<slug>/`) e nunca
+ * ganha prefixo — preservar isso e o que mantem canonical, `_redirects` e
+ * sitemap intactos. EN vive sob `/en/<slug>/`.
+ *
+ * @example
+ * postPath('glossario-de-ia', 'pt'); // '/glossario-de-ia/'
+ * postPath('glossario-de-ia', 'en'); // '/en/glossario-de-ia/'
+ */
+export function postPath(slug: string, lang: Lang): string {
+  return lang === DEFAULT_LANG ? `/${slug}/` : `/${lang}/${slug}/`;
+}
+
+/** Descreve uma pagina equivalente em outro idioma, para hreflang/switcher. */
+export interface Alternate {
+  lang: Lang;
+  /** Caminho absoluto no site (comeca com `/`). */
+  path: string;
+}
+
+/**
+ * Gera o conjunto de `hreflang` de um post que tem par PT<->EN.
+ * Inclui `x-default` apontando para o PT, que e a versao canonica do conteudo.
+ *
+ * Só deve ser chamado quando as DUAS versoes existem de fato: emitir hreflang
+ * para um idioma sem pagina publicada e sinal inconsistente pro Google.
+ */
+export function postAlternates(slug: string, langs: readonly Lang[]): Alternate[] {
+  return langs.map((lang) => ({ lang, path: postPath(slug, lang) }));
+}

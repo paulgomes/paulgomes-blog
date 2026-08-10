@@ -1,0 +1,34 @@
+---
+// Rota EN dos posts: /en/<slug>/
+//
+// ADITIVA: nao existe entrada aqui sem um arquivo em src/content/blog-en. As
+// rotas PT (na raiz) sao geradas por src/pages/[...slug].astro e nao mudam.
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+import { readingTime } from '../../lib/reading-time';
+import { postAlternates } from '../../i18n';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blogEn');
+	// So publicamos a versao EN quando o original PT existe — o par precisa ser
+	// real nos dois sentidos para o hreflang ser consistente.
+	const originals = new Set((await getCollection('blog')).map((p) => p.id));
+	return posts
+		.filter((post) => originals.has(post.id))
+		.map((post) => ({
+			params: { slug: post.id },
+			props: post,
+		}));
+}
+type Props = CollectionEntry<'blogEn'>;
+
+const post = Astro.props;
+const { Content } = await render(post);
+
+const minutes = readingTime(post.body);
+const alternates = postAlternates(post.id, ['pt', 'en']);
+---
+
+<BlogPost {...post.data} minutes={minutes} id={post.id} lang="en" alternates={alternates}>
+	<Content />
+</BlogPost>

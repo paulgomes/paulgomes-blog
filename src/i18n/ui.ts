@@ -48,6 +48,26 @@ const pt = {
   'blog.compartilhar': 'Compartilhar',
   'blog.autor': 'Autor',
   'blog.min_de_leitura': 'min de leitura',
+  'blog.atualizado_em': 'atualizado em',
+  'blog.categorias': 'Categorias',
+
+  // --- Navegação pública / seletor de idioma ---
+  'nav.home': 'Home',
+  'nav.blog': 'Blog',
+  'nav.sobre': 'Sobre',
+  'nav.contato': 'Contato',
+  'nav.pagina_inicial': 'Página inicial',
+  // Convite escrito NO idioma deste dicionário — o switcher usa o dicionário de
+  // DESTINO, então numa página EN esta é a string mostrada para voltar ao PT.
+  'lang.trocar': 'Ler em português',
+  'lang.nome': 'Português',
+
+  // --- Listagem EN ---
+  'listagem.titulo': 'Artigos',
+  'listagem.descricao': 'Ensaios sobre branding, tecnologia e o futuro dos negócios.',
+  'listagem.vazio': 'Nenhum artigo publicado ainda.',
+  'listagem.traduzido_aviso':
+    'Tradução automática a partir do original em português.',
 } as const;
 
 /** Chaves válidas do dicionário (derivadas da fonte de verdade PT). */
@@ -82,6 +102,23 @@ const en = {
   'blog.compartilhar': 'Share',
   'blog.autor': 'Author',
   'blog.min_de_leitura': 'min read',
+  'blog.atualizado_em': 'updated on',
+  'blog.categorias': 'Categories',
+
+  // --- Public nav / language switcher ---
+  'nav.home': 'Home',
+  'nav.blog': 'Blog',
+  'nav.sobre': 'About',
+  'nav.contato': 'Contact',
+  'nav.pagina_inicial': 'Home page',
+  'lang.trocar': 'Read in English',
+  'lang.nome': 'English',
+
+  // --- Listing ---
+  'listagem.titulo': 'Articles',
+  'listagem.descricao': 'Essays on branding, technology and the future of business.',
+  'listagem.vazio': 'No articles published yet.',
+  'listagem.traduzido_aviso': 'Machine-translated from the Portuguese original.',
 } satisfies Record<UIKey, string>;
 
 /**

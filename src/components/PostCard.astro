@@ -3,16 +3,19 @@ import { Image } from 'astro:assets';
 import FormattedDate from './FormattedDate.astro';
 import CoverFallback from './CoverFallback.astro';
 import type { CollectionEntry } from 'astro:content';
+import { DEFAULT_LANG, postPath, type Lang } from '../i18n';
 
 interface Props {
-  post: CollectionEntry<'blog'>;
+  post: CollectionEntry<'blog'> | CollectionEntry<'blogEn'>;
+  /** Default `pt` — os cards ja existentes seguem apontando para `/<slug>/`. */
+  lang?: Lang;
 }
 
-const { post } = Astro.props;
+const { post, lang = DEFAULT_LANG } = Astro.props;
 ---
 
 <article class="group">
-  <a href={`/${post.id}/`} class="block">
+  <a href={postPath(post.id, lang)} class="block">
     {post.data.heroImage ? (
       <div class="mb-4 overflow-hidden rounded-lg" style="background-color: var(--color-subtle)">
         {typeof post.data.heroImage === 'string'
@@ -26,7 +29,7 @@ const { post } = Astro.props;
       </div>
     )}
     <div class="text-xs uppercase tracking-wider" style="color: var(--color-muted)">
-      <FormattedDate date={post.data.pubDate} />
+      <FormattedDate date={post.data.pubDate} lang={lang} />
     </div>
     <h3 class="mt-2 font-display text-2xl font-bold leading-tight transition-opacity group-hover:opacity-60">
       {post.data.title}

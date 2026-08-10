@@ -13,11 +13,21 @@ import authorPhoto from '../assets/brand/paul-gomes.webp';
 import { CATEGORIA_SLUGS, CATEGORIA_COLORS, type Categoria } from '../lib/categorias';
 import { breadcrumbList, SCHEMA_ID } from '../lib/schema';
 import { SITE_CONFIG } from '../config/site';
+import LangSwitcher from '../components/LangSwitcher.astro';
+import { DEFAULT_LANG, BCP47, useTranslations, postPath, type Alternate, type Lang } from '../i18n';
 
-type Props = CollectionEntry<'blog'>['data'] & { minutes?: number; id?: string };
+type Props = CollectionEntry<'blog'>['data'] & {
+  minutes?: number;
+  id?: string;
+  /** Idioma do post. Default `pt` — as paginas PT atuais nao mudam. */
+  lang?: Lang;
+  /** Versoes equivalentes em outros idiomas (vazio = post so-PT, sem hreflang). */
+  alternates?: Alternate[];
+};
 
-const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categorias = [], minutes, id } = Astro.props as Props & { categorias?: Categoria[]; minutes?: number; id?: string };
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categorias = [], minutes, id, lang = DEFAULT_LANG, alternates = [] } = Astro.props as Props & { categorias?: Categoria[]; minutes?: number; id?: string };
 const heroAlt = heroImageAlt || title;
+const t = useTranslations(lang);
 
 // URL canônica absoluta para os botões de compartilhamento.
 const shareUrl = new URL(Astro.url.pathname, Astro.site).href;
@@ -50,14 +60,18 @@ const articleSchema = {
     '@id': Astro.url.href,
   },
   ...(categorias.length ? { keywords: categorias.join(', '), articleSection: categorias[0] } : {}),
-  inLanguage: 'pt-BR',
+  inLanguage: BCP47[lang],
+  // Numa traducao, o original PT e declarado como a obra-fonte.
+  ...(lang !== DEFAULT_LANG && id
+    ? { translationOfWork: { '@type': 'Article', '@id': `${SITE_CONFIG.url}${postPath(id, DEFAULT_LANG)}` } }
+    : {}),
 };
 
 // BreadcrumbList (Home > Blog > Categoria > Post) — navegacao estruturada pro Google.
 const cats = categorias as Categoria[];
 const breadcrumbSchema = breadcrumbList([
-  { name: 'Home', item: `${SITE_CONFIG.url}/` },
-  { name: 'Blog', item: `${SITE_CONFIG.url}/blog/` },
+  { name: t('nav.home'), item: `${SITE_CONFIG.url}${lang === DEFAULT_LANG ? '/' : `/${lang}/`}` },
+  { name: t('nav.blog'), item: `${SITE_CONFIG.url}${lang === DEFAULT_LANG ? '/blog/' : `/${lang}/`}` },
   ...(cats.length
     ? [{ name: cats[0], item: `${SITE_CONFIG.url}/categoria/${CATEGORIA_SLUGS[cats[0]]}/` }]
     : []),
@@ -65,7 +79,7 @@ const breadcrumbSchema = breadcrumbList([
 ]);
 ---
 
-<html lang="pt-BR">
+<html lang={BCP47[lang]}>
   <head>
     <BaseHead
       title={title}
@@ -74,6 +88,8 @@ const breadcrumbSchema = breadcrumbList([
         ? (typeof heroImage === 'string' ? heroImage : heroImage.src)
         : (id ? `/og/${id}.png` : undefined)}
       ogType="article"
+      lang={lang}
+      alternates={alternates}
     />
 
     <!-- Schema.org Article (GEO/AEO) -->
@@ -95,12 +111,13 @@ const breadcrumbSchema = breadcrumbList([
       <article>
         <header class="container-prose pt-16 pb-12 md:pt-24">
           <div class="text-xs uppercase tracking-widest" style="color: var(--color-muted)">
-            <FormattedDate date={pubDate} />
-            {minutes && <span class="ml-3">· {minutes} min de leitura</span>}
+            <FormattedDate date={pubDate} lang={lang} />
+            {minutes && <span class="ml-3">· {minutes} {t('blog.min_de_leitura')}</span>}
             {updatedDate && (
-              <span class="ml-3">· atualizado em <FormattedDate date={updatedDate} /></span>
+              <span class="ml-3">· {t('blog.atualizado_em')} <FormattedDate date={updatedDate} lang={lang} /></span>
             )}
           </div>
+          <LangSwitcher lang={lang} alternates={alternates} />
           <h1 class="mt-4 text-balance font-display text-4xl font-bold leading-[1.15] tracking-[-0.015em] md:text-6xl">
             {title}
           </h1>
@@ -119,7 +136,7 @@ const breadcrumbSchema = breadcrumbList([
             />
             <div>
               <p class="font-medium">{SITE_AUTHOR}</p>
-              <p class="text-xs" style="color: var(--color-muted)">Autor</p>
+              <p class="text-xs" style="color: var(--color-muted)">{t('blog.autor')}</p>
             </div>
           </div>
         </header>
@@ -147,12 +164,12 @@ const breadcrumbSchema = breadcrumbList([
           </div>
         </div>
 
-        <RelatedPosts currentId={id ?? ''} categorias={cats} />
+        <RelatedPosts currentId={id ?? ''} categorias={cats} lang={lang} />
 
         {categorias.length > 0 && (
           <div class="container-prose pb-12">
             <div class="post-tags">
-              <span class="post-tags-label">Categorias:</span>
+              <span class="post-tags-label">{t('blog.categorias')}:</span>
               {cats.map((categoria) => (
                 <a
                   href={`/categoria/${CATEGORIA_SLUGS[categoria]}/`}

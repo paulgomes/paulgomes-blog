@@ -2,17 +2,37 @@
 import '../styles/global.css';
 import { baseSchemaDocument } from '../lib/schema';
 import { HEAD_SNIPPET } from '../consts';
+import { DEFAULT_LANG, OG_LOCALE, BCP47, type Alternate, type Lang } from '../i18n';
 
 interface Props {
   title: string;
   description: string;
   image?: string;
   ogType?: 'website' | 'article';
+  /** Idioma da pagina. Default `pt` — paginas existentes nao mudam. */
+  lang?: Lang;
+  /**
+   * Paginas equivalentes em outros idiomas. Quando vazio (o caso de toda pagina
+   * so-PT de hoje), NENHUM hreflang e emitido — evita sinal inconsistente.
+   */
+  alternates?: Alternate[];
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const { title, description, image = '/og-image.png', ogType = 'website' } = Astro.props;
+const {
+  title,
+  description,
+  image = '/og-image.png',
+  ogType = 'website',
+  lang = DEFAULT_LANG,
+  alternates = [],
+} = Astro.props;
 const ogImageURL = new URL(image, Astro.url).toString();
+
+// hreflang so faz sentido com par real (2+ versoes). x-default aponta pro PT,
+// que e a fonte de verdade do conteudo.
+const hasPair = alternates.length > 1;
+const xDefault = alternates.find((a) => a.lang === DEFAULT_LANG);
 
 // Grafo JSON-LD base (WebSite + Organization + Person) — presente em todas as paginas.
 const baseSchema = baseSchemaDocument();
@@ -33,6 +53,12 @@ const baseSchema = baseSchemaDocument();
 <link rel="shortcut icon" href="/favicon.ico" />
 <meta name="generator" content={Astro.generator} />
 <link rel="canonical" href={canonicalURL} />
+{hasPair && alternates.map((alt) => (
+  <link rel="alternate" hreflang={BCP47[alt.lang]} href={new URL(alt.path, Astro.site).toString()} />
+))}
+{hasPair && xDefault && (
+  <link rel="alternate" hreflang="x-default" href={new URL(xDefault.path, Astro.site).toString()} />
+)}
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link rel="alternate" type="application/rss+xml" title={title} href={new URL('rss.xml', Astro.site)} />
 
@@ -51,7 +77,7 @@ const baseSchema = baseSchemaDocument();
 <meta property="og:image" content={ogImageURL} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:locale" content="pt_BR" />
+<meta property="og:locale" content={OG_LOCALE[lang]} />
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:url" content={Astro.url} />
