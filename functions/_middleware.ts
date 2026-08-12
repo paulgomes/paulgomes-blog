@@ -14,6 +14,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     !url.pathname.startsWith('/api/auth/me') &&
     !url.pathname.startsWith('/api/newsletter/subscribe') &&
     !url.pathname.startsWith('/api/contact') &&
+    // /api/readiness/* alimenta a ferramenta publica ChatGPT Ads Readiness, que
+    // roda sem login. Ambos validam e sanitizam a entrada no proprio handler:
+    //  - site-scan: allowlist de esquema/host, anti-SSRF, timeout e cap de bytes;
+    //  - lead: honeypot, sanitizacao e validacao de formato/tamanho.
+    // Nao ha rate limit ainda (depende do KV namespace — FILA-HUMANA item 4).
+    !url.pathname.startsWith('/api/readiness/') &&
     // /api/cron/* é chamado pelo GitHub Actions (sem sessão); autentica por CRON_SECRET no próprio handler.
     !url.pathname.startsWith('/api/cron/');
 
