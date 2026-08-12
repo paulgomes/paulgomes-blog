@@ -254,6 +254,115 @@ test('score nunca sai da faixa 0-100', () => {
   }
 });
 
+
+// --- insights ---------------------------------------------------------------
+
+const { executiveSummary, strategicAlerts, evidenceByDimension, priorityActions } =
+  await load('src/lib/readiness/insights.ts');
+
+test('sumário executivo cita os dados informados pela empresa', () => {
+  const identity = { empresa:'Acme Odonto', site:'acme.com.br', segmento:'odontologia', local:'Sorocaba', modelo:'servico' };
+  const answers = { modelo:'servico', objetivo:'leads', produto_principal:'Implante dentário',
+                    eco_ticket:5000, eco_meta:100000, eco_investimento:'5a10k' };
+  const d = diagnose(answers, null);
+  const txt = executiveSummary(identity, answers, d).join(' ');
+  assert.ok(txt.includes('Acme Odonto'), 'deveria citar a empresa');
+  assert.ok(txt.includes('odontologia'), 'deveria citar o segmento');
+  assert.ok(/implante dent/i.test(txt), 'deveria citar o produto');
+  assert.ok(txt.includes('20 vendas'), 'deveria calcular vendas necessarias');
+});
+
+test('sumário executivo não inventa número quando falta insumo', () => {
+  const identity = { empresa:'X', site:'', segmento:'', local:'', modelo:'b2b' };
+  const txt = executiveSummary(identity, { modelo:'b2b' }, diagnose({ modelo:'b2b' }, null)).join(' ');
+  assert.ok(!/R\$/.test(txt), 'nao deveria citar valores sem ticket/meta/verba informados');
+});
+
+test('alerta crítico: meta exige mais leads do que a capacidade', () => {
+  const answers = { eco_ticket:1000, eco_meta:500000, com_taxa:'sim', com_taxa_valor:10, com_volume:'ate20' };
+  const d = diagnose(answers, null);
+  const a = strategicAlerts(answers, d, null);
+  assert.ok(a.some(x => x.severity==='critico' && /mais leads/i.test(x.title)), 'faltou o alerta de capacidade');
+});
+
+test('alerta crítico: verba alta sem mensuração', () => {
+  const answers = { eco_investimento:'mais30k', track_origem:'nao', track_ga:'nao', track_gtm:'nao',
+                    track_conversoes:'nao', track_lead_cliente:'nao', track_crm:'nao' };
+  const d = diagnose(answers, null);
+  assert.ok(strategicAlerts(answers, d, null).some(x => /mensura/i.test(x.title) && x.severity==='critico'));
+});
+
+test('alerta crítico: objetivo de conversão sem caminho no site', () => {
+  const signals = { url:'u', finalUrl:'u', status:200, title:'t', metaDescription:null, h1:[], h2Count:0,
+    hasForm:false, hasWhatsAppLink:false, hasTelLink:false, hasMailtoLink:false, hasSchemaOrg:false,
+    schemaTypes:[], hasViewportMeta:false, hasOpenGraph:false, hasCanonical:false, htmlBytes:10,
+    imgCount:0, imgWithoutAlt:0, trustSignals:[], ctaTerms:[], langAttr:null };
+  const answers = { objetivo:'vendas' };
+  const d = diagnose(answers, signals);
+  assert.ok(strategicAlerts(answers, d, signals).some(x => /caminho de convers/i.test(x.title)));
+});
+
+test('empresa saudável não recebe alerta crítico fabricado', () => {
+  const answers = { eco_investimento:'3a5k', com_volume:'100a500', com_tempo_resposta:'5min',
+    track_origem:'sim', track_ga:'sim', track_gtm:'sim', track_conversoes:'sim',
+    track_lead_cliente:'sim', track_crm:'sim', oferta_status:'definida',
+    ia_aparece:'sim', ia_pesquisou:'aparece', ia_conteudo:'sim', ia_presenca_externa:'forte' };
+  const d = diagnose(answers, null);
+  const criticos = strategicAlerts(answers, d, null).filter(x => x.severity==='critico');
+  assert.equal(criticos.length, 0, `nao deveria haver critico; veio: ${criticos.map(c=>c.title).join(', ')}`);
+});
+
+test('evidências separam o que sustenta do que puxa para baixo', () => {
+  const answers = { track_conversoes:'sim', track_origem:'nao', track_ga:'nao' };
+  const ev = evidenceByDimension(answers, null).find(e => e.dimension==='mensuracao');
+  assert.ok(ev, 'deveria haver evidencia de mensuracao');
+  assert.ok(ev.strengths.some(s => /Convers.es configuradas/i.test(s.label)));
+  assert.ok(ev.gaps.some(g => /origem dos leads/i.test(g.label)));
+});
+
+test('plano priorizado coloca impacto alto e esforço baixo primeiro', () => {
+  const answers = { com_tempo_resposta:'mais1dia', track_conversoes:'nao', site_lp:'home' };
+  const d = diagnose(answers, null);
+  const p = priorityActions(answers, d, null);
+  assert.ok(p.length > 0);
+  assert.equal(p[0].impact, 'alto');
+  assert.equal(p[0].effort, 'baixo');
+});
+
+test('perfis diferentes geram alertas diferentes', () => {
+  const a1 = strategicAlerts({ objetivo:'vendas', com_tempo_resposta:'mais1dia' },
+    diagnose({ objetivo:'vendas', com_tempo_resposta:'mais1dia' }, null), null).map(x=>x.title).join('|');
+  const a2 = strategicAlerts({ objetivo:'marca', com_tempo_resposta:'5min' },
+    diagnose({ objetivo:'marca', com_tempo_resposta:'5min' }, null), null).map(x=>x.title).join('|');
+  assert.notEqual(a1, a2);
+});
+
+test('resumo conta os mesmos críticos que a seção de alertas (com sinais do site)', () => {
+  const signals = { url:'u', finalUrl:'u', status:200, title:'t', metaDescription:null, h1:[], h2Count:0,
+    hasForm:false, hasWhatsAppLink:false, hasTelLink:false, hasMailtoLink:false, hasSchemaOrg:false,
+    schemaTypes:[], hasViewportMeta:false, hasOpenGraph:false, hasCanonical:false, htmlBytes:10,
+    imgCount:0, imgWithoutAlt:0, trustSignals:[], ctaTerms:[], langAttr:null };
+  const answers = { objetivo:'vendas', eco_investimento:'mais30k', track_origem:'nao',
+    track_conversoes:'nao', track_lead_cliente:'nao', track_crm:'nao', track_ga:'nao', track_gtm:'nao' };
+  const d = diagnose(answers, signals);
+  const criticos = strategicAlerts(answers, d, signals).filter(a => a.severity === 'critico');
+  assert.ok(criticos.length >= 2, 'o cenario deveria produzir 2+ criticos');
+  const txt = executiveSummary({empresa:'X',site:'u',segmento:'',local:'',modelo:'b2c'}, answers, d, signals).join(' ');
+  assert.ok(txt.includes(`${criticos.length} pontos criticos`.replace('criticos','críticos')),
+    `resumo deveria citar ${criticos.length} pontos criticos; texto: ${txt.slice(-220)}`);
+});
+
+test('concordância no singular quando há exatamente 1 crítico', () => {
+  const answers = { eco_investimento:'mais30k', track_origem:'nao', track_conversoes:'nao',
+    track_lead_cliente:'nao', track_crm:'nao', track_ga:'nao', track_gtm:'nao' };
+  const d = diagnose(answers, null);
+  const criticos = strategicAlerts(answers, d, null).filter(a => a.severity === 'critico');
+  assert.equal(criticos.length, 1);
+  const txt = executiveSummary({empresa:'X',site:'',segmento:'',local:'',modelo:'b2c'}, answers, d, null).join(' ');
+  assert.ok(txt.includes('Foi identificado 1 ponto crítico'), 'faltou concordancia no singular');
+  assert.ok(!txt.includes('Foram identificados 1'), 'concordancia errada no singular');
+});
+
 // ---------------------------------------------------------------------------
 
 console.log(`testes: ${passed} passaram, ${failures.length} falharam`);

@@ -8,9 +8,18 @@
  * usar dark patterns, e um gate que esconde tudo seria um.
  */
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { Answers, Diagnosis, Identity, SiteSignals } from '../../lib/readiness/types';
 import { track } from '../../lib/readiness/analytics';
+import {
+  evidenceByDimension,
+  executiveSummary,
+  priorityActions,
+  strategicAlerts,
+  type Alert,
+  type DimensionEvidence,
+  type PriorityAction,
+} from '../../lib/readiness/insights';
 import { DimensionBar, ScoreRing } from './Visuals';
 
 const WYS_URL = 'https://agenciawys.com.br/';
@@ -32,9 +41,29 @@ export default function Report({ diagnosis, identity, answers, signals, scanReas
   const { total, classification, dimensions, bottlenecks, opportunities, roadmap, opportunityIndex, scenario } =
     diagnosis;
 
+  // Derivações caras o suficiente para não repetir a cada render de input do gate.
+  const summary = useMemo(
+    () => executiveSummary(identity, answers, diagnosis, signals),
+    [identity, answers, diagnosis, signals]
+  );
+  const alerts = useMemo(() => strategicAlerts(answers, diagnosis, signals), [answers, diagnosis, signals]);
+  const evidence = useMemo(() => evidenceByDimension(answers, signals), [answers, signals]);
+  const priority = useMemo(() => priorityActions(answers, diagnosis, signals), [answers, diagnosis, signals]);
+
+  const evidenceFor = (id: string) => evidence.find((e) => e.dimension === id);
+
+  const hoje = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+
   return (
     <div className="rd-shell">
       <div className="rd-report">
+        {/* Cabeçalho que só aparece na impressão — dá identidade ao PDF. */}
+        <div className="rd-print-head" aria-hidden="true">
+          <strong>ChatGPT Ads Readiness</strong>
+          <span>
+            {identity.empresa || '—'} · {hoje}
+          </span>
+        </div>
         {/* ---------------- Cabeçalho ---------------- */}
         <header className="rd-report-head">
           <p className="rd-eyebrow">ChatGPT Ads Readiness · {identity.empresa || 'Seu diagnóstico'}</p>
@@ -59,19 +88,35 @@ export default function Report({ diagnosis, identity, answers, signals, scanReas
           </div>
         </header>
 
-        {/* ---------------- Dimensões ---------------- */}
+        {/* ---------------- Leitura executiva ---------------- */}
+        <section className="rd-section">
+          <h3 className="rd-section-title">Leitura executiva</h3>
+          <div className="rd-summary">
+            {summary.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+        </section>
+
+        {/* ---------------- Dimensões + evidência ---------------- */}
         <section className="rd-section">
           <h3 className="rd-section-title">Prontidão por dimensão</h3>
+          <p className="rd-section-note">
+            Cada nota abaixo é sustentada pelas suas próprias respostas. O que aparece marcado como
+            <em> observado</em> veio da leitura automática do site, não do questionário.
+          </p>
           <div className="rd-bars">
             {dimensions.map((d, i) => (
-              <DimensionBar
-                key={d.id}
-                label={d.label}
-                score={d.score}
-                weight={d.weight}
-                meaning={d.meaning}
-                delayMs={i * 70}
-              />
+              <div key={d.id} className="rd-dim">
+                <DimensionBar
+                  label={d.label}
+                  score={d.score}
+                  weight={d.weight}
+                  meaning={d.meaning}
+                  delayMs={i * 70}
+                />
+                {unlocked && <EvidenceList data={evidenceFor(d.id)} />}
+              </div>
             ))}
           </div>
         </section>
@@ -99,6 +144,35 @@ export default function Report({ diagnosis, identity, answers, signals, scanReas
         {/* ---------------- Conteúdo completo ---------------- */}
         {unlocked && (
           <>
+            {alerts.length > 0 && (
+              <section className="rd-section">
+                <h3 className="rd-section-title">Alertas estratégicos</h3>
+                <p className="rd-section-note">
+                  Pontos que só aparecem no cruzamento das respostas: cada item isolado pode parecer aceitável,
+                  mas a combinação compromete o resultado.
+                </p>
+                <div className="rd-alerts">
+                  {alerts.map((a) => (
+                    <AlertCard key={a.title} alert={a} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {priority.length > 0 && (
+              <section className="rd-section">
+                <h3 className="rd-section-title">Plano priorizado</h3>
+                <p className="rd-section-note">
+                  Ordenado por retorno prático — impacto alto e esforço baixo primeiro.
+                </p>
+                <div className="rd-priority">
+                  {priority.map((p, i) => (
+                    <PriorityRow key={p.action} item={p} rank={i + 1} />
+                  ))}
+                </div>
+              </section>
+            )}
+
             <section className="rd-section">
               <h3 className="rd-section-title">Oportunidades identificadas</h3>
               <div className="rd-opps">
@@ -134,11 +208,103 @@ export default function Report({ diagnosis, identity, answers, signals, scanReas
               </div>
             </section>
 
+            <PrintBar empresa={identity.empresa} />
             <FinalCta />
           </>
         )}
       </div>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+
+function EvidenceList({ data }: { data?: DimensionEvidence }) {
+  if (!data || (data.strengths.length === 0 && data.gaps.length === 0)) return null;
+
+  return (
+    <div className="rd-evidence">
+      {data.gaps.length > 0 && (
+        <div className="rd-evidence-col">
+          <span className="rd-evidence-head is-gap">O que puxa para baixo</span>
+          <ul>
+            {data.gaps.slice(0, 4).map((e) => (
+              <li key={e.label}>
+                <span className="rd-evidence-label">{e.label}</span>
+                <span className="rd-evidence-answer">{e.answer}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {data.strengths.length > 0 && (
+        <div className="rd-evidence-col">
+          <span className="rd-evidence-head is-strength">O que sustenta</span>
+          <ul>
+            {data.strengths.slice(0, 4).map((e) => (
+              <li key={e.label}>
+                <span className="rd-evidence-label">{e.label}</span>
+                <span className="rd-evidence-answer">{e.answer}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AlertCard({ alert }: { alert: Alert }) {
+  return (
+    <article className={`rd-alert is-${alert.severity}`}>
+      <span className="rd-alert-tag">{alert.severity === 'critico' ? 'Crítico' : 'Atenção'}</span>
+      <h4 className="rd-alert-title">{alert.title}</h4>
+      <p className="rd-alert-text">{alert.detail}</p>
+    </article>
+  );
+}
+
+function PriorityRow({ item, rank }: { item: PriorityAction; rank: number }) {
+  return (
+    <article className="rd-priority-row">
+      <span className="rd-priority-rank">{String(rank).padStart(2, '0')}</span>
+      <div className="rd-priority-body">
+        <h4 className="rd-priority-title">{item.action}</h4>
+        <p className="rd-priority-text">{item.rationale}</p>
+      </div>
+      <div className="rd-priority-tags">
+        <span className={`rd-tag rd-impact-${item.impact}`}>Impacto {item.impact}</span>
+        <span className={`rd-tag rd-effort-${item.effort}`}>Esforço {item.effort}</span>
+      </div>
+    </article>
+  );
+}
+
+/** Impressão via diálogo nativo — cobre "salvar como PDF" sem embarcar uma lib. */
+function PrintBar({ empresa }: { empresa: string }) {
+  const print = () => {
+    track('wys_cta_clicked', { where: 'print' });
+    window.print();
+  };
+
+  return (
+    <section className="rd-printbar">
+      <div>
+        <h4 className="rd-printbar-title">Levar este diagnóstico adiante</h4>
+        <p className="rd-printbar-text">
+          Imprima ou salve como PDF para compartilhar com sua equipe
+          {empresa ? ` da ${empresa}` : ''}. No diálogo de impressão, escolha “Salvar como PDF”.
+        </p>
+      </div>
+      <button type="button" className="rd-btn rd-btn-outline" onClick={print}>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <polyline points="6 9 6 2 18 2 18 9" />
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+          <rect x="6" y="14" width="12" height="8" />
+        </svg>
+        Imprimir / Salvar PDF
+      </button>
+    </section>
   );
 }
 
