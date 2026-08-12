@@ -1,6 +1,6 @@
 ---
-title: "ChatGPT ganha conversas ilimitadas de graça a partir desta sexta\n"
-description: ""
+title: "ChatGPT ganha conversas ilimitadas de graça a partir desta sexta"
+description: "O ChatGPT liberou conversas de texto sem limite no plano gratuito. Quando algo se torna ilimitado e gratuito, o preço parou de ser cobrado em dinheiro."
 pubDate: 2026-08-07
 heroImage: "https://media.paulgomes.com.br/2026/08/dfd96368-f739-475c-ba47-c7886ef333dc.png"
 featured: true

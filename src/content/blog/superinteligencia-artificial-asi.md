@@ -1,6 +1,6 @@
 ---
 title: "Superinteligência Artificial (ASI)"
-description: ""
+description: "Existe uma diferença brutal entre usar inteligência artificial e viver num mundo governado por ela. O que está em jogo na corrida pela superinteligência."
 pubDate: 2026-05-24
 heroImage: "https://media.paulgomes.com.br/2026/05/2d8af6e0-a2a7-4b73-a4be-0b02fd23a62f.png"
 heroImageAlt: "Superinteligência Artificial (ASI)"

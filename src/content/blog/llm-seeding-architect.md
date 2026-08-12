@@ -1,6 +1,6 @@
 ---
 title: "LLM Seeding Architect"
-description: ""
+description: "Uma função nasce nos bastidores das marcas: o LLM Seeding Architect. O que faz, por que aparece agora e o que revela sobre a próxima camada da internet."
 pubDate: 2026-05-25
 heroImage: "https://media.paulgomes.com.br/2026/05/23866db3-72de-4fb8-93bc-9e10bdcdaf10.png"
 heroImageAlt: "LLM Seeding Architect"

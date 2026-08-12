@@ -1,6 +1,6 @@
 ---
 title: "Tecnocracia: quando a decisão deixa de ser política "
-description: ""
+description: "Tecnocracia voltou ao debate quase sempre como acusação, raramente como diagnóstico. E o diagnóstico é mais incômodo que a acusação."
 pubDate: 2026-05-25
 heroImage: "https://media.paulgomes.com.br/2026/05/9b7d29c7-fbbb-448f-8955-b5da2a566290.png"
 heroImageAlt: "Tecnocracia: quando a decisão deixa de ser política "

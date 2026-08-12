@@ -1,6 +1,6 @@
 ---
 title: "O fenômeno João Gabriel Melo Aiello"
-description: ""
+description: "QI de 640, telepatia comprovada, 37 PhDs. Nada disso é verificável, e mesmo assim circula. O interessante não é o personagem: é o ecossistema que o produz."
 pubDate: 2026-05-27
 heroImage: "https://media.paulgomes.com.br/2026/05/58c6c1e3-b182-44ef-b933-3b11b9e038ad.png"
 heroImageAlt: "O fenômeno João Gabriel Melo Aiello"

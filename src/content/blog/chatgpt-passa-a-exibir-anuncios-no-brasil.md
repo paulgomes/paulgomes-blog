@@ -1,6 +1,6 @@
 ---
 title: "ChatGPT passa a exibir anúncios no Brasil"
-description: ""
+description: "A OpenAI ativou anúncios no ChatGPT para usuários brasileiros dos planos Free e Go. Como o formato funciona, onde não aparece e o que muda para as marcas."
 pubDate: 2026-05-25
 heroImage: "https://media.paulgomes.com.br/2026/05/b950e95d-8ab6-4742-ba70-be1ba33c6940.png"
 heroImageAlt: "ChatGPT passa a exibir anúncios no Brasil"

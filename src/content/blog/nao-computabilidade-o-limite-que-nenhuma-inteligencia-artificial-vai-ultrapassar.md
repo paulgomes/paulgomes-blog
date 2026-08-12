@@ -1,6 +1,6 @@
 ---
 title: "Não computabilidade: o limite que nenhuma inteligência artificial vai ultrapassar"
-description: ""
+description: "Existe uma classe de problemas que nenhum algoritmo resolve — por impossibilidade matemática, não por falta de potência. O teto que não é de hardware."
 pubDate: 2026-06-07
 featured: true
 focusKeyword: "Não computabilidade"
