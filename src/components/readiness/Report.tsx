@@ -21,6 +21,8 @@ import {
   type PriorityAction,
 } from '../../lib/readiness/insights';
 import { DimensionBar, ScoreRing } from './Visuals';
+import { PhoneInput } from './MaskedInputs';
+import { formatMoney, isPhonePlausible, toE164, type Country } from '../../lib/readiness/locale';
 
 const WYS_URL = 'https://agenciawys.com.br/';
 const PAUL_URL = 'https://paulgomes.com.br/';
@@ -33,21 +35,32 @@ interface Props {
   scanReason: string | null;
   unlocked: boolean;
   onUnlock: () => void;
+  country: Country;
 }
 
-const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
-
-export default function Report({ diagnosis, identity, answers, signals, scanReason, unlocked, onUnlock }: Props) {
+export default function Report({
+  diagnosis,
+  identity,
+  answers,
+  signals,
+  scanReason,
+  unlocked,
+  onUnlock,
+  country,
+}: Props) {
   const { total, classification, dimensions, bottlenecks, opportunities, roadmap, opportunityIndex, scenario } =
     diagnosis;
 
   // Derivações caras o suficiente para não repetir a cada render de input do gate.
   const summary = useMemo(
-    () => executiveSummary(identity, answers, diagnosis, signals),
-    [identity, answers, diagnosis, signals]
+    () => executiveSummary(identity, answers, diagnosis, signals, country),
+    [identity, answers, diagnosis, signals, country]
   );
-  const alerts = useMemo(() => strategicAlerts(answers, diagnosis, signals), [answers, diagnosis, signals]);
-  const evidence = useMemo(() => evidenceByDimension(answers, signals), [answers, signals]);
+  const alerts = useMemo(
+    () => strategicAlerts(answers, diagnosis, signals, country),
+    [answers, diagnosis, signals, country]
+  );
+  const evidence = useMemo(() => evidenceByDimension(answers, signals, country), [answers, signals, country]);
   const priority = useMemo(() => priorityActions(answers, diagnosis, signals), [answers, diagnosis, signals]);
 
   const evidenceFor = (id: string) => evidence.find((e) => e.dimension === id);
@@ -139,7 +152,16 @@ export default function Report({ diagnosis, identity, answers, signals, scanReas
         )}
 
         {/* ---------------- Gate ---------------- */}
-        {!unlocked && <LeadGate identity={identity} answers={answers} diagnosis={diagnosis} signals={signals} onUnlock={onUnlock} />}
+        {!unlocked && (
+          <LeadGate
+            identity={identity}
+            answers={answers}
+            diagnosis={diagnosis}
+            signals={signals}
+            onUnlock={onUnlock}
+            country={country}
+          />
+        )}
 
         {/* ---------------- Conteúdo completo ---------------- */}
         {unlocked && (
@@ -190,7 +212,7 @@ export default function Report({ diagnosis, identity, answers, signals, scanReas
 
             <SiteSection signals={signals} scanReason={scanReason} />
 
-            <ScenarioSection scenario={scenario} />
+            <ScenarioSection scenario={scenario} country={country} />
 
             <section className="rd-section">
               <h3 className="rd-section-title">Roadmap sugerido</h3>
@@ -404,7 +426,7 @@ function SiteSection({ signals, scanReason }: { signals: SiteSignals | null; sca
 
 // ---------------------------------------------------------------------------
 
-function ScenarioSection({ scenario }: { scenario: Diagnosis['scenario'] }) {
+function ScenarioSection({ scenario, country }: { scenario: Diagnosis['scenario']; country: Country }) {
   const { vendasNecessarias, leadsNecessarios, ticketMedio, faturamentoDesejado, taxaFechamento } = scenario;
   if (!vendasNecessarias && !leadsNecessarios) return null;
 
@@ -420,7 +442,7 @@ function ScenarioSection({ scenario }: { scenario: Diagnosis['scenario'] }) {
           <div className="rd-scenario-item">
             <span className="rd-scenario-label">Meta ÷ ticket médio</span>
             <span className="rd-scenario-value">
-              {BRL.format(faturamentoDesejado)} ÷ {BRL.format(ticketMedio)}
+              {formatMoney(faturamentoDesejado, country)} ÷ {formatMoney(ticketMedio, country)}
             </span>
           </div>
         )}
@@ -458,9 +480,10 @@ interface GateProps {
   diagnosis: Diagnosis;
   signals: SiteSignals | null;
   onUnlock: () => void;
+  country: Country;
 }
 
-function LeadGate({ identity, answers, diagnosis, signals, onUnlock }: GateProps) {
+function LeadGate({ identity, answers, diagnosis, signals, onUnlock, country }: GateProps) {
   const [form, setForm] = useState({ nome: '', email: '', whatsapp: '', empresa: identity.empresa, website: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle');
   const [error, setError] = useState('');
@@ -474,8 +497,15 @@ function LeadGate({ identity, answers, diagnosis, signals, onUnlock }: GateProps
     setForm({ ...form, [k]: e.target.value });
   };
 
+  const phoneOk = isPhonePlausible(form.whatsapp, country);
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!phoneOk) {
+      setStatus('error');
+      setError(`Confira o WhatsApp — o número não tem a quantidade de dígitos de ${country.name}.`);
+      return;
+    }
     setStatus('sending');
     setError('');
 
@@ -483,7 +513,17 @@ function LeadGate({ identity, answers, diagnosis, signals, onUnlock }: GateProps
       const res = await fetch('/api/readiness/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, identity, answers, diagnosis, siteSignals: signals }),
+        body: JSON.stringify({
+          ...form,
+          // E.164 para o CRM: o número precisa ser discável sem adivinhar o país.
+          whatsapp: toE164(form.whatsapp, country),
+          // A moeda vai junto: sem ela, um ticket de 5.000 no CRM é ambíguo
+          // entre reais e euros.
+          identity: { ...identity, moeda: country.currency },
+          answers,
+          diagnosis,
+          siteSignals: signals,
+        }),
       });
       const data = await res.json().catch(() => ({}));
 
@@ -547,21 +587,30 @@ function LeadGate({ identity, answers, diagnosis, signals, onUnlock }: GateProps
           </label>
           <label className="rd-field">
             <span className="rd-field-label">WhatsApp *</span>
-            <input
-              className="rd-input"
-              type="tel"
+            <PhoneInput
               value={form.whatsapp}
-              onChange={set('whatsapp')}
+              country={country}
               required
-              placeholder="(11) 90000-0000"
-              maxLength={25}
+              ariaLabel="WhatsApp"
+              onChange={(v) => {
+                if (!touched) {
+                  setTouched(true);
+                  track('lead_form_started');
+                }
+                setForm((f) => ({ ...f, whatsapp: v }));
+              }}
             />
+            {form.whatsapp.length > 0 && !isPhonePlausible(form.whatsapp, country) && (
+              <span className="rd-field-warn">
+                Faltam dígitos para um número de {country.name}.
+              </span>
+            )}
           </label>
         </div>
 
         {status === 'error' && <p className="rd-error">{error}</p>}
 
-        <button type="submit" className="rd-btn rd-btn-lg" disabled={status === 'sending'}>
+        <button type="submit" className="rd-btn rd-btn-lg" disabled={status === 'sending' || !phoneOk}>
           {status === 'sending' ? 'Enviando…' : 'Ver relatório completo'}
         </button>
         <p className="rd-microcopy">

@@ -113,11 +113,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         await env.DB.prepare(
           `INSERT INTO readiness_leads (
              id, nome, email, whatsapp, empresa,
-             site, segmento, local, modelo, objetivo, investimento_faixa, ticket_medio,
+             site, segmento, local, pais, moeda, modelo, objetivo, investimento_faixa, ticket_medio,
              readiness_score, readiness_band, opportunity_index, wys_lead_score, wys_lead_tier,
              answers_json, diagnosis_json, site_signals_json,
              user_agent, ip, created_at
-           ) VALUES (?,?,?,?,?, ?,?,?,?,?,?,?, ?,?,?,?,?, ?,?,?, ?,?,?)`
+           ) VALUES (?,?,?,?,?, ?,?,?,?,?,?,?,?,?, ?,?,?,?,?, ?,?,?, ?,?,?)`
         )
           .bind(
             id,
@@ -128,6 +128,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
             cleanLine(String(identity.site || '')).slice(0, 500) || null,
             cleanLine(String(identity.segmento || '')).slice(0, 200) || null,
             cleanLine(String(identity.local || '')).slice(0, 200) || null,
+            cleanLine(String(identity.pais || '')).slice(0, 4) || null,
+            cleanLine(String(identity.moeda || '')).slice(0, 8) || null,
             cleanLine(String(identity.modelo || '')).slice(0, 40) || null,
             cleanLine(String(answers.objetivo || '')).slice(0, 60) || null,
             cleanLine(String(answers.eco_investimento || '')).slice(0, 40) || null,

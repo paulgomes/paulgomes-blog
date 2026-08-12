@@ -12,6 +12,7 @@
  */
 
 import { QUESTIONS, visibleQuestions } from './questions';
+import { bracketLabel, formatMoney, getCountry, type Country } from './locale';
 import type {
   Answers,
   DimensionId,
@@ -101,7 +102,9 @@ const INVEST_MID: Record<string, number> = {
   ate1k: 1000, '1a3k': 2000, '3a5k': 4000, '5a10k': 7500, '10a30k': 20000, mais30k: 40000,
 };
 
-const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+/** Moeda do relatório. Vem do país informado — formatar euro com "R$" seria
+ *  pior do que não formatar. Default Brasil, que é o público principal. */
+const money = (value: number, country?: Country | null) => formatMoney(value, country ?? getCountry(null));
 
 function toNumber(v: unknown): number | null {
   if (v === null || v === undefined || v === '') return null;
@@ -127,7 +130,11 @@ export interface DimensionEvidence {
 }
 
 /** Rótulo legível da resposta de uma pergunta. */
-function answerLabel(id: string, answers: Answers): { text: string; score: number } | null {
+function answerLabel(
+  id: string,
+  answers: Answers,
+  country?: Country | null
+): { text: string; score: number } | null {
   const q = QUESTIONS.find((x) => x.id === id);
   if (!q) return null;
   const value = answers[id];
@@ -144,7 +151,9 @@ function answerLabel(id: string, answers: Answers): { text: string; score: numbe
   if (q.kind === 'single') {
     const opt = q.options?.find((o) => o.value === value);
     if (!opt || typeof opt.score !== 'number') return null;
-    return { text: opt.label, score: opt.score };
+    // Faixa de verba é reescrita na moeda do país; o resto usa o rótulo original.
+    const localized = country ? bracketLabel(opt.value, country) : null;
+    return { text: localized ?? opt.label, score: opt.score };
   }
 
   if (q.kind === 'text' || q.kind === 'longtext') {
@@ -159,12 +168,16 @@ function answerLabel(id: string, answers: Answers): { text: string; score: numbe
 }
 
 /** Agrupa, por dimensão, o que puxou a nota para cima e para baixo. */
-export function evidenceByDimension(answers: Answers, signals: SiteSignals | null): DimensionEvidence[] {
+export function evidenceByDimension(
+  answers: Answers,
+  signals: SiteSignals | null,
+  country?: Country | null
+): DimensionEvidence[] {
   const map = new Map<DimensionId, DimensionEvidence>();
 
   for (const q of visibleQuestions(answers)) {
     if (!q.dimension) continue;
-    const resolved = answerLabel(q.id, answers);
+    const resolved = answerLabel(q.id, answers, country);
     if (!resolved) continue;
 
     if (!map.has(q.dimension)) {
@@ -234,7 +247,8 @@ export interface Alert {
 export function strategicAlerts(
   answers: Answers,
   diagnosis: Diagnosis,
-  signals: SiteSignals | null
+  signals: SiteSignals | null,
+  country?: Country | null
 ): Alert[] {
   const alerts: Alert[] = [];
   const by = Object.fromEntries(diagnosis.dimensions.map((d) => [d.id, d.score])) as Record<DimensionId, number>;
@@ -261,7 +275,7 @@ export function strategicAlerts(
     alerts.push({
       severity: 'critico',
       title: 'Investimento planejado sem estrutura de mensuração',
-      detail: `Você pretende investir cerca de ${BRL.format(verba)}/mês, mas a mensuração está em ${by.mensuracao}/100. Sem conversão configurada e origem de lead confiável, não haverá como distinguir a campanha que gerou receita da que apenas gastou. Na prática, é decidir no escuro sobre um valor relevante.`,
+      detail: `Você pretende investir cerca de ${money(verba, country)}/mês, mas a mensuração está em ${by.mensuracao}/100. Sem conversão configurada e origem de lead confiável, não haverá como distinguir a campanha que gerou receita da que apenas gastou. Na prática, é decidir no escuro sobre um valor relevante.`,
     });
   }
 
@@ -299,7 +313,7 @@ export function strategicAlerts(
     alerts.push({
       severity: 'atencao',
       title: 'Primeira operação de mídia com orçamento alto',
-      detail: `Você nunca anunciou e planeja cerca de ${BRL.format(verba)}/mês. O primeiro ciclo é sempre de aprendizado — canal, oferta, criativo e página ainda não têm histórico. Começar com uma fração do orçamento e escalar sobre o que se provou custa menos do que aprender no valor cheio.`,
+      detail: `Você nunca anunciou e planeja cerca de ${money(verba, country)}/mês. O primeiro ciclo é sempre de aprendizado — canal, oferta, criativo e página ainda não têm histórico. Começar com uma fração do orçamento e escalar sobre o que se provou custa menos do que aprender no valor cheio.`,
     });
   }
 
@@ -361,7 +375,8 @@ export function executiveSummary(
   diagnosis: Diagnosis,
   /** Precisa ser o MESMO valor passado a `strategicAlerts` na tela: com sinais
    *  do site nascem alertas críticos a mais, e o resumo contaria a menos. */
-  signals: SiteSignals | null = null
+  signals: SiteSignals | null = null,
+  country?: Country | null
 ): string[] {
   const out: string[] = [];
   const empresa = identity.empresa.trim() || 'Sua empresa';
@@ -399,22 +414,22 @@ export function executiveSummary(
   if (ticket && meta) {
     const vendas = Math.ceil(meta / ticket);
     let frase =
-      `Com ticket médio de ${BRL.format(ticket)} e meta de ${BRL.format(meta)} adicionais por mês, ` +
+      `Com ticket médio de ${money(ticket, country)} e meta de ${money(meta, country)} adicionais por mês, ` +
       `o objetivo equivale a aproximadamente ${vendas} venda${vendas > 1 ? 's' : ''} nova${vendas > 1 ? 's' : ''} por mês.`;
     if (verba) {
       const custoMax = Math.floor(verba / vendas);
-      frase += ` Com a verba prevista de ${BRL.format(verba)}/mês, isso implica um custo de aquisição máximo de cerca de ${BRL.format(custoMax)} por cliente para a conta fechar apenas com mídia.`;
+      frase += ` Com a verba prevista de ${money(verba, country)}/mês, isso implica um custo de aquisição máximo de cerca de ${money(custoMax, country)} por cliente para a conta fechar apenas com mídia.`;
     }
     out.push(frase);
   } else if (verba) {
     out.push(
-      `A verba prevista é de cerca de ${BRL.format(verba)}/mês. Sem ticket médio e meta informados, não é possível ` +
+      `A verba prevista é de cerca de ${money(verba, country)}/mês. Sem ticket médio e meta informados, não é possível ` +
         `dimensionar quantas vendas esse investimento precisaria gerar — e é justamente essa conta que define se o canal faz sentido.`
     );
   }
 
   // Parágrafo 4 — a leitura de risco, quando houver.
-  const criticos = strategicAlerts(answers, diagnosis, signals).filter((a) => a.severity === 'critico');
+  const criticos = strategicAlerts(answers, diagnosis, signals, country).filter((a) => a.severity === 'critico');
   if (criticos.length === 1) {
     out.push(
       `Foi identificado 1 ponto crítico no cruzamento das respostas — uma situação em que cada item isolado ` +

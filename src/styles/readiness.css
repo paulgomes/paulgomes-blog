@@ -315,6 +315,85 @@
 .rd-input:focus { outline: none; border-color: var(--color-accent); }
 .rd-textarea { resize: vertical; line-height: 1.6; }
 
+.rd-field-hint,
+.rd-field-warn {
+  font-size: 0.74rem;
+  line-height: 1.45;
+  margin-top: 0.35rem;
+}
+.rd-field-hint { color: var(--color-muted); }
+.rd-field-warn { color: #b45309; }
+.dark .rd-field-warn { color: #fbbf24; }
+
+.rd-field-pair { display: grid; grid-template-columns: 1fr; gap: 1.1rem; }
+@media (min-width: 560px) {
+  .rd-field-pair { grid-template-columns: 1fr 1fr; }
+}
+
+/* --- campos com afixo (moeda, %, DDI, esquema de URL) ---------------------
+   O afixo fica FORA do input, num wrapper com borda. Colocá-lo dentro do valor
+   faria o cursor pular sobre ele a cada tecla. */
+
+.rd-money,
+.rd-phone,
+.rd-url {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-paper);
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+.rd-money:focus-within,
+.rd-phone:focus-within,
+.rd-url:focus-within { border-color: var(--color-accent); }
+
+.rd-money-symbol,
+.rd-phone-dial,
+.rd-url-scheme,
+.rd-money-code {
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  background: var(--color-subtle);
+  white-space: nowrap;
+  user-select: none;
+}
+.rd-money-symbol,
+.rd-phone-dial,
+.rd-url-scheme { border-right: 1px solid var(--color-border); }
+.rd-money-code {
+  border-left: 1px solid var(--color-border);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+}
+
+.rd-money-input,
+.rd-phone-input,
+.rd-url-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+.rd-money-input:focus,
+.rd-phone-input:focus,
+.rd-url-input:focus { border-color: transparent; }
+
+/* Valores em dinheiro pedem leitura numérica, alinhada e tabular. */
+.rd-money-input {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+.rd-percent-input { text-align: left; }
+
 .rd-honeypot {
   position: absolute;
   left: -9999px;

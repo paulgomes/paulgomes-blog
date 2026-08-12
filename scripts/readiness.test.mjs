@@ -21,6 +21,9 @@ const { assertWeights, classify, totalScore, scoreDimensions, simulateScenario, 
 const { diagnose } = await load('src/lib/readiness/diagnose.ts');
 const { QUESTIONS, visibleQuestions } = await load('src/lib/readiness/questions.ts');
 const { DIMENSIONS } = await load('src/lib/readiness/types.ts');
+const { getCountry, formatMoney, groupDigits, parseMoney, formatPhone, isPhonePlausible,
+        toE164, normalizeUrl, currencySymbol, COUNTRIES, bracketLabel,
+        INVEST_BRACKETS } = await load('src/lib/readiness/locale.ts');
 
 let passed = 0;
 const failures = [];
@@ -361,6 +364,149 @@ test('concordância no singular quando há exatamente 1 crítico', () => {
   const txt = executiveSummary({empresa:'X',site:'',segmento:'',local:'',modelo:'b2c'}, answers, d, null).join(' ');
   assert.ok(txt.includes('Foi identificado 1 ponto crítico'), 'faltou concordancia no singular');
   assert.ok(!txt.includes('Foram identificados 1'), 'concordancia errada no singular');
+});
+
+// --- localizacao e mascaras -------------------------------------------------
+
+test('moeda acompanha o país informado', () => {
+  assert.equal(getCountry('BR').currency, 'BRL');
+  assert.equal(getCountry('PT').currency, 'EUR');
+  assert.equal(getCountry('US').currency, 'USD');
+  assert.equal(getCountry('AR').currency, 'ARS');
+  // Pais fora da lista cai no fallback internacional, nao em BRL.
+  assert.equal(getCountry('ZZ').currency, 'USD');
+  assert.equal(getCountry(null).code, 'BR', 'default deve ser Brasil');
+});
+
+test('formatação de dinheiro nunca rotula euro como real', () => {
+  const br = formatMoney(3500, getCountry('BR'));
+  const pt = formatMoney(3500, getCountry('PT'));
+  assert.ok(br.includes('R$'), `esperado R$ em ${br}`);
+  assert.ok(!pt.includes('R$'), `PT nao pode exibir R$: ${pt}`);
+  assert.ok(/€/.test(pt), `esperado simbolo de euro em ${pt}`);
+});
+
+test('separador de milhar segue o país', () => {
+  assert.equal(groupDigits('3500', getCountry('BR')), '3.500');
+  assert.equal(groupDigits('3500', getCountry('US')), '3,500');
+  assert.equal(groupDigits('', getCountry('BR')), '');
+  assert.equal(groupDigits('abc', getCountry('BR')), '');
+  // Zeros a esquerda nao viram "0.001"
+  assert.equal(groupDigits('0007', getCountry('BR')), '7');
+});
+
+test('parseMoney desfaz a máscara', () => {
+  assert.equal(parseMoney('R$ 3.500'), 3500);
+  assert.equal(parseMoney('1,234,567'), 1234567);
+  assert.equal(parseMoney(''), null);
+  assert.equal(parseMoney('abc'), null);
+});
+
+test('máscara de telefone brasileira alterna fixo e celular', () => {
+  const br = getCountry('BR');
+  assert.equal(formatPhone('1533334444', br), '(15) 3333-4444');   // fixo, 10 digitos
+  assert.equal(formatPhone('15999998888', br), '(15) 99999-8888'); // celular, 11
+  assert.equal(formatPhone('15', br), '(15');                       // parcial nao quebra
+  assert.equal(formatPhone('', br), '');
+});
+
+test('máscara de telefone respeita outros países', () => {
+  assert.equal(formatPhone('912345678', getCountry('PT')), '912 345 678');
+  assert.equal(formatPhone('4155551234', getCountry('US')), '(415) 555-1234');
+  // Pais sem mascara nacional apenas agrupa, sem inventar formato.
+  const intl = formatPhone('123456789', getCountry('ZZ'));
+  assert.ok(/^[\d ]+$/.test(intl), `internacional deveria ser digitos e espacos: ${intl}`);
+});
+
+test('validação de telefone recusa número incompleto', () => {
+  const br = getCountry('BR');
+  assert.equal(isPhonePlausible('1599999888', br), true);   // 10 = fixo
+  assert.equal(isPhonePlausible('159999988888', br), false); // 12 = invalido
+  assert.equal(isPhonePlausible('159', br), false);
+  assert.equal(isPhonePlausible('912345678', getCountry('PT')), true);
+});
+
+test('E.164 inclui o DDI do país', () => {
+  assert.equal(toE164('15999998888', getCountry('BR')), '+5515999998888');
+  assert.equal(toE164('912345678', getCountry('PT')), '+351912345678');
+  assert.equal(toE164('', getCountry('BR')), '');
+});
+
+test('normalizeUrl aceita domínio sem esquema e recusa lixo', () => {
+  assert.equal(normalizeUrl('empresa.com.br'), 'https://empresa.com.br/');
+  assert.equal(normalizeUrl('https://empresa.com.br/x'), 'https://empresa.com.br/x');
+  assert.equal(normalizeUrl('  acme.io  '), 'https://acme.io/');
+  assert.equal(normalizeUrl('nao-e-url'), null);
+  assert.equal(normalizeUrl(''), null);
+});
+
+test('todo país da lista produz símbolo e máscara utilizáveis', () => {
+  for (const c of COUNTRIES) {
+    const sym = currencySymbol(c);
+    assert.ok(sym && sym.length > 0, `${c.code} sem simbolo`);
+    assert.ok(formatMoney(1000, c).length > 0, `${c.code} nao formata`);
+    for (const m of c.phoneMasks) {
+      assert.ok((m.match(/#/g) || []).length >= 6, `${c.code}: mascara curta demais (${m})`);
+    }
+  }
+});
+
+test('relatório usa a moeda do país no resumo executivo', () => {
+  const answers = { eco_ticket:1000, eco_meta:50000, eco_investimento:'5a10k' };
+  const d = diagnose(answers, null);
+  const id = { empresa:'Lisboa Lda', site:'', segmento:'', local:'Lisboa', pais:'PT', modelo:'b2b' };
+  const txt = executiveSummary(id, answers, d, null, getCountry('PT')).join(' ');
+  assert.ok(!txt.includes('R$'), `resumo PT nao pode citar R$: ${txt.slice(0,200)}`);
+  assert.ok(/€/.test(txt), 'resumo PT deveria citar euro');
+});
+
+test('alertas usam a moeda do país', () => {
+  const answers = { eco_investimento:'mais30k', track_origem:'nao', track_conversoes:'nao',
+    track_lead_cliente:'nao', track_crm:'nao', track_ga:'nao', track_gtm:'nao' };
+  const d = diagnose(answers, null);
+  const txt = strategicAlerts(answers, d, null, getCountry('US')).map(a=>a.detail).join(' ');
+  assert.ok(!txt.includes('R$'), `alerta US nao pode citar R$: ${txt.slice(0,200)}`);
+});
+
+test('faixas de investimento são reescritas na moeda do país', () => {
+  const br = bracketLabel('5a10k', getCountry('BR'));
+  const pt = bracketLabel('5a10k', getCountry('PT'));
+  assert.ok(br.includes('R$'), `BR deveria usar R$: ${br}`);
+  assert.ok(!pt.includes('R$'), `PT nao pode usar R$: ${pt}`);
+  assert.ok(/€/.test(pt), `PT deveria usar euro: ${pt}`);
+  assert.ok(bracketLabel('ate1k', getCountry('BR')).startsWith('Até'));
+  assert.ok(bracketLabel('mais30k', getCountry('BR')).startsWith('Acima de'));
+  assert.equal(bracketLabel('nao-e-faixa', getCountry('BR')), null);
+});
+
+test('toda faixa do questionário tem rótulo localizado', () => {
+  const q = QUESTIONS.find(x => x.id === 'eco_investimento');
+  for (const o of q.options) {
+    assert.ok(INVEST_BRACKETS[o.value], `faixa ${o.value} sem limites em INVEST_BRACKETS`);
+    for (const c of COUNTRIES) {
+      const l = bracketLabel(o.value, c);
+      assert.ok(l && l.length > 0, `${c.code}/${o.value} sem rotulo`);
+    }
+  }
+});
+
+test('nenhum texto do relatório fora do Brasil contém R$', () => {
+  const country = getCountry('PT');
+  const answers = { eco_ticket:2500, eco_meta:150000, eco_investimento:'10a30k',
+    com_volume:'ate20', com_taxa:'sim', com_taxa_valor:5, track_origem:'nao',
+    track_conversoes:'nao', track_lead_cliente:'nao', track_crm:'nao',
+    track_ga:'nao', track_gtm:'nao', objetivo:'vendas', modelo:'b2b' };
+  const d = diagnose(answers, null);
+  const id = { empresa:'Lisboa Lda', site:'', segmento:'software', local:'Lisboa', pais:'PT', modelo:'b2b' };
+
+  const textos = [
+    ...executiveSummary(id, answers, d, null, country),
+    ...strategicAlerts(answers, d, null, country).flatMap(a => [a.title, a.detail]),
+    ...evidenceByDimension(answers, null, country).flatMap(e =>
+      [...e.strengths, ...e.gaps].flatMap(x => [x.label, x.answer])),
+  ].join(' | ');
+
+  assert.ok(!textos.includes('R$'), `vazou R$ no relatorio PT: ${textos.slice(0, 300)}`);
 });
 
 // ---------------------------------------------------------------------------

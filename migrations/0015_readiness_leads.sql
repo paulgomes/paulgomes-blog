@@ -21,10 +21,15 @@ CREATE TABLE IF NOT EXISTS readiness_leads (
   -- Contexto da empresa (denormalizado para consulta rapida no painel)
   site TEXT,
   segmento TEXT,
-  local TEXT,
+  local TEXT,                           -- cidade
+  pais TEXT,                            -- ISO 3166-1 alpha-2 ('XX' = fora da lista curada)
+  moeda TEXT,                           -- ISO 4217 usado no diagnostico (BRL, EUR, USD...)
   modelo TEXT,                          -- b2b|b2c|b2b2c|saas|ecommerce|marketplace|servico|outro
   objetivo TEXT,
   investimento_faixa TEXT,
+  -- ticket_medio esta NA MOEDA da coluna `moeda`, nao necessariamente em BRL.
+  -- Comparar tickets entre paises exige conversao; nao ordene por este campo
+  -- sem normalizar antes.
   ticket_medio REAL,
 
   -- Resultado do diagnostico

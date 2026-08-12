@@ -16,6 +16,8 @@ import { visibleQuestions } from '../../lib/readiness/questions';
 import { diagnose } from '../../lib/readiness/diagnose';
 import { track, trackProgress } from '../../lib/readiness/analytics';
 import { ProgressBar } from './Visuals';
+import { CountInput, MoneyInput, PercentInput, UrlInput } from './MaskedInputs';
+import { bracketLabel, COUNTRIES, DEFAULT_COUNTRY, getCountry, normalizeUrl, type Country } from '../../lib/readiness/locale';
 import Report from './Report';
 
 type Phase = 'landing' | 'identity' | 'questions' | 'analyzing' | 'report';
@@ -31,7 +33,14 @@ const MODELOS = [
   { value: 'outro', label: 'Outro' },
 ];
 
-const EMPTY_IDENTITY: Identity = { empresa: '', site: '', segmento: '', local: '', modelo: '' };
+const EMPTY_IDENTITY: Identity = {
+  empresa: '',
+  site: '',
+  segmento: '',
+  local: '',
+  pais: DEFAULT_COUNTRY,
+  modelo: '',
+};
 
 export default function ReadinessApp() {
   const [phase, setPhase] = useState<Phase>('landing');
@@ -46,6 +55,7 @@ export default function ReadinessApp() {
   // A lista se recalcula a cada resposta — é isso que torna o fluxo adaptativo.
   const questions = useMemo(() => visibleQuestions(answers), [answers]);
   const current: Question | undefined = questions[index];
+  const country = useMemo(() => getCountry(identity.pais), [identity.pais]);
 
   const diagnosis = useMemo(
     () => (phase === 'report' ? diagnose(answers, signals) : null),
@@ -109,10 +119,16 @@ export default function ReadinessApp() {
 
   const runAnalysis = async () => {
     setPhase('analyzing');
-    const url = identity.site.trim();
+    // Normaliza aqui e não no envio: se o que a pessoa digitou não forma um host
+    // plausível, o scanner receberia lixo e responderia com um erro genérico.
+    const url = normalizeUrl(identity.site);
 
     if (!url) {
-      setScanReason('Nenhuma URL informada.');
+      setScanReason(
+        identity.site.trim()
+          ? 'O endereço informado não é um site válido.'
+          : 'Nenhuma URL informada.'
+      );
       finishAnalysis();
       return;
     }
@@ -184,6 +200,7 @@ export default function ReadinessApp() {
         scanReason={scanReason}
         unlocked={unlocked}
         onUnlock={() => setUnlocked(true)}
+        country={country}
       />
     );
   }
@@ -203,7 +220,13 @@ export default function ReadinessApp() {
             {current.help && <p className="rd-question-help">{current.help}</p>}
           </div>
 
-          <QuestionInput question={current} value={answers[current.id]} onChange={setAnswer} onAdvance={next} />
+          <QuestionInput
+            question={current}
+            value={answers[current.id]}
+            onChange={setAnswer}
+            onAdvance={next}
+            country={country}
+          />
         </div>
 
         <div className="rd-actions">
@@ -310,14 +333,7 @@ function IdentityForm({ identity, setIdentity, onSubmit, onBack }: IdentityProps
 
           <label className="rd-field">
             <span className="rd-field-label">Site</span>
-            <input
-              className="rd-input"
-              value={identity.site}
-              onChange={set('site')}
-              placeholder="suaempresa.com.br"
-              inputMode="url"
-              maxLength={300}
-            />
+            <UrlInput value={identity.site} onChange={(v) => setIdentity({ ...identity, site: v })} />
           </label>
 
           <label className="rd-field">
@@ -331,16 +347,33 @@ function IdentityForm({ identity, setIdentity, onSubmit, onBack }: IdentityProps
             />
           </label>
 
-          <label className="rd-field">
-            <span className="rd-field-label">Cidade / País</span>
-            <input
-              className="rd-input"
-              value={identity.local}
-              onChange={set('local')}
-              placeholder="Ex.: Sorocaba, Brasil"
-              maxLength={200}
-            />
-          </label>
+          <div className="rd-field-pair">
+            <label className="rd-field">
+              <span className="rd-field-label">Cidade</span>
+              <input
+                className="rd-input"
+                value={identity.local}
+                onChange={set('local')}
+                placeholder="Ex.: Sorocaba"
+                maxLength={200}
+              />
+            </label>
+
+            <label className="rd-field">
+              <span className="rd-field-label">País</span>
+              <select className="rd-input" value={identity.pais} onChange={set('pais')}>
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
+                ))}
+                <option value="XX">Outro país</option>
+              </select>
+              <span className="rd-field-hint">
+                Define a moeda ({getCountry(identity.pais).currency}) e o formato de telefone do diagnóstico.
+              </span>
+            </label>
+          </div>
 
           <label className="rd-field">
             <span className="rd-field-label">Modelo de negócio *</span>
@@ -377,14 +410,26 @@ interface InputProps {
   value: Answers[string];
   onChange: (id: string, value: Answers[string]) => void;
   onAdvance: () => void;
+  country: Country;
 }
 
-function QuestionInput({ question, value, onChange }: InputProps) {
+/**
+ * Campos numéricos que representam DINHEIRO ganham símbolo e separador da moeda
+ * do país. Os demais (percentual, contagem) usam a máscara própria — um leads/mês
+ * exibido como "R$ 120" seria pior do que campo cru.
+ */
+const MONEY_FIELDS = new Set(['eco_ticket', 'eco_meta', 'ads_investimento_atual']);
+const PERCENT_FIELDS = new Set(['com_taxa_valor']);
+
+function QuestionInput({ question, value, onChange, country }: InputProps) {
   if (question.kind === 'single') {
     return (
       <div className="rd-options" role="radiogroup" aria-label={question.title}>
         {question.options?.map((o) => {
           const selected = value === o.value;
+          // Faixas de verba são escritas na moeda do país; o rótulo estático em
+          // questions.ts está em BRL e serve só de fallback.
+          const label = bracketLabel(o.value, country) ?? o.label;
           return (
             <button
               type="button"
@@ -396,7 +441,7 @@ function QuestionInput({ question, value, onChange }: InputProps) {
             >
               <span className="rd-option-mark" aria-hidden="true" />
               <span className="rd-option-body">
-                <span className="rd-option-label">{o.label}</span>
+                <span className="rd-option-label">{label}</span>
                 {o.hint && <span className="rd-option-hint">{o.hint}</span>}
               </span>
             </button>
@@ -457,16 +502,22 @@ function QuestionInput({ question, value, onChange }: InputProps) {
   }
 
   if (question.kind === 'number') {
+    const num = typeof value === 'number' ? value : null;
+    const set = (v: number | null) => onChange(question.id, v);
+
+    if (MONEY_FIELDS.has(question.id)) {
+      return <MoneyInput value={num} country={country} onChange={set} ariaLabel={question.title} />;
+    }
+    if (PERCENT_FIELDS.has(question.id)) {
+      return <PercentInput value={num} onChange={set} placeholder="20" ariaLabel={question.title} />;
+    }
     return (
-      <input
-        className="rd-input"
-        type="number"
-        inputMode="decimal"
-        value={value === null || value === undefined ? '' : String(value)}
+      <CountInput
+        value={num}
+        country={country}
+        onChange={set}
         placeholder={question.placeholder}
-        min={question.min}
-        max={question.max}
-        onChange={(e) => onChange(question.id, e.target.value === '' ? null : Number(e.target.value))}
+        ariaLabel={question.title}
       />
     );
   }

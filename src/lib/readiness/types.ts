@@ -176,7 +176,10 @@ export interface Identity {
   empresa: string;
   site: string;
   segmento: string;
+  /** Cidade. O país fica separado porque governa moeda e telefone. */
   local: string;
+  /** ISO 3166-1 alpha-2, ou 'XX' para fora da lista curada. */
+  pais: string;
   modelo: BusinessModel | '';
 }
 
