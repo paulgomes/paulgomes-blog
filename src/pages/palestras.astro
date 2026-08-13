@@ -3,6 +3,8 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE } from '../consts';
+import { SCHEMA_ID } from '../lib/schema';
+import { SITE_CONFIG } from '../config/site';
 
 const temas = [
   {
@@ -34,8 +36,34 @@ const formatos = [
 <html lang="pt-BR">
   <head>
     <BaseHead
-      title={`Palestras — ${SITE_TITLE}`}
-      description="Paul Gomes em palestras sobre inteligência artificial, GEO, o futuro da internet e das empresas. Solicite uma palestra para seu evento ou time de liderança."
+      title="Palestrante de inteligência artificial e GEO — Paul Gomes"
+      description="Paul Gomes é palestrante sobre inteligência artificial, GEO e o futuro dos negócios. Keynote, imersão para liderança e painéis. Solicite para seu evento."
+    />
+    <!-- Declara Paul Gomes como PALESTRANTE dos temas listados, ligando ao
+         mesmo @id do Person do grafo base. Sem isso a página descreve palestras
+         sem dizer à máquina de quem elas são — e é justamente essa associação
+         que sustenta consultas como "palestrante de inteligência artificial". -->
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        '@id': `${SITE_CONFIG.url}/palestras/#webpage`,
+        url: `${SITE_CONFIG.url}/palestras/`,
+        name: 'Palestras sobre inteligência artificial e GEO',
+        inLanguage: SITE_CONFIG.locale,
+        isPartOf: { '@id': SCHEMA_ID.website },
+        about: { '@id': SCHEMA_ID.person },
+        mainEntity: temas.map((tema) => ({
+          '@type': 'Event',
+          name: tema.titulo,
+          description: tema.resumo,
+          eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+          performer: { '@id': SCHEMA_ID.person },
+          organizer: { '@id': SCHEMA_ID.organization },
+        })),
+      })}
     />
   </head>
   <body>
