@@ -39,6 +39,10 @@ sentidos.
 
 ## Traduzindo posts
 
+> **Status: em espera.** A tradução em massa dos posts está desligada por decisão
+> do dono (13/08/2026). O que está no ar em `/en/` são traduções feitas à mão. O
+> script abaixo continua funcional e testado, para quando/se for retomado.
+
 ```bash
 ANTHROPIC_API_KEY=sk-... npm run translate -- --dry-run   # simula, não chama API
 ANTHROPIC_API_KEY=sk-... npm run translate -- --limit 5   # piloto
@@ -61,8 +65,10 @@ O script preserva `categorias`, `pubDate`, `updatedDate`, `heroImage` e
 - **Não** emitir `hreflang` para idioma sem página equivalente publicada.
 - **Não** misturar idiomas numa mesma página (`RelatedPosts` já filtra por
   idioma; mantenha assim).
-- **Não** tratar o EN como revisado: hoje é **tradução de máquina**, sinalizada
-  como tal em `/en/` via `listagem.traduzido_aviso`.
+- **Não** deixar o aviso de `/en/` desalinhado do que está publicado. Hoje as
+  traduções no ar foram feitas **à mão**, e `listagem.traduzido_aviso` diz apenas
+  "artigos traduzidos". Se a tradução em massa por IA for ligada, o aviso precisa
+  voltar a declarar que é tradução automática — afirmar o contrário seria falso.
 
 ## Pendente
 

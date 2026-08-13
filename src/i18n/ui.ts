@@ -66,8 +66,12 @@ const pt = {
   'listagem.titulo': 'Artigos',
   'listagem.descricao': 'Ensaios sobre branding, tecnologia e o futuro dos negócios.',
   'listagem.vazio': 'Nenhum artigo publicado ainda.',
+  // O aviso descreve o que ESTÁ publicado. As traduções atuais foram feitas à
+  // mão; dizer "tradução automática" seria afirmar algo falso sobre elas.
+  // Se um dia a tradução em massa por IA for ligada, este texto precisa voltar
+  // a declarar isso — ver src/i18n/README.md.
   'listagem.traduzido_aviso':
-    'Tradução automática a partir do original em português.',
+    'Seleção de artigos traduzidos do original em português.',
 } as const;
 
 /** Chaves válidas do dicionário (derivadas da fonte de verdade PT). */
@@ -118,7 +122,7 @@ const en = {
   'listagem.titulo': 'Articles',
   'listagem.descricao': 'Essays on branding, technology and the future of business.',
   'listagem.vazio': 'No articles published yet.',
-  'listagem.traduzido_aviso': 'Machine-translated from the Portuguese original.',
+  'listagem.traduzido_aviso': 'Selected articles, translated from the Portuguese original.',
 } satisfies Record<UIKey, string>;
 
 /**
