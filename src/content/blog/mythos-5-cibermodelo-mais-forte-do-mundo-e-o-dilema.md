@@ -6,7 +6,7 @@ categorias:
   - Cybersecurity
   - IA
 focusKeyword: "Mythos 5 cibersegurança"
-metaTitle: "Mythos 5: o modelo mais forte do mundo em ciber"
+metaTitle: "Mythos 5: o modelo mais forte em cibersegurança"
 metaDescription: "O Mythos 5 tem as maiores capacidades de cibersegurança já vistas em um modelo. Entenda o hacking agêntico, o uso duplo e por que ele não é público."
 ---
 

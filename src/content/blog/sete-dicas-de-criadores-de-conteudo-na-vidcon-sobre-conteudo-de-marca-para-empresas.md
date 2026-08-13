@@ -7,7 +7,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/296362711-597962548409928-5294185315491526449-n.webp"
 heroImageAlt: "Sete dicas de criadores de conteúdo na VidCon sobre conteúdo de marca para empresas"
 focusKeyword: "criadores conteudo"
-metaTitle: "Sete dicas de criadores de conteúdo na VidCon sobre..."
+metaTitle: "VidCon: sete dicas sobre conteúdo de marca"
 metaDescription: "No mês passado, a Meta participou da VidCon nos Estados Unidos para conversar com os criadores de conteúdo sobre como eles gostam de trabalhar com..."
 ---
 

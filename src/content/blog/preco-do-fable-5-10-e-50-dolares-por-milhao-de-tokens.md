@@ -6,7 +6,7 @@ categorias:
   - Negócios
   - IA
 focusKeyword: "preço Fable 5"
-metaTitle: "Preço do Fable 5: US$10 e US$50 por milhão de tokens"
+metaTitle: "Fable 5: quanto custa por milhão de tokens"
 metaDescription: "Fable 5 custa US$10 por milhão de tokens de entrada e US$50 de saída — menos da metade do Mythos Preview. O que a queda de preço muda para o negócio."
 ---
 

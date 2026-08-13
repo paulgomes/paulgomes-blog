@@ -8,7 +8,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/29b345d0-324c-4475-8f68-2ec2c81b3c6b.webp"
 heroImageAlt: "Tendências de Tecnologia, Marketing e Consumo para 2025: insights para marcas visionárias"
 focusKeyword: "marketing"
-metaTitle: "Tendências de Tecnologia, Marketing e Consumo para 2025:..."
+metaTitle: "O que esperar de tecnologia e consumo em 2025"
 metaDescription: "À medida que 2025 avança, as fronteiras entre tecnologia, marketing e comportamento do consumidor se estreitam."
 ---
 

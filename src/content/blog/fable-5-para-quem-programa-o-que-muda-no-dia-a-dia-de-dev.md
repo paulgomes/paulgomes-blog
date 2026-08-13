@@ -6,7 +6,7 @@ categorias:
   - DevOps
   - IA
 focusKeyword: "Fable 5 programação"
-metaTitle: "Fable 5 para quem programa: o que muda no dia a dia"
+metaTitle: "O que muda no dia a dia de quem programa com Fable 5"
 metaDescription: "Stripe diz que o Fable comprimiu meses de engenharia em dias. Veja o que muda de verdade no fluxo de quem escreve código com o novo modelo."
 ---
 

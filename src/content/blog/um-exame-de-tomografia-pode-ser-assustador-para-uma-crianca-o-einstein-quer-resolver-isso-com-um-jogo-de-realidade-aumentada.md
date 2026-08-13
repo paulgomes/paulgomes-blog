@@ -7,7 +7,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-9.webp"
 heroImageAlt: "Um exame de tomografia pode ser assustador para uma criança. O Einstein quer resolver isso com um jogo de realidade aumentada"
 focusKeyword: "pode"
-metaTitle: "Um exame de tomografia pode ser assustador para uma..."
+metaTitle: "Einstein usa realidade aumentada em tomografia infantil"
 metaDescription: "Por mais que médicos e enfermeiros se esforcem em deixar os pacientes à vontade, um hospital pode ser um ambiente desconfortável, mesmo assustador."
 ---
 

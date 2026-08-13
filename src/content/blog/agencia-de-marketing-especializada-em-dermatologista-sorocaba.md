@@ -8,7 +8,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/paul-gomes-4.webp"
 heroImageAlt: "Agência de Marketing Especializada em Dermatologista Sorocaba"
 focusKeyword: "agencia marketing"
-metaTitle: "Agência de Marketing Especializada em Dermatologista..."
+metaTitle: "Marketing para dermatologistas em Sorocaba"
 metaDescription: "Na agitada paisagem do mundo digital, o sucesso de um dermatologista em Sorocaba vai além do consultório."
 ---
 

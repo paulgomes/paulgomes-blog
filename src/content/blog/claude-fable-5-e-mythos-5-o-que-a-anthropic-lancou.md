@@ -6,7 +6,7 @@ categorias:
   - IA
   - Em Alta
 focusKeyword: "Claude Fable 5"
-metaTitle: "Claude Fable 5 e Mythos 5: o que a Anthropic lançou"
+metaTitle: "O que a Anthropic lançou com Fable 5 e Mythos 5"
 metaDescription: "A Anthropic lançou o Fable 5, seu modelo mais capaz já liberado, e o Mythos 5, o mesmo cérebro sem as travas. Entenda o que muda de verdade."
 ---
 

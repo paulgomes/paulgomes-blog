@@ -7,7 +7,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/shutterstock-2209159351.webp"
 heroImageAlt: "Hábitos que você deve abandonar para evoluir na carreira em 2023"
 focusKeyword: "voce"
-metaTitle: "Hábitos que você deve abandonar para evoluir na carreira..."
+metaTitle: "Hábitos para abandonar e evoluir na carreira"
 metaDescription: "Junto com a Agência Wys, negócios no mundo inteiro estão indo além Melhor agência de marketing em Sorocaba Agência de Marketing em Sorocaba Leia mais em:..."
 ---
 

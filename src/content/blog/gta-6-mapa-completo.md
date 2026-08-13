@@ -1,5 +1,6 @@
 ---
 title: "GTA 6 Mapa Completo: Vice City, Leonida e Todos os Locais Confirmados"
+metaTitle: "GTA 6: mapa completo de Vice City e Leonida"
 description: "GTA 6 se passa em Leonida, a Flórida da Rockstar, com Vice City no centro. Conheça as seis regiões oficiais, o que a comunidade reconstruiu e o tamanho do mapa."
 pubDate: 2026-05-09
 categorias:

@@ -8,7 +8,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-25.webp"
 heroImageAlt: "Como fazer fotos ao estilo 'Disney Pixar', da nova moda no Instagram"
 focusKeyword: "estilo disney"
-metaTitle: "Como fazer fotos ao estilo 'Disney Pixar', da nova moda..."
+metaTitle: "Como fazer fotos estilo Disney Pixar no Instagram"
 metaDescription: "Para quem quer entrar na \"trend\", elaboramos um tutorial detalhado para conseguir chegar no resultado: Como criar sua imagem ao estilo Disney Pixar:..."
 ---
 

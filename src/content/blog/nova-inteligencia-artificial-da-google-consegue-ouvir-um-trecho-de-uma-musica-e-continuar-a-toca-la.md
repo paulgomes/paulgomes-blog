@@ -7,7 +7,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/shutterstock-592921421.webp"
 heroImageAlt: "Nova Inteligência Artificial da Google consegue ouvir um trecho de uma música e continuar a tocá-la"
 focusKeyword: "musica"
-metaTitle: "Nova Inteligência Artificial da Google consegue ouvir um..."
+metaTitle: "IA do Google ouve música e continua a melodia"
 metaDescription: "fonte: https://mittechreview.com.br/nova-inteligencia-artificial-da-google-consegue-ouvir-um-trecho-de-uma-musica-e-continuar-a-toca-la/"
 ---
 

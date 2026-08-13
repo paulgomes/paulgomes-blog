@@ -8,7 +8,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/2026/07/blog-regiao-marketing-para-restaurantes-de-sorocaba.jpg"
 heroImageAlt: "Chef finalizando prato em cozinha de restaurante"
 focusKeyword: "marketing para restaurantes"
-metaTitle: "Marketing para restaurantes de Sorocaba: mesa cheia"
+metaTitle: "Como encher as mesas do seu restaurante em Sorocaba"
 metaDescription: "Marketing para restaurantes em Sorocaba: foto que vende, cardápio digital, delivery próprio vs. apps, ofertas para dias fracos e base própria de clientes."
 ---
 

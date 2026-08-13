@@ -6,7 +6,7 @@ categorias:
   - IA
   - Tecnologia
 focusKeyword: "dados sinteticos"
-metaTitle: "Dados sintéticos: treinar modelos com dados gerados por IA"
+metaTitle: "Dados sintéticos: treinar IA com dados gerados por IA"
 metaDescription: "Dados sintéticos viraram necessidade no treino de modelos. Entenda o risco de colapso, a curadoria e por que a verificação decide tudo."
 ---
 

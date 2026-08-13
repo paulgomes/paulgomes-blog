@@ -8,7 +8,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/wys-blog-posts-17.webp"
 heroImageAlt: "Como a Inteligência Artificial está Ajudando os Profissionais de Marketing"
 focusKeyword: "marketing"
-metaTitle: "Como a Inteligência Artificial está Ajudando os..."
+metaTitle: "Como a IA está ajudando profissionais de marketing"
 metaDescription: "No mundo dos negócios, profissionais de marketing enfrentam o desafio de se destacar e alcançar resultados significativos."
 ---
 

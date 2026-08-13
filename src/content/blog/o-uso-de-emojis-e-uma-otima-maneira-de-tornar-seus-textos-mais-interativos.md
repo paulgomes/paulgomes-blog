@@ -7,7 +7,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-9.webp"
 heroImageAlt: "O uso de emojis é uma ótima maneira de tornar seus textos mais interativos"
 focusKeyword: "textos interativos"
-metaTitle: "O uso de emojis é uma ótima maneira de tornar seus..."
+metaTitle: "Emojis: como deixar seus textos mais interativos"
 metaDescription: "😁😆 Por fim, lembre-se sempre que os melhores textos interativos são aqueles que contenham um equilíbrio entre emojis e palavras – ⚠️ Então usem essa..."
 ---
 

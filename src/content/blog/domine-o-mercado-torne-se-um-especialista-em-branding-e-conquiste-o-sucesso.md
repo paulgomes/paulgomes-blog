@@ -8,7 +8,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/financial-review-p5nmyca.webp"
 heroImageAlt: "Domine o mercado: torne-se um especialista em branding e conquiste o sucesso"
 focusKeyword: "branding"
-metaTitle: "Domine o mercado: torne-se um especialista em branding e..."
+metaTitle: "Como se tornar um especialista em branding"
 metaDescription: "Domine o mercado: torne-se um especialista em branding e conquiste o sucesso O branding é uma das estratégias de marketing mais importantes para..."
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: "GTA 6: Tudo o Que Foi Confirmado Oficialmente Pela Rockstar Até Agora"
+metaTitle: "GTA 6: tudo confirmado oficialmente pela Rockstar"
 description: "Um inventário do que é oficial em GTA 6: lançamento, cenário, protagonistas, jogabilidade, edições, preço e trailers — separando fatos de rumores."
 pubDate: 2026-05-26
 categorias:

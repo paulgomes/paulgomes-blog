@@ -7,7 +7,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/posts/legacy/screenshot-4.webp"
 heroImageAlt: "Cobranding Histórico: O Duelo entre Elon Musk e Mark Zuckerberg"
 focusKeyword: "musk"
-metaTitle: "Cobranding Histórico: O Duelo entre Elon Musk e Mark..."
+metaTitle: "Cobranding: o duelo entre Musk e Zuckerberg"
 metaDescription: "Elon Musk anuncia uma luta contra Mark Zuckerberg com transmissão no X, a nova plataforma de vídeo ao vivo que substituiu o Twitter após sua aquisição por Musk."
 ---
 

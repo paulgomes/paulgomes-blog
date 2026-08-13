@@ -7,7 +7,7 @@ categorias:
 heroImage: "https://media.paulgomes.com.br/2026/07/blog-regiao-branding-para-empresas-de-sorocaba.jpg"
 heroImageAlt: "Paleta de cores e materiais de design de marca"
 focusKeyword: "branding para empresas"
-metaTitle: "Branding para empresas de Sorocaba: marca forte"
+metaTitle: "Como construir uma marca forte em Sorocaba"
 metaDescription: "Branding para empresas de Sorocaba: posicionamento, consistência visual e verbal, orgulho regional sem provincianismo e quando rebranding vale a pena."
 ---
 
