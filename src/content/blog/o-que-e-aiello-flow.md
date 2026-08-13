@@ -1,0 +1,58 @@
+---
+title: "O que é Aiello Flow?"
+description: "Aiello Flow é o perfil de humor de Matheus Aiello, onde nasceu o personagem do 'gênio de QI 640'. O que é o canal e por que virou estudo de caso de viralização."
+pubDate: 2026-05-13
+categorias:
+  - Em Alta
+  - Redes Sociais
+  - Branding
+focusKeyword: "aiello flow"
+metaTitle: "O que é Aiello Flow? O canal por trás do fenômeno"
+metaDescription: "Aiello Flow (@aielloflow) é o perfil de humor do ator Matheus Aiello. Entenda o canal, o personagem que criou e o mecanismo que o levou a virar 'notícia'."
+---
+
+**Aiello Flow é o perfil de humor do ator Matheus Aiello**, presente no TikTok, Instagram e YouTube sob o identificador **@aielloflow**. É nele que nasceu o personagem do "cientista brasileiro de QI 640" que dominou o feed brasileiro em 2026.
+
+Não é uma empresa, um método, um curso nem um produto. É um canal de conteúdo cômico — e a confusão sobre o que ele é faz parte do próprio fenômeno.
+
+## O que o canal produz
+
+O formato central é a esquete em vídeo curto, com o ator interpretando personagens. O mais conhecido é **João Gabriel Melo Aiello**, construído sobre alegações deliberadamente impossíveis: 37 PhDs aos 27 anos, mil e oitocentos artigos científicos, telepatia comprovada na infância, comunicação com patos e tartarugas marinhas.
+
+O exagero é o mecanismo da piada. Um personagem que afirmasse ter um QI de 130 não seria engraçado — seria apenas plausível. O humor depende do absurdo ser grande o bastante para ser evidente.
+
+O problema, como quase sempre nesses casos, não estava no canal. Estava no que aconteceu quando o conteúdo saiu dele.
+
+## Por que o canal virou estudo de caso
+
+Recortes dos vídeos passaram a circular sem qualquer marca de contexto. Sem o perfil, sem a sequência, sem o tom — apenas a alegação, isolada, com cara de depoimento.
+
+A partir daí, portais de notícia replicaram o material. O mesmo texto, praticamente palavra por palavra, apareceu em PE News, Minuto São Paulo e Mídia ABC, entre outros. Não é jornalismo: é distribuição coordenada de conteúdo vestida com a estética de notícia.
+
+E aqui está o ponto que interessa a quem trabalha com marca: **para o algoritmo de busca, existe diferença entre uma alegação solta numa rede social e a mesma alegação replicada em sites com domínio próprio, layout editorial e estrutura semântica de portal.** Para o leitor que pesquisa o nome no Google, essa diferença técnica vira sinônimo de legitimidade.
+
+A [checagem do Boatos.org](https://www.boatos.org/brasil/joao-gabriel-melo-aiello-e-um-cientista-com-qi-640-37-phds-e-foi-proibido-de-fazer-o-enem.html) identificou a origem cômica e classificou as alegações como falsas — mas checagem chega sempre depois, e alcança uma fração de quem viu o material original.
+
+## O que dá para aprender com o Aiello Flow
+
+Três leituras práticas, para além da curiosidade sobre o caso.
+
+**Conteúdo perde o contexto na primeira republicação.** Qualquer material que dependa de enquadramento para ser entendido — sátira, ironia, provocação — vai circular sem esse enquadramento em algum momento. Isso não é acidente: é o comportamento padrão do ambiente. Quem produz precisa decidir se o conteúdo sobrevive à perda de contexto.
+
+**A estética de notícia virou commodity.** Montar um site com domínio próprio, layout editorial e aparência de portal custa quase nada. A autoridade que esse formato empresta, porém, continua sendo lida pelo público como se fosse cara de obter. Essa assimetria é o que o caso explora — e o que qualquer operação de desinformação explora.
+
+**Sistemas de IA aprendem do que está publicado, não do que é verdade.** Quando dezenas de sites repetem a mesma biografia inventada, uma busca semântica tende a devolver essa biografia. A autoridade, no sentido em que esses sistemas operam hoje, é função de presença distribuída e consistência entre fontes — não de veracidade. É uma das razões pelas quais [trabalhar a presença da marca em fontes externas](/empresas-de-inteligencia-artificial-no-mundo/) deixou de ser detalhe de SEO e virou questão de reputação.
+
+## O que o caso não é
+
+Vale dizer com clareza, porque a indignação com o episódio costuma mirar o alvo errado.
+
+Aiello Flow é um canal de humor fazendo humor. Criar personagens absurdos é ofício antigo e legítimo, e o exagero é a ferramenta do gênero. Atribuir má-fé a isso seria confundir sátira com fraude.
+
+A responsabilidade pela desinformação está na camada seguinte: nos sites que publicaram conteúdo cômico como reportagem sem qualquer apuração, e no modelo econômico que torna isso lucrativo.
+
+---
+
+Leituras relacionadas: [quem é o João Gabriel Melo Aiello](/quem-e-joao-gabriel-melo-aiello/), com as alegações e por que não se sustentam; [quem é Aiello](/quem-e-aiello/), sobre o ator por trás do personagem; e [o fenômeno João Gabriel Melo Aiello](/o-fenomeno-joao-gabriel-melo-aiello/), com a análise da infraestrutura que transformou a piada em "notícia".
+
+**Fontes:** perfis públicos [@aielloflow](https://www.instagram.com/aielloflow/) e [@aiellomatheus](https://www.instagram.com/aiellomatheus/), e a checagem do [Boatos.org](https://www.boatos.org/brasil/joao-gabriel-melo-aiello-e-um-cientista-com-qi-640-37-phds-e-foi-proibido-de-fazer-o-enem.html).

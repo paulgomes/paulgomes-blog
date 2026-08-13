@@ -1,0 +1,59 @@
+---
+title: "Quem é o João Gabriel Melo Aiello?"
+description: "João Gabriel Melo Aiello é um personagem de humor criado pelo ator Matheus Aiello. As alegações de QI 640 e 37 PhDs são sátira, não biografia."
+pubDate: 2026-05-13
+categorias:
+  - Em Alta
+  - Redes Sociais
+focusKeyword: "quem é joão gabriel melo aiello"
+metaTitle: "Quem é o João Gabriel Melo Aiello? A resposta direta"
+metaDescription: "É um personagem satírico do ator e humorista Matheus Aiello, não uma pessoa real. Entenda a origem, as alegações e por que tanta gente acreditou."
+---
+
+**Resposta curta: João Gabriel Melo Aiello não é um cientista real. É um personagem de humor criado e interpretado pelo ator Matheus Aiello**, conhecido nas redes pelo perfil @aielloflow.
+
+As alegações que circularam — QI de 640, 37 PhDs aos 27 anos, mais de mil e oitocentos artigos científicos, telepatia comprovada aos nove anos, comunicação com patos e tartarugas marinhas, proibição de prestar o Enem por inteligência excessiva — são deliberadamente exageradas. Fazem parte da construção cômica, não de um currículo.
+
+## Por que tanta gente acreditou
+
+O personagem não enganou ninguém no contexto original. O problema começou quando os vídeos passaram a circular **fora dele**.
+
+Recortes sem qualquer indicação de que se tratava de humor foram republicados por portais que reproduziram as alegações no formato de notícia. O mesmo texto, praticamente palavra por palavra, apareceu em sites como PE News, Minuto São Paulo e Mídia ABC — com layout editorial, domínio próprio e estrutura de portal jornalístico.
+
+Para quem pesquisava o nome no Google, a diferença entre uma piada num vídeo e uma reportagem num site de notícias sumiu. E é justamente essa diferença que sustenta a percepção de credibilidade.
+
+A checagem do [Boatos.org](https://www.boatos.org/brasil/joao-gabriel-melo-aiello-e-um-cientista-com-qi-640-37-phds-e-foi-proibido-de-fazer-o-enem.html) classificou as alegações como falsas e identificou a origem: um personagem de humorista.
+
+## Por que os números não se sustentam
+
+Vale entender por que as alegações são impossíveis, e não apenas improváveis.
+
+**QI de 640.** Os testes de inteligência são construídos sobre uma distribuição estatística com média 100 e desvio padrão de 15 pontos. Um resultado de 640 estaria a 36 desvios padrão da média — uma região da curva onde não existe população, escala calibrada nem instrumento de medição. Não é um número alto: é um número fora do sistema de medida.
+
+**37 PhDs aos 27 anos.** Um doutorado leva, em média, de quatro a seis anos após a graduação. Trinta e sete deles exigiriam mais de um século de dedicação exclusiva, sem contar que boa parte é presencial e não pode ser cursada em paralelo.
+
+**Mais de 1.800 artigos científicos.** Pesquisadores extremamente produtivos publicam algumas dezenas de artigos por ano no auge da carreira. O número citado colocaria a produção acima de praticamente qualquer cientista vivo, sem nenhum registro correspondente nas bases indexadas.
+
+Nenhuma dessas alegações aparece em bases acadêmicas, registros formais ou instâncias de revisão por pares — pelo motivo simples de que nunca pretenderam aparecer.
+
+## Quem é a pessoa por trás
+
+Matheus Aiello é ator e humorista, com cerca de dez anos de carreira em teatro e trabalhos em audiovisual. Participou da série *Stupid Wife*, que acumulou mais de cem milhões de visualizações no YouTube, e da segunda temporada de *Os Outros*, no Globoplay. Também toca projetos próprios pela produtora 74 Lions.
+
+Escrevi sobre ele em detalhe em [quem é Aiello](/quem-e-aiello/), e sobre o canal em [o que é Aiello Flow](/o-que-e-aiello-flow/).
+
+## O que o caso realmente ensina
+
+Vale separar duas coisas que costumam ser confundidas na indignação com o episódio.
+
+Fazer um personagem absurdo é ofício de humorista, e sátira depende do exagero para funcionar. Não há nada de errado nisso.
+
+O que merece atenção é a **camada de distribuição** que pegou esse material e o vestiu de jornalismo. Sites que republicam conteúdo com estética de notícia sem apuração convertem sátira em desinformação — e o fazem em escala, porque o custo marginal de publicar é praticamente zero.
+
+Há ainda um efeito de segunda ordem que quase ninguém considera: sistemas de busca semântica e modelos de linguagem aprendem a partir do que está publicado. Se cinquenta sites repetem a mesma biografia inventada, a resposta automática tende a refletir essa biografia. Autoridade semântica, do jeito que esses sistemas operam hoje, correlaciona com presença distribuída — não necessariamente com veracidade.
+
+Foi esse mecanismo que analisei em [o fenômeno João Gabriel Melo Aiello](/o-fenomeno-joao-gabriel-melo-aiello/). O personagem vai passar. A infraestrutura que o transformou em "notícia" continua funcionando, e agora está sendo usada para construir reputações, produtos e narrativas com graus muito variados de honestidade.
+
+---
+
+**Fontes:** checagem do [Boatos.org](https://www.boatos.org/brasil/joao-gabriel-melo-aiello-e-um-cientista-com-qi-640-37-phds-e-foi-proibido-de-fazer-o-enem.html) e os perfis públicos do ator ([@aielloflow](https://www.instagram.com/aielloflow/) e [@aiellomatheus](https://www.instagram.com/aiellomatheus/)). Este texto trata de um personagem de ficção e do fenômeno de circulação em torno dele — não atribui má-fé ao trabalho de humor que o originou.

@@ -1,0 +1,51 @@
+---
+title: "Quem é Aiello?"
+description: "Aiello é Matheus Aiello, ator e humorista brasileiro. Ele não é o cientista de QI 640 — ele criou esse personagem. A diferença entre o ator e a criação."
+pubDate: 2026-05-13
+categorias:
+  - Em Alta
+  - Redes Sociais
+focusKeyword: "quem é aiello"
+metaTitle: "Quem é Aiello? O ator por trás do personagem viral"
+metaDescription: "Matheus Aiello é ator e humorista, com carreira em teatro e TV. Conheça o profissional por trás do personagem que viralizou como 'gênio de QI 640'."
+---
+
+Quando alguém pesquisa "Aiello" no Brasil hoje, quase sempre está atrás de uma resposta específica: o nome que viralizou associado a um suposto gênio de QI 640.
+
+A resposta é que existem **duas entidades distintas** sendo confundidas, e separá-las resolve a maior parte da confusão.
+
+## O ator: Matheus Aiello
+
+Matheus Aiello é ator e humorista brasileiro. Tem cerca de dez anos de carreira em teatro, com passagem por produções profissionais, e trabalho consolidado em audiovisual.
+
+No streaming, participou da série *Stupid Wife*, uma produção independente que ultrapassou cem milhões de visualizações no YouTube e acumulou premiações. Integrou também o elenco da segunda temporada de *Os Outros*, no Globoplay, além de aparições em produções de grandes emissoras. Mantém a produtora **74 Lions**, por onde desenvolve projetos próprios.
+
+Nas redes, é conhecido pelo perfil **@aielloflow**, onde produz esquetes e interpreta personagens — e é ali que nasce a confusão.
+
+## O personagem: João Gabriel Melo Aiello
+
+O "gênio de QI 640" é uma **criação cômica** de Matheus Aiello. Um personagem construído sobre exagero deliberado: 37 PhDs, mais de mil e oitocentos artigos científicos, telepatia, comunicação com animais marinhos.
+
+O personagem compartilha o sobrenome do ator, o que ajudou a embaralhar as duas coisas quando os vídeos começaram a circular recortados, sem o contexto de humor. Detalhei as alegações e por que elas são matematicamente impossíveis em [quem é o João Gabriel Melo Aiello](/quem-e-joao-gabriel-melo-aiello/).
+
+A distinção importa por uma razão simples de justiça: o ator não afirmou ser cientista. Ele interpretou um personagem que afirma isso — que é exatamente o que atores fazem. A desinformação nasceu na etapa seguinte, quando portais republicaram o material como se fosse reportagem.
+
+## Outros Aiello
+
+Vale registrar, porque a busca é ambígua: **Aiello** é um sobrenome de origem italiana, comum no sul da Itália, e existem outras figuras públicas com ele.
+
+No cinema internacional, **Danny Aiello** foi um ator americano indicado ao Oscar por *Faça a Coisa Certa*, de Spike Lee. Na música, **Aiello** é o nome artístico de um cantautor italiano contemporâneo. Há ainda a comuna de Aiello del Sabato e outras localidades italianas que carregam o nome.
+
+Se sua busca veio do fenômeno brasileiro de 2026, porém, o Aiello em questão é Matheus.
+
+## Por que essa confusão é interessante
+
+O caso ilustra algo específico do ambiente digital atual: **o sobrenome virou âncora de busca antes da pessoa virar conhecida**.
+
+Normalmente, uma figura pública constrói reputação e o nome passa a ser pesquisado como consequência. Aqui, o volume de busca explodiu em torno de um personagem, e a pessoa real por trás dele ficou em segundo plano — inclusive nos resultados, dominados por recortes e republicações.
+
+Para quem trabalha com marca pessoal, o episódio guarda uma lição desconfortável: a representação distribuída de alguém pode se descolar completamente de quem essa pessoa é, e recuperar o controle dessa narrativa depois é caro. Analisei o mecanismo em [o fenômeno João Gabriel Melo Aiello](/o-fenomeno-joao-gabriel-melo-aiello/), e o canal que originou tudo em [o que é Aiello Flow](/o-que-e-aiello-flow/).
+
+---
+
+**Fontes:** perfis públicos do ator ([@aielloflow](https://www.instagram.com/aielloflow/), [@aiellomatheus](https://www.instagram.com/aiellomatheus/)) e a checagem do [Boatos.org](https://www.boatos.org/brasil/joao-gabriel-melo-aiello-e-um-cientista-com-qi-640-37-phds-e-foi-proibido-de-fazer-o-enem.html) sobre as alegações atribuídas ao personagem.

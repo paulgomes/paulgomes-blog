@@ -38,3 +38,9 @@ A figura específica vai desaparecer ou se reinventar, como acontece com a maior
 Para quem trabalha com marca, posicionamento, percepção pública ou qualquer atividade que dependa de credibilidade, o caso oferece uma leitura clara. A reputação no ambiente digital atual é menos sobre o que se é, e mais sobre quão coerente e distribuída é a representação daquilo que se afirma ser. Isso não é necessariamente uma boa notícia, mas é a paisagem em que se opera.
 
 A questão que fica não é se Aiello é verdadeiro. A questão é por que a pergunta demora tanto para ser feita.
+
+---
+
+**Atualização.** A origem foi identificada depois que este texto saiu: trata-se de um personagem de humor do ator Matheus Aiello, e a checagem do [Boatos.org](https://www.boatos.org/brasil/joao-gabriel-melo-aiello-e-um-cientista-com-qi-640-37-phds-e-foi-proibido-de-fazer-o-enem.html) classificou as alegações como falsas. Isso não enfraquece a análise acima — reforça: a sátira era evidente na fonte, e mesmo assim atravessou a camada de distribuição vestida de reportagem.
+
+Detalhamento em três textos: [quem é o João Gabriel Melo Aiello](/quem-e-joao-gabriel-melo-aiello/), [quem é Aiello](/quem-e-aiello/) e [o que é Aiello Flow](/o-que-e-aiello-flow/).
