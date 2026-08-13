@@ -9,7 +9,7 @@ metaTitle: "Projeto Gateway"
 metaDescription: "Em 1983, um documento técnico do Exército dos Estados Unidos analisou seriamente essas possibilidades dentro de um programa ligado à CIA chamado Gateway..."
 ---
 
-# Quando a CIA Investigou Consciência, Frequência e Realidades Não Físicas
+## Quando a CIA Investigou Consciência, Frequência e Realidades Não Físicas
 
 Durante décadas, qualquer discussão envolvendo expansão da consciência, projeção astral ou estados alterados da mente foi automaticamente colocada no mesmo campo de teorias marginais e misticismo moderno.
 

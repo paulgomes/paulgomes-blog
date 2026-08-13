@@ -25,7 +25,7 @@ type Props = CollectionEntry<'blog'>['data'] & {
   alternates?: Alternate[];
 };
 
-const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categorias = [], minutes, id, lang = DEFAULT_LANG, alternates = [] } = Astro.props as Props & { categorias?: Categoria[]; minutes?: number; id?: string };
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categorias = [], minutes, id, lang = DEFAULT_LANG, alternates = [], faq } = Astro.props as Props & { categorias?: Categoria[]; minutes?: number; id?: string };
 const heroAlt = heroImageAlt || title;
 const t = useTranslations(lang);
 
@@ -67,6 +67,22 @@ const articleSchema = {
     : {}),
 };
 
+// FAQPage — só quando o post declara `faq` no frontmatter. Emitir a marcação
+// vazia ou inferida do corpo seria pior que não emitir: schema que não
+// corresponde ao conteúdo visível é violação de diretriz.
+const faqSchema = faq && faq.length > 0
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      inLanguage: BCP47[lang],
+      mainEntity: faq.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.a },
+      })),
+    }
+  : null;
+
 // BreadcrumbList (Home > Blog > Categoria > Post) — navegacao estruturada pro Google.
 const cats = categorias as Categoria[];
 const breadcrumbSchema = breadcrumbList([
@@ -97,6 +113,9 @@ const breadcrumbSchema = breadcrumbList([
 
     <!-- BreadcrumbList -->
     <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+    <!-- FAQPage (apenas quando o post declara `faq` no frontmatter) -->
+    {faqSchema && <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
 
     <!-- Open Graph article-specific (BaseHead ja emitiu og:type=article via prop) -->
     <meta property="article:published_time" content={publishedISO} />

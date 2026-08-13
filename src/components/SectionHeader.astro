@@ -5,9 +5,16 @@ interface Props {
   description?: string;
   href?: string;
   hrefLabel?: string;
+  /**
+   * Nível do heading. Default `h2`, que é o correto quando o componente abre uma
+   * SEÇÃO dentro de uma página que já tem seu `h1`. Páginas cujo título principal
+   * é este componente — as de categoria — devem passar `h1`, senão a página fica
+   * sem heading de primeiro nível.
+   */
+  as?: 'h1' | 'h2';
 }
 
-const { eyebrow, title, description, href, hrefLabel = 'Ver todos →' } = Astro.props;
+const { eyebrow, title, description, href, hrefLabel = 'Ver todos →', as: Heading = 'h2' } = Astro.props;
 ---
 
 <header class="mb-12 flex flex-col items-center gap-4 text-center">
@@ -16,9 +23,9 @@ const { eyebrow, title, description, href, hrefLabel = 'Ver todos →' } = Astro
       ◆ {eyebrow}
     </p>
   )}
-  <h2 class="font-display text-2xl font-bold leading-tight tracking-tight md:text-4xl max-w-2xl">
+  <Heading class="font-display text-2xl font-bold leading-tight tracking-tight md:text-4xl max-w-2xl">
     {title}
-  </h2>
+  </Heading>
   {description && (
     <p class="text-base md:text-lg max-w-xl" style="color: var(--color-muted)">
       {description}

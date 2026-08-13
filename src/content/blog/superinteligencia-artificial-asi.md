@@ -10,7 +10,7 @@ metaTitle: "Superinteligência Artificial (ASI)"
 metaDescription: "Enquanto isso, silenciosamente, uma corrida muito maior acontece nos bastidores: a criação da Superinteligência Artificial, ou Artificial..."
 ---
 
-# O Momento em Que a Máquina Deixa de Ser Ferramenta
+## O Momento em Que a Máquina Deixa de Ser Ferramenta
 
 Existe uma diferença brutal entre usar inteligência artificial e viver em um mundo governado por ela.
 

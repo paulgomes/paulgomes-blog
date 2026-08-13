@@ -18,6 +18,18 @@ const postSchema = ({ image }: { image: () => any }) =>
 		// Enum dinamico — vem do CATEGORIAS gerado por /api/categorias/sync
 		categorias: z.array(z.enum(CATEGORIAS as unknown as [string, ...string[]])).default([]),
 		featured: z.boolean().optional().default(false),
+		/**
+		 * Perguntas e respostas do post, emitidas como JSON-LD `FAQPage`.
+		 *
+		 * Nota honesta sobre o retorno: desde 2023 o Google restringiu o rich
+		 * result de FAQ a sites governamentais e de saúde, então NÃO espere as
+		 * sanfonas no resultado de busca. O valor aqui é outro e alinhado ao
+		 * foco GEO/AEO do site: dar a sistemas de IA um par pergunta-resposta
+		 * explícito e citável, em vez de deixá-los inferir do corpo do texto.
+		 */
+		faq: z
+			.array(z.object({ q: z.string().min(3), a: z.string().min(10) }))
+			.optional(),
 	});
 
 const blog = defineCollection({

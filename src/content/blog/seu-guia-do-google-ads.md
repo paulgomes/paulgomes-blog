@@ -11,7 +11,7 @@ metaTitle: "Seu guia do Google Ads"
 metaDescription: "Seu guia do Google Ads Alcance novos clientes e expanda seus negócios com o Google Ads, a solução de publicidade on-line do Google."
 ---
 
-# Seu guia do Google Ads
+## Seu guia do Google Ads
 
 Alcance novos clientes e expanda seus negócios com o Google Ads, a solução de publicidade on-line do Google. Esses guias foram criados com o objetivo de ajudar você a começar a usar o Google Ads rapidamente para criar anúncios bem-sucedidos e transformar em receita seu investimento em publicidade. Basta escolher o caminho certo para você começar.
 
