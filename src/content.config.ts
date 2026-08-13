@@ -19,6 +19,19 @@ const postSchema = ({ image }: { image: () => any }) =>
 		categorias: z.array(z.enum(CATEGORIAS as unknown as [string, ...string[]])).default([]),
 		featured: z.boolean().optional().default(false),
 		/**
+		 * Título/description alternativos para SEO, herdados da importação do
+		 * WordPress. Existem em ~205 posts e até agora eram DESCARTADOS pelo Zod
+		 * por não estarem declarados aqui.
+		 *
+		 * Parte deles é reescrita editorial legítima e mais curta; parte é o
+		 * original cortado com reticências. `src/lib/seo-meta.ts` decide qual
+		 * usar — nunca aplique estes campos direto.
+		 */
+		metaTitle: z.string().optional(),
+		metaDescription: z.string().optional(),
+		/** Palavra-chave alvo do post. Informativa; não altera renderização. */
+		focusKeyword: z.string().optional(),
+		/**
 		 * Perguntas e respostas do post, emitidas como JSON-LD `FAQPage`.
 		 *
 		 * Nota honesta sobre o retorno: desde 2023 o Google restringiu o rich

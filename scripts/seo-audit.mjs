@@ -166,7 +166,6 @@ function auditSitemap() {
 async function auditContent() {
   const files = (await readdir(BLOG)).filter((f) => /\.(md|mdx)$/.test(f));
   let thin = 0;
-  let longDesc = 0;
 
   for (const file of files) {
     const slug = file.replace(/\.(md|mdx)$/, '');
@@ -193,11 +192,6 @@ async function auditContent() {
 
     if (!description) {
       err('frontmatter', `${slug}: sem description (o Google inventa o snippet)`);
-    } else if (description.length > 165) {
-      // Herança da importação do WordPress, que cortava em ~200 chars. Não
-      // impede indexação — só desperdiça o final do snippet. Contado em
-      // agregado para não afogar os problemas reais em ruído.
-      longDesc++;
     }
 
     const words = body
@@ -214,7 +208,44 @@ async function auditContent() {
       warn('conteudo', `${slug}: ${words} palavras (abaixo de ${THIN_WORDS})`);
     }
   }
-  return { total: files.length, thin, longDesc };
+  return { total: files.length, thin };
+}
+
+// --- 10: o que de fato sai no HTML -----------------------------------------
+
+/**
+ * Mede <title> e meta description do HTML CONSTRUÍDO, não do frontmatter.
+ * Depois que `src/lib/seo-meta.ts` passou a escolher entre `title` e
+ * `metaTitle`, o frontmatter deixou de descrever o que o Google vê.
+ */
+async function auditRendered(files) {
+  let longTitle = 0;
+  let longDesc = 0;
+
+  for (const file of files) {
+    const route = '/' + path.relative(DIST, file).replace(/index\.html$/, '');
+    if (route.startsWith('/painel')) continue;
+    const html = await readFile(file, 'utf8');
+
+    const t = /<title>([\s\S]*?)<\/title>/.exec(html);
+    if (t) {
+      const title = t[1].replace(/\s+/g, ' ').trim();
+      if (/(\.{3}|…)\s*$/.test(title)) {
+        err('render', `${route}: <title> termina em reticências -> "${title}"`);
+      }
+      if (title.length > 60) longTitle++;
+    }
+
+    const d = /<meta name="description" content="([\s\S]*?)"/.exec(html);
+    if (d) {
+      const desc = d[1].replace(/\s+/g, ' ').trim();
+      if (/(\.{3}|…)\s*$/.test(desc)) {
+        err('render', `${route}: meta description termina em reticências`);
+      }
+      if (desc.length > 165) longDesc++;
+    }
+  }
+  return { longTitle, longDesc };
 }
 
 // --- main ------------------------------------------------------------------
@@ -230,13 +261,14 @@ const htmlFiles = await walkHtml(DIST);
 await auditInternalLinks(htmlFiles, redirectSources);
 const sitemapCount = auditSitemap();
 const content = await auditContent();
+const rendered = await auditRendered(htmlFiles);
 
 console.log('=== Auditoria de SEO ===');
 console.log(`páginas HTML     ${htmlFiles.length}`);
 console.log(`regras _redirects ${rules.length}`);
 console.log(`URLs no sitemap  ${sitemapCount}`);
 console.log(`posts            ${content.total} (${content.thin} com menos de ${THIN_WORDS} palavras)`);
-console.log(`descriptions > 165 chars: ${content.longDesc} (o Google trunca o final; herança da importação)`);
+console.log(`no HTML: ${rendered.longTitle} titles > 60 chars, ${rendered.longDesc} descriptions > 165 chars`);
 
 const byCat = (list) => {
   const g = {};

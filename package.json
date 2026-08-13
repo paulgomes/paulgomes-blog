@@ -14,7 +14,8 @@
     "translate": "node scripts/translate-posts.mjs",
     "translate:test": "node scripts/translate-posts.test.mjs",
     "readiness:test": "node --experimental-strip-types --import ./scripts/register-ts-hook.mjs scripts/readiness.test.mjs",
-    "seo:audit": "node scripts/seo-audit.mjs"
+    "seo:audit": "node scripts/seo-audit.mjs",
+    "seo:meta:test": "node --experimental-strip-types --import ./scripts/register-ts-hook.mjs scripts/seo-meta.test.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",

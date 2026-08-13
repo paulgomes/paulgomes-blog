@@ -14,6 +14,7 @@ import { CATEGORIA_SLUGS, CATEGORIA_COLORS, type Categoria } from '../lib/catego
 import { breadcrumbList, SCHEMA_ID } from '../lib/schema';
 import { SITE_CONFIG } from '../config/site';
 import LangSwitcher from '../components/LangSwitcher.astro';
+import { seoDescription, seoTitle } from '../lib/seo-meta';
 import { DEFAULT_LANG, BCP47, useTranslations, postPath, type Alternate, type Lang } from '../i18n';
 
 type Props = CollectionEntry<'blog'>['data'] & {
@@ -28,6 +29,16 @@ type Props = CollectionEntry<'blog'>['data'] & {
 const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categorias = [], minutes, id, lang = DEFAULT_LANG, alternates = [], faq } = Astro.props as Props & { categorias?: Categoria[]; minutes?: number; id?: string };
 const heroAlt = heroImageAlt || title;
 const t = useTranslations(lang);
+
+// O <title> e a meta description podem usar a reescrita editorial do
+// frontmatter, quando ela existe e é legítima. O H1 e o schema seguem usando o
+// `title` real — quem lê a página vê o título completo.
+const { metaTitle, metaDescription } = Astro.props as Props & {
+  metaTitle?: string;
+  metaDescription?: string;
+};
+const headTitle = seoTitle(title, metaTitle);
+const headDescription = seoDescription(description, metaDescription);
 
 // URL canônica absoluta para os botões de compartilhamento.
 const shareUrl = new URL(Astro.url.pathname, Astro.site).href;
@@ -98,8 +109,8 @@ const breadcrumbSchema = breadcrumbList([
 <html lang={BCP47[lang]}>
   <head>
     <BaseHead
-      title={title}
-      description={description}
+      title={headTitle}
+      description={headDescription}
       image={heroImage
         ? (typeof heroImage === 'string' ? heroImage : heroImage.src)
         : (id ? `/og/${id}.png` : undefined)}
