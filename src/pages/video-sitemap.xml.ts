@@ -7,8 +7,13 @@ const SITE = SITE_CONFIG.url;
 // Regex pra extrair IDs de YouTube
 const YT_RE = /https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
 
-// Captura ID em <YouTube id="..." />
-const YT_COMPONENT_RE = /<YouTube\s+id=["']([a-zA-Z0-9_-]{11})["']\s*\/>/g;
+// Captura ID em <YouTube id="..." /> (com ou sem outras props, ex.: title)
+const YT_COMPONENT_RE = /<YouTube\s+[^>]*?id=["']([a-zA-Z0-9_-]{11})["'][^>]*?\/>/g;
+
+// Captura ID em iframe cru. Necessario para posts .md gerenciados pelo painel:
+// eles nao podem virar .mdx (o painel grava sempre `${slug}.md`, o que criaria
+// arquivo duplicado no proximo edit), entao o embed neles e HTML puro.
+const YT_IFRAME_RE = /(?:youtube-nocookie\.com|youtube\.com)\/embed\/([a-zA-Z0-9_-]{11})/g;
 
 function escapeXml(s: string): string {
   return s
@@ -38,6 +43,8 @@ export const GET: APIRoute = async () => {
     while ((m = YT_RE.exec(rawBody)) !== null) ids.add(m[1]);
     YT_COMPONENT_RE.lastIndex = 0;
     while ((m = YT_COMPONENT_RE.exec(rawBody)) !== null) ids.add(m[1]);
+    YT_IFRAME_RE.lastIndex = 0;
+    while ((m = YT_IFRAME_RE.exec(rawBody)) !== null) ids.add(m[1]);
 
     if (ids.size === 0) continue;
 

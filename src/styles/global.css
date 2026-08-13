@@ -180,3 +180,30 @@
   .btn-neu:hover,
   .btn-neu:active { transition: none; transform: none; }
 }
+
+/* ==========================================================================
+   Embed de vídeo em markdown puro (.md)
+
+   O componente YouTube.astro tem <style> escopado, que não alcança HTML
+   escrito dentro de um arquivo .md. Posts gerenciados pelo painel precisam
+   continuar como .md — o painel grava sempre `${slug}.md`, e renomear para
+   .mdx criaria um arquivo duplicado no próximo edit. Para esses, o embed é
+   iframe cru e o estilo vive aqui.
+   ========================================================================== */
+
+.yt-embed {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  margin: 2rem 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #000;
+}
+.yt-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}

@@ -39,6 +39,10 @@ Para quem trabalha com marca, posicionamento, percepção pública ou qualquer a
 
 A questão que fica não é se Aiello é verdadeiro. A questão é por que a pergunta demora tanto para ser feita.
 
+## Comentei este caso em vídeo
+
+<div class="yt-embed"><iframe src="https://www.youtube-nocookie.com/embed/12jvnM9vrl4" title="Paul Gomes comenta o caso João Gabriel Melo Aiello" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+
 ---
 
 **Atualização.** A origem foi identificada depois que este texto saiu: trata-se de um personagem de humor do ator Matheus Aiello, e a checagem do [Boatos.org](https://www.boatos.org/brasil/joao-gabriel-melo-aiello-e-um-cientista-com-qi-640-37-phds-e-foi-proibido-de-fazer-o-enem.html) classificou as alegações como falsas. Isso não enfraquece a análise acima — reforça: a sátira era evidente na fonte, e mesmo assim atravessou a camada de distribuição vestida de reportagem.
