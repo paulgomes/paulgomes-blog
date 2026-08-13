@@ -49,11 +49,20 @@ export const SITE_CONFIG: TenantConfig = {
       'Tecnologia',
       'Negócios',
     ],
+    // `sameAs` é o que permite ao buscador consolidar perfis espalhados numa
+    // única entidade. Numa busca por nome disputada com homônimos, cada perfil
+    // confirmado aqui ajuda a separar esta pessoa das outras — então a lista
+    // deve conter TODO perfil oficial, não só as redes principais.
     sameAs: [
       'https://www.linkedin.com/in/inpaulgomes/',
       'https://www.instagram.com/paulgomes/',
       'https://www.youtube.com/@paulgomesx',
       'https://x.com/paullgomes',
+      // TODO: incluir a URL real do app na App Store. Ela aparece na busca por
+      // "paul gomes", mas o endereço da App Store carrega um ID numérico
+      // (…/app/paul-gomes/id000000000) que precisa ser copiado da loja. Um
+      // sameAs que aponta para o lugar errado enfraquece a entidade em vez de
+      // reforçá-la, então fica de fora até termos o endereço correto.
     ],
   },
   organization: {

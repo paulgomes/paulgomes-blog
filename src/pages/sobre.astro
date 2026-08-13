@@ -7,15 +7,42 @@ import { Image } from 'astro:assets';
 import paulAvatar from '../assets/brand/paul-avatar.png';
 import signature from '../assets/brand/signature-paul-gomes.webp';
 import { SITE_TITLE } from '../consts';
+import { SCHEMA_ID } from '../lib/schema';
+import { SITE_CONFIG } from '../config/site';
+
+/**
+ * `ProfilePage` é o tipo que o Google usa para ligar uma URL a uma PESSOA.
+ *
+ * Isso importa aqui mais do que em qualquer outra página do site: a busca por
+ * "Paul Gomes" é disputada por homônimos com sinais de entidade mais fortes
+ * (um piloto de Stock Car com verbete na Wikipédia, um canal de conserto de
+ * GPU com 200 mil inscritos, um deputado estadual). Sem uma página declarada
+ * como perfil, o buscador não tem âncora para separar uma pessoa da outra.
+ *
+ * O `mainEntity` aponta para o mesmo @id do Person do grafo base, em vez de
+ * repetir os dados: entidade duplicada com @id diferente é entidade nova, e o
+ * efeito seria o oposto do pretendido.
+ */
+const profileSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  '@id': `${SITE_CONFIG.url}/sobre/#profilepage`,
+  url: `${SITE_CONFIG.url}/sobre/`,
+  name: `${SITE_CONFIG.author.name} — ${SITE_CONFIG.author.jobTitle}`,
+  inLanguage: SITE_CONFIG.locale,
+  isPartOf: { '@id': SCHEMA_ID.website },
+  mainEntity: { '@id': SCHEMA_ID.person },
+};
 ---
 
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <BaseHead
-      title={`Sobre — ${SITE_TITLE}`}
-      description="Paul Gomes — fundador do Grupo WYS. Ensaios sobre IA, GEO, SEO, arquitetura digital e o futuro dos negócios."
+      title="Quem é Paul Gomes — Fundador do Grupo WYS"
+      description="Paul Gomes é fundador e CEO do Grupo WYS. Escreve sobre inteligência artificial, GEO, SEO, branding e o futuro dos negócios."
     />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(profileSchema)} />
   </head>
   <body>
     <Header />
@@ -24,8 +51,11 @@ import { SITE_TITLE } from '../consts';
       <div class="sobre-grid">
         <!-- Coluna esquerda: texto -->
         <div class="sobre-content">
-          <p class="sobre-eyebrow">Paul Gomes — Thinking Forward</p>
-          <h1 class="sobre-title font-display">Sobre</h1>
+          <p class="sobre-eyebrow">Sobre · Thinking Forward</p>
+          <!-- O h1 carrega o NOME, não a palavra "Sobre": esta é a página que
+               disputa a busca pelo nome próprio, e o heading é um dos sinais
+               que o buscador usa para decidir de quem a página fala. -->
+          <h1 class="sobre-title font-display">Paul Gomes</h1>
 
           <article class="sobre-body">
             <p class="sobre-lead">Sou Paul Gomes.</p>
