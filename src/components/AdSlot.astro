@@ -1,21 +1,31 @@
 ---
-// Espaço reservado para banner ads (leaderboard / billboard responsivo).
-// Por enquanto mostra um placeholder "Publicidade". Para ativar um anúncio real:
-//   • AdSense: colar o <ins class="adsbygoogle" ...> dentro de [data-ad-slot] e
-//     incluir o loader do AdSense (atualmente removido do <head> por performance).
-//   • Outra rede / banner próprio: substituir o conteúdo de [data-ad-slot] pelo markup.
+// Banner AdSense responsivo (leaderboard / billboard).
+// O loader do AdSense fica no <head> (BaseHead.astro), com o publisher
+// ca-pub-6639862760844520. Para usar um bloco de anúncio específico, informe
+// o `slot` (data-ad-slot do painel do AdSense); sem ele o Auto Ads decide.
 interface Props {
   label?: string;
+  slot?: string;
 }
-const { label = 'Publicidade' } = Astro.props;
+const { label = 'Publicidade', slot } = Astro.props;
+const client = 'ca-pub-6639862760844520';
 ---
 
 <aside class="adslot" aria-label="Publicidade">
   <div class="container-wide">
     <p class="adslot-eyebrow">{label}</p>
     <div class="adslot-inner" data-ad-slot>
-      <!-- Insira aqui o código do banner (728x90 / 970x250 responsivo). -->
-      <span class="adslot-placeholder">Espaço para banner</span>
+      <ins
+        class="adsbygoogle"
+        style="display:block;width:100%"
+        data-ad-client={client}
+        data-ad-slot={slot}
+        data-ad-format="horizontal"
+        data-full-width-responsive="true"
+      ></ins>
+      <script is:inline>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
     </div>
   </div>
 </aside>
@@ -37,31 +47,27 @@ const { label = 'Publicidade' } = Astro.props;
     opacity: 0.55;
   }
 
+  /* Bloco, não flex: o AdSense precisa medir a largura do <ins> para
+     escolher o formato (em flex ele recebe availableWidth=0 e falha). */
   .adslot-inner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
     width: 100%;
     max-width: 970px;
     margin: 0 auto;
     min-height: 90px;
-    border: 1px dashed var(--color-border);
     border-radius: 12px;
-    background: var(--color-subtle);
     overflow: hidden;
+  }
+
+  .adslot-inner :global(ins.adsbygoogle) {
+    display: block;
+    width: 100%;
   }
 
   @media (min-width: 768px) {
     .adslot-inner {
       min-height: 120px;
     }
-  }
-
-  .adslot-placeholder {
-    font-family: var(--font-sans);
-    font-size: 0.8rem;
-    color: var(--color-muted);
-    opacity: 0.5;
   }
 
   :global(.dark) .adslot-inner {
