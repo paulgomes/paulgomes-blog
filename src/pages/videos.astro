@@ -1,0 +1,215 @@
+---
+// Seção de vídeos do canal do YouTube.
+//
+// Os dados vêm de src/data/videos.json, commitado no repo e atualizado por
+// `npm run videos:sync`. Buscar no build deixaria a página refém de uma chamada
+// externa: se a API oscilasse, a seção sumiria do site sem ninguém tocar em
+// nada.
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import { SCHEMA_ID } from '../lib/schema';
+import { SITE_CONFIG } from '../config/site';
+import data from '../data/videos.json';
+
+const { videos, channel } = data;
+
+const title = 'Vídeos — Paul Gomes';
+const description =
+  'Vídeos de Paul Gomes sobre inteligência artificial, GEO, marcas e o futuro dos negócios. Análises e leituras estratégicas em formato curto.';
+
+const fmtDate = (iso: string) =>
+  new Date(`${iso}T12:00:00Z`).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+
+/**
+ * `VideoObject` para cada vídeo, dentro de uma `ItemList`.
+ *
+ * `contentUrl` aponta para o YouTube e não para cá: o vídeo não está hospedado
+ * neste domínio, e declarar o contrário seria descrever errado onde o arquivo
+ * vive. O `embedUrl` usa o domínio sem cookie, igual ao player do site.
+ */
+const videoSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  '@id': `${SITE_CONFIG.url}/videos/#itemlist`,
+  name: 'Vídeos de Paul Gomes',
+  numberOfItems: videos.length,
+  itemListElement: videos.map((v, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'VideoObject',
+      name: v.title,
+      description: v.description || v.title,
+      thumbnailUrl: v.thumbnail,
+      uploadDate: v.published,
+      contentUrl: v.url,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${v.id}`,
+      author: { '@id': SCHEMA_ID.person },
+      publisher: { '@id': SCHEMA_ID.organization },
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <BaseHead title={title} description={description} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(videoSchema)} />
+  </head>
+  <body>
+    <Header />
+
+    <main>
+      <section class="container-wide pt-16 pb-8 md:pt-24">
+        <SectionHeader
+          as="h1"
+          eyebrow="Vídeos"
+          title="Vídeos"
+          description="Análises sobre inteligência artificial, marcas e o futuro dos negócios."
+          href={channel.url}
+          hrefLabel="Ver o canal no YouTube →"
+        />
+      </section>
+
+      {videos.length > 0 ? (
+        <section class="container-wide pb-24 border-t" style="border-color: var(--color-border)">
+          <div class="video-grid pt-12">
+            {videos.map((v) => (
+              <article class="video-card">
+                <a href={v.url} target="_blank" rel="noopener noreferrer" class="video-link">
+                  <div class="video-thumb">
+                    {/* loading lazy + dimensões explícitas evitam deslocamento de
+                        layout enquanto as 15 miniaturas carregam. */}
+                    <img
+                      src={v.thumbnail}
+                      alt={v.title}
+                      width="480"
+                      height="360"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span class="video-play" aria-hidden="true">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </span>
+                  </div>
+                  <time class="video-date" datetime={v.published}>{fmtDate(v.published)}</time>
+                  <h2 class="video-title">{v.title}</h2>
+                </a>
+              </article>
+            ))}
+          </div>
+
+          <p class="video-note">
+            Estes são os vídeos mais recentes. O catálogo completo está
+            <a href={channel.url} target="_blank" rel="noopener noreferrer"> no canal</a>.
+          </p>
+        </section>
+      ) : (
+        <section class="container-wide pb-24">
+          <p class="video-note">
+            Nenhum vídeo sincronizado ainda. Veja o
+            <a href={channel.url} target="_blank" rel="noopener noreferrer"> canal no YouTube</a>.
+          </p>
+        </section>
+      )}
+    </main>
+
+    <Footer />
+
+    <style>
+      .video-grid {
+        display: grid;
+        gap: 2.5rem 1.75rem;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 640px) {
+        .video-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (min-width: 1024px) {
+        .video-grid { grid-template-columns: repeat(3, 1fr); }
+      }
+
+      .video-link { display: block; text-decoration: none; color: inherit; }
+
+      .video-thumb {
+        position: relative;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border-radius: 0.75rem;
+        background: var(--color-subtle);
+        margin-bottom: 0.9rem;
+      }
+      .video-thumb img {
+        width: 100%;
+        height: 100%;
+        /* A miniatura do YouTube vem em 4:3 com tarjas; o cover recorta para
+           16:9 sem distorcer a imagem. */
+        object-fit: cover;
+        display: block;
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .video-link:hover .video-thumb img { transform: scale(1.04); }
+
+      .video-play {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 52px;
+        height: 52px;
+        border-radius: 9999px;
+        background: color-mix(in srgb, var(--color-ink) 82%, transparent);
+        color: var(--color-paper);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+      }
+      .video-link:hover .video-play {
+        background: var(--color-accent);
+        transform: translate(-50%, -50%) scale(1.08);
+      }
+
+      .video-date {
+        display: block;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--color-muted);
+      }
+      .video-title {
+        margin: 0.4rem 0 0;
+        font-family: var(--font-display);
+        font-size: 1.05rem;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+        transition: opacity 0.2s ease;
+      }
+      .video-link:hover .video-title { opacity: 0.65; }
+
+      .video-note {
+        margin-top: 3rem;
+        font-size: 0.88rem;
+        color: var(--color-muted);
+        text-align: center;
+      }
+      .video-note a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 4px; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .video-thumb img,
+        .video-play { transition: none; }
+        .video-link:hover .video-thumb img { transform: none; }
+      }
+    </style>
+  </body>
+</html>

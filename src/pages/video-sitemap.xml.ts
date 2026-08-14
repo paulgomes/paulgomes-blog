@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { SITE_CONFIG } from '../config/site';
+import videosData from '../data/videos.json';
 
 const SITE = SITE_CONFIG.url;
 
@@ -67,6 +68,32 @@ export const GET: APIRoute = async () => {
     </video:video>
   </url>`);
     }
+  }
+
+  // --- Vídeos do canal, listados em /videos/ -------------------------------
+  //
+  // Cada entrada aponta o <loc> para /videos/, que é a página deste site onde o
+  // vídeo aparece. O Google exige que o loc seja uma URL do próprio domínio — é
+  // por isso que a página precisa existir para os vídeos entrarem no sitemap.
+  //
+  // Os IDs já cobertos pelos posts são pulados: o mesmo vídeo declarado em duas
+  // URLs do site é conteúdo duplicado no sitemap de vídeo.
+  const jaNosPosts = new Set(
+    entries.flatMap((e) => [...e.matchAll(/embed\/([a-zA-Z0-9_-]{11})/g)].map((m) => m[1]))
+  );
+
+  for (const video of videosData.videos) {
+    if (jaNosPosts.has(video.id)) continue;
+    entries.push(`  <url>
+    <loc>${SITE}/videos/</loc>
+    <video:video>
+      <video:thumbnail_loc>${escapeXml(video.thumbnail)}</video:thumbnail_loc>
+      <video:title>${escapeXml(video.title)}</video:title>
+      <video:description>${escapeXml(video.description || video.title)}</video:description>
+      <video:player_loc>https://www.youtube.com/embed/${video.id}</video:player_loc>
+      <video:publication_date>${new Date(`${video.published}T12:00:00Z`).toISOString()}</video:publication_date>
+    </video:video>
+  </url>`);
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
