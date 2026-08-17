@@ -1,35 +1,132 @@
 ---
+/**
+ * /palestras — landing page AUTÔNOMA.
+ *
+ * Diferente do resto do site, esta página não usa <Header> nem <Footer>: ela é
+ * uma peça de conversão, e o menu completo do blog só oferece caminhos para
+ * SAIR daqui antes do formulário. No lugar deles entram uma barra mínima
+ * (marca + um botão) e um rodapé curto.
+ *
+ * O rodapé curto existe de propósito em vez de "nenhum rodapé": uma página sem
+ * link nenhum para o resto do domínio vira órfã para o rastreador e perde a
+ * ligação com a entidade Paul Gomes construída nas outras páginas — que é
+ * justamente o que sustenta a busca por "palestrante de inteligência
+ * artificial". Poucos links, escolhidos, resolvem os dois lados.
+ */
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE_TITLE } from '../consts';
-import { SCHEMA_ID } from '../lib/schema';
+import SocialIcons from '../components/SocialIcons.astro';
+import { SCHEMA_ID, breadcrumbList } from '../lib/schema';
 import { SITE_CONFIG } from '../config/site';
+import videosData from '../data/videos.json';
+
+import fotoHero from '../assets/brand/paul-gomes.webp';
+import fotoConceito from '../assets/brand/paul-ai.jpeg';
+import fotoRetrato from '../assets/brand/paul-avatar.png';
 
 const temas = [
   {
     titulo: 'A internet invisível',
-    resumo: 'A próxima camada da web não será navegada, será interpretada por modelos. O que muda quando a descoberta deixa de passar pelo clique.',
+    resumo:
+      'A próxima camada da web não será navegada, será interpretada por modelos. O que muda quando a descoberta deixa de passar pelo clique.',
   },
   {
     titulo: 'GEO: ser encontrado pelos modelos',
-    resumo: 'A disputa por atenção migrou do Google para os sistemas de IA. Como marcas viram referência dentro das respostas, não só nos resultados.',
+    resumo:
+      'A disputa por atenção migrou do Google para os sistemas de IA. Como marcas viram referência dentro das respostas, não só nos resultados.',
   },
   {
     titulo: 'Terceirizando a cognição',
-    resumo: 'A IA está moldando decisão, percepção e memória coletiva em silêncio. Uma leitura estratégica sobre dependência cognitiva e comportamento.',
+    resumo:
+      'A IA está moldando decisão, percepção e memória coletiva em silêncio. Uma leitura estratégica sobre dependência cognitiva e comportamento.',
   },
   {
     titulo: 'O futuro dos negócios na era dos agentes',
-    resumo: 'Quando o software deixa de responder e passa a agir, a vantagem competitiva muda de lugar. O que antecipar antes que vire consenso.',
+    resumo:
+      'Quando o software deixa de responder e passa a agir, a vantagem competitiva muda de lugar. O que antecipar antes que vire consenso.',
   },
 ];
 
 const formatos = [
-  { nome: 'Keynote', desc: 'Palestra de abertura ou encerramento para eventos e convenções.' },
-  { nome: 'Imersão para liderança', desc: 'Sessão fechada com o time de decisão sobre IA, GEO e estratégia digital.' },
-  { nome: 'Painel e mediação', desc: 'Participação em debates sobre o futuro da tecnologia e dos negócios.' },
+  { nome: 'Keynote', desc: 'Palestra de abertura ou encerramento para eventos e convenções.', duracao: '45 min – 1h30' },
+  { nome: 'Imersão para liderança', desc: 'Sessão fechada com o time de decisão sobre IA, GEO e estratégia digital.', duracao: '2h – meio período' },
+  { nome: 'Painel e mediação', desc: 'Participação em debates sobre o futuro da tecnologia e dos negócios.', duracao: 'Sob demanda' },
 ];
+
+/**
+ * Números da faixa de credenciais.
+ *
+ * Os três primeiros são CALCULADOS do conteúdo real do site, então continuam
+ * verdadeiros sozinhos conforme o blog cresce, e qualquer um pode conferir
+ * abrindo o /blog. Não há aqui nenhum número de audiência, evento ou empresa
+ * atendida: esses eu não tenho como verificar, e um número inventado numa
+ * página comercial é o tipo de erro que só aparece quando um cliente cobra a
+ * fonte. Quando os reais existirem, é só acrescentar um objeto nesta lista.
+ *
+ * O rótulo do ano diz "primeiro texto do arquivo", e não "X anos de
+ * experiência", porque é isso que o dado mede: 2011 vem de dois posts isolados,
+ * e o volume real começa em 2020.
+ */
+const posts = await getCollection('blog');
+const totalArtigos = posts.length;
+const anoInicial = posts.reduce(
+  (min, p) => Math.min(min, p.data.pubDate.getFullYear()),
+  new Date().getFullYear()
+);
+const totalFrentes = new Set(posts.flatMap((p) => p.data.categorias)).size;
+
+const numeros = [
+  { valor: `${totalArtigos}`, label: 'Artigos publicados sobre IA, GEO e negócios' },
+  { valor: `${anoInicial}`, label: 'Ano do primeiro texto publicado no arquivo' },
+  { valor: `${totalFrentes}`, label: 'Frentes cobertas, de IA a cibersegurança' },
+  { valor: 'WYS', label: 'Fundador e CEO do Grupo WYS' },
+];
+
+/**
+ * Fotos de palco.
+ *
+ * Vazio por enquanto — a seção inteira só aparece quando houver entrada aqui.
+ * Renderizar uma galeria vazia numa página de palestrante passa a mensagem
+ * contrária à pretendida. Para preencher: suba as fotos em /painel/midia e cole
+ * as URLs do media.paulgomes.com.br, com largura e altura reais (sem elas o
+ * layout salta enquanto a imagem carrega).
+ */
+const galeriaPalco: { src: string; alt: string; width: number; height: number }[] = [];
+
+// Alguns vídeos do canal são recortes diários cujo título é só a data. Numa
+// página comercial eles não dizem nada — ficam de fora.
+const TITULO_SO_DATA = /^\d{1,2}\s+de\s+[a-zà-ú]+\s+de\s+\d{4}$/i;
+const videos = videosData.videos.filter((v) => !TITULO_SO_DATA.test(v.title.trim())).slice(0, 3);
+
+const pageUrl = `${SITE_CONFIG.url}/palestras/`;
+
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${pageUrl}#webpage`,
+  url: pageUrl,
+  name: 'Palestras sobre inteligência artificial e GEO',
+  inLanguage: SITE_CONFIG.locale,
+  isPartOf: { '@id': SCHEMA_ID.website },
+  about: { '@id': SCHEMA_ID.person },
+  primaryImageOfPage: `${SITE_CONFIG.url}${fotoHero.src}`,
+  mainEntity: temas.map((tema) => ({
+    '@type': 'Event',
+    name: tema.titulo,
+    description: tema.resumo,
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    performer: { '@id': SCHEMA_ID.person },
+    organizer: { '@id': SCHEMA_ID.organization },
+  })),
+};
+
+// Sem menu na página, o breadcrumb passa a ser o único sinal de hierarquia que
+// sobra para o rastreador — por isso ele entra aqui, e não só nas páginas de post.
+const breadcrumbSchema = breadcrumbList([
+  { name: 'Início', item: `${SITE_CONFIG.url}/` },
+  { name: 'Palestras', item: pageUrl },
+]);
 ---
 
 <!doctype html>
@@ -39,110 +136,756 @@ const formatos = [
       title="Palestrante de inteligência artificial e GEO — Paul Gomes"
       description="Paul Gomes é palestrante sobre inteligência artificial, GEO e o futuro dos negócios. Keynote, imersão para liderança e painéis. Solicite para seu evento."
     />
-    <!-- Declara Paul Gomes como PALESTRANTE dos temas listados, ligando ao
-         mesmo @id do Person do grafo base. Sem isso a página descreve palestras
-         sem dizer à máquina de quem elas são — e é justamente essa associação
-         que sustenta consultas como "palestrante de inteligência artificial". -->
-    <script
-      is:inline
-      type="application/ld+json"
-      set:html={JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'WebPage',
-        '@id': `${SITE_CONFIG.url}/palestras/#webpage`,
-        url: `${SITE_CONFIG.url}/palestras/`,
-        name: 'Palestras sobre inteligência artificial e GEO',
-        inLanguage: SITE_CONFIG.locale,
-        isPartOf: { '@id': SCHEMA_ID.website },
-        about: { '@id': SCHEMA_ID.person },
-        mainEntity: temas.map((tema) => ({
-          '@type': 'Event',
-          name: tema.titulo,
-          description: tema.resumo,
-          eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-          performer: { '@id': SCHEMA_ID.person },
-          organizer: { '@id': SCHEMA_ID.organization },
-        })),
-      })}
-    />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(webPageSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   </head>
-  <body>
-    <Header />
 
-    <main class="container-wide pt-16 pb-24 md:pt-24">
-      <header class="max-w-3xl">
-        <p class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #0103F9">Palestras</p>
-        <h1 class="mt-3 font-display text-4xl font-bold tracking-tight md:text-6xl">Enxergar o próximo movimento antes que ele seja óbvio</h1>
-        <p class="mt-6 text-lg leading-relaxed" style="color: var(--color-muted)">
-          Falo sobre as transformações silenciosas que estão redesenhando a internet, os negócios e a forma como as pessoas pensam. Palestras para quem precisa entender a mudança enquanto ela ainda está acontecendo, e não depois.
-        </p>
-        <a href="/contato" class="cta mt-8 inline-flex items-center gap-2">Solicitar palestra <span aria-hidden="true">&rarr;</span></a>
-      </header>
+  <body class="lp">
+    <!-- Barra mínima: marca e um caminho só. -->
+    <header class="lp-nav">
+      <div class="lp-wrap lp-nav-inner">
+        <a href="/" class="lp-brand" aria-label="Paul Gomes — página inicial">Paul&nbsp;Gomes</a>
+        <!-- Todos os botões vão direto ao formulário. Mandar o visitante rolar
+             até outra faixa que só tem OUTRO botão é um clique a mais sem
+             informação nova no meio. -->
+        <a href="/contato" class="lp-btn lp-btn-sm">Solicitar palestra</a>
+      </div>
+    </header>
 
-      <!-- Temas -->
-      <section class="mt-20">
-        <h2 class="font-display text-2xl font-bold md:text-3xl">Temas</h2>
-        <div class="mt-8 grid gap-5 sm:grid-cols-2">
-          {temas.map((t) => (
-            <article class="card">
-              <h3 class="font-display text-xl font-bold">{t.titulo}</h3>
-              <p class="mt-3 text-base leading-relaxed" style="color: var(--color-muted)">{t.resumo}</p>
-            </article>
-          ))}
+    <main id="conteudo">
+      <!-- ================= HERO ================= -->
+      <section class="lp-hero">
+        <div class="lp-wrap lp-hero-grid">
+          <div class="lp-hero-copy">
+            <p class="lp-eyebrow">Palestrante de inteligência artificial e GEO</p>
+            <h1 class="lp-h1">Enxergar o próximo movimento antes que ele seja óbvio</h1>
+            <p class="lp-lead">
+              Falo sobre as transformações silenciosas que estão redesenhando a internet, os
+              negócios e a forma como as pessoas pensam. Palestras para quem precisa entender a
+              mudança enquanto ela ainda está acontecendo, e não depois.
+            </p>
+            <div class="lp-hero-actions">
+              <a href="/contato" class="lp-btn">Solicitar palestra <span aria-hidden="true">→</span></a>
+              <a href="#temas" class="lp-link">Ver os temas</a>
+            </div>
+          </div>
+
+          <div class="lp-hero-foto">
+            <Image
+              src={fotoHero}
+              alt="Paul Gomes, palestrante de inteligência artificial, de terno azul"
+              widths={[420, 640, 860]}
+              sizes="(min-width: 900px) 440px, 80vw"
+              loading="eager"
+              class="lp-hero-img"
+            />
+          </div>
         </div>
-        <p class="mt-6 text-sm" style="color: var(--color-muted)">Temas adaptados ao contexto do seu público e do seu setor.</p>
       </section>
 
-      <!-- Formatos -->
-      <section class="mt-20">
-        <h2 class="font-display text-2xl font-bold md:text-3xl">Formatos</h2>
-        <div class="mt-8 grid gap-5 sm:grid-cols-3">
-          {formatos.map((f) => (
-            <div class="card">
-              <h3 class="font-display text-lg font-bold">{f.nome}</h3>
-              <p class="mt-2 text-sm leading-relaxed" style="color: var(--color-muted)">{f.desc}</p>
+      <!-- ================= NÚMEROS ================= -->
+      <section class="lp-numeros" aria-label="Credenciais">
+        <div class="lp-wrap lp-numeros-grid">
+          {numeros.map((n) => (
+            <div class="lp-numero">
+              <p class="lp-numero-valor">{n.valor}</p>
+              <p class="lp-numero-label">{n.label}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <!-- CTA -->
-      <section class="mt-20 rounded-3xl p-10 md:p-14" style="background: color-mix(in srgb, #0103F9 8%, transparent)">
-        <h2 class="font-display text-2xl font-bold md:text-3xl">Leve essa conversa para o seu evento</h2>
-        <p class="mt-4 max-w-2xl text-base leading-relaxed" style="color: var(--color-muted)">
-          Conte o contexto, o público e a data. Retorno com tema, formato e disponibilidade.
-        </p>
-        <a href="/contato" class="cta mt-7 inline-flex items-center gap-2">Solicitar palestra <span aria-hidden="true">&rarr;</span></a>
+      <!-- ================= TEMAS ================= -->
+      <section id="temas" class="lp-secao">
+        <div class="lp-wrap">
+          <p class="lp-eyebrow lp-eyebrow-dark">Temas</p>
+          <h2 class="lp-h2">Quatro conversas que mudam a régua da sala</h2>
+          <div class="lp-temas">
+            {temas.map((t, i) => (
+              <article class="lp-tema">
+                <span class="lp-tema-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <h3 class="lp-tema-titulo">{t.titulo}</h3>
+                <p class="lp-tema-resumo">{t.resumo}</p>
+              </article>
+            ))}
+          </div>
+          <p class="lp-nota">Todo tema é adaptado ao contexto do seu público e do seu setor.</p>
+        </div>
+      </section>
+
+      <!-- ================= FOTO CONCEITO + FRASE ================= -->
+      <section class="lp-quote">
+        <Image
+          src={fotoConceito}
+          alt="Retrato de Paul Gomes se dissolvendo em partículas digitais"
+          widths={[900, 1400, 1900]}
+          sizes="100vw"
+          loading="lazy"
+          class="lp-quote-img"
+        />
+        <div class="lp-quote-overlay">
+          <div class="lp-wrap">
+            <blockquote class="lp-quote-texto">
+              A maior mudança da nossa geração não está acontecendo na tela. Está acontecendo na
+              forma como decidimos.
+            </blockquote>
+            <p class="lp-quote-autor">Paul Gomes</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= FORMATOS ================= -->
+      <section id="formatos" class="lp-secao lp-secao-alt">
+        <div class="lp-wrap">
+          <p class="lp-eyebrow lp-eyebrow-dark">Formatos</p>
+          <h2 class="lp-h2">Do palco de convenção à sala fechada de diretoria</h2>
+          <div class="lp-formatos">
+            {formatos.map((f) => (
+              <div class="lp-formato">
+                <h3 class="lp-formato-nome">{f.nome}</h3>
+                <p class="lp-formato-desc">{f.desc}</p>
+                <p class="lp-formato-duracao">{f.duracao}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SOBRE ================= -->
+      <section class="lp-secao">
+        <div class="lp-wrap lp-sobre">
+          <!-- O retrato é um recorte com fundo transparente. Solto na página ele
+               fica boiando no branco; o painel atrás transforma o recorte em
+               decisão de layout. -->
+          <div class="lp-sobre-foto">
+            <Image
+              src={fotoRetrato}
+              alt="Paul Gomes, fundador e CEO do Grupo WYS"
+              widths={[380, 560, 760]}
+              sizes="(min-width: 900px) 420px, 80vw"
+              loading="lazy"
+              class="lp-sobre-img"
+            />
+          </div>
+          <div class="lp-sobre-copy">
+            <p class="lp-eyebrow lp-eyebrow-dark">Quem sobe no palco</p>
+            <h2 class="lp-h2">Por que chamar o Paul para o seu evento</h2>
+            <p>
+              Fundador e CEO do <a href="https://agenciawys.com.br" target="_blank" rel="noopener">Grupo WYS</a>,
+              acompanho diariamente as mudanças que estão transformando a forma como as pessoas
+              pensam, trabalham, compram, criam e se relacionam.
+            </p>
+            <p>
+              Escrevo sobre inteligência artificial, GEO, SEO, arquitetura digital e comportamento
+              desde {anoInicial} — são {totalArtigos} artigos publicados que viram matéria-prima das
+              palestras. Não é teoria de slide: é o que estou testando, errando e ajustando com
+              marcas reais enquanto o mercado ainda está decidindo se acredita.
+            </p>
+            <p>
+              O que levo para o palco não é uma lista de ferramentas. É a leitura estratégica do
+              que muda quando a descoberta, a decisão e a confiança passam a ser mediadas por
+              máquinas.
+            </p>
+            <a href="/sobre" class="lp-link lp-link-dark">Conhecer a trajetória completa</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= VÍDEOS ================= -->
+      {videos.length > 0 && (
+        <section class="lp-secao lp-secao-alt">
+          <div class="lp-wrap">
+            <p class="lp-eyebrow lp-eyebrow-dark">Em vídeo</p>
+            <h2 class="lp-h2">Veja o tom antes de contratar</h2>
+            <div class="lp-videos">
+              {videos.map((v) => (
+                <a href={v.url} target="_blank" rel="noopener noreferrer" class="lp-video">
+                  <span class="lp-video-thumb">
+                    <img src={v.thumbnail} alt={v.title} width="480" height="360" loading="lazy" decoding="async" />
+                    <span class="lp-video-play" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                    </span>
+                  </span>
+                  <span class="lp-video-titulo">{v.title}</span>
+                </a>
+              ))}
+            </div>
+            <a href="/videos" class="lp-link lp-link-dark">Todos os vídeos</a>
+          </div>
+        </section>
+      )}
+
+      <!-- ================= GALERIA DE PALCO ================= -->
+      {galeriaPalco.length > 0 && (
+        <section class="lp-secao">
+          <div class="lp-wrap">
+            <p class="lp-eyebrow lp-eyebrow-dark">No palco</p>
+            <h2 class="lp-h2">Registros dos últimos eventos</h2>
+            <div class="lp-galeria">
+              {galeriaPalco.map((f) => (
+                <figure class="lp-galeria-item">
+                  <img src={f.src} alt={f.alt} width={f.width} height={f.height} loading="lazy" decoding="async" />
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <!-- ================= CTA ================= -->
+      <section id="solicitar" class="lp-cta">
+        <div class="lp-wrap lp-cta-inner">
+          <h2 class="lp-cta-titulo">Leve essa conversa para o seu evento</h2>
+          <p class="lp-cta-texto">
+            Conte o contexto, o público e a data. Retorno com tema, formato e disponibilidade.
+          </p>
+          <a href="/contato" class="lp-btn lp-btn-inverso">Solicitar palestra <span aria-hidden="true">→</span></a>
+        </div>
       </section>
     </main>
 
-    <Footer />
+    <!-- Rodapé curto: o mínimo para a página não ficar órfã. -->
+    <footer class="lp-footer">
+      <div class="lp-wrap lp-footer-inner">
+        <div>
+          <p class="lp-footer-marca">Paul Gomes</p>
+          <p class="lp-footer-nota">Palestras sobre inteligência artificial, GEO e o futuro dos negócios.</p>
+        </div>
+        <nav class="lp-footer-nav" aria-label="Links do site">
+          <a href="/">Início</a>
+          <a href="/sobre">Sobre</a>
+          <a href="/blog">Blog</a>
+          <a href="/contato">Contato</a>
+        </nav>
+        <SocialIcons size={20} className="lp-footer-social" />
+      </div>
+      <div class="lp-wrap lp-footer-base">
+        <p>© {new Date().getFullYear()} Paul Gomes · Todos os direitos reservados</p>
+        <a href="/privacidade">Privacidade</a>
+      </div>
+    </footer>
   </body>
 </html>
 
 <style>
-  .card {
-    border: 1px solid var(--color-border);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    background: color-mix(in srgb, var(--color-paper) 60%, transparent);
-    transition: border-color 0.2s ease, transform 0.2s ease;
+  /* Tokens locais. O hero e o CTA são escuros nos dois temas de propósito:
+     numa landing a hierarquia visual precisa ser previsível, e não seguir a
+     preferência de tema do visitante. */
+  .lp {
+    --lp-azul: #0103f9;
+    --lp-azul-claro: #6063ff;
+    --lp-escuro: #07070c;
   }
-  .card:hover { border-color: color-mix(in srgb, #0103F9 40%, var(--color-border)); transform: translateY(-2px); }
-  :global(.dark) .card:hover { border-color: color-mix(in srgb, #3D40FF 45%, var(--color-border)); }
+  :global(.dark) .lp { --lp-azul: #3d40ff; }
 
-  .cta {
-    background: #0103F9; color: #fff;
-    font-weight: 600; font-size: 0.95rem;
-    padding: 0.75rem 1.4rem; border-radius: 999px;
+  .lp-wrap {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1180px;
+    padding-inline: 1.25rem;
+  }
+
+  /* ---------- barra ---------- */
+  .lp-nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    /* Quase opaca: com muita transparência o texto das seções claras atravessa
+       a barra e o topo da página fica sujo durante a rolagem. */
+    background: color-mix(in srgb, var(--lp-escuro) 96%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  }
+  .lp-nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.9rem;
+  }
+  .lp-brand {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  /* ---------- botões ---------- */
+  .lp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--lp-azul);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.98rem;
+    padding: 0.85rem 1.6rem;
+    border-radius: 999px;
     text-decoration: none;
     transition: filter 0.2s ease, transform 0.2s ease;
   }
-  .cta:hover { filter: brightness(1.1); transform: translateY(-1px); }
-  :global(.dark) .cta { background: #3D40FF; }
+  .lp-btn:hover { filter: brightness(1.15); transform: translateY(-1px); }
+  .lp-btn-sm { padding: 0.55rem 1.1rem; font-size: 0.85rem; }
+  .lp-btn-inverso { background: #fff; color: var(--lp-escuro); }
+
+  .lp-link {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border-bottom: 1px solid rgb(255 255 255 / 0.35);
+    padding-bottom: 2px;
+    transition: border-color 0.2s ease;
+  }
+  .lp-link:hover { border-color: #fff; }
+  .lp-link-dark {
+    display: inline-block;
+    margin-top: 1.75rem;
+    color: var(--lp-azul);
+    border-color: color-mix(in srgb, var(--lp-azul) 40%, transparent);
+  }
+  .lp-link-dark:hover { border-color: var(--lp-azul); }
+
+  /* ---------- hero ---------- */
+  .lp-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--lp-escuro);
+    color: #fff;
+  }
+  /* Brilho azul atrás da foto — dá profundidade sem precisar de mais um asset. */
+  .lp-hero::before {
+    content: '';
+    position: absolute;
+    right: -12%;
+    top: -30%;
+    width: 70vw;
+    height: 120%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--lp-azul) 55%, transparent), transparent);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .lp-hero-grid {
+    position: relative;
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+    padding-block: 4rem 3rem;
+  }
+  @media (min-width: 900px) {
+    .lp-hero-grid {
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 4rem;
+      padding-block: 6rem 5rem;
+    }
+  }
+
+  .lp-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--lp-azul-claro);
+    margin: 0;
+  }
+  .lp-eyebrow-dark { color: var(--lp-azul); }
+
+  .lp-h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 6.2vw, 4.4rem);
+    font-weight: 800;
+    line-height: 1.03;
+    letter-spacing: -0.035em;
+    margin: 1rem 0 0;
+  }
+  .lp-lead {
+    margin: 1.5rem 0 0;
+    max-width: 34rem;
+    font-size: 1.08rem;
+    line-height: 1.65;
+    color: rgb(255 255 255 / 0.72);
+  }
+  .lp-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2.25rem;
+  }
+
+  .lp-hero-foto { position: relative; }
+  .lp-hero-img {
+    width: 100%;
+    height: auto;
+    border-radius: 1.5rem;
+    /* A foto original tem fundo cinza claro; o leve escurecimento evita que ela
+       brigue com o fundo preto do hero. */
+    filter: saturate(1.05) brightness(0.97);
+  }
+
+  /* ---------- números ---------- */
+  .lp-numeros {
+    background: var(--lp-azul);
+    color: #fff;
+  }
+  .lp-numeros-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem 1.5rem;
+    padding-block: 2.75rem;
+  }
+  @media (min-width: 860px) {
+    .lp-numeros-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  .lp-numero-valor {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 2.9rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+  .lp-numero-label {
+    margin: 0.6rem 0 0;
+    font-size: 0.83rem;
+    line-height: 1.45;
+    color: rgb(255 255 255 / 0.8);
+  }
+
+  /* ---------- seções claras ---------- */
+  .lp-secao { padding-block: 5rem; }
+  @media (min-width: 900px) { .lp-secao { padding-block: 7rem; } }
+  .lp-secao-alt { background: var(--color-subtle); }
+
+  .lp-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.6vw, 2.7rem);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.028em;
+    margin: 0.9rem 0 0;
+    max-width: 22ch;
+  }
+  .lp-nota {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+
+  /* ---------- temas ---------- */
+  .lp-temas {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 3rem;
+  }
+  @media (min-width: 760px) { .lp-temas { grid-template-columns: repeat(2, 1fr); } }
+
+  .lp-tema {
+    position: relative;
+    border: 1px solid var(--color-border);
+    border-radius: 1.25rem;
+    padding: 2rem 1.75rem 1.75rem;
+    background: var(--color-paper);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .lp-tema:hover {
+    border-color: color-mix(in srgb, var(--lp-azul) 45%, var(--color-border));
+    transform: translateY(-3px);
+  }
+  .lp-tema-num {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: var(--lp-azul);
+  }
+  .lp-tema-titulo {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0.7rem 0 0;
+  }
+  .lp-tema-resumo {
+    margin: 0.85rem 0 0;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+
+  /* ---------- frase sobre foto ---------- */
+  .lp-quote {
+    position: relative;
+    background: var(--lp-escuro);
+    isolation: isolate;
+  }
+  .lp-quote-img {
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+    max-height: 620px;
+    object-fit: cover;
+    /* O rosto está à esquerda na foto; o crop preserva esse lado. */
+    object-position: 30% 40%;
+    display: block;
+  }
+  .lp-quote-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    padding-block: 3rem;
+    background: linear-gradient(to top, rgb(7 7 12 / 0.92) 12%, rgb(7 7 12 / 0.25) 55%, transparent);
+  }
+  .lp-quote-texto {
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 3.2vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: #fff;
+    max-width: 24ch;
+    margin: 0;
+    border: 0;
+    padding: 0;
+  }
+  .lp-quote-autor {
+    margin: 1rem 0 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--lp-azul-claro);
+  }
+
+  /* ---------- formatos ---------- */
+  .lp-formatos {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 3rem;
+  }
+  @media (min-width: 820px) { .lp-formatos { grid-template-columns: repeat(3, 1fr); } }
+
+  .lp-formato {
+    border-top: 3px solid var(--lp-azul);
+    padding-top: 1.4rem;
+  }
+  .lp-formato-nome {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+  }
+  .lp-formato-desc {
+    margin: 0.65rem 0 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+  .lp-formato-duracao {
+    margin: 1rem 0 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--lp-azul);
+  }
+
+  /* ---------- sobre ---------- */
+  .lp-sobre {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .lp-sobre { grid-template-columns: 420px 1fr; gap: 4rem; }
+  }
+  .lp-sobre-foto {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    border-radius: 1.5rem;
+    background: linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--lp-azul) 20%, var(--color-subtle)),
+      var(--color-subtle)
+    );
+  }
+  .lp-sobre-img {
+    /* Mais largo que o painel e ancorado embaixo: o recorte "senta" na base em
+       vez de flutuar no meio, que é o que denuncia um PNG sem fundo. */
+    width: 112%;
+    max-width: none;
+    height: auto;
+    display: block;
+  }
+  .lp-sobre-copy p {
+    margin: 1.1rem 0 0;
+    font-size: 1.02rem;
+    line-height: 1.7;
+    color: var(--color-muted);
+  }
+  .lp-sobre-copy p:first-of-type { margin-top: 1.5rem; }
+  .lp-sobre-copy a { color: var(--lp-azul); }
+
+  /* ---------- vídeos ---------- */
+  .lp-videos {
+    display: grid;
+    gap: 1.75rem;
+    margin-top: 3rem;
+  }
+  @media (min-width: 760px) { .lp-videos { grid-template-columns: repeat(3, 1fr); } }
+
+  .lp-video { display: block; text-decoration: none; color: inherit; }
+  .lp-video-thumb {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 0.9rem;
+    background: var(--color-border);
+  }
+  .lp-video-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .lp-video:hover .lp-video-thumb img { transform: scale(1.05); }
+  .lp-video-play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 46px;
+    height: 46px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--lp-escuro) 80%, transparent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+  }
+  .lp-video:hover .lp-video-play { background: var(--lp-azul); }
+  .lp-video-titulo {
+    display: block;
+    margin-top: 0.85rem;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  /* ---------- galeria ---------- */
+  .lp-galeria {
+    display: grid;
+    gap: 1rem;
+    margin-top: 3rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 900px) { .lp-galeria { grid-template-columns: repeat(3, 1fr); } }
+  .lp-galeria-item { margin: 0; }
+  .lp-galeria-item img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 0.9rem;
+    display: block;
+  }
+
+  /* ---------- CTA ---------- */
+  .lp-cta {
+    background: var(--lp-escuro);
+    color: #fff;
+  }
+  .lp-cta-inner {
+    padding-block: 5rem;
+    text-align: center;
+  }
+  @media (min-width: 900px) { .lp-cta-inner { padding-block: 7rem; } }
+  .lp-cta-titulo {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 4.5vw, 3.1rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin: 0 auto;
+    max-width: 18ch;
+  }
+  .lp-cta-texto {
+    margin: 1.35rem auto 0;
+    max-width: 40ch;
+    font-size: 1.03rem;
+    line-height: 1.65;
+    color: rgb(255 255 255 / 0.7);
+  }
+  .lp-cta .lp-btn { margin-top: 2.25rem; }
+
+  /* ---------- rodapé ---------- */
+  .lp-footer {
+    background: var(--lp-escuro);
+    color: rgb(255 255 255 / 0.72);
+    border-top: 1px solid rgb(255 255 255 / 0.08);
+  }
+  .lp-footer-inner {
+    display: grid;
+    gap: 2rem;
+    padding-block: 3rem 2rem;
+  }
+  @media (min-width: 820px) {
+    .lp-footer-inner {
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 3rem;
+    }
+  }
+  .lp-footer-marca {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+  }
+  .lp-footer-nota { margin: 0.45rem 0 0; font-size: 0.88rem; max-width: 34ch; }
+  .lp-footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+  }
+  .lp-footer-nav a { color: rgb(255 255 255 / 0.8); text-decoration: none; }
+  .lp-footer-nav a:hover { color: #fff; }
+  .lp-footer :global(.lp-footer-social) { color: rgb(255 255 255 / 0.8); }
+
+  .lp-footer-base {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1.25rem 2rem;
+    border-top: 1px solid rgb(255 255 255 / 0.08);
+    font-size: 0.8rem;
+  }
+  .lp-footer-base p { margin: 0; }
+  .lp-footer-base a { color: rgb(255 255 255 / 0.7); text-decoration: none; }
+  .lp-footer-base a:hover { color: #fff; }
 
   @media (prefers-reduced-motion: reduce) {
-    .card, .cta { transition: none; }
-    .card:hover, .cta:hover { transform: none; }
+    .lp-btn,
+    .lp-tema,
+    .lp-video-thumb img,
+    .lp-video-play { transition: none; }
+    .lp-btn:hover,
+    .lp-tema:hover { transform: none; }
+    .lp-video:hover .lp-video-thumb img { transform: none; }
   }
 </style>
