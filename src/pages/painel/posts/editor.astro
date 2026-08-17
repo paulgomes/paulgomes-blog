@@ -54,7 +54,28 @@ const currentNav = isEditing ? 'posts' : 'new';
 
       <section class="side-section">
         <label id="categoryLabel" class="side-label">Categoria</label>
-        <input id="category" class="side-input" placeholder="Branding, IA, etc" />
+        <!-- Seletor de categorias.
+
+             O campo era texto livre, e isso quebrava o build: o enum em
+             src/lib/categorias.ts é gate de compilação, então um nome digitado
+             fora da lista derruba o deploy. Aqui só é possível escolher entre
+             as cadastradas.
+
+             O #category continua existindo como hidden e continua guardando a
+             string separada por vírgula — todo o resto do editor (autosave,
+             validação, envio) segue lendo dele sem alteração. -->
+        <div id="categoryPicker" class="cat-picker">
+          <button type="button" id="categoryToggle" class="cat-toggle" aria-haspopup="listbox" aria-expanded="false">
+            <span id="categoryChips" class="cat-chips"><span class="cat-placeholder">Selecionar categorias</span></span>
+            <svg class="cat-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div id="categoryMenu" class="cat-menu" role="listbox" aria-multiselectable="true" hidden>
+            <input id="categoryFilter" class="cat-filter" type="text" placeholder="Filtrar…" autocomplete="off" />
+            <div id="categoryOptions" class="cat-options"></div>
+            <p class="cat-hint">Para criar ou renomear, use <a href="/painel/categorias">Categorias</a>.</p>
+          </div>
+        </div>
+        <input id="category" type="hidden" />
       </section>
 
       <section class="side-section">
@@ -173,6 +194,10 @@ const currentNav = isEditing ? 'posts' : 'new';
 
   <script>
     import { analyzeSEO, detectFocusKeyword, generateMetaTitle, generateMetaDescription } from '../../../lib/seo-analyzer';
+    // Enum aceito pelo build. Serve de fallback do seletor de categorias quando
+    // a API não responde — e garante que a lista oferecida nunca contenha um
+    // nome capaz de quebrar a compilação.
+    import { CATEGORIAS as CATEGORIAS_ENUM } from '../../../lib/categorias';
 
     // ===== Modo =====
     // 'post'  → editando posts_meta via /api/posts/:slug
@@ -263,8 +288,7 @@ const currentNav = isEditing ? 'posts' : 'new';
       $btnSavePost.style.display = 'inline-flex';
       $slug.readOnly = true;
       $slug.classList.add('is-readonly');
-      $categoryLabel.textContent = 'Categorias (separadas por vírgula)';
-      $category.placeholder = 'IA, SEO, Branding';
+      $categoryLabel.textContent = 'Categorias';
       $deleteBtn.style.display = 'inline-flex';
       $featuredBlock.hidden = false;
       $publishedAtBlock.hidden = false;
@@ -409,6 +433,148 @@ const currentNav = isEditing ? 'posts' : 'new';
     // Analise inicial
     setTimeout(updateSeoAnalysis, 200);
 
+    // ===== Seletor de categorias =====
+    //
+    // Fonte dos nomes, em ordem de preferência:
+    //   1. GET /api/categorias — o que está de fato cadastrado no D1.
+    //   2. CATEGORIAS_FALLBACK — o enum do último build, embutido abaixo.
+    //
+    // O fallback importa: se a API falhar, um <select> vazio impediria
+    // categorizar qualquer post. Ele pode estar desatualizado em relação ao D1,
+    // mas nunca contém nome que quebre o build — é exatamente o enum aceito.
+    const CATEGORIAS_FALLBACK = CATEGORIAS_ENUM;
+
+    const $categoryPicker = document.getElementById('categoryPicker') as HTMLDivElement;
+    const $categoryToggle = document.getElementById('categoryToggle') as HTMLButtonElement;
+    const $categoryMenu = document.getElementById('categoryMenu') as HTMLDivElement;
+    const $categoryChips = document.getElementById('categoryChips') as HTMLSpanElement;
+    const $categoryFilter = document.getElementById('categoryFilter') as HTMLInputElement;
+    const $categoryOptions = document.getElementById('categoryOptions') as HTMLDivElement;
+
+    let allCategorias: string[] = [...CATEGORIAS_FALLBACK];
+    let selectedCategorias: string[] = [];
+
+    /** Escreve no hidden e avisa o resto do editor (autosave, preview, SEO). */
+    function commitCategorias() {
+      $category.value = selectedCategorias.join(', ');
+      $category.dispatchEvent(new Event('input', { bubbles: true }));
+      renderCategoryChips();
+    }
+
+    function renderCategoryChips() {
+      if (selectedCategorias.length === 0) {
+        $categoryChips.innerHTML = '<span class="cat-placeholder">Selecionar categorias</span>';
+        return;
+      }
+      $categoryChips.textContent = '';
+      for (const nome of selectedCategorias) {
+        const chip = document.createElement('span');
+        chip.className = 'cat-chip';
+        chip.textContent = nome;
+        $categoryChips.appendChild(chip);
+      }
+    }
+
+    function renderCategoryOptions() {
+      const filtro = $categoryFilter.value.trim().toLowerCase();
+      const lista = filtro
+        ? allCategorias.filter((c) => c.toLowerCase().includes(filtro))
+        : allCategorias;
+
+      $categoryOptions.textContent = '';
+
+      if (lista.length === 0) {
+        const vazio = document.createElement('p');
+        vazio.className = 'cat-empty';
+        vazio.textContent = 'Nenhuma categoria encontrada.';
+        $categoryOptions.appendChild(vazio);
+        return;
+      }
+
+      for (const nome of lista) {
+        const marcado = selectedCategorias.includes(nome);
+        const opt = document.createElement('button');
+        opt.type = 'button';
+        opt.className = 'cat-option' + (marcado ? ' is-selected' : '');
+        opt.setAttribute('role', 'option');
+        opt.setAttribute('aria-selected', String(marcado));
+
+        const box = document.createElement('span');
+        box.className = 'cat-box';
+        box.setAttribute('aria-hidden', 'true');
+
+        const label = document.createElement('span');
+        label.textContent = nome;
+
+        opt.append(box, label);
+        opt.addEventListener('click', () => {
+          selectedCategorias = selectedCategorias.includes(nome)
+            ? selectedCategorias.filter((c) => c !== nome)
+            : [...selectedCategorias, nome];
+          commitCategorias();
+          renderCategoryOptions();
+        });
+        $categoryOptions.appendChild(opt);
+      }
+    }
+
+    function openCategoryMenu(abrir: boolean) {
+      $categoryMenu.hidden = !abrir;
+      $categoryToggle.setAttribute('aria-expanded', String(abrir));
+      if (abrir) {
+        renderCategoryOptions();
+        $categoryFilter.value = '';
+        $categoryFilter.focus();
+      }
+    }
+
+    $categoryToggle.addEventListener('click', () => {
+      openCategoryMenu($categoryMenu.hidden);
+    });
+    $categoryFilter.addEventListener('input', renderCategoryOptions);
+    document.addEventListener('click', (e) => {
+      if (!$categoryPicker.contains(e.target as Node)) openCategoryMenu(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !$categoryMenu.hidden) {
+        openCategoryMenu(false);
+        $categoryToggle.focus();
+      }
+    });
+
+    /** Aplica o valor vindo do rascunho/post ao seletor. */
+    function setCategoriasFromString(s: string) {
+      selectedCategorias = categoriasToArray(s);
+      // Categoria que já está no post mas saiu do cadastro continua listada,
+      // senão ela sumiria em silêncio no próximo salvamento.
+      for (const c of selectedCategorias) {
+        if (!allCategorias.includes(c)) allCategorias.push(c);
+      }
+      renderCategoryChips();
+    }
+
+    async function loadCategorias() {
+      try {
+        const res = await fetch('/api/categorias', { credentials: 'same-origin' });
+        if (!res.ok) return;
+        const data = await res.json();
+        const nomes = (data?.categories || [])
+          .map((c: any) => String(c?.name || '').trim())
+          .filter(Boolean);
+        if (nomes.length === 0) return;
+        allCategorias = nomes;
+        for (const c of selectedCategorias) {
+          if (!allCategorias.includes(c)) allCategorias.push(c);
+        }
+        if (!$categoryMenu.hidden) renderCategoryOptions();
+      } catch {
+        // Silencioso de propósito: o fallback já garante um seletor utilizável.
+      }
+    }
+
+    renderCategoryChips();
+    loadCategorias();
+
     // ===== Helpers categorias =====
     function categoriasToString(categorias: any): string {
       if (!categorias) return '';
@@ -486,7 +652,7 @@ const currentNav = isEditing ? 'posts' : 'new';
       autoGrowTitle();
       $description.value = draft.description || '';
       $slug.value = draft.slug || '';
-      $category.value = draft.category || '';
+      setCategoriasFromString(draft.category || '');
       $focusKeyword.value = draft.focus_keyword || '';
       $metaTitle.value = draft.meta_title || '';
       $metaDescription.value = draft.meta_description || '';
@@ -520,7 +686,7 @@ const currentNav = isEditing ? 'posts' : 'new';
       autoGrowTitle();
       $description.value = post.description || '';
       $slug.value = post.slug || '';
-      $category.value = categoriasToString(post.categorias);
+      setCategoriasFromString(categoriasToString(post.categorias));
       $focusKeyword.value = post.focus_keyword || '';
       $metaTitle.value = post.meta_title || '';
       $metaDescription.value = post.meta_description || '';
