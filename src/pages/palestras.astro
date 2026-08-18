@@ -4,13 +4,20 @@
  *
  * Não usa <Header> nem <Footer>: é uma peça de conversão, e o menu completo do
  * blog só oferece caminhos para SAIR daqui antes do formulário. No lugar deles,
- * uma barra mínima (marca + um botão) e um rodapé curto.
+ * uma barra mínima e um rodapé curto.
  *
  * O rodapé curto existe de propósito em vez de "nenhum rodapé": página sem link
  * algum para o resto do domínio vira órfã para o rastreador e perde a ligação
  * com a entidade Paul Gomes construída nas outras páginas — que é o que
  * sustenta a busca por "palestrante de inteligência artificial". Poucos links,
  * escolhidos, resolvem os dois lados. Pelo mesmo motivo entra um BreadcrumbList.
+ *
+ * SISTEMA VISUAL
+ * A página inteira roda com uma família só (Montserrat). O que cria hierarquia
+ * é contraste de escala e de tracking, não variedade de fonte: display enorme
+ * com tracking negativo, rótulo minúsculo com tracking largo, corpo em peso
+ * normal. O azul da marca aparece em poucos lugares de propósito — cor usada em
+ * tudo deixa de significar alguma coisa.
  */
 import type { ImageMetadata } from 'astro';
 import { getCollection } from 'astro:content';
@@ -19,7 +26,6 @@ import BaseHead from '../components/BaseHead.astro';
 import SocialIcons from '../components/SocialIcons.astro';
 import { SCHEMA_ID, breadcrumbList, faqPage } from '../lib/schema';
 import { SITE_CONFIG } from '../config/site';
-import videosData from '../data/videos.json';
 
 import brandHero from '../assets/brand/paul-gomes.webp';
 import brandCitacao from '../assets/brand/paul-ai.jpeg';
@@ -55,17 +61,13 @@ const fotoCitacao = acha('citacao') ?? brandCitacao;
 const RESERVADOS = new Set(['hero', 'retrato', 'citacao']);
 const galeriaPalco = fotos
   .filter((f) => !RESERVADOS.has(f.chave))
-  .map((f) => ({
-    src: f.src,
-    alt: `Paul Gomes — ${f.chave.replace(/[-_]+/g, ' ')}`,
-  }));
+  .map((f) => ({ src: f.src, alt: `Paul Gomes — ${f.chave.replace(/[-_]+/g, ' ')}` }));
 
 /* ========================================================================== *
  * NÚMEROS
  *
- * Os dois derivados do conteúdo (artigos e ano do primeiro texto) são
- * CALCULADOS da coleção de posts, então seguem verdadeiros sozinhos conforme o
- * blog cresce, e qualquer um confere abrindo o /blog.
+ * Artigos e ano do primeiro texto são CALCULADOS da coleção de posts, e os anos
+ * de operação derivam do ano de fundação. Nenhum deles envelhece sozinho.
  * ========================================================================== */
 const ANO_FUNDACAO_WYS = 2011;
 
@@ -78,10 +80,10 @@ const anoPrimeiroTexto = posts.reduce(
 const anosDeOperacao = new Date().getFullYear() - ANO_FUNDACAO_WYS;
 
 const evidencias = [
-  { valor: `${anosDeOperacao} anos`, label: 'Construindo estratégia digital, dados e IA aplicada dentro de empresas' },
-  { valor: `${totalArtigos}`, label: 'Artigos publicados sobre IA, GEO, arquitetura digital e comportamento' },
-  { valor: `${anoPrimeiroTexto}`, label: 'Ano da fundação do Grupo WYS e do primeiro texto do arquivo' },
-  { valor: 'BrainPilot', label: 'Metodologia proprietária de transformação AI Native' },
+  { valor: `${anosDeOperacao}`, sufixo: 'anos', label: 'Construindo estratégia digital, dados e IA aplicada dentro de empresas' },
+  { valor: `${totalArtigos}`, sufixo: '', label: 'Artigos publicados sobre IA, GEO, arquitetura digital e comportamento' },
+  { valor: `${anoPrimeiroTexto}`, sufixo: '', label: 'Ano da fundação do Grupo WYS e do primeiro texto do arquivo' },
+  { valor: 'BrainPilot', sufixo: '', label: 'Metodologia proprietária de transformação AI Native' },
 ];
 
 const marcas = [
@@ -215,11 +217,6 @@ const faq = [
   },
 ];
 
-// Alguns vídeos do canal são recortes diários cujo título é só a data. Numa
-// página comercial eles não dizem nada — ficam de fora.
-const TITULO_SO_DATA = /^\d{1,2}\s+de\s+[a-zà-ú]+\s+de\s+\d{4}$/i;
-const videos = videosData.videos.filter((v) => !TITULO_SO_DATA.test(v.title.trim())).slice(0, 3);
-
 const pageUrl = `${SITE_CONFIG.url}/palestras/`;
 
 const webPageSchema = {
@@ -248,8 +245,8 @@ const breadcrumbSchema = breadcrumbList([
   { name: 'Palestras', item: pageUrl },
 ]);
 
-// O FAQPage é o formato que sistemas de IA conseguem citar diretamente — é o
-// mesmo motivo pelo qual ele existe nos posts (ver src/content.config.ts).
+// O FAQPage é o formato que sistemas de IA conseguem citar diretamente — mesmo
+// motivo pelo qual ele existe nos posts (ver src/content.config.ts).
 const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
 ---
 
@@ -263,10 +260,16 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     <script is:inline type="application/ld+json" set:html={JSON.stringify(webPageSchema)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+    <!-- Marca o suporte a JS ANTES da primeira pintura. As animações de entrada
+         escondem blocos por CSS, e sem esta marca quem estiver com JavaScript
+         desabilitado veria uma página em branco. -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
 
   <body class="lp">
-    <header class="lp-nav">
+    <a href="#conteudo" class="lp-pular">Pular para o conteúdo</a>
+
+    <header class="lp-nav" id="nav">
       <div class="lp-wrap lp-nav-inner">
         <a href="/" class="lp-brand" aria-label="Paul Gomes — página inicial">Paul&nbsp;Gomes</a>
         <!-- Todos os botões vão direto ao formulário. Mandar o visitante rolar
@@ -274,14 +277,19 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
              informação nova no meio. -->
         <a href="/contato" class="lp-btn lp-btn-sm">Solicitar palestra</a>
       </div>
+      <!-- Progresso de leitura: a página é longa, e uma régua fina diz de
+           relance quanto falta sem ocupar espaço de conteúdo. -->
+      <div class="lp-progresso" aria-hidden="true"><i id="progressoBarra"></i></div>
     </header>
 
     <main id="conteudo">
       <!-- ===================== 1. HERO ===================== -->
       <section class="lp-hero">
         <div class="lp-wrap lp-hero-grid">
-          <div>
-            <p class="lp-eyebrow">Palestras sobre inteligência artificial, GEO e transformação AI Native</p>
+          <div class="lp-hero-copy">
+            <p class="lp-rotulo lp-rotulo-claro">
+              Palestras sobre inteligência artificial, GEO e transformação AI Native
+            </p>
             <h1 class="lp-h1">Nem toda transformação avisa que começou</h1>
             <p class="lp-lead">
               A inteligência artificial não está mudando apenas as ferramentas que sua empresa usa.
@@ -289,59 +297,65 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
               precisam entender esse movimento enquanto ele ainda está em curso, não quando ele já
               virou consenso de mercado.
             </p>
-            <div class="lp-hero-actions">
+            <div class="lp-hero-acoes">
               <a href="/contato" class="lp-btn">Solicitar palestra <span aria-hidden="true">→</span></a>
               <a href="#temas" class="lp-link">Ver os temas</a>
             </div>
           </div>
 
-          <div class="lp-hero-foto">
+          <figure class="lp-hero-figura">
             <Image
               src={fotoHero}
               alt="Paul Gomes, palestrante de inteligência artificial e GEO"
-              widths={[420, 640, 860]}
-              sizes="(min-width: 900px) 440px, 80vw"
+              widths={[440, 680, 920]}
+              sizes="(min-width: 1000px) 460px, 84vw"
               loading="eager"
               class="lp-hero-img"
             />
-          </div>
+          </figure>
         </div>
-      </section>
 
-      <!-- ===================== 2. EVIDÊNCIA ===================== -->
-      <section class="lp-evidencia" aria-label="Credenciais">
-        <div class="lp-wrap lp-evidencia-grid">
-          {evidencias.map((e) => (
-            <div>
-              <p class="lp-evidencia-valor">{e.valor}</p>
-              <p class="lp-evidencia-label">{e.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <!-- ===================== 3. PROVA SOCIAL ===================== -->
-      <section class="lp-secao lp-secao-curta">
+        <!-- ---------- evidência, ainda dentro do bloco escuro ---------- -->
         <div class="lp-wrap">
-          <h2 class="lp-h3">Marcas que já passaram por projetos conduzidos pelo Grupo WYS</h2>
+          <dl class="lp-evidencias">
+            {evidencias.map((e) => (
+              <div class="lp-evidencia">
+                <dt class="lp-evidencia-valor">
+                  {e.valor}{e.sufixo && <span class="lp-evidencia-sufixo">{e.sufixo}</span>}
+                </dt>
+                <dd class="lp-evidencia-label">{e.label}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      <!-- ===================== 2. MARCAS ===================== -->
+      <section class="lp-marcas-secao reveal">
+        <div class="lp-wrap">
+          <h2 class="lp-rotulo lp-rotulo-escuro">
+            Marcas que já passaram por projetos conduzidos pelo Grupo WYS
+          </h2>
           <ul class="lp-marcas">
             {marcas.map((m) => <li>{m}</li>)}
           </ul>
-          <p class="lp-nota lp-nota-italic">
+          <p class="lp-marcas-nota">
             O que levo ao palco vem de projeto entregue, não de leitura de relatório.
           </p>
         </div>
       </section>
 
-      <!-- ===================== 4. DIAGNÓSTICO ===================== -->
-      <section class="lp-secao lp-secao-alt">
-        <div class="lp-wrap lp-diagnostico">
-          <div>
-            <p class="lp-eyebrow lp-eyebrow-dark">Diagnóstico</p>
+      <!-- ===================== 3. DIAGNÓSTICO ===================== -->
+      <section class="lp-secao">
+        <div class="lp-wrap lp-diag">
+          <!-- Coluna fixa: o título acompanha a leitura do texto ao lado em vez
+               de sumir no topo depois do primeiro parágrafo. -->
+          <div class="lp-diag-titulo reveal">
+            <p class="lp-rotulo lp-rotulo-escuro">Diagnóstico</p>
             <h2 class="lp-h2">A maioria das empresas está implementando IA da forma errada</h2>
-            <p class="lp-destaque">Não por falta de investimento. Por falta de arquitetura.</p>
+            <p class="lp-destaque">Não por falta de investimento.<br />Por falta de arquitetura.</p>
           </div>
-          <div class="lp-diagnostico-corpo">
+          <div class="lp-diag-corpo reveal">
             <p>
               Adotam ferramentas sem estratégia, e cada nova licença vira mais ruído. Automatizam
               tarefas sem redesenhar processos, o que apenas acelera a ineficiência que já existia.
@@ -370,27 +384,31 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
         </div>
       </section>
 
-      <!-- ===================== 5. TEMAS ===================== -->
-      <section id="temas" class="lp-secao">
+      <!-- ===================== 4. TEMAS ===================== -->
+      <section id="temas" class="lp-secao lp-secao-alt">
         <div class="lp-wrap">
-          <p class="lp-eyebrow lp-eyebrow-dark">Temas</p>
-          <h2 class="lp-h2">Cinco conversas que mudam a régua da sala</h2>
-          <div class="lp-temas">
+          <div class="lp-cabecalho reveal">
+            <p class="lp-rotulo lp-rotulo-escuro">Temas</p>
+            <h2 class="lp-h2">Cinco conversas que mudam a régua da sala</h2>
+          </div>
+          <!-- Índice editorial em vez de cards: cinco caixas nunca fecham uma
+               grade sem sobrar buraco, e a lista numerada lê melhor. -->
+          <ol class="lp-temas">
             {temas.map((t, i) => (
-              <article class="lp-tema">
+              <li class="lp-tema reveal">
                 <span class="lp-tema-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                 <h3 class="lp-tema-titulo">{t.titulo}</h3>
                 <p class="lp-tema-resumo">{t.resumo}</p>
-              </article>
+              </li>
             ))}
-          </div>
-          <p class="lp-nota">
+          </ol>
+          <p class="lp-nota reveal">
             Todo tema é adaptado ao contexto do seu setor, do seu público e do momento da sua empresa.
           </p>
         </div>
       </section>
 
-      <!-- ===================== 6. CITAÇÃO ===================== -->
+      <!-- ===================== 5. CITAÇÃO ===================== -->
       <section class="lp-citacao">
         <Image
           src={fotoCitacao}
@@ -411,56 +429,63 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
         </div>
       </section>
 
-      <!-- ===================== 7. O QUE A SALA LEVA ===================== -->
-      <section class="lp-secao lp-secao-alt">
+      <!-- ===================== 6. O QUE A SALA LEVA ===================== -->
+      <section class="lp-secao">
         <div class="lp-wrap">
-          <p class="lp-eyebrow lp-eyebrow-dark">O que a sala leva</p>
-          <h2 class="lp-h2">Sua liderança sai da palestra com três coisas</h2>
+          <div class="lp-cabecalho reveal">
+            <p class="lp-rotulo lp-rotulo-escuro">O que a sala leva</p>
+            <h2 class="lp-h2">Sua liderança sai da palestra com três coisas</h2>
+          </div>
           <div class="lp-entregas">
-            {entregas.map((e) => (
-              <div class="lp-entrega">
+            {entregas.map((e, i) => (
+              <div class="lp-entrega reveal">
+                <span class="lp-entrega-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                 <h3 class="lp-entrega-titulo">{e.titulo}</h3>
                 <p class="lp-entrega-texto">{e.texto}</p>
               </div>
             ))}
           </div>
-          <p class="lp-nota lp-nota-forte">
+          <p class="lp-nota lp-nota-forte reveal">
             O objetivo não é entusiasmo. É desconforto produtivo, do tipo que sobrevive à
             segunda-feira.
           </p>
         </div>
       </section>
 
-      <!-- ===================== 8. FORMATOS ===================== -->
-      <section class="lp-secao">
+      <!-- ===================== 7. FORMATOS ===================== -->
+      <section class="lp-secao lp-secao-alt">
         <div class="lp-wrap">
-          <p class="lp-eyebrow lp-eyebrow-dark">Formatos</p>
-          <h2 class="lp-h2">Do palco de convenção à sala fechada de diretoria</h2>
+          <div class="lp-cabecalho reveal">
+            <p class="lp-rotulo lp-rotulo-escuro">Formatos</p>
+            <h2 class="lp-h2">Do palco de convenção à sala fechada de diretoria</h2>
+          </div>
           <div class="lp-formatos">
             {formatos.map((f) => (
-              <div class="lp-formato">
+              <article class="lp-formato reveal">
                 <h3 class="lp-formato-nome">{f.nome}</h3>
                 <p class="lp-formato-desc">{f.desc}</p>
                 <p class="lp-formato-duracao">{f.duracao}</p>
-              </div>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      <!-- ===================== 9. FILTRO DE INTENÇÃO ===================== -->
-      <section class="lp-filtro">
-        <div class="lp-wrap lp-filtro-grid">
-          <div>
-            <h2 class="lp-h3 lp-filtro-titulo">Para quem essa palestra foi construída</h2>
+      <!-- ===================== 8. FILTRO DE INTENÇÃO ===================== -->
+      <section class="lp-secao">
+        <div class="lp-wrap lp-filtro">
+          <div class="lp-filtro-col reveal">
+            <p class="lp-filtro-marca lp-filtro-marca-sim" aria-hidden="true">Sim</p>
+            <h2 class="lp-h3">Para quem essa palestra foi construída</h2>
             <p>
               Conselhos, diretorias, convenções de liderança, times de marketing e comunicação,
               universidades corporativas e eventos setoriais que já passaram da fase de perguntar se
               a IA é relevante.
             </p>
           </div>
-          <div>
-            <h2 class="lp-h3 lp-filtro-titulo lp-filtro-titulo-nao">Para quem ela não foi</h2>
+          <div class="lp-filtro-col reveal">
+            <p class="lp-filtro-marca" aria-hidden="true">Não</p>
+            <h2 class="lp-h3">Para quem ela não foi</h2>
             <p>
               Não é treinamento de ferramenta, não é demonstração de gadget no palco e não é conteúdo
               motivacional sobre o futuro. Se o evento precisa de espetáculo, existem ótimos
@@ -471,24 +496,24 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
         </div>
       </section>
 
-      <!-- ===================== 10. QUEM SOBE NO PALCO ===================== -->
-      <section class="lp-secao">
+      <!-- ===================== 9. QUEM SOBE NO PALCO ===================== -->
+      <section class="lp-secao lp-secao-alt">
         <div class="lp-wrap lp-sobre">
           <!-- O retrato de fallback é um recorte com fundo transparente. Solto
-               na página ele fica boiando no branco; o painel atrás transforma o
-               recorte em decisão de layout. -->
-          <div class="lp-sobre-foto">
+               na página ele fica boiando; o painel atrás transforma o recorte em
+               decisão de layout. -->
+          <div class="lp-sobre-foto reveal">
             <Image
               src={fotoRetrato}
               alt="Paul Gomes, fundador e CEO do Grupo WYS"
-              widths={[380, 560, 760]}
-              sizes="(min-width: 900px) 420px, 80vw"
+              widths={[400, 620, 820]}
+              sizes="(min-width: 960px) 440px, 84vw"
               loading="lazy"
               class="lp-sobre-img"
             />
           </div>
-          <div class="lp-sobre-copy">
-            <p class="lp-eyebrow lp-eyebrow-dark">Quem sobe no palco</p>
+          <div class="lp-sobre-copy reveal">
+            <p class="lp-rotulo lp-rotulo-escuro">Quem sobe no palco</p>
             <h2 class="lp-h2">Não é teoria de slide. É o que estou construindo agora.</h2>
             <p>
               Fundei o <a href="https://agenciawys.com.br" target="_blank" rel="noopener">Grupo WYS</a>
@@ -512,19 +537,21 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
               O que levo para o palco não é uma lista de ferramentas. É o que estou testando, errando
               e ajustando com marcas reais enquanto o mercado ainda decide se acredita.
             </p>
-            <a href="/sobre" class="lp-link lp-link-dark">Conhecer a trajetória completa</a>
+            <a href="/sobre" class="lp-link lp-link-escuro">Conhecer a trajetória completa</a>
           </div>
         </div>
       </section>
 
-      <!-- ===================== 11. TERRITÓRIOS ===================== -->
-      <section class="lp-secao lp-secao-alt">
+      <!-- ===================== 10. TERRITÓRIOS ===================== -->
+      <section class="lp-secao">
         <div class="lp-wrap">
-          <p class="lp-eyebrow lp-eyebrow-dark">Territórios de domínio</p>
-          <h2 class="lp-h2">Onde a conversa tem lastro</h2>
+          <div class="lp-cabecalho reveal">
+            <p class="lp-rotulo lp-rotulo-escuro">Territórios de domínio</p>
+            <h2 class="lp-h2">Onde a conversa tem lastro</h2>
+          </div>
           <div class="lp-territorios">
             {territorios.map((t) => (
-              <div class="lp-territorio">
+              <div class="lp-territorio reveal">
                 <h3 class="lp-territorio-titulo">{t.grupo}</h3>
                 <ul class="lp-tags">
                   {t.itens.map((i) => <li>{i}</li>)}
@@ -535,7 +562,9 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
         </div>
       </section>
 
-      <!-- ===================== 12. POSIÇÃO ===================== -->
+      <!-- ===================== 11. POSIÇÃO ===================== -->
+      <!-- Único bloco de cor cheia da página. Ele só funciona como clímax porque
+           o azul aparece com conta-gotas em todo o resto. -->
       <section class="lp-posicao">
         <div class="lp-wrap lp-posicao-inner">
           <h2 class="lp-posicao-titulo">Made by humans.<br />Amplified by AI.</h2>
@@ -561,12 +590,14 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
       {galeriaPalco.length > 0 && (
         <section class="lp-secao">
           <div class="lp-wrap">
-            <p class="lp-eyebrow lp-eyebrow-dark">No palco</p>
-            <h2 class="lp-h2">Registros dos últimos eventos</h2>
+            <div class="lp-cabecalho reveal">
+              <p class="lp-rotulo lp-rotulo-escuro">No palco</p>
+              <h2 class="lp-h2">Registros dos últimos eventos</h2>
+            </div>
             <div class="lp-galeria">
               {galeriaPalco.map((f) => (
-                <figure class="lp-galeria-item">
-                  <Image src={f.src} alt={f.alt} widths={[420, 720, 1000]} sizes="(min-width: 900px) 33vw, 50vw" loading="lazy" />
+                <figure class="lp-galeria-item reveal">
+                  <Image src={f.src} alt={f.alt} widths={[420, 720, 1000]} sizes="(min-width: 960px) 33vw, 50vw" loading="lazy" />
                 </figure>
               ))}
             </div>
@@ -574,38 +605,16 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
         </section>
       )}
 
-      <!-- ===================== 13. VÍDEO ===================== -->
-      {videos.length > 0 && (
-        <section class="lp-secao lp-secao-alt">
-          <div class="lp-wrap">
-            <p class="lp-eyebrow lp-eyebrow-dark">Prova em vídeo</p>
-            <h2 class="lp-h2">Veja o tom antes de contratar</h2>
-            <div class="lp-videos">
-              {videos.map((v) => (
-                <a href={v.url} target="_blank" rel="noopener noreferrer" class="lp-video">
-                  <span class="lp-video-thumb">
-                    <img src={v.thumbnail} alt={v.title} width="480" height="360" loading="lazy" decoding="async" />
-                    <span class="lp-video-play" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-                    </span>
-                  </span>
-                  <span class="lp-video-titulo">{v.title}</span>
-                </a>
-              ))}
-            </div>
-            <a href="/videos" class="lp-link lp-link-dark">Todos os vídeos</a>
-          </div>
-        </section>
-      )}
-
-      <!-- ===================== 14. COMO FUNCIONA ===================== -->
-      <section class="lp-secao">
+      <!-- ===================== 12. COMO FUNCIONA ===================== -->
+      <section class="lp-secao lp-secao-alt">
         <div class="lp-wrap">
-          <p class="lp-eyebrow lp-eyebrow-dark">Como funciona</p>
-          <h2 class="lp-h2">Do primeiro contato ao palco</h2>
+          <div class="lp-cabecalho reveal">
+            <p class="lp-rotulo lp-rotulo-escuro">Como funciona</p>
+            <h2 class="lp-h2">Do primeiro contato ao palco</h2>
+          </div>
           <ol class="lp-etapas">
             {etapas.map((e, i) => (
-              <li class="lp-etapa">
+              <li class="lp-etapa reveal">
                 <span class="lp-etapa-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                 <h3 class="lp-etapa-titulo">{e.titulo}</h3>
                 <p class="lp-etapa-texto">{e.texto}</p>
@@ -615,30 +624,36 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
         </div>
       </section>
 
-      <!-- ===================== 15. FAQ ===================== -->
-      <section class="lp-secao lp-secao-alt">
+      <!-- ===================== 13. FAQ ===================== -->
+      <section class="lp-secao">
         <div class="lp-wrap lp-faq-wrap">
-          <p class="lp-eyebrow lp-eyebrow-dark">Perguntas frequentes</p>
-          <h2 class="lp-h2">O que costumam perguntar antes de fechar</h2>
-          <!-- <details> nativo: acordeão sem JavaScript, e o texto da resposta
-               continua no HTML mesmo fechado — que é o que o rastreador lê. -->
-          <div class="lp-faq">
+          <div class="lp-cabecalho reveal">
+            <p class="lp-rotulo lp-rotulo-escuro">Perguntas frequentes</p>
+            <h2 class="lp-h2">O que costumam perguntar antes de fechar</h2>
+          </div>
+          <!-- <details> nativo: acordeão sem JavaScript, e a resposta continua no
+               HTML mesmo fechada — que é o que o rastreador lê. O `name` comum
+               faz o navegador fechar a anterior ao abrir a próxima, então a
+               lista nunca vira uma parede de texto. -->
+          <div class="lp-faq reveal">
             {faq.map((f) => (
-              <details class="lp-faq-item">
+              <details class="lp-faq-item" name="faq-palestras">
                 <summary class="lp-faq-q">{f.q}</summary>
-                <p class="lp-faq-a">{f.a}</p>
+                <div class="lp-faq-a"><p>{f.a}</p></div>
               </details>
             ))}
           </div>
         </div>
       </section>
 
-      <!-- ===================== 16. CTA FINAL ===================== -->
+      <!-- ===================== 14. CTA FINAL ===================== -->
       <section class="lp-cta">
         <div class="lp-wrap lp-cta-inner">
+          <p class="lp-rotulo lp-rotulo-claro">Próximo passo</p>
           <h2 class="lp-cta-titulo">Leve essa conversa para o seu evento</h2>
           <p class="lp-cta-texto">
-            Conte o contexto, o público e a data. Retorno com tema, formato e disponibilidade.
+            Conte o contexto, o público e a data. Retorno com tema, formato e disponibilidade em até
+            24 horas úteis.
           </p>
           <a href="/contato" class="lp-btn lp-btn-inverso">Solicitar palestra <span aria-hidden="true">→</span></a>
         </div>
@@ -666,25 +681,153 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
         <a href="/privacidade">Privacidade</a>
       </div>
     </footer>
+
+    <!-- Barra fixa de ação no celular. A página é longa; sem ela, quem está no
+         meio do texto precisa rolar até uma das pontas para agir. Só aparece
+         depois que o hero sai da tela, para não competir com o botão de lá. -->
+    <div class="lp-acao-movel" id="acaoMovel" hidden>
+      <a href="/contato" class="lp-btn lp-btn-bloco">Solicitar palestra <span aria-hidden="true">→</span></a>
+    </div>
+
+    <script is:inline>
+      (() => {
+        const semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* ---- entrada dos blocos ----
+           Geometria conferida no proprio handler de rolagem, em vez de
+           IntersectionObserver. O observador entrega as notificacoes em lote e,
+           sob rolagem muito rapida ou restauracao de posicao, chega a pular
+           blocos — e um bloco pulado aqui nao e uma animacao perdida, e um
+           pedaco da pagina invisivel. Com 33 elementos, a varredura custa nada,
+           e a lista so encolhe. */
+        let pendentes = [].slice.call(document.querySelectorAll('.reveal'));
+        const revelar = (el) => el.classList.add('is-in');
+
+        if (semMovimento) {
+          pendentes.forEach(revelar);
+          pendentes = [];
+        }
+
+        const revelarVisiveis = () => {
+          if (!pendentes.length) return;
+          const de = document.documentElement;
+          // No fim da pagina nao sobra rolagem para revelar o que ficou abaixo
+          // do limite. Sem esta saida, um bloco que caia nos ultimos pixels
+          // ficaria invisivel para sempre.
+          if (de.scrollTop + de.clientHeight >= de.scrollHeight - 4) {
+            pendentes.forEach(revelar);
+            pendentes = [];
+            return;
+          }
+          const limite = innerHeight * 0.92;
+          pendentes = pendentes.filter((el) => {
+            if (el.getBoundingClientRect().top > limite) return true;
+            revelar(el);
+            return false;
+          });
+        };
+
+        /* ---- progresso de leitura + estado da barra ---- */
+        const barra = document.getElementById('progressoBarra');
+        const nav = document.getElementById('nav');
+        let agendado = false;
+
+        const atualizar = () => {
+          const de = document.documentElement;
+          const total = de.scrollHeight - de.clientHeight;
+          const pct = total > 0 ? Math.min(1, de.scrollTop / total) : 0;
+          if (barra) barra.style.transform = `scaleX(${pct})`;
+          if (nav) nav.classList.toggle('is-rolado', de.scrollTop > 12);
+          revelarVisiveis();
+          agendado = false;
+        };
+
+        const agendar = () => {
+          if (agendado) return;
+          agendado = true;
+          requestAnimationFrame(atualizar);
+        };
+
+        addEventListener('scroll', agendar, { passive: true });
+        addEventListener('resize', agendar, { passive: true });
+        atualizar();
+
+        /* ---- acao fixa no celular ---- */
+        const acao = document.getElementById('acaoMovel');
+        const hero = document.querySelector('.lp-hero');
+        if (acao && hero) {
+          if ('IntersectionObserver' in window) {
+            new IntersectionObserver(([e]) => { acao.hidden = e.isIntersecting; }, { threshold: 0 })
+              .observe(hero);
+          } else {
+            // Sem observador, a barra fica sempre disponivel: melhor um botao a
+            // mais do que nenhum caminho de acao no meio da pagina.
+            acao.hidden = false;
+          }
+        }
+      })();
+    </script>
   </body>
 </html>
 
 <style>
-  /* O hero, as faixas de posição e o CTA são escuros nos dois temas de
-     propósito: numa landing a hierarquia visual precisa ser previsível, e não
-     seguir a preferência de tema do visitante. */
+  /* ==================================================================
+     TOKENS
+     O hero, a citação, a posição e o CTA fogem do tema claro/escuro de
+     propósito: numa landing a hierarquia visual precisa ser previsível,
+     e não seguir a preferência de tema do visitante.
+     ================================================================== */
   .lp {
-    --lp-azul: #0103f9;
-    --lp-azul-claro: #6063ff;
-    --lp-escuro: #07070c;
+    --az: #0103f9;
+    --az-claro: #6063ff;
+    --tinta: #08080d;
+    --tinta-2: #101018;
+
+    /* Escala de espaço: um passo só, usado em toda a página. */
+    --s-secao: clamp(4.5rem, 9vw, 8.5rem);
+    --s-bloco: clamp(2.5rem, 5vw, 4rem);
   }
-  :global(.dark) .lp { --lp-azul: #3d40ff; }
+  :global(.dark) .lp { --az: #4f52ff; --az-claro: #8f91ff; }
 
   .lp-wrap {
     margin-inline: auto;
     width: 100%;
-    max-width: 1180px;
-    padding-inline: 1.25rem;
+    max-width: 1200px;
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+  }
+
+  /* ---------- acessibilidade ---------- */
+  .lp-pular {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 60;
+    background: var(--az);
+    color: #fff;
+    padding: 0.7rem 1.2rem;
+    border-radius: 0 0 0.6rem 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: top 0.18s ease;
+  }
+  .lp-pular:focus { top: 0; }
+
+  /* O projeto não define foco visível em lugar nenhum. Numa página que existe
+     para receber contato, navegar por teclado sem ver onde se está é um jeito
+     silencioso de perder o lead. */
+  .lp :is(a, button, summary):focus-visible {
+    outline: 2px solid var(--az-claro);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* ---------- entrada ---------- */
+  :global(html.js) .reveal { opacity: 0; transform: translateY(22px); }
+  :global(html.js) .reveal.is-in {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   /* ---------- barra ---------- */
@@ -692,294 +835,376 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     position: sticky;
     top: 0;
     z-index: 40;
-    /* Quase opaca: com muita transparência o texto das seções claras atravessa
-       a barra e o topo da página fica sujo durante a rolagem. */
-    background: color-mix(in srgb, var(--lp-escuro) 96%, transparent);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+    background: transparent;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    border-bottom: 1px solid transparent;
+  }
+  /* Transparente sobre o hero e sólida depois: o topo da página fica limpo, e
+     a barra só ganha peso quando passa a flutuar sobre conteúdo claro. */
+  .lp-nav.is-rolado {
+    background: color-mix(in srgb, var(--tinta) 94%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom-color: rgb(255 255 255 / 0.1);
   }
   .lp-nav-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding-block: 0.9rem;
+    padding-block: 1.1rem;
   }
   .lp-brand {
-    font-family: var(--font-display);
+    font-size: 1rem;
     font-weight: 800;
-    font-size: 1.05rem;
     letter-spacing: -0.02em;
     color: #fff;
     text-decoration: none;
+  }
+  .lp-progresso {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    overflow: hidden;
+  }
+  .lp-progresso i {
+    display: block;
+    height: 100%;
+    background: var(--az-claro);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
   }
 
   /* ---------- botões e links ---------- */
   .lp-btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    background: var(--lp-azul);
+    gap: 0.6rem;
+    background: var(--az);
     color: #fff;
+    font-size: 0.95rem;
     font-weight: 600;
-    font-size: 0.98rem;
-    padding: 0.85rem 1.6rem;
+    letter-spacing: -0.005em;
+    padding: 1rem 1.75rem;
     border-radius: 999px;
     text-decoration: none;
-    transition: filter 0.2s ease, transform 0.2s ease;
+    overflow: hidden;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
   }
-  .lp-btn:hover { filter: brightness(1.15); transform: translateY(-1px); }
-  .lp-btn-sm { padding: 0.55rem 1.1rem; font-size: 0.85rem; }
-  .lp-btn-inverso { background: #fff; color: var(--lp-escuro); }
+  .lp-btn span { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+  .lp-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px -12px color-mix(in srgb, var(--az) 75%, transparent);
+  }
+  .lp-btn:hover span { transform: translateX(4px); }
+  .lp-btn-sm { padding: 0.6rem 1.2rem; font-size: 0.84rem; }
+  .lp-btn-inverso { background: #fff; color: var(--tinta); }
+  .lp-btn-inverso:hover { box-shadow: 0 12px 28px -12px rgb(255 255 255 / 0.4); }
+  .lp-btn-bloco { display: flex; justify-content: center; width: 100%; }
 
   .lp-link {
+    position: relative;
     color: #fff;
-    font-weight: 600;
     font-size: 0.95rem;
+    font-weight: 600;
     text-decoration: none;
-    border-bottom: 1px solid rgb(255 255 255 / 0.35);
-    padding-bottom: 2px;
-    transition: border-color 0.2s ease;
+    padding-bottom: 3px;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .lp-link:hover { border-color: #fff; }
-  .lp-link-dark {
-    display: inline-block;
-    margin-top: 1.75rem;
-    color: var(--lp-azul);
-    border-color: color-mix(in srgb, var(--lp-azul) 40%, transparent);
-  }
-  .lp-link-dark:hover { border-color: var(--lp-azul); }
+  /* Sublinhado que recolhe e volta pelo outro lado — detalhe pequeno, mas é o
+     tipo de coisa que separa "tem link" de "foi desenhado". */
+  .lp-link:hover { background-size: 0% 1px; }
+  .lp-link-escuro { display: inline-block; margin-top: 2rem; color: var(--az); }
 
-  /* ---------- tipografia comum ---------- */
-  .lp-eyebrow {
-    font-size: 0.72rem;
+  /* ---------- tipografia ---------- */
+  .lp-rotulo {
+    font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.22em;
-    color: var(--lp-azul-claro);
+    letter-spacing: 0.26em;
+    line-height: 1.7;
     margin: 0;
-    max-width: 46ch;
-    line-height: 1.6;
+    max-width: 44ch;
   }
-  .lp-eyebrow-dark { color: var(--lp-azul); }
+  .lp-rotulo-claro { color: var(--az-claro); }
+  .lp-rotulo-escuro { color: var(--az); }
 
   .lp-h1 {
-    font-family: var(--font-display);
-    font-size: clamp(2.4rem, 6.2vw, 4.4rem);
+    font-size: clamp(2.6rem, 6.6vw, 5.1rem);
     font-weight: 800;
-    line-height: 1.03;
-    letter-spacing: -0.035em;
-    margin: 1rem 0 0;
+    line-height: 0.98;
+    letter-spacing: -0.042em;
+    margin: 1.5rem 0 0;
+    text-wrap: balance;
   }
   .lp-h2 {
-    font-family: var(--font-display);
-    font-size: clamp(1.75rem, 3.6vw, 2.7rem);
+    font-size: clamp(1.85rem, 3.9vw, 3rem);
     font-weight: 800;
-    line-height: 1.12;
-    letter-spacing: -0.028em;
-    margin: 0.9rem 0 0;
-    max-width: 24ch;
+    line-height: 1.08;
+    letter-spacing: -0.033em;
+    margin: 1.1rem 0 0;
+    max-width: 20ch;
+    text-wrap: balance;
   }
   .lp-h3 {
-    font-family: var(--font-display);
-    font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+    font-size: clamp(1.2rem, 2.3vw, 1.6rem);
     font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
     margin: 0;
   }
   .lp-lead {
-    margin: 1.5rem 0 0;
-    max-width: 38rem;
-    font-size: 1.08rem;
-    line-height: 1.65;
-    color: rgb(255 255 255 / 0.72);
+    margin: 1.75rem 0 0;
+    max-width: 40rem;
+    font-size: clamp(1rem, 1.25vw, 1.12rem);
+    line-height: 1.68;
+    color: rgb(255 255 255 / 0.7);
   }
+  .lp-cabecalho { margin-bottom: var(--s-bloco); }
   .lp-nota {
-    margin-top: 2.25rem;
+    margin: 2.5rem 0 0;
     font-size: 0.9rem;
+    line-height: 1.6;
     color: var(--color-muted);
-    max-width: 60ch;
+    max-width: 58ch;
   }
-  .lp-nota-italic { font-style: italic; }
-  .lp-nota-forte {
-    font-size: 1.02rem;
-    font-weight: 600;
-    color: var(--color-ink);
-  }
+  .lp-nota-forte { font-size: 1.05rem; font-weight: 600; color: var(--color-ink); }
 
   /* ---------- hero ---------- */
   .lp-hero {
     position: relative;
     overflow: hidden;
-    background: var(--lp-escuro);
+    background: var(--tinta);
     color: #fff;
+    /* A barra é sticky e transparente no topo; o padding negativo puxa o hero
+       para trás dela em vez de deixar uma faixa vazia. */
+    margin-top: -4.4rem;
+    padding-top: 4.4rem;
   }
-  /* Brilho azul atrás da foto — profundidade sem precisar de mais um asset. */
   .lp-hero::before {
     content: '';
     position: absolute;
-    right: -12%;
-    top: -30%;
-    width: 70vw;
-    height: 120%;
-    background: radial-gradient(closest-side, color-mix(in srgb, var(--lp-azul) 55%, transparent), transparent);
-    opacity: 0.5;
+    right: -10%;
+    top: -25%;
+    width: 62vw;
+    height: 115%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--az) 62%, transparent), transparent 72%);
+    opacity: 0.42;
     pointer-events: none;
   }
   .lp-hero-grid {
     position: relative;
     display: grid;
-    gap: 3rem;
+    gap: clamp(2.5rem, 5vw, 4.5rem);
     align-items: center;
-    padding-block: 4rem 3rem;
+    padding-block: clamp(3.5rem, 7vw, 6.5rem) clamp(3rem, 5vw, 5rem);
   }
-  @media (min-width: 900px) {
-    .lp-hero-grid { grid-template-columns: 1.15fr 0.85fr; gap: 4rem; padding-block: 6rem 5rem; }
+  @media (min-width: 1000px) {
+    .lp-hero-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); }
   }
-  .lp-hero-actions {
+  .lp-hero-acoes {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 1.5rem;
-    margin-top: 2.25rem;
+    gap: 1.25rem 2rem;
+    margin-top: clamp(2rem, 3.5vw, 2.75rem);
+  }
+
+  .lp-hero-figura { position: relative; margin: 0; }
+  /* Moldura deslocada: a foto ganha profundidade sem precisar de sombra, que
+     ficaria invisível sobre preto. */
+  .lp-hero-figura::before {
+    content: '';
+    position: absolute;
+    inset: 1.5rem -1.5rem -1.5rem 1.5rem;
+    border: 1px solid rgb(255 255 255 / 0.16);
+    border-radius: 1.5rem;
+    pointer-events: none;
   }
   .lp-hero-img {
+    position: relative;
     width: 100%;
     height: auto;
     border-radius: 1.5rem;
-    filter: saturate(1.05) brightness(0.97);
+    filter: saturate(1.04) contrast(1.03);
   }
 
   /* ---------- evidência ---------- */
-  .lp-evidencia { background: var(--lp-azul); color: #fff; }
-  .lp-evidencia-grid {
+  .lp-evidencias {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2rem 1.5rem;
-    padding-block: 2.75rem;
+    gap: 2.25rem 1.5rem;
+    margin: 0;
+    padding-block: clamp(2.5rem, 4vw, 3.5rem);
+    border-top: 1px solid rgb(255 255 255 / 0.12);
   }
-  @media (min-width: 860px) { .lp-evidencia-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 880px) { .lp-evidencias { grid-template-columns: repeat(4, 1fr); gap: 2rem; } }
+  .lp-evidencia { position: relative; }
+  /* Filete vertical entre colunas, no lugar de caixas: separa sem desenhar. */
+  @media (min-width: 880px) {
+    .lp-evidencia + .lp-evidencia { padding-left: 2rem; }
+    .lp-evidencia + .lp-evidencia::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.35rem;
+      bottom: 0.35rem;
+      width: 1px;
+      background: rgb(255 255 255 / 0.12);
+    }
+  }
   .lp-evidencia-valor {
-    font-family: var(--font-display);
-    font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: clamp(1.9rem, 3.5vw, 2.7rem);
     font-weight: 800;
     line-height: 1;
-    letter-spacing: -0.03em;
-    margin: 0;
+    letter-spacing: -0.04em;
+    color: #fff;
+  }
+  .lp-evidencia-sufixo {
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--az-claro);
   }
   .lp-evidencia-label {
-    margin: 0.6rem 0 0;
-    font-size: 0.83rem;
-    line-height: 1.45;
-    color: rgb(255 255 255 / 0.82);
+    margin: 0.75rem 0 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: rgb(255 255 255 / 0.6);
+    max-width: 26ch;
   }
 
   /* ---------- seções ---------- */
-  .lp-secao { padding-block: 5rem; }
-  @media (min-width: 900px) { .lp-secao { padding-block: 7rem; } }
-  .lp-secao-curta { padding-block: 3.5rem; }
-  @media (min-width: 900px) { .lp-secao-curta { padding-block: 4.5rem; } }
+  .lp-secao { padding-block: var(--s-secao); }
   .lp-secao-alt { background: var(--color-subtle); }
+  /* O alvo de âncora precisa parar ABAIXO da barra fixa, senão o título fica
+     escondido atrás dela. */
+  [id] { scroll-margin-top: 5.5rem; }
 
   /* ---------- marcas ---------- */
+  .lp-marcas-secao { padding-block: clamp(3rem, 5vw, 4.5rem); }
+  /* Rotulo longo: com 0.26em de tracking, 44ch quebra em tres linhas. */
+  .lp-marcas-secao .lp-rotulo { max-width: 68ch; }
   .lp-marcas {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.6rem 0.5rem;
-    margin: 1.75rem 0 0;
+    align-items: baseline;
+    gap: 0.35rem 2.25rem;
+    margin: 2rem 0 0;
     padding: 0;
     list-style: none;
   }
+  /* Nomes soltos e espaçados leem como lista de clientes; dentro de pílulas,
+     leem como filtro de e-commerce. */
   .lp-marcas li {
-    font-family: var(--font-display);
-    font-size: 0.95rem;
+    font-size: clamp(1rem, 1.7vw, 1.35rem);
     font-weight: 700;
-    letter-spacing: -0.01em;
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
+    letter-spacing: -0.02em;
     color: var(--color-ink);
+    opacity: 0.78;
+    transition: opacity 0.2s ease;
   }
-  .lp-marcas + .lp-nota { margin-top: 1.5rem; }
-
-  /* ---------- diagnóstico ---------- */
-  .lp-diagnostico { display: grid; gap: 2.5rem; }
-  @media (min-width: 960px) {
-    .lp-diagnostico { grid-template-columns: 0.85fr 1fr; gap: 4rem; }
-  }
-  .lp-destaque {
-    margin: 1.5rem 0 0;
-    font-family: var(--font-display);
-    font-size: 1.15rem;
-    font-weight: 700;
-    line-height: 1.4;
-    color: var(--lp-azul);
-    max-width: 26ch;
-  }
-  .lp-diagnostico-corpo p {
-    margin: 0 0 1.25rem;
-    font-size: 1.02rem;
-    line-height: 1.75;
+  .lp-marcas li:hover { opacity: 1; }
+  .lp-marcas-nota {
+    margin: 2rem 0 0;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.9rem;
+    font-style: italic;
     color: var(--color-muted);
   }
-  .lp-diagnostico-corpo p:last-child { margin-bottom: 0; }
+
+  /* ---------- diagnóstico ---------- */
+  .lp-diag { display: grid; gap: var(--s-bloco); }
+  @media (min-width: 980px) {
+    .lp-diag { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); gap: clamp(3rem, 6vw, 6rem); align-items: start; }
+    .lp-diag-titulo { position: sticky; top: 7rem; }
+  }
+  .lp-destaque {
+    margin: 1.75rem 0 0;
+    padding-left: 1.1rem;
+    border-left: 2px solid var(--az);
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+  }
+  .lp-diag-corpo p {
+    margin: 0 0 1.4rem;
+    font-size: clamp(1rem, 1.15vw, 1.08rem);
+    line-height: 1.8;
+    color: var(--color-muted);
+  }
+  .lp-diag-corpo p:last-child { margin-bottom: 0; }
   .lp-punch {
-    border-left: 3px solid var(--lp-azul);
-    padding-left: 1.25rem;
-    font-weight: 600;
+    font-size: clamp(1.1rem, 1.8vw, 1.35rem) !important;
+    font-weight: 700;
+    line-height: 1.45 !important;
+    letter-spacing: -0.02em;
     color: var(--color-ink) !important;
+    padding-block: 0.5rem;
   }
 
   /* ---------- temas ---------- */
-  .lp-temas { display: grid; gap: 1.25rem; margin-top: 3rem; }
-  @media (min-width: 760px) { .lp-temas { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1060px) {
-    .lp-temas { grid-template-columns: repeat(6, 1fr); }
-    /* Cinco cards em duas fileiras: 3 em cima, 2 embaixo ocupando metade cada.
-       Sem isso o quinto card fica sozinho e a fileira parece quebrada. */
-    .lp-tema:nth-child(-n + 3) { grid-column: span 2; }
-    .lp-tema:nth-child(n + 4) { grid-column: span 3; }
+  .lp-temas {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
   }
   .lp-tema {
-    border: 1px solid var(--color-border);
-    border-radius: 1.25rem;
-    padding: 2rem 1.75rem 1.75rem;
-    background: var(--color-paper);
-    transition: border-color 0.2s ease, transform 0.2s ease;
+    display: grid;
+    gap: 0.5rem 2rem;
+    padding-block: clamp(1.75rem, 3vw, 2.5rem);
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color 0.3s ease;
   }
-  .lp-tema:hover {
-    border-color: color-mix(in srgb, var(--lp-azul) 45%, var(--color-border));
-    transform: translateY(-3px);
+  @media (min-width: 860px) {
+    .lp-tema { grid-template-columns: 4.5rem minmax(0, 1fr) minmax(0, 1.15fr); align-items: start; }
   }
+  .lp-tema:hover { background: color-mix(in srgb, var(--az) 3.5%, transparent); }
   .lp-tema-num {
-    font-family: var(--font-display);
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 800;
-    letter-spacing: 0.12em;
-    color: var(--lp-azul);
+    letter-spacing: 0.1em;
+    line-height: 2;
+    color: color-mix(in srgb, var(--az) 55%, transparent);
+    transition: color 0.3s ease;
   }
+  .lp-tema:hover .lp-tema-num { color: var(--az); }
   .lp-tema-titulo {
-    font-family: var(--font-display);
-    font-size: 1.3rem;
+    font-size: clamp(1.2rem, 2.1vw, 1.6rem);
     font-weight: 700;
-    line-height: 1.25;
-    margin: 0.7rem 0 0;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    margin: 0;
+    text-wrap: balance;
   }
   .lp-tema-resumo {
-    margin: 0.85rem 0 0;
+    margin: 0;
     font-size: 0.98rem;
-    line-height: 1.6;
+    line-height: 1.7;
     color: var(--color-muted);
   }
 
   /* ---------- citação ---------- */
-  .lp-citacao { position: relative; background: var(--lp-escuro); isolation: isolate; }
+  .lp-citacao { position: relative; background: var(--tinta); isolation: isolate; }
   .lp-citacao-img {
     width: 100%;
     height: 100%;
-    min-height: 340px;
-    max-height: 620px;
+    min-height: 380px;
+    max-height: 660px;
     object-fit: cover;
     object-position: 30% 40%;
     display: block;
@@ -989,105 +1214,121 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     inset: 0;
     display: flex;
     align-items: flex-end;
-    padding-block: 3rem;
-    background: linear-gradient(to top, rgb(7 7 12 / 0.92) 12%, rgb(7 7 12 / 0.25) 55%, transparent);
+    padding-block: clamp(2.5rem, 5vw, 4.5rem);
+    background: linear-gradient(to top, rgb(8 8 13 / 0.94) 10%, rgb(8 8 13 / 0.2) 58%, transparent);
   }
   .lp-citacao-texto {
-    font-family: var(--font-display);
-    font-size: clamp(1.3rem, 3.2vw, 2.25rem);
+    font-size: clamp(1.4rem, 3.4vw, 2.5rem);
     font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
     color: #fff;
-    max-width: 24ch;
+    max-width: 22ch;
     margin: 0;
     border: 0;
     padding: 0;
+    text-wrap: balance;
   }
   .lp-citacao-autor {
-    margin: 1rem 0 0;
-    font-size: 0.78rem;
+    margin: 1.25rem 0 0;
+    font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--lp-azul-claro);
+    letter-spacing: 0.26em;
+    color: var(--az-claro);
   }
 
   /* ---------- entregas ---------- */
-  .lp-entregas { display: grid; gap: 1.25rem; margin-top: 3rem; }
-  @media (min-width: 820px) { .lp-entregas { grid-template-columns: repeat(3, 1fr); } }
-  .lp-entrega {
-    background: var(--color-paper);
-    border-radius: 1.25rem;
-    padding: 1.9rem 1.6rem;
+  .lp-entregas { display: grid; gap: 2.5rem 2rem; }
+  @media (min-width: 840px) { .lp-entregas { grid-template-columns: repeat(3, 1fr); } }
+  .lp-entrega { padding-top: 1.5rem; border-top: 2px solid var(--color-ink); }
+  .lp-entrega-num {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--az);
   }
   .lp-entrega-titulo {
-    font-family: var(--font-display);
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     font-weight: 700;
-    line-height: 1.3;
-    margin: 0;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin: 0.9rem 0 0;
   }
   .lp-entrega-texto {
-    margin: 0.8rem 0 0;
+    margin: 0.85rem 0 0;
     font-size: 0.96rem;
-    line-height: 1.6;
+    line-height: 1.7;
     color: var(--color-muted);
   }
 
   /* ---------- formatos ---------- */
-  .lp-formatos { display: grid; gap: 1.25rem; margin-top: 3rem; }
-  @media (min-width: 820px) { .lp-formatos { grid-template-columns: repeat(3, 1fr); } }
-  .lp-formato { border-top: 3px solid var(--lp-azul); padding-top: 1.4rem; }
+  .lp-formatos { display: grid; gap: 1.25rem; }
+  @media (min-width: 840px) { .lp-formatos { grid-template-columns: repeat(3, 1fr); } }
+  .lp-formato {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.75rem, 3vw, 2.25rem);
+    background: var(--color-paper);
+    border: 1px solid var(--color-border);
+    border-radius: 1.25rem;
+    transition: border-color 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .lp-formato:hover {
+    border-color: color-mix(in srgb, var(--az) 40%, var(--color-border));
+    transform: translateY(-4px);
+  }
   .lp-formato-nome {
-    font-family: var(--font-display);
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 700;
+    letter-spacing: -0.02em;
     margin: 0;
   }
   .lp-formato-desc {
-    margin: 0.65rem 0 0;
+    margin: 0.8rem 0 0;
     font-size: 0.95rem;
-    line-height: 1.6;
+    line-height: 1.65;
     color: var(--color-muted);
+    flex: 1;
   }
   .lp-formato-duracao {
-    margin: 1rem 0 0;
-    font-size: 0.78rem;
+    margin: 1.75rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--lp-azul);
+    letter-spacing: 0.16em;
+    color: var(--az);
   }
 
   /* ---------- filtro de intenção ---------- */
-  .lp-filtro {
-    background: var(--lp-escuro);
-    color: rgb(255 255 255 / 0.75);
-  }
-  .lp-filtro-grid {
-    display: grid;
-    gap: 2.5rem;
-    padding-block: 4.5rem;
-  }
+  .lp-filtro { display: grid; gap: var(--s-bloco); }
   @media (min-width: 860px) {
-    .lp-filtro-grid { grid-template-columns: repeat(2, 1fr); gap: 4rem; padding-block: 6rem; }
+    .lp-filtro { grid-template-columns: repeat(2, 1fr); gap: clamp(3rem, 6vw, 5rem); }
   }
-  .lp-filtro-titulo {
-    color: #fff;
-    padding-left: 1rem;
-    border-left: 3px solid var(--lp-azul-claro);
+  .lp-filtro-col { padding-top: 1.5rem; border-top: 1px solid var(--color-border); }
+  .lp-filtro-marca {
+    margin: 0 0 1.25rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.26em;
+    color: var(--color-muted);
   }
-  .lp-filtro-titulo-nao { border-left-color: rgb(255 255 255 / 0.25); }
-  .lp-filtro p {
-    margin: 1.1rem 0 0;
+  .lp-filtro-marca-sim { color: var(--az); }
+  .lp-filtro-col p:last-child {
+    margin: 1.25rem 0 0;
     font-size: 1rem;
-    line-height: 1.7;
+    line-height: 1.75;
+    color: var(--color-muted);
   }
 
   /* ---------- sobre ---------- */
-  .lp-sobre { display: grid; gap: 2.5rem; align-items: center; }
-  @media (min-width: 900px) { .lp-sobre { grid-template-columns: 420px 1fr; gap: 4rem; } }
+  .lp-sobre { display: grid; gap: var(--s-bloco); align-items: center; }
+  @media (min-width: 960px) {
+    .lp-sobre { grid-template-columns: 440px minmax(0, 1fr); gap: clamp(3rem, 6vw, 5rem); }
+  }
   .lp-sobre-foto {
     position: relative;
     display: flex;
@@ -1096,266 +1337,223 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     overflow: hidden;
     aspect-ratio: 1 / 1;
     border-radius: 1.5rem;
+    /* Gradiente com cor de verdade: com o painel quase branco, o recorte
+       (que tambem e claro nas bordas) simplesmente desaparecia dentro dele. */
     background: linear-gradient(
-      160deg,
-      color-mix(in srgb, var(--lp-azul) 20%, var(--color-subtle)),
-      var(--color-subtle)
+      165deg,
+      color-mix(in srgb, var(--az) 26%, var(--color-paper)),
+      color-mix(in srgb, var(--az) 7%, var(--color-paper))
     );
   }
   .lp-sobre-img {
     /* Mais largo que o painel e ancorado embaixo: o recorte "senta" na base em
        vez de flutuar no meio, que é o que denuncia um PNG sem fundo. */
-    width: 112%;
+    width: 122%;
     max-width: none;
     height: auto;
     display: block;
   }
   .lp-sobre-copy p {
-    margin: 1.1rem 0 0;
-    font-size: 1.02rem;
-    line-height: 1.7;
+    margin: 1.25rem 0 0;
+    font-size: 1rem;
+    line-height: 1.75;
     color: var(--color-muted);
   }
-  .lp-sobre-copy p:first-of-type { margin-top: 1.5rem; }
-  .lp-sobre-copy a { color: var(--lp-azul); }
+  .lp-sobre-copy p:first-of-type { margin-top: 1.75rem; }
+  .lp-sobre-copy a { color: var(--az); }
 
   /* ---------- territórios ---------- */
-  .lp-territorios { display: grid; gap: 2rem; margin-top: 3rem; }
-  @media (min-width: 860px) { .lp-territorios { grid-template-columns: repeat(3, 1fr); } }
+  .lp-territorios { display: grid; gap: 2.5rem; }
+  @media (min-width: 880px) { .lp-territorios { grid-template-columns: repeat(3, 1fr); gap: 3rem; } }
   .lp-territorio-titulo {
-    font-family: var(--font-display);
-    font-size: 1.02rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    margin: 0 0 1rem;
-    padding-bottom: 0.8rem;
+    letter-spacing: -0.01em;
+    margin: 0 0 1.25rem;
+    padding-bottom: 1rem;
     border-bottom: 1px solid var(--color-border);
   }
-  .lp-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
+  .lp-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
   .lp-tags li {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    padding: 0.4rem 0.85rem;
+    padding: 0.45rem 0.9rem;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--lp-azul) 10%, transparent);
-    color: var(--lp-azul);
+    border: 1px solid color-mix(in srgb, var(--az) 22%, transparent);
+    color: var(--az);
   }
 
   /* ---------- posição ---------- */
-  .lp-posicao { background: var(--lp-azul); color: #fff; }
-  .lp-posicao-inner { display: grid; gap: 2rem; padding-block: 4.5rem; }
-  @media (min-width: 900px) {
-    .lp-posicao-inner { grid-template-columns: 0.9fr 1fr; gap: 4rem; padding-block: 6rem; }
+  .lp-posicao {
+    background: var(--az);
+    color: #fff;
+    background-image: radial-gradient(90% 120% at 88% 0%, rgb(255 255 255 / 0.16), transparent 60%);
+  }
+  .lp-posicao-inner { display: grid; gap: var(--s-bloco); padding-block: var(--s-secao); }
+  @media (min-width: 940px) {
+    .lp-posicao-inner { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr); gap: clamp(3rem, 6vw, 5rem); }
   }
   .lp-posicao-titulo {
-    font-family: var(--font-display);
-    font-size: clamp(1.9rem, 4.4vw, 3rem);
+    font-size: clamp(2rem, 4.6vw, 3.3rem);
     font-weight: 800;
-    line-height: 1.06;
-    letter-spacing: -0.03em;
+    line-height: 1.02;
+    letter-spacing: -0.04em;
     margin: 0;
   }
   .lp-posicao-corpo p {
-    margin: 0 0 1.1rem;
+    margin: 0 0 1.25rem;
     font-size: 1.02rem;
-    line-height: 1.7;
-    color: rgb(255 255 255 / 0.82);
+    line-height: 1.75;
+    color: rgb(255 255 255 / 0.84);
   }
   .lp-posicao-punch {
-    font-family: var(--font-display);
-    font-size: 1.15rem !important;
+    margin: 2rem 0 0 !important;
+    padding-top: 1.75rem;
+    border-top: 1px solid rgb(255 255 255 / 0.28);
+    font-size: 1.2rem !important;
     font-weight: 700;
+    letter-spacing: -0.02em;
     color: #fff !important;
-    margin-bottom: 0 !important;
   }
 
   /* ---------- galeria ---------- */
-  .lp-galeria {
-    display: grid;
-    gap: 1rem;
-    margin-top: 3rem;
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .lp-galeria { display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); }
   @media (min-width: 900px) { .lp-galeria { grid-template-columns: repeat(3, 1fr); } }
-  .lp-galeria-item { margin: 0; }
+  .lp-galeria-item { margin: 0; overflow: hidden; border-radius: 1rem; }
   .lp-galeria-item :global(img) {
     width: 100%;
     height: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
-    border-radius: 0.9rem;
     display: block;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
-
-  /* ---------- vídeos ---------- */
-  .lp-videos { display: grid; gap: 1.75rem; margin-top: 3rem; }
-  @media (min-width: 760px) { .lp-videos { grid-template-columns: repeat(3, 1fr); } }
-  .lp-video { display: block; text-decoration: none; color: inherit; }
-  .lp-video-thumb {
-    position: relative;
-    display: block;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    border-radius: 0.9rem;
-    background: var(--color-border);
-  }
-  .lp-video-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .lp-video:hover .lp-video-thumb img { transform: scale(1.05); }
-  .lp-video-play {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 46px;
-    height: 46px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--lp-escuro) 80%, transparent);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s ease;
-  }
-  .lp-video:hover .lp-video-play { background: var(--lp-azul); }
-  .lp-video-titulo {
-    display: block;
-    margin-top: 0.85rem;
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.35;
-  }
+  .lp-galeria-item:hover :global(img) { transform: scale(1.04); }
 
   /* ---------- etapas ---------- */
-  .lp-etapas {
-    display: grid;
-    gap: 2rem;
-    margin: 3rem 0 0;
-    padding: 0;
-    list-style: none;
-    counter-reset: etapa;
-  }
-  @media (min-width: 860px) { .lp-etapas { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
-  .lp-etapa { position: relative; padding-top: 1.4rem; border-top: 1px solid var(--color-border); }
+  .lp-etapas { display: grid; gap: 2.5rem 2rem; margin: 0; padding: 0; list-style: none; }
+  @media (min-width: 880px) { .lp-etapas { grid-template-columns: repeat(3, 1fr); } }
+  .lp-etapa { position: relative; padding-top: 1.5rem; border-top: 1px solid var(--color-border); }
   .lp-etapa-num {
-    font-family: var(--font-display);
-    font-size: 2rem;
+    font-size: clamp(2.2rem, 4vw, 3rem);
     font-weight: 800;
     line-height: 1;
-    letter-spacing: -0.04em;
-    color: color-mix(in srgb, var(--lp-azul) 28%, transparent);
+    letter-spacing: -0.05em;
+    color: color-mix(in srgb, var(--az) 20%, transparent);
   }
   .lp-etapa-titulo {
-    font-family: var(--font-display);
-    font-size: 1.12rem;
+    font-size: 1.15rem;
     font-weight: 700;
-    line-height: 1.3;
-    margin: 0.7rem 0 0;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin: 1rem 0 0;
   }
   .lp-etapa-texto {
-    margin: 0.7rem 0 0;
+    margin: 0.8rem 0 0;
     font-size: 0.95rem;
-    line-height: 1.6;
+    line-height: 1.7;
     color: var(--color-muted);
   }
 
   /* ---------- FAQ ---------- */
-  .lp-faq-wrap { max-width: 860px; }
-  .lp-faq { margin-top: 2.75rem; border-top: 1px solid var(--color-border); }
+  .lp-faq-wrap { max-width: 900px; }
+  .lp-faq { border-top: 1px solid var(--color-border); }
   .lp-faq-item { border-bottom: 1px solid var(--color-border); }
   .lp-faq-q {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 1.5rem;
+    gap: 2rem;
     cursor: pointer;
     list-style: none;
-    padding: 1.35rem 0;
-    font-family: var(--font-display);
-    font-size: 1.03rem;
+    padding: 1.5rem 0;
+    font-size: clamp(1rem, 1.4vw, 1.1rem);
     font-weight: 700;
+    letter-spacing: -0.015em;
     line-height: 1.4;
+    transition: color 0.2s ease;
   }
+  .lp-faq-q:hover { color: var(--az); }
   .lp-faq-q::-webkit-details-marker { display: none; }
   /* Sinal de abre/fecha desenhado em CSS: um ícone a mais no HTML por pergunta
      seria só ruído para leitor de tela, que já anuncia o estado do <details>. */
   .lp-faq-q::after {
     content: '';
     flex: none;
-    width: 11px;
-    height: 11px;
-    margin-top: 0.4rem;
-    border-right: 2px solid var(--lp-azul);
-    border-bottom: 2px solid var(--lp-azul);
+    width: 10px;
+    height: 10px;
+    margin-top: 0.45rem;
+    border-right: 2px solid var(--az);
+    border-bottom: 2px solid var(--az);
     transform: rotate(45deg);
-    transition: transform 0.2s ease;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .lp-faq-item[open] .lp-faq-q::after { transform: rotate(-135deg); margin-top: 0.75rem; }
+  .lp-faq-item[open] .lp-faq-q::after { transform: rotate(-135deg); margin-top: 0.8rem; }
+
   .lp-faq-a {
+    display: grid;
+    grid-template-rows: 1fr;
+    padding-bottom: 1.75rem;
+  }
+  .lp-faq-a p {
     margin: 0;
-    padding: 0 0 1.5rem;
-    max-width: 68ch;
+    max-width: 70ch;
     font-size: 0.98rem;
-    line-height: 1.7;
+    line-height: 1.75;
     color: var(--color-muted);
   }
 
   /* ---------- CTA ---------- */
-  .lp-cta { background: var(--lp-escuro); color: #fff; }
-  .lp-cta-inner { padding-block: 5rem; text-align: center; }
-  @media (min-width: 900px) { .lp-cta-inner { padding-block: 7rem; } }
+  .lp-cta {
+    background: var(--tinta);
+    color: #fff;
+    background-image: radial-gradient(70% 120% at 50% 100%, color-mix(in srgb, var(--az) 40%, transparent), transparent 65%);
+  }
+  .lp-cta-inner { padding-block: var(--s-secao); text-align: center; }
+  .lp-cta-inner .lp-rotulo { margin-inline: auto; }
   .lp-cta-titulo {
-    font-family: var(--font-display);
-    font-size: clamp(1.9rem, 4.5vw, 3.1rem);
+    font-size: clamp(2rem, 4.8vw, 3.4rem);
     font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    margin: 0 auto;
-    max-width: 18ch;
+    line-height: 1.05;
+    letter-spacing: -0.038em;
+    margin: 1.25rem auto 0;
+    max-width: 16ch;
+    text-wrap: balance;
   }
   .lp-cta-texto {
-    margin: 1.35rem auto 0;
-    max-width: 40ch;
-    font-size: 1.03rem;
-    line-height: 1.65;
-    color: rgb(255 255 255 / 0.7);
+    margin: 1.5rem auto 0;
+    max-width: 44ch;
+    font-size: 1.02rem;
+    line-height: 1.7;
+    color: rgb(255 255 255 / 0.68);
   }
-  .lp-cta .lp-btn { margin-top: 2.25rem; }
+  .lp-cta .lp-btn { margin-top: 2.5rem; }
 
   /* ---------- rodapé ---------- */
   .lp-footer {
-    background: var(--lp-escuro);
-    color: rgb(255 255 255 / 0.72);
-    border-top: 1px solid rgb(255 255 255 / 0.08);
+    background: var(--tinta-2);
+    color: rgb(255 255 255 / 0.7);
   }
-  .lp-footer-inner { display: grid; gap: 2rem; padding-block: 3rem 2rem; }
-  @media (min-width: 820px) {
+  .lp-footer-inner { display: grid; gap: 2rem; padding-block: 3.5rem 2.25rem; }
+  @media (min-width: 840px) {
     .lp-footer-inner { grid-template-columns: 1fr auto auto; align-items: center; gap: 3rem; }
   }
   .lp-footer-marca {
-    font-family: var(--font-display);
     font-size: 1.15rem;
     font-weight: 800;
+    letter-spacing: -0.02em;
     color: #fff;
     margin: 0;
   }
-  .lp-footer-nota { margin: 0.45rem 0 0; font-size: 0.88rem; max-width: 36ch; }
-  .lp-footer-nav { display: flex; flex-wrap: wrap; gap: 1.5rem; font-size: 0.9rem; }
-  .lp-footer-nav a { color: rgb(255 255 255 / 0.8); text-decoration: none; }
+  .lp-footer-nota { margin: 0.5rem 0 0; font-size: 0.88rem; line-height: 1.6; max-width: 36ch; }
+  .lp-footer-nav { display: flex; flex-wrap: wrap; gap: 1.75rem; font-size: 0.9rem; }
+  .lp-footer-nav a {
+    color: rgb(255 255 255 / 0.75);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
   .lp-footer-nav a:hover { color: #fff; }
-  .lp-footer :global(.lp-footer-social) { color: rgb(255 255 255 / 0.8); }
+  .lp-footer :global(.lp-footer-social) { color: rgb(255 255 255 / 0.75); }
 
   .lp-footer-base {
     display: flex;
@@ -1363,17 +1561,47 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding-block: 1.25rem 2rem;
-    border-top: 1px solid rgb(255 255 255 / 0.08);
-    font-size: 0.8rem;
+    padding-block: 1.5rem 2.25rem;
+    border-top: 1px solid rgb(255 255 255 / 0.1);
+    font-size: 0.78rem;
   }
   .lp-footer-base p { margin: 0; }
-  .lp-footer-base a { color: rgb(255 255 255 / 0.7); text-decoration: none; }
+  .lp-footer-base a { color: rgb(255 255 255 / 0.65); text-decoration: none; }
   .lp-footer-base a:hover { color: #fff; }
 
+  /* ---------- ação fixa no celular ---------- */
+  .lp-acao-movel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 45;
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--tinta) 92%, transparent);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgb(255 255 255 / 0.1);
+  }
+  .lp-acao-movel[hidden] { display: none; }
+  /* No desktop a barra do topo já fica sempre à vista, então a de baixo seria
+     redundante e roubaria altura de tela. */
+  @media (min-width: 760px) { .lp-acao-movel { display: none !important; } }
+  @media (max-width: 759px) { .lp-footer-base { padding-bottom: 5.5rem; } }
+
   @media (prefers-reduced-motion: reduce) {
-    .lp-btn, .lp-tema, .lp-video-thumb img, .lp-video-play, .lp-faq-q::after { transition: none; }
-    .lp-btn:hover, .lp-tema:hover { transform: none; }
-    .lp-video:hover .lp-video-thumb img { transform: none; }
+    :global(html.js) .reveal { opacity: 1; transform: none; }
+    .lp-nav,
+    .lp-btn,
+    .lp-btn span,
+    .lp-link,
+    .lp-tema,
+    .lp-tema-num,
+    .lp-formato,
+    .lp-faq-q,
+    .lp-faq-q::after,
+    .lp-galeria-item :global(img) { transition: none; }
+    .lp-btn:hover,
+    .lp-formato:hover { transform: none; }
+    .lp-btn:hover span { transform: none; }
+    .lp-galeria-item:hover :global(img) { transform: none; }
   }
 </style>
