@@ -6,6 +6,53 @@ Log cronológico do trabalho na Core Platform. Mais recente no topo.
 
 ---
 
+## 2026-08-18 — /palestras vira landing page autônoma (design v2 + mecanismo de mídia)
+
+Sessão longa, na nuvem. Tudo commitado e publicado em `main` (`4e5feca`).
+
+### Painel: seletor de categorias (`8a2330d`)
+- O campo de categoria do editor era `<input>` de texto livre com valores separados por vírgula. Além da UX, era **risco de build**: `categorias` é `z.enum(CATEGORIAS)` e um erro de digitação derruba o `astro build` — ou seja, o deploy.
+- Virou seletor múltiplo: chips, dropdown filtrável, checkbox por item. Lista vem de `GET /api/categorias`, com o enum de build como fallback. `#category` continua existindo como `hidden` com a mesma string, então autosave, validação e preview de SEO seguem sem alteração.
+- Categoria que já está no post mas não consta no registro é mantida na seleção — descartar em silêncio apagaria dado ao salvar.
+
+### /palestras reconstruída (`9559ba7` → `4e5feca`)
+Três rodadas, nesta ordem:
+
+1. **Landing autônoma.** Saíram `<Header>` e `<Footer>` do blog (o menu completo só oferece caminhos para SAIR antes do formulário). Entraram barra mínima e rodapé curto — curto, e não ausente, porque página sem link para o resto do domínio vira órfã para o rastreador e perde a ligação com a entidade Paul Gomes. Pelo mesmo motivo entrou `BreadcrumbList`.
+2. **Roteiro v2** (briefing do dono, 17 seções): prova social com marcas, diagnóstico, "o que a sala leva", filtro de intenção, territórios de domínio, posição "Made by humans", como funciona e 10 perguntas frequentes. H1 virou "Nem toda transformação avisa que começou"; temas foram de 4 para 5.
+3. **Elevação de design + UX.** Índice numerado no lugar de cards, marcas como nomes espaçados, filete vertical nas evidências, azul recolhido para poucos pontos (a faixa "Made by humans" é o único bloco de cor cheia, e só funciona como clímax por isso). Barra de ação fixa no celular, régua de progresso, link "pular para o conteúdo", foco visível, `scroll-margin` nas âncoras, FAQ exclusivo via `name`.
+
+**Seção de vídeos removida** a pedido, junto com o import de `videos.json`.
+
+### Mecanismo de mídia: `src/assets/palestrante/`
+Pasta varrida no build por `import.meta.glob`. Quem for trocar as fotos **só precisa commitar arquivo lá** — nenhuma linha de código muda. Convenção documentada no `README.md` da pasta:
+
+| Nome | Onde entra |
+| --- | --- |
+| `hero.*` | foto grande do topo |
+| `retrato.*` | bloco "Quem sobe no palco" |
+| `citacao.*` | faixa larga da frase de palco |
+| `citacao.mp4` / `.webm` | vídeo de fundo daquela faixa |
+| qualquer outro nome | galeria "No palco", ordem alfabética |
+
+- Sem os reservados, cai nas fotos de `src/assets/brand`. Sem outras fotos, a galeria não renderiza.
+- O `alt` da galeria sai do nome do arquivo — o nome é lido por leitor de tela e pelo buscador.
+- O vídeo não tem `autoplay` no HTML: só baixa quando a faixa chega perto da tela, pausa fora dela, e sob `prefers-reduced-motion` não baixa um byte. Tem botão de pausa (WCAG 2.2.2). Se o arquivo falhar, fica o poster.
+- Slot do hero tem proporção 4/5 fixa com `object-fit: cover`: a foto é trocável, e sem isso o tamanho do bloco passaria a depender do formato do arquivo que alguém subisse.
+
+### Decisões que não devem ser desfeitas sem motivo
+- **Nenhum número de audiência, evento ou empresa foi inventado.** Artigos e ano do primeiro texto são calculados da coleção; os 15 anos derivam do ano de fundação. Nada disso envelhece sozinho.
+- O rótulo do ano diz "primeiro texto do arquivo", não "anos de experiência": 2011 vem de dois posts isolados e o volume real começa em 2020.
+- A entrada dos blocos ao rolar usa conferência de geometria no handler de rolagem, **não** `IntersectionObserver` — o observador entrega em lote e, sob rolagem rápida, pulou 23 blocos num teste. Bloco pulado aqui não é animação perdida, é pedaço de página invisível. O CSS que esconde só vale sob `html.js`, marcado antes da primeira pintura: sem JavaScript a página aparece inteira.
+
+### Correções de SEO no caminho
+- `ciso-as-a-service`: `description` vazia (Zod aceita string vazia, então o build passava e a página saía sem meta description) e dois `h1` na mesma página. Corrigidos (`80bd344`).
+
+### Estado
+Build verde (268 páginas), `npm run seo:audit` sem erros, sem estouro horizontal em 390/768/1440px, tema escuro conferido.
+
+---
+
 ## 2026-07-08 — Cluster "contratar agência" agendado 1/dia (futuro)
 
 - **5 artigos satélite** da palavra-chave comercial "agência de marketing Sorocaba" (como escolher, quanto custa, perguntas antes de contratar, agência vs. equipe interna, o que uma agência entrega), todos funelando com CTA para a LP `/agencia-de-marketing-em-sorocaba/` — sem canibalizar (intenção informacional; LP segue dona da intenção transacional).

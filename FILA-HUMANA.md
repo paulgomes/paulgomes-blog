@@ -16,6 +16,24 @@ Resolva em lote, de forma assíncrona. Eu sigo trabalhando no que não depende d
 - **Feito:** criado o Worker **`paulgomes-cron`** (pasta `cron-worker/`) com **Cron Trigger `*/15`** que chama `/api/cron/publish-scheduled` autenticado por `CRON_SECRET` (rotacionado no Pages e no Worker). Independe do GitHub Actions. Validado ponta a ponta: um draft `scheduled` vencido foi publicado sozinho (commit no Git + deploy) e depois removido. Ver **ADR-011**.
 - **Pendência menor:** a GitHub Action antiga ficou redundante (responde 401 com o secret antigo, não publica nada). Pode ser desabilitada/removida quando quiser.
 
+## 🔴 10. Mídia da /palestras — arquivos que só existem na máquina do dono
+- **Contexto:** a landing `/palestras` foi reconstruída e está no ar, mas usa as fotos antigas de `src/assets/brand`. Os arquivos escolhidos estão em `C:\Users\Paul\Desktop\PAULGOMES-BLOG\palestrante\editadas`, fora do repositório. Sessão na nuvem não alcança o disco local — por isso ficou pendente.
+- **O que fazer:** copiar para `src/assets/palestrante/` e commitar. A página monta sozinha; a convenção de nomes está no `README.md` daquela pasta.
+  - `11.jpg` → renomear para **`hero.jpg`** (foto do topo, a escolhida pelo dono)
+  - `parallax` → exportar em **MP4** e salvar como **`citacao.mp4`** (vídeo de fundo da faixa da citação; `.mov` não toca em navegador)
+  - `2`, `3`, `IMG_7486`, `IMG_7517`, `IMG_7529` → galeria "No palco". Usar **nomes descritivos** (`palco-exness-palavras-chave.jpg`, não `IMG_7517.jpg`): o nome do arquivo vira o texto alternativo.
+- **Recomendação registrada:** deixar de fora as imagens de banco (`business-executives…`, `waiting-room…`, `young-girl…`) e as da parede "Thinking Forward". Numa página que promete "projeto entregue, não leitura de relatório", foto de banco enfraquece o argumento.
+- **Alternativa sem Git:** subir no `/painel/midia` e passar as URLs do `media.paulgomes.com.br`.
+
+## 🟡 11. Números reais para a faixa de evidência da /palestras
+- **Contexto:** a faixa mostra 4 itens, e três são calculados do próprio conteúdo (artigos publicados, ano do primeiro texto, anos desde a fundação). Não há nenhum número de audiência, evento ou empresa atendida — esses não têm como ser verificados a partir do repositório, e número inventado em página comercial só aparece quando um cliente cobra a fonte.
+- **O que fazer:** se existirem números auditáveis (pessoas impactadas, eventos realizados, empresas atendidas), passar que eles entram na mesma lista `evidencias` em `src/pages/palestras.astro`.
+- **Relacionado:** o `AUTHOR_CARD` em `src/consts.ts` tem contagens de seguidores marcadas como placeholder no próprio código. Também precisam dos números reais ou de remoção.
+
+## 🟡 12. Auto Ads do AdSense na /palestras
+- **Contexto:** o loader do AdSense está no `BaseHead`, então carrega em todas as páginas, inclusive na landing. Não há bloco de anúncio na `/palestras`, mas **se o Auto Ads estiver ligado no painel do AdSense**, o Google pode injetar anúncio ali — competindo com o CTA numa página cujo único objetivo é o formulário.
+- **O que fazer:** decidir. Se quiser, dá para excluir `/palestras` do Auto Ads pelo painel do AdSense.
+
 ## 🟡 8. Métricas reais de acesso (FASE 3 — estatísticas avançadas)
 - **Contexto:** `GET /api/stats` só tem contadores (total/publicados/rascunhos…). Não há views/pageviews/bounce/top-posts.
 - **O que fazer:** escolher a fonte — **Cloudflare Web Analytics** (já ativo no site, mas sem API de leitura fácil) vs **Analytics Engine**/GA4 — e me dar acesso/credencial. Sem isso, a UI de "estatísticas avançadas" fica só scaffolding.
