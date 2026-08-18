@@ -6,6 +6,36 @@ Log cronológico do trabalho na Core Platform. Mais recente no topo.
 
 ---
 
+## 2026-08-18 (tarde) — Mídia real na /palestras + parallax na faixa da citação
+
+Primeira sessão **local**: o disco do dono finalmente ao alcance, que era o que travava o item 10 da FILA-HUMANA. Origem em `C:\Users\Paul\Desktop\PAULGOMES-BLOG\palestrante\` — pasta de trabalho, **não** um clone; o repositório é a subpasta `paulgomes-blog`.
+
+### Hero
+`editadas/11.png` → `src/assets/palestrante/hero.jpg` (PNG 1,8 MB → JPEG 208 KB, mesmos 1448×1086). A `/palestras` deixou de cair no fallback de `src/assets/brand`.
+
+### Vídeo da faixa de citação
+`EXNESS/parallax.mp4` → `src/assets/palestrante/citacao.mp4`. Três coisas mudaram no caminho:
+- **Áudio removido** (`-an`). A faixa toca sempre muda; a trilha era peso que ninguém ouviria.
+- **Marca d'água do Gemini removida** (`delogo`, região 64×64 em 1130,570). O arquivo é gerado por IA — `encoder=Google` na metadata e o losango de quatro pontas no canto. Estrela do Gemini numa landing comercial é ruído de origem, não assinatura.
+- **`+faststart`**: o índice vai para o começo do arquivo, então o vídeo começa a tocar antes de baixar inteiro.
+
+10 s, H.264, 1280×720, 2,4 MB — dentro dos 6 MB que o `README.md` da pasta estipula.
+
+### Parallax
+O fundo da faixa anda mais devagar que a página, ±70 px ao longo do percurso.
+- A altura fixa saiu da mídia e foi para a `.lp-citacao`, que ganhou `overflow: hidden`. A mídia virou `position: absolute`, 140 px mais alta que a faixa e recuada 70 px no topo: **a folga é simétrica, então o deslocamento nunca descobre a borda** — conferido em todo o percurso, o valor bate exatamente ±70 e não passa disso.
+- O valor mora numa custom property (`--parallax-folga`) que o script lê. CSS e JS não podem divergir se só existe um número.
+- Entra no **handler de rolagem que já existia**, junto com a régua de progresso e a revelação dos blocos. Um segundo listener disputaria o mesmo quadro sem ganhar nada.
+- Sob `prefers-reduced-motion` não se move e não recebe `will-change` — a mídia fica parada no meio da folga, que é onde ela já está sem `transform`.
+
+### O que NÃO foi feito, e por quê
+A galeria "No palco" ficou de fora. O item 10 mandava usar `2`, `3`, `IMG_7486`, `IMG_7517` e `IMG_7529` — **essas fotos mostram outra pessoa, não o Paul Gomes**. A sessão da nuvem escreveu o item sem poder abrir os arquivos; esta abriu. Conferido contra `paul-gomes.webp`, `paul-avatar.png` e as quatro fotos pessoais da raiz: todas batem entre si e com a `11`/`33`, nenhuma bate com as de palco. Como o `alt` da galeria é gerado como `"Paul Gomes — <nome do arquivo>"`, publicá-las afirmaria autoria de quem não está ali. Está na FILA-HUMANA #10 aguardando o dono dizer de quem são.
+
+### Estado
+Build verde (270 páginas). Commits locais; **push aguardando autorização** (ADR-001).
+
+---
+
 ## 2026-08-18 — /palestras vira landing page autônoma (design v2 + mecanismo de mídia)
 
 Sessão longa, na nuvem. Tudo commitado e publicado em `main` (`4e5feca`).

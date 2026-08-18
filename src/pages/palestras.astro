@@ -788,6 +788,34 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
           });
         };
 
+        /* ---- parallax da faixa de citacao ----
+           O fundo anda mais devagar que a pagina. Entra no mesmo handler de
+           rolagem do resto: um segundo listener so disputaria o mesmo quadro.
+           Quem pediu menos movimento nao recebe nada e a midia fica parada no
+           meio da folga, que e exatamente onde ela ja esta sem `transform`. */
+        const faixaCitacao = document.querySelector('.lp-citacao');
+        const midiaCitacao = faixaCitacao && faixaCitacao.querySelector('.lp-citacao-midia');
+        const folgaParallax = faixaCitacao
+          ? parseFloat(getComputedStyle(faixaCitacao).getPropertyValue('--parallax-folga')) || 0
+          : 0;
+        const temParallax = Boolean(midiaCitacao) && !semMovimento && folgaParallax > 0;
+        if (temParallax) faixaCitacao.classList.add('tem-parallax');
+
+        const moverFundo = () => {
+          if (!temParallax) return;
+          const r = faixaCitacao.getBoundingClientRect();
+          // Fora da tela nao ha o que mover, e escrever no style a toa forcaria
+          // trabalho de composicao em quadro que ninguem ve.
+          if (r.bottom < 0 || r.top > innerHeight) return;
+          // -1 com a faixa entrando por baixo, +1 depois que ela saiu por cima.
+          // O deslocamento nunca passa da folga, entao a borda da midia nao
+          // aparece em nenhum ponto do percurso.
+          const meio = r.top + r.height / 2;
+          const progresso = (innerHeight / 2 - meio) / ((innerHeight + r.height) / 2);
+          midiaCitacao.style.transform =
+            `translate3d(0, ${(progresso * folgaParallax).toFixed(1)}px, 0)`;
+        };
+
         /* ---- progresso de leitura + estado da barra ---- */
         const barra = document.getElementById('progressoBarra');
         const nav = document.getElementById('nav');
@@ -800,6 +828,7 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
           if (barra) barra.style.transform = `scaleX(${pct})`;
           if (nav) nav.classList.toggle('is-rolado', de.scrollTop > 12);
           revelarVisiveis();
+          moverFundo();
           agendado = false;
         };
 
@@ -1334,18 +1363,35 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
   }
 
   /* ---------- citação ---------- */
-  .lp-citacao { position: relative; background: var(--tinta); isolation: isolate; }
   /* Altura fixa em vez de derivada da proporcao do arquivo: assim a faixa nao
      muda de tamanho quando a midia troca de imagem para video, e nao ha salto
-     de layout enquanto ela carrega. */
-  .lp-citacao-midia {
-    width: 100%;
+     de layout enquanto ela carrega. Ela mora aqui, e nao na midia, porque com
+     o parallax a midia e de proposito mais alta que a faixa — quem define o
+     recorte visivel passa a ser o `overflow` deste bloco. */
+  .lp-citacao {
+    position: relative;
+    background: var(--tinta);
+    isolation: isolate;
+    overflow: hidden;
     height: clamp(380px, 52vw, 660px);
+    /* Folga que a midia tem para deslizar sem descobrir a borda. O script le
+       este mesmo valor, entao os dois lados nao saem de sincronia. */
+    --parallax-folga: 70px;
+  }
+  .lp-citacao-midia {
+    position: absolute;
+    left: 0;
+    top: calc(-1 * var(--parallax-folga));
+    width: 100%;
+    height: calc(100% + 2 * var(--parallax-folga));
     object-fit: cover;
     object-position: 30% 40%;
     display: block;
     background: var(--tinta);
   }
+  /* So quando o parallax esta de fato ativo: `will-change` custa memoria de
+     video, e sem movimento nao ha o que prometer ao compositor. */
+  .lp-citacao.tem-parallax .lp-citacao-midia { will-change: transform; }
 
   .lp-citacao-botao {
     position: absolute;

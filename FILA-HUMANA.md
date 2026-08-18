@@ -16,13 +16,14 @@ Resolva em lote, de forma assíncrona. Eu sigo trabalhando no que não depende d
 - **Feito:** criado o Worker **`paulgomes-cron`** (pasta `cron-worker/`) com **Cron Trigger `*/15`** que chama `/api/cron/publish-scheduled` autenticado por `CRON_SECRET` (rotacionado no Pages e no Worker). Independe do GitHub Actions. Validado ponta a ponta: um draft `scheduled` vencido foi publicado sozinho (commit no Git + deploy) e depois removido. Ver **ADR-011**.
 - **Pendência menor:** a GitHub Action antiga ficou redundante (responde 401 com o secret antigo, não publica nada). Pode ser desabilitada/removida quando quiser.
 
-## 🔴 10. Mídia da /palestras — arquivos que só existem na máquina do dono
-- **Contexto:** a landing `/palestras` foi reconstruída e está no ar, mas usa as fotos antigas de `src/assets/brand`. Os arquivos escolhidos estão em `C:\Users\Paul\Desktop\PAULGOMES-BLOG\palestrante\editadas`, fora do repositório. Sessão na nuvem não alcança o disco local — por isso ficou pendente.
-- **O que fazer:** copiar para `src/assets/palestrante/` e commitar. A página monta sozinha; a convenção de nomes está no `README.md` daquela pasta.
-  - `11.jpg` → renomear para **`hero.jpg`** (foto do topo, a escolhida pelo dono)
-  - `parallax` → exportar em **MP4** e salvar como **`citacao.mp4`** (vídeo de fundo da faixa da citação; `.mov` não toca em navegador)
-  - `2`, `3`, `IMG_7486`, `IMG_7517`, `IMG_7529` → galeria "No palco". Usar **nomes descritivos** (`palco-exness-palavras-chave.jpg`, não `IMG_7517.jpg`): o nome do arquivo vira o texto alternativo.
-- **Recomendação registrada:** deixar de fora as imagens de banco (`business-executives…`, `waiting-room…`, `young-girl…`) e as da parede "Thinking Forward". Numa página que promete "projeto entregue, não leitura de relatório", foto de banco enfraquece o argumento.
+## 🟡 10. Mídia da /palestras — hero e vídeo resolvidos; galeria travada por identidade
+- **Contexto:** os arquivos estavam em `C:\Users\Paul\Desktop\PAULGOMES-BLOG\palestrante\editadas`, fora do repositório, e a sessão na nuvem não alcançava o disco local. Resolvido em sessão local (2026-08-18), que pôde **abrir as imagens** — coisa que a sessão da nuvem não fez ao redigir este item.
+- **Feito:** `11.png` → `src/assets/palestrante/hero.jpg`; `parallax.mp4` → `citacao.mp4` (sem áudio, marca d'água do Gemini removida com `delogo`, `+faststart`); faixa da citação ganhou parallax.
+- **🔴 Pendente — decisão do dono.** As fotos que este item mandava pôr na galeria "No palco" (`1`, `2`, `3`, `IMG_7486`, `IMG_7517`, `IMG_7529`, evento Exness) **não são do Paul Gomes**: mostram outra pessoa. Conferido contra `src/assets/brand/paul-gomes.webp`, `paul-avatar.png` e as quatro fotos pessoais da raiz de `PAULGOMES-BLOG` — todas batem entre si e com a `11`/`33`, e nenhuma bate com as de palco. A galeria gera `alt="Paul Gomes — …"` a partir do nome do arquivo, então publicá-las afirmaria que é ele.
+  - **O que fazer:** dizer de quem são. Se forem de outro palestrante/parceiro, a galeria precisa de legenda com crédito (hoje não tem esse campo). Se existirem fotos de palco do próprio Paul, são essas que entram.
+  - Enquanto não decidir, a galeria não é renderizada — a página não mostra grade vazia.
+- **Recomendação registrada (mantida):** deixar de fora as imagens de banco (`business-executives…`, `waiting-room…`, `young-girl…`) e as da parede "Thinking Forward". Numa página que promete "projeto entregue, não leitura de relatório", foto de banco enfraquece o argumento.
+- **Nota sobre o vídeo:** `parallax.mp4` é gerado por IA (metadata `encoder=Google`, marca d'água do Gemini) e mostra um rosto que não é o do Paul. Fica de pé como **fundo decorativo** porque é o mesmo papel que a imagem anterior (`paul-ai.jpeg`) já cumpria ali, e o `<video>` é `aria-hidden`. Se a intenção for mostrar o palestrante nessa faixa, o arquivo é o errado.
 - **Alternativa sem Git:** subir no `/painel/midia` e passar as URLs do `media.paulgomes.com.br`.
 
 ## 🟡 11. Números reais para a faixa de evidência da /palestras
