@@ -27,11 +27,10 @@ grade vazia numa página de palestrante diz o contrário do que se quer dizer.
 Uma foto de plateia, de auditório ou de sala de reunião mostra **onde** a coisa
 acontece. Ela não mostra o palestrante, e não deve dizer que mostra.
 
-É essa a diferença entre os dois caminhos. A galeria "No palco" gera o `alt` na
-forma `"Paul Gomes — <nome do arquivo>"`: é uma afirmação sobre quem está na
-imagem. As de ambiente vão com `alt` vazio e `aria-hidden`, porque são
-decorativas — entram dessaturadas e recoloridas no azul da marca, atrás de
-texto, como textura.
+É essa a diferença entre os dois caminhos. A galeria "No palco" mostra a foto
+como fotografia, com `alt` descrevendo a cena. As de ambiente vão com `alt`
+vazio e `aria-hidden`, porque são decorativas — entram dessaturadas e
+recoloridas no azul da marca, atrás de texto, como textura.
 
 Use o prefixo quando a foto for de ambiente, e nomeie pelo lugar. Dois papéis
 têm nome próprio; o resto forma o mosaico:
@@ -105,11 +104,20 @@ cinco segundos atrás de texto precisa ter como parar (WCAG 2.2.2).
 ## Texto alternativo
 
 O `alt` de cada foto da galeria é gerado a partir do nome do arquivo, então o
-nome é lido por quem usa leitor de tela e pelo buscador. Prefira nomes
-descritivos:
+nome é lido por quem usa leitor de tela e pelo buscador.
 
-    palco-convencao-senai.jpg   ->  "Paul Gomes — palco convenção senai"
-    IMG_4821.jpg                ->  "Paul Gomes — IMG 4821"   (ruim)
+**Nomeie pela cena, não pela pessoa.** O build não tem como conferir quem está
+na foto, e um `alt` que afirma o nome de alguém erra sozinho no dia em que
+alguém trocar o arquivo. Descrevendo a cena, o texto continua verdadeiro em
+qualquer caso — e é o que quem não enxerga a imagem precisa saber.
+
+    palco-auditorio-lotado.jpg  ->  "Palco auditorio lotado"
+    IMG_4821.jpg                ->  "IMG 4821"   (ruim: não descreve nada)
+
+Nomes de arquivo ficam em ASCII, sem acento — é o que evita problema de
+normalização entre Windows, macOS e Linux. A consequência é que o `alt` sai sem
+acento também ("auditorio"). Um leitor de tela em pt-BR lê sem tropeço; se
+algum caso pedir acentuação exata, o jeito é escrever o `alt` à mão na página.
 
 O vídeo de fundo é decorativo e vai marcado como tal — a mensagem dele já está
 no texto que fica por cima.

@@ -83,9 +83,22 @@ const RESERVADOS = new Set(['hero', 'retrato', 'citacao']);
 const PREFIXO_AMBIENTE = 'ambiente-';
 const ambientes = fotos.filter((f) => f.chave.startsWith(PREFIXO_AMBIENTE));
 
+/*
+ * O `alt` descreve a cena, e não quem está nela.
+ *
+ * Antes era `"Paul Gomes — <arquivo>"`, o que transforma cada foto numa
+ * afirmação sobre a pessoa retratada — e o build não tem como verificar
+ * isso. Quem sobe a imagem escolhe o nome; nomeando pela cena
+ * (`palco-auditorio-lotado`), o texto alternativo fica correto tanto se for
+ * o palestrante quanto se for outra pessoa em cena, e continua servindo a
+ * quem depende do leitor de tela, que precisa saber o que a foto mostra.
+ */
 const galeriaPalco = fotos
   .filter((f) => !RESERVADOS.has(f.chave) && !f.chave.startsWith(PREFIXO_AMBIENTE))
-  .map((f) => ({ src: f.src, alt: `Paul Gomes — ${f.chave.replace(/[-_]+/g, ' ')}` }));
+  .map((f) => {
+    const cena = f.chave.replace(/[-_]+/g, ' ');
+    return { src: f.src, alt: cena.charAt(0).toUpperCase() + cena.slice(1) };
+  });
 
 /*
  * O papel vem do nome, como nos reservados do topo — e não da posição na
