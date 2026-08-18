@@ -59,9 +59,33 @@ const fotoCitacao = acha('citacao') ?? brandCitacao;
 // O `alt` sai do nome do arquivo: é o único dado que descreve a foto e que a
 // pessoa que sobe a imagem controla. Documentado no README.
 const RESERVADOS = new Set(['hero', 'retrato', 'citacao']);
+
+/**
+ * Fotos de ambiente (`ambiente-*`).
+ *
+ * Entram dessaturadas e recoloridas no azul da marca, como textura atrás de
+ * texto — e não como fotografia documental. A distinção não é estética: a
+ * galeria "No palco" gera `alt` na forma "Paul Gomes — …", ou seja, afirma
+ * quem está em cena. Uma imagem de plateia ou de auditório mostra o lugar,
+ * não o palestrante, e não deve fazer essa afirmação. Por isso este caminho
+ * separado: `alt` vazio e `aria-hidden`, porque decorativa é o que ela é.
+ *
+ * O nome do arquivo aqui descreve o LUGAR (`ambiente-plateia-em-convencao`),
+ * o que mantém a pasta legível para quem for trocar a imagem depois.
+ */
+const PREFIXO_AMBIENTE = 'ambiente-';
+const ambientes = fotos
+  .filter((f) => f.chave.startsWith(PREFIXO_AMBIENTE))
+  .map((f) => f.src);
+
 const galeriaPalco = fotos
-  .filter((f) => !RESERVADOS.has(f.chave))
+  .filter((f) => !RESERVADOS.has(f.chave) && !f.chave.startsWith(PREFIXO_AMBIENTE))
   .map((f) => ({ src: f.src, alt: `Paul Gomes — ${f.chave.replace(/[-_]+/g, ' ')}` }));
+
+// A primeira vai para a faixa larga; a segunda, para o fecho. Com uma só, ela
+// serve as duas — repetir é melhor do que deixar um dos blocos sem textura.
+const ambienteFaixa = ambientes[0] ?? null;
+const ambienteFecho = ambientes[1] ?? ambientes[0] ?? null;
 
 /**
  * Vídeo de fundo da faixa de citação.
@@ -647,6 +671,34 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
         </div>
       </section>
 
+      <!-- ===================== FAIXA DE AMBIENTE ===================== -->
+      {/* Respiro entre a posição e o "como funciona": dois blocos densos
+          seguidos cansam. A imagem entra tratada no azul da marca e o texto
+          fala do lugar, não de quem esteve nele. */}
+      {ambienteFaixa && (
+        <section class="lp-ambiente">
+          <Image
+            src={ambienteFaixa}
+            alt=""
+            aria-hidden="true"
+            widths={[900, 1400, 1900]}
+            sizes="100vw"
+            loading="lazy"
+            class="lp-ambiente-img"
+          />
+          <div class="lp-ambiente-cor" aria-hidden="true"></div>
+          <div class="lp-ambiente-overlay">
+            <div class="lp-wrap">
+              <p class="lp-rotulo lp-rotulo-claro">Onde isso acontece</p>
+              <p class="lp-ambiente-texto">
+                Convenção, comitê executivo, time reunido numa sala. O formato muda —
+                a conversa que interessa é a mesma.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
       <!-- ===================== GALERIA ===================== -->
       {galeriaPalco.length > 0 && (
         <section class="lp-secao">
@@ -709,6 +761,21 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
 
       <!-- ===================== 14. CTA FINAL ===================== -->
       <section class="lp-cta">
+        {/* Textura, não ilustração: a foto entra em `luminosity` e só empresta
+            o relevo do lugar. A cor continua sendo a do radial azul que já
+            estava aqui — este é o bloco de conversão, e imagem que disputa
+            atenção com o botão trabalha contra ele. */}
+        {ambienteFecho && (
+          <Image
+            src={ambienteFecho}
+            alt=""
+            aria-hidden="true"
+            widths={[900, 1400, 1900]}
+            sizes="100vw"
+            loading="lazy"
+            class="lp-cta-fundo"
+          />
+        )}
         <div class="lp-wrap lp-cta-inner">
           <p class="lp-rotulo lp-rotulo-claro">Próximo passo</p>
           <h2 class="lp-cta-titulo">Leve essa conversa para o seu evento</h2>
@@ -1429,27 +1496,60 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     display: flex;
     align-items: flex-end;
     padding-block: clamp(2.5rem, 5vw, 4.5rem);
-    background: linear-gradient(to top, rgb(8 8 13 / 0.94) 10%, rgb(8 8 13 / 0.2) 58%, transparent);
+    /* Duas camadas, e nao uma mais escura. A vertical assenta a base da faixa;
+       a lateral da chao ao texto, que e alinhado a esquerda. Escurecer o quadro
+       inteiro para ganhar contraste apagaria o video — este recorta a sombra
+       onde a letra esta e devolve a imagem limpa do meio para a direita. */
+    background:
+      linear-gradient(to right, rgb(8 8 13 / 0.85) 0%, rgb(8 8 13 / 0.5) 34%, rgb(8 8 13 / 0.08) 62%, transparent 78%),
+      linear-gradient(to top, rgb(8 8 13 / 0.94) 10%, rgb(8 8 13 / 0.2) 58%, transparent);
   }
   .lp-citacao-texto {
-    font-size: clamp(1.4rem, 3.4vw, 2.5rem);
+    /* Corpo maior que o do resto da pagina: e a unica frase da faixa e precisa
+       sustentar 660px de altura. Com o corpo subindo, o leading e o tracking
+       descem — em tamanho de display, entrelinha de texto corrido afrouxa a
+       mancha e o espacejamento normal abre buracos entre as letras. */
+    font-size: clamp(1.6rem, 4.1vw, 3.15rem);
     font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -0.03em;
+    line-height: 1.13;
+    letter-spacing: -0.035em;
     color: #fff;
-    max-width: 22ch;
+    /* 20ch em vez de 22ch: com o corpo maior a linha ficaria longa demais para
+       o olho voltar sem se perder, e a mancha desmancharia sobre a imagem. */
+    max-width: 20ch;
     margin: 0;
     border: 0;
     padding: 0;
     text-wrap: balance;
+    /* Fundo em movimento nao se pode prever: o gradiente cobre o quadro medio,
+       e isto cobre o resto. Halo largo e fraco para descolar a letra, mais um
+       contorno curto para firmar a borda — nenhum dos dois aparece como sombra
+       desenhada, que sujaria a forma da tipografia. */
+    text-shadow: 0 2px 28px rgb(0 0 0 / 0.55), 0 1px 3px rgb(0 0 0 / 0.42);
   }
   .lp-citacao-autor {
-    margin: 1.25rem 0 0;
-    font-size: 0.68rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin: 1.5rem 0 0;
+    font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.26em;
+    /* 0.26em separava tanto as letras que o nome parava de se ler como palavra.
+       0.2em mantem o ar da versalete sem quebrar a unidade. */
+    letter-spacing: 0.2em;
     color: var(--az-claro);
+    text-shadow: 0 1px 12px rgb(0 0 0 / 0.6);
+  }
+  /* Filete de atribuicao: a mesma marca que separa as evidencias, aqui ligando
+     a assinatura a frase. Sem ele o nome flutua solto sobre a imagem. */
+  .lp-citacao-autor::before {
+    content: '';
+    width: clamp(1.75rem, 4vw, 2.75rem);
+    height: 2px;
+    flex: none;
+    background: currentColor;
+    opacity: 0.85;
   }
 
   /* ---------- entregas ---------- */
@@ -1630,6 +1730,62 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     color: #fff !important;
   }
 
+  /* ---------- ambiente ---------- */
+  /* Duotone da marca. A foto entra em cinza e recebe o azul por cima: o
+     resultado pertence à página em vez de parecer imagem avulsa colada nela.
+     O tratamento é forte de propósito — assim a imagem se lê como textura do
+     lugar, não como retrato de alguém. */
+  .lp-ambiente {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--tinta);
+    height: clamp(300px, 33vw, 440px);
+    display: flex;
+    align-items: flex-end;
+  }
+  .lp-ambiente-img {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Cinza antes de tudo: com a cor original no lugar, o azul aplicado por
+       cima brigaria com o que já existe na foto em vez de reger a imagem. */
+    filter: grayscale(1) contrast(1.08) brightness(0.62);
+  }
+  /* `screen` age nas luzes e deixa as sombras onde estão — é o que faz o azul
+     virar tom da imagem em vez de véu por cima dela. Camada própria, e não
+     pseudo-elemento: a ordem de empilhamento fica explícita. */
+  .lp-ambiente-cor {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: var(--az);
+    mix-blend-mode: screen;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .lp-ambiente-overlay {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-block: clamp(2rem, 4vw, 3.25rem);
+    background: linear-gradient(to top, rgb(8 8 13 / 0.9) 12%, rgb(8 8 13 / 0.25) 62%, transparent);
+  }
+  .lp-ambiente-texto {
+    margin: 0.75rem 0 0;
+    max-width: 30ch;
+    font-size: clamp(1.15rem, 2.3vw, 1.75rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: #fff;
+    text-wrap: balance;
+    text-shadow: 0 2px 22px rgb(0 0 0 / 0.5);
+  }
+
   /* ---------- galeria ---------- */
   .lp-galeria { display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); }
   @media (min-width: 900px) { .lp-galeria { grid-template-columns: repeat(3, 1fr); } }
@@ -1719,11 +1875,30 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
 
   /* ---------- CTA ---------- */
   .lp-cta {
+    position: relative;
+    /* Sem isto o `mix-blend-mode` da foto atravessaria e se misturaria com a
+       seção anterior em vez de com o gradiente daqui. */
+    isolation: isolate;
+    overflow: hidden;
     background: var(--tinta);
     color: #fff;
     background-image: radial-gradient(70% 120% at 50% 100%, color-mix(in srgb, var(--az) 40%, transparent), transparent 65%);
   }
-  .lp-cta-inner { padding-block: var(--s-secao); text-align: center; }
+  .lp-cta-fundo {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* `luminosity` toma só o claro-escuro da foto e deixa a cor por conta do
+       radial que está atrás — a textura aparece, o azul da marca continua
+       sendo quem manda. Opacidade baixa porque aqui o assunto é o botão. */
+    mix-blend-mode: luminosity;
+    opacity: 0.26;
+    pointer-events: none;
+  }
+  .lp-cta-inner { position: relative; z-index: 1; padding-block: var(--s-secao); text-align: center; }
   .lp-cta-inner .lp-rotulo { margin-inline: auto; }
   .lp-cta-titulo {
     font-size: clamp(2rem, 4.8vw, 3.4rem);

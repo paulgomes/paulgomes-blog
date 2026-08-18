@@ -15,11 +15,37 @@ O nome do arquivo decide onde a foto aparece:
 | `hero.*`            | Foto grande do topo                           |
 | `retrato.*`         | Bloco "Quem sobe no palco"                    |
 | `citacao.*`         | Faixa larga com a frase de palco              |
+| `ambiente-*.*`      | Camada de ambiente (ver abaixo)               |
 | qualquer outro nome | Galeria "No palco", em ordem alfabética       |
 
 Sem `hero.*`, `retrato.*` ou `citacao.*`, a página cai nas fotos de
 `src/assets/brand`. Sem nenhuma outra foto, a galeria não é renderizada — uma
 grade vazia numa página de palestrante diz o contrário do que se quer dizer.
+
+### `ambiente-*` — foto do lugar, não da pessoa
+
+Uma foto de plateia, de auditório ou de sala de reunião mostra **onde** a coisa
+acontece. Ela não mostra o palestrante, e não deve dizer que mostra.
+
+É essa a diferença entre os dois caminhos. A galeria "No palco" gera o `alt` na
+forma `"Paul Gomes — <nome do arquivo>"`: é uma afirmação sobre quem está na
+imagem. As de ambiente vão com `alt` vazio e `aria-hidden`, porque são
+decorativas — entram dessaturadas e recoloridas no azul da marca, atrás de
+texto, como textura.
+
+Use o prefixo quando a foto for de ambiente, e nomeie pelo lugar:
+
+    ambiente-plateia-em-convencao.jpg      ->  faixa larga "Onde isso acontece"
+    ambiente-auditorio-antes-da-abertura.jpg
+    ambiente-sala-de-reuniao.jpg           ->  fundo do bloco final de CTA
+
+A primeira em ordem alfabética vai para a faixa larga; a segunda, para o fundo
+do CTA. Com uma só, ela serve as duas. Sem nenhuma, os dois blocos continuam
+funcionando — a faixa não é renderizada e o CTA fica só com o gradiente.
+
+**Não use `ambiente-` para foto em que alguém apareça em destaque.** O
+tratamento escurece e recolore, mas não descaracteriza: rosto reconhecível numa
+página assinada por uma pessoa é lido como sendo ela.
 
 Pode subir o arquivo grande, direto da câmera: o Astro gera as versões
 redimensionadas em WebP no build. O que vai para o repositório é o original, e é
