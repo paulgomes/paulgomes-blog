@@ -56,6 +56,13 @@ const fotoHero = acha('hero') ?? brandHero;
 const fotoRetrato = acha('retrato') ?? brandRetrato;
 const fotoCitacao = acha('citacao') ?? brandCitacao;
 
+// O retrato de reserva é um PNG recortado, sem fundo, e pede um tratamento que
+// uma fotografia comum não aceita: ele "senta" na base de um painel colorido.
+// Aplicado a uma foto com fundo próprio, esse mesmo tratamento corta o topo da
+// imagem. Saber qual dos dois está em uso é o que permite tratar cada um como
+// ele precisa.
+const retratoEhRecorte = !acha('retrato');
+
 // O `alt` sai do nome do arquivo: é o único dado que descreve a foto e que a
 // pessoa que sobe a imagem controla. Documentado no README.
 const RESERVADOS = new Set(['hero', 'retrato', 'citacao']);
@@ -669,7 +676,7 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
           <!-- O retrato de fallback é um recorte com fundo transparente. Solto
                na página ele fica boiando; o painel atrás transforma o recorte em
                decisão de layout. -->
-          <div class="lp-sobre-foto reveal">
+          <div class:list={['lp-sobre-foto', 'reveal', retratoEhRecorte && 'lp-sobre-foto-recorte']}>
             <Image
               src={fotoRetrato}
               alt="Paul Gomes, fundador e CEO do Grupo WYS"
@@ -1967,11 +1974,14 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
   }
   .lp-sobre-foto {
     position: relative;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
     overflow: hidden;
-    aspect-ratio: 1 / 1;
+    /* 4/5 e exatamente o aspecto de retrato.jpg (1122x1402). Casando o painel
+       com a foto, o object-fit: cover nao corta nada: a composicao aparece
+       inteira. Antes o painel era 1/1 e a imagem entrava a 122% ancorada na
+       base, o que descartava 34% da foto pelo topo. O tratamento de recorte
+       nunca se aplicou aqui: retrato.jpg e fotografia opaca (3 canais, sem
+       alpha), nao um PNG de fundo transparente. */
+    aspect-ratio: 4 / 5;
     border-radius: 1.5rem;
     /* Gradiente com cor de verdade: com o painel quase branco, o recorte
        (que tambem e claro nas bordas) simplesmente desaparecia dentro dele. */
@@ -1982,13 +1992,29 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     );
   }
   .lp-sobre-img {
-    /* Mais largo que o painel e ancorado embaixo: o recorte "senta" na base em
-       vez de flutuar no meio, que é o que denuncia um PNG sem fundo. */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Retrato de reserva: PNG recortado, sem fundo. Aqui o painel colorido e o
+     assunto, e a imagem "senta" na base dele — flutuando no meio, o recorte se
+     denuncia. Regra separada porque `cover` num PNG transparente esticaria o
+     recorte ate preencher o painel, que e o oposto do efeito. */
+  .lp-sobre-foto-recorte {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+  }
+  .lp-sobre-foto-recorte .lp-sobre-img {
     width: 122%;
     max-width: none;
     height: auto;
-    display: block;
+    object-fit: fill;
   }
+
   .lp-sobre-copy p {
     margin: 1.25rem 0 0;
     font-size: 1rem;
