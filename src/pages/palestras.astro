@@ -2,97 +2,218 @@
 /**
  * /palestras — landing page AUTÔNOMA.
  *
- * Diferente do resto do site, esta página não usa <Header> nem <Footer>: ela é
- * uma peça de conversão, e o menu completo do blog só oferece caminhos para
- * SAIR daqui antes do formulário. No lugar deles entram uma barra mínima
- * (marca + um botão) e um rodapé curto.
+ * Não usa <Header> nem <Footer>: é uma peça de conversão, e o menu completo do
+ * blog só oferece caminhos para SAIR daqui antes do formulário. No lugar deles,
+ * uma barra mínima (marca + um botão) e um rodapé curto.
  *
- * O rodapé curto existe de propósito em vez de "nenhum rodapé": uma página sem
- * link nenhum para o resto do domínio vira órfã para o rastreador e perde a
- * ligação com a entidade Paul Gomes construída nas outras páginas — que é
- * justamente o que sustenta a busca por "palestrante de inteligência
- * artificial". Poucos links, escolhidos, resolvem os dois lados.
+ * O rodapé curto existe de propósito em vez de "nenhum rodapé": página sem link
+ * algum para o resto do domínio vira órfã para o rastreador e perde a ligação
+ * com a entidade Paul Gomes construída nas outras páginas — que é o que
+ * sustenta a busca por "palestrante de inteligência artificial". Poucos links,
+ * escolhidos, resolvem os dois lados. Pelo mesmo motivo entra um BreadcrumbList.
  */
+import type { ImageMetadata } from 'astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import SocialIcons from '../components/SocialIcons.astro';
-import { SCHEMA_ID, breadcrumbList } from '../lib/schema';
+import { SCHEMA_ID, breadcrumbList, faqPage } from '../lib/schema';
 import { SITE_CONFIG } from '../config/site';
 import videosData from '../data/videos.json';
 
-import fotoHero from '../assets/brand/paul-gomes.webp';
-import fotoConceito from '../assets/brand/paul-ai.jpeg';
-import fotoRetrato from '../assets/brand/paul-avatar.png';
+import brandHero from '../assets/brand/paul-gomes.webp';
+import brandCitacao from '../assets/brand/paul-ai.jpeg';
+import brandRetrato from '../assets/brand/paul-avatar.png';
+
+/* ========================================================================== *
+ * FOTOS
+ *
+ * A pasta src/assets/palestrante é varrida no build. Quem for trocar as fotos
+ * só precisa commitar arquivo lá — nada aqui muda. A convenção de nomes está
+ * documentada no README daquela pasta.
+ * ========================================================================== */
+const arquivos = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/palestrante/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true }
+);
+
+const fotos = Object.entries(arquivos)
+  .map(([caminho, mod]) => {
+    const arquivo = caminho.split('/').pop() ?? '';
+    return { chave: arquivo.replace(/\.[^.]+$/, '').toLowerCase(), arquivo, src: mod.default };
+  })
+  .sort((a, b) => a.arquivo.localeCompare(b.arquivo, 'pt-BR'));
+
+const acha = (chave: string) => fotos.find((f) => f.chave === chave)?.src;
+
+const fotoHero = acha('hero') ?? brandHero;
+const fotoRetrato = acha('retrato') ?? brandRetrato;
+const fotoCitacao = acha('citacao') ?? brandCitacao;
+
+// O `alt` sai do nome do arquivo: é o único dado que descreve a foto e que a
+// pessoa que sobe a imagem controla. Documentado no README.
+const RESERVADOS = new Set(['hero', 'retrato', 'citacao']);
+const galeriaPalco = fotos
+  .filter((f) => !RESERVADOS.has(f.chave))
+  .map((f) => ({
+    src: f.src,
+    alt: `Paul Gomes — ${f.chave.replace(/[-_]+/g, ' ')}`,
+  }));
+
+/* ========================================================================== *
+ * NÚMEROS
+ *
+ * Os dois derivados do conteúdo (artigos e ano do primeiro texto) são
+ * CALCULADOS da coleção de posts, então seguem verdadeiros sozinhos conforme o
+ * blog cresce, e qualquer um confere abrindo o /blog.
+ * ========================================================================== */
+const ANO_FUNDACAO_WYS = 2011;
+
+const posts = await getCollection('blog');
+const totalArtigos = posts.length;
+const anoPrimeiroTexto = posts.reduce(
+  (min, p) => Math.min(min, p.data.pubDate.getFullYear()),
+  new Date().getFullYear()
+);
+const anosDeOperacao = new Date().getFullYear() - ANO_FUNDACAO_WYS;
+
+const evidencias = [
+  { valor: `${anosDeOperacao} anos`, label: 'Construindo estratégia digital, dados e IA aplicada dentro de empresas' },
+  { valor: `${totalArtigos}`, label: 'Artigos publicados sobre IA, GEO, arquitetura digital e comportamento' },
+  { valor: `${anoPrimeiroTexto}`, label: 'Ano da fundação do Grupo WYS e do primeiro texto do arquivo' },
+  { valor: 'BrainPilot', label: 'Metodologia proprietária de transformação AI Native' },
+];
+
+const marcas = [
+  'Disney', 'Senai', 'Grupo Petrópolis', 'Heliar', 'Ihara',
+  'Jinko', 'Lufkin', 'Toyo', 'Hummel', 'Toroid',
+];
 
 const temas = [
   {
     titulo: 'A internet invisível',
     resumo:
-      'A próxima camada da web não será navegada, será interpretada por modelos. O que muda quando a descoberta deixa de passar pelo clique.',
+      'A próxima camada da web não será navegada, será interpretada por modelos. O que muda na aquisição, na marca e na receita quando a descoberta deixa de passar pelo clique.',
   },
   {
     titulo: 'GEO: ser encontrado pelos modelos',
     resumo:
-      'A disputa por atenção migrou do Google para os sistemas de IA. Como marcas viram referência dentro das respostas, não só nos resultados.',
+      'A disputa por atenção migrou dos buscadores para os sistemas generativos. Como marcas se tornam referência dentro das respostas, e não apenas resultados em uma página.',
+  },
+  {
+    titulo: 'A empresa AI Native',
+    resumo:
+      'A diferença entre usar IA e operar com IA. Por que projetos isolados não escalam e o que precisa mudar na arquitetura da organização antes da próxima ferramenta entrar.',
   },
   {
     titulo: 'Terceirizando a cognição',
     resumo:
-      'A IA está moldando decisão, percepção e memória coletiva em silêncio. Uma leitura estratégica sobre dependência cognitiva e comportamento.',
+      'A IA está moldando percepção, memória e critério de decisão em silêncio. Uma leitura estratégica sobre dependência cognitiva, dentro e fora da empresa.',
   },
   {
     titulo: 'O futuro dos negócios na era dos agentes',
     resumo:
-      'Quando o software deixa de responder e passa a agir, a vantagem competitiva muda de lugar. O que antecipar antes que vire consenso.',
+      'Quando o software deixa de responder e passa a agir, a vantagem competitiva muda de lugar. O que antecipar antes que vire obrigação.',
+  },
+];
+
+const entregas = [
+  {
+    titulo: 'Um mapa da mudança real',
+    texto:
+      'Onde a IA está alterando margem, aquisição e confiança no seu setor, separado do que é apenas ruído de mercado.',
+  },
+  {
+    titulo: 'Uma pergunta que ninguém tinha feito',
+    texto:
+      'A conversa expõe o ponto cego. Normalmente ele não está na tecnologia, está na forma como a empresa entendeu a tecnologia.',
+  },
+  {
+    titulo: 'Critério para decidir',
+    texto:
+      'Como distinguir movimento estrutural de modismo antes de comprometer orçamento, time e reputação com a aposta errada.',
   },
 ];
 
 const formatos = [
-  { nome: 'Keynote', desc: 'Palestra de abertura ou encerramento para eventos e convenções.', duracao: '45 min – 1h30' },
-  { nome: 'Imersão para liderança', desc: 'Sessão fechada com o time de decisão sobre IA, GEO e estratégia digital.', duracao: '2h – meio período' },
+  { nome: 'Keynote', desc: 'Abertura ou encerramento de convenções, kickoffs e eventos corporativos.', duracao: '45 min a 1h30' },
+  { nome: 'Imersão para liderança', desc: 'Sessão fechada com o time de decisão sobre IA, GEO e arquitetura de transformação.', duracao: '2h a meio período' },
   { nome: 'Painel e mediação', desc: 'Participação em debates sobre o futuro da tecnologia e dos negócios.', duracao: 'Sob demanda' },
 ];
 
-/**
- * Números da faixa de credenciais.
- *
- * Os três primeiros são CALCULADOS do conteúdo real do site, então continuam
- * verdadeiros sozinhos conforme o blog cresce, e qualquer um pode conferir
- * abrindo o /blog. Não há aqui nenhum número de audiência, evento ou empresa
- * atendida: esses eu não tenho como verificar, e um número inventado numa
- * página comercial é o tipo de erro que só aparece quando um cliente cobra a
- * fonte. Quando os reais existirem, é só acrescentar um objeto nesta lista.
- *
- * O rótulo do ano diz "primeiro texto do arquivo", e não "X anos de
- * experiência", porque é isso que o dado mede: 2011 vem de dois posts isolados,
- * e o volume real começa em 2020.
- */
-const posts = await getCollection('blog');
-const totalArtigos = posts.length;
-const anoInicial = posts.reduce(
-  (min, p) => Math.min(min, p.data.pubDate.getFullYear()),
-  new Date().getFullYear()
-);
-const totalFrentes = new Set(posts.flatMap((p) => p.data.categorias)).size;
-
-const numeros = [
-  { valor: `${totalArtigos}`, label: 'Artigos publicados sobre IA, GEO e negócios' },
-  { valor: `${anoInicial}`, label: 'Ano do primeiro texto publicado no arquivo' },
-  { valor: `${totalFrentes}`, label: 'Frentes cobertas, de IA a cibersegurança' },
-  { valor: 'WYS', label: 'Fundador e CEO do Grupo WYS' },
+const territorios = [
+  {
+    grupo: 'Estratégia e crescimento',
+    itens: ['Business Intelligence', 'Growth Strategy', 'SEO', 'GEO', 'AEO', 'PPC'],
+  },
+  {
+    grupo: 'IA empresarial e sistemas agênticos',
+    itens: ['Enterprise AI Architecture', 'Agentic AI', 'Multi-Agent Systems', 'LLMOps', 'AI Governance'],
+  },
+  {
+    grupo: 'Transformação AI Native',
+    itens: ['Decision Intelligence', 'Cognitive Automation', 'Autonomous Workflows', 'Enterprise Knowledge Systems'],
+  },
 ];
 
-/**
- * Fotos de palco.
- *
- * Vazio por enquanto — a seção inteira só aparece quando houver entrada aqui.
- * Renderizar uma galeria vazia numa página de palestrante passa a mensagem
- * contrária à pretendida. Para preencher: suba as fotos em /painel/midia e cole
- * as URLs do media.paulgomes.com.br, com largura e altura reais (sem elas o
- * layout salta enquanto a imagem carrega).
- */
-const galeriaPalco: { src: string; alt: string; width: number; height: number }[] = [];
+const etapas = [
+  {
+    titulo: 'Você envia o contexto',
+    texto: 'Data, público, formato e o que precisa acontecer com a sala. Três minutos de formulário.',
+  },
+  {
+    titulo: 'Retorno com uma proposta de tema',
+    texto:
+      'Não um catálogo. Uma recomendação de recorte para o seu público, com formato e disponibilidade. Resposta em até 24 horas úteis.',
+  },
+  {
+    titulo: 'Ajuste fino antes do evento',
+    texto: 'Alinhamento com o time organizador para calibrar linguagem, exemplos e profundidade ao setor.',
+  },
+];
+
+const faq = [
+  {
+    q: 'Quem contratar para uma palestra sobre inteligência artificial no Brasil?',
+    a: 'Depende do que o evento precisa entregar. Para demonstração de ferramentas e entretenimento tecnológico, o mercado tem opções fortes. Para uma leitura estratégica sobre como a IA está mudando descoberta, decisão e arquitetura de empresa, essa é a conversa que eu levo ao palco.',
+  },
+  {
+    q: 'Qual a experiência prática por trás da palestra?',
+    a: `${anosDeOperacao} anos à frente do Grupo WYS, projetos com marcas como Disney, Senai e Grupo Petrópolis, atuação como advisor de IA para times executivos e a criação do BrainPilot, metodologia proprietária de transformação AI Native. O conteúdo da palestra vem dessa operação.`,
+  },
+  {
+    q: 'A palestra serve para conselho, diretoria e C-level?',
+    a: 'Sim. O recorte é de decisão, não de operação. A discussão trata de risco, posicionamento e prioridade, na linguagem de quem responde por resultado.',
+  },
+  {
+    q: 'Tem demonstração de ferramentas ao vivo?',
+    a: 'Não como espetáculo. Ferramentas mudam a cada trimestre. O que a sala leva é o critério para entender o que está mudando por baixo delas, que é o que continua valendo depois do evento.',
+  },
+  {
+    q: 'O conteúdo é adaptado ao setor da empresa?',
+    a: 'Sim. Cada palestra é ajustada ao contexto do público, com exemplos do setor e do momento da empresa.',
+  },
+  {
+    q: 'O que é GEO e por que isso aparece na palestra?',
+    a: 'GEO é a disciplina de tornar uma marca visível e citável dentro das respostas geradas por sistemas de inteligência artificial. Entra na palestra porque é onde a disputa por atenção está migrando, e a maioria das empresas ainda mede presença digital com a régua anterior.',
+  },
+  {
+    q: 'O que significa uma organização AI Native?',
+    a: 'É uma empresa que não usa IA como ferramenta acessória, mas opera com IA integrada à arquitetura de processos, decisão e conhecimento. A diferença aparece na adoção, na governança e no retorno.',
+  },
+  {
+    q: 'A palestra pode virar um trabalho de implementação depois?',
+    a: 'Pode. A palestra é uma conversa de leitura estratégica. Quando a empresa decide agir, existe o BrainPilot, conduzido pelo Grupo WYS. São etapas distintas e a segunda nunca é condição da primeira.',
+  },
+  {
+    q: 'Quanto tempo dura?',
+    a: 'Keynote de 45 minutos a 1h30. Imersões fechadas de 2 horas a meio período.',
+  },
+  {
+    q: 'Como solicitar uma palestra?',
+    a: 'Pelo formulário de contato, com data, público e objetivo do evento. O retorno vem em até 24 horas úteis com tema, formato e disponibilidade.',
+  },
+];
 
 // Alguns vídeos do canal são recortes diários cujo título é só a data. Numa
 // página comercial eles não dizem nada — ficam de fora.
@@ -106,7 +227,7 @@ const webPageSchema = {
   '@type': 'WebPage',
   '@id': `${pageUrl}#webpage`,
   url: pageUrl,
-  name: 'Palestras sobre inteligência artificial e GEO',
+  name: 'Palestrante de inteligência artificial, GEO e AI Native',
   inLanguage: SITE_CONFIG.locale,
   isPartOf: { '@id': SCHEMA_ID.website },
   about: { '@id': SCHEMA_ID.person },
@@ -121,27 +242,30 @@ const webPageSchema = {
   })),
 };
 
-// Sem menu na página, o breadcrumb passa a ser o único sinal de hierarquia que
-// sobra para o rastreador — por isso ele entra aqui, e não só nas páginas de post.
+// Sem menu na página, o breadcrumb é o único sinal de hierarquia que sobra.
 const breadcrumbSchema = breadcrumbList([
   { name: 'Início', item: `${SITE_CONFIG.url}/` },
   { name: 'Palestras', item: pageUrl },
 ]);
+
+// O FAQPage é o formato que sistemas de IA conseguem citar diretamente — é o
+// mesmo motivo pelo qual ele existe nos posts (ver src/content.config.ts).
+const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
 ---
 
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <BaseHead
-      title="Palestrante de inteligência artificial e GEO — Paul Gomes"
-      description="Paul Gomes é palestrante sobre inteligência artificial, GEO e o futuro dos negócios. Keynote, imersão para liderança e painéis. Solicite para seu evento."
+      title="Palestrante de Inteligência Artificial, GEO e AI Native | Paul Gomes"
+      description="Palestras sobre inteligência artificial, GEO e transformação AI Native para conselhos, diretorias e eventos corporativos. Quinze anos de operação real, metodologia proprietária e projetos com grandes marcas. Retorno em até 24h."
     />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(webPageSchema)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
   </head>
 
   <body class="lp">
-    <!-- Barra mínima: marca e um caminho só. -->
     <header class="lp-nav">
       <div class="lp-wrap lp-nav-inner">
         <a href="/" class="lp-brand" aria-label="Paul Gomes — página inicial">Paul&nbsp;Gomes</a>
@@ -153,16 +277,17 @@ const breadcrumbSchema = breadcrumbList([
     </header>
 
     <main id="conteudo">
-      <!-- ================= HERO ================= -->
+      <!-- ===================== 1. HERO ===================== -->
       <section class="lp-hero">
         <div class="lp-wrap lp-hero-grid">
-          <div class="lp-hero-copy">
-            <p class="lp-eyebrow">Palestrante de inteligência artificial e GEO</p>
-            <h1 class="lp-h1">Enxergar o próximo movimento antes que ele seja óbvio</h1>
+          <div>
+            <p class="lp-eyebrow">Palestras sobre inteligência artificial, GEO e transformação AI Native</p>
+            <h1 class="lp-h1">Nem toda transformação avisa que começou</h1>
             <p class="lp-lead">
-              Falo sobre as transformações silenciosas que estão redesenhando a internet, os
-              negócios e a forma como as pessoas pensam. Palestras para quem precisa entender a
-              mudança enquanto ela ainda está acontecendo, e não depois.
+              A inteligência artificial não está mudando apenas as ferramentas que sua empresa usa.
+              Está mudando como as pessoas procuram, decidem e confiam. Palestras para lideranças que
+              precisam entender esse movimento enquanto ele ainda está em curso, não quando ele já
+              virou consenso de mercado.
             </p>
             <div class="lp-hero-actions">
               <a href="/contato" class="lp-btn">Solicitar palestra <span aria-hidden="true">→</span></a>
@@ -173,7 +298,7 @@ const breadcrumbSchema = breadcrumbList([
           <div class="lp-hero-foto">
             <Image
               src={fotoHero}
-              alt="Paul Gomes, palestrante de inteligência artificial, de terno azul"
+              alt="Paul Gomes, palestrante de inteligência artificial e GEO"
               widths={[420, 640, 860]}
               sizes="(min-width: 900px) 440px, 80vw"
               loading="eager"
@@ -183,23 +308,73 @@ const breadcrumbSchema = breadcrumbList([
         </div>
       </section>
 
-      <!-- ================= NÚMEROS ================= -->
-      <section class="lp-numeros" aria-label="Credenciais">
-        <div class="lp-wrap lp-numeros-grid">
-          {numeros.map((n) => (
-            <div class="lp-numero">
-              <p class="lp-numero-valor">{n.valor}</p>
-              <p class="lp-numero-label">{n.label}</p>
+      <!-- ===================== 2. EVIDÊNCIA ===================== -->
+      <section class="lp-evidencia" aria-label="Credenciais">
+        <div class="lp-wrap lp-evidencia-grid">
+          {evidencias.map((e) => (
+            <div>
+              <p class="lp-evidencia-valor">{e.valor}</p>
+              <p class="lp-evidencia-label">{e.label}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <!-- ================= TEMAS ================= -->
+      <!-- ===================== 3. PROVA SOCIAL ===================== -->
+      <section class="lp-secao lp-secao-curta">
+        <div class="lp-wrap">
+          <h2 class="lp-h3">Marcas que já passaram por projetos conduzidos pelo Grupo WYS</h2>
+          <ul class="lp-marcas">
+            {marcas.map((m) => <li>{m}</li>)}
+          </ul>
+          <p class="lp-nota lp-nota-italic">
+            O que levo ao palco vem de projeto entregue, não de leitura de relatório.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== 4. DIAGNÓSTICO ===================== -->
+      <section class="lp-secao lp-secao-alt">
+        <div class="lp-wrap lp-diagnostico">
+          <div>
+            <p class="lp-eyebrow lp-eyebrow-dark">Diagnóstico</p>
+            <h2 class="lp-h2">A maioria das empresas está implementando IA da forma errada</h2>
+            <p class="lp-destaque">Não por falta de investimento. Por falta de arquitetura.</p>
+          </div>
+          <div class="lp-diagnostico-corpo">
+            <p>
+              Adotam ferramentas sem estratégia, e cada nova licença vira mais ruído. Automatizam
+              tarefas sem redesenhar processos, o que apenas acelera a ineficiência que já existia.
+              Contratam plataformas sem governança, e o projeto vira passivo jurídico. Investem em
+              tecnologia sem preparar equipes, porque a barreira nunca foi o modelo, foi a cultura.
+            </p>
+            <p>
+              O resultado se repete com uma constância desconfortável: projetos isolados, adoção
+              baixa, retorno difuso.
+            </p>
+            <p>
+              Enquanto isso, uma segunda mudança acontece por fora da empresa. A camada de descoberta
+              da internet está sendo reescrita. As pessoas pararam de pesquisar e começaram a
+              perguntar. A resposta deixou de ser uma lista de links e passou a ser uma síntese
+              produzida por um modelo, que decide quem citar e quem ignorar.
+            </p>
+            <p class="lp-punch">
+              Quando a decisão de compra começa dentro de uma resposta gerada, a marca ausente
+              daquela resposta não perde a disputa. Ela não entra na disputa.
+            </p>
+            <p>
+              São dois movimentos simultâneos, um dentro e outro fora da organização. Poucas
+              lideranças estão olhando para os dois ao mesmo tempo.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 5. TEMAS ===================== -->
       <section id="temas" class="lp-secao">
         <div class="lp-wrap">
           <p class="lp-eyebrow lp-eyebrow-dark">Temas</p>
-          <h2 class="lp-h2">Quatro conversas que mudam a régua da sala</h2>
+          <h2 class="lp-h2">Cinco conversas que mudam a régua da sala</h2>
           <div class="lp-temas">
             {temas.map((t, i) => (
               <article class="lp-tema">
@@ -209,33 +384,55 @@ const breadcrumbSchema = breadcrumbList([
               </article>
             ))}
           </div>
-          <p class="lp-nota">Todo tema é adaptado ao contexto do seu público e do seu setor.</p>
+          <p class="lp-nota">
+            Todo tema é adaptado ao contexto do seu setor, do seu público e do momento da sua empresa.
+          </p>
         </div>
       </section>
 
-      <!-- ================= FOTO CONCEITO + FRASE ================= -->
-      <section class="lp-quote">
+      <!-- ===================== 6. CITAÇÃO ===================== -->
+      <section class="lp-citacao">
         <Image
-          src={fotoConceito}
-          alt="Retrato de Paul Gomes se dissolvendo em partículas digitais"
+          src={fotoCitacao}
+          alt="Paul Gomes em retrato conceitual sobre inteligência artificial"
           widths={[900, 1400, 1900]}
           sizes="100vw"
           loading="lazy"
-          class="lp-quote-img"
+          class="lp-citacao-img"
         />
-        <div class="lp-quote-overlay">
+        <div class="lp-citacao-overlay">
           <div class="lp-wrap">
-            <blockquote class="lp-quote-texto">
+            <blockquote class="lp-citacao-texto">
               A maior mudança da nossa geração não está acontecendo na tela. Está acontecendo na
               forma como decidimos.
             </blockquote>
-            <p class="lp-quote-autor">Paul Gomes</p>
+            <p class="lp-citacao-autor">Paul Gomes</p>
           </div>
         </div>
       </section>
 
-      <!-- ================= FORMATOS ================= -->
-      <section id="formatos" class="lp-secao lp-secao-alt">
+      <!-- ===================== 7. O QUE A SALA LEVA ===================== -->
+      <section class="lp-secao lp-secao-alt">
+        <div class="lp-wrap">
+          <p class="lp-eyebrow lp-eyebrow-dark">O que a sala leva</p>
+          <h2 class="lp-h2">Sua liderança sai da palestra com três coisas</h2>
+          <div class="lp-entregas">
+            {entregas.map((e) => (
+              <div class="lp-entrega">
+                <h3 class="lp-entrega-titulo">{e.titulo}</h3>
+                <p class="lp-entrega-texto">{e.texto}</p>
+              </div>
+            ))}
+          </div>
+          <p class="lp-nota lp-nota-forte">
+            O objetivo não é entusiasmo. É desconforto produtivo, do tipo que sobrevive à
+            segunda-feira.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== 8. FORMATOS ===================== -->
+      <section class="lp-secao">
         <div class="lp-wrap">
           <p class="lp-eyebrow lp-eyebrow-dark">Formatos</p>
           <h2 class="lp-h2">Do palco de convenção à sala fechada de diretoria</h2>
@@ -251,12 +448,35 @@ const breadcrumbSchema = breadcrumbList([
         </div>
       </section>
 
-      <!-- ================= SOBRE ================= -->
+      <!-- ===================== 9. FILTRO DE INTENÇÃO ===================== -->
+      <section class="lp-filtro">
+        <div class="lp-wrap lp-filtro-grid">
+          <div>
+            <h2 class="lp-h3 lp-filtro-titulo">Para quem essa palestra foi construída</h2>
+            <p>
+              Conselhos, diretorias, convenções de liderança, times de marketing e comunicação,
+              universidades corporativas e eventos setoriais que já passaram da fase de perguntar se
+              a IA é relevante.
+            </p>
+          </div>
+          <div>
+            <h2 class="lp-h3 lp-filtro-titulo lp-filtro-titulo-nao">Para quem ela não foi</h2>
+            <p>
+              Não é treinamento de ferramenta, não é demonstração de gadget no palco e não é conteúdo
+              motivacional sobre o futuro. Se o evento precisa de espetáculo, existem ótimos
+              profissionais para isso. Aqui a proposta é outra: uma leitura estratégica que a sala
+              leva embora.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 10. QUEM SOBE NO PALCO ===================== -->
       <section class="lp-secao">
         <div class="lp-wrap lp-sobre">
-          <!-- O retrato é um recorte com fundo transparente. Solto na página ele
-               fica boiando no branco; o painel atrás transforma o recorte em
-               decisão de layout. -->
+          <!-- O retrato de fallback é um recorte com fundo transparente. Solto
+               na página ele fica boiando no branco; o painel atrás transforma o
+               recorte em decisão de layout. -->
           <div class="lp-sobre-foto">
             <Image
               src={fotoRetrato}
@@ -269,33 +489,96 @@ const breadcrumbSchema = breadcrumbList([
           </div>
           <div class="lp-sobre-copy">
             <p class="lp-eyebrow lp-eyebrow-dark">Quem sobe no palco</p>
-            <h2 class="lp-h2">Por que chamar o Paul para o seu evento</h2>
+            <h2 class="lp-h2">Não é teoria de slide. É o que estou construindo agora.</h2>
             <p>
-              Fundador e CEO do <a href="https://agenciawys.com.br" target="_blank" rel="noopener">Grupo WYS</a>,
-              acompanho diariamente as mudanças que estão transformando a forma como as pessoas
-              pensam, trabalham, compram, criam e se relacionam.
+              Fundei o <a href="https://agenciawys.com.br" target="_blank" rel="noopener">Grupo WYS</a>
+              em {ANO_FUNDACAO_WYS} e lidero a operação desde então, no cruzamento entre business
+              intelligence, growth strategy e inteligência artificial aplicada. Nos últimos anos,
+              passei a atuar também como advisor de IA para outras empresas, ajudando times
+              executivos a estruturar arquitetura, governança e sistemas agênticos.
             </p>
             <p>
-              Escrevo sobre inteligência artificial, GEO, SEO, arquitetura digital e comportamento
-              desde {anoInicial} — são {totalArtigos} artigos publicados que viram matéria-prima das
-              palestras. Não é teoria de slide: é o que estou testando, errando e ajustando com
-              marcas reais enquanto o mercado ainda está decidindo se acredita.
+              Criei o BrainPilot, uma metodologia proprietária de diagnóstico, arquitetura e
+              implementação de IA empresarial. Ela existe porque a pergunta que chega até mim
+              raramente é qual ferramenta usar. É como transformar a IA de acessório isolado em
+              capacidade central da organização.
             </p>
             <p>
-              O que levo para o palco não é uma lista de ferramentas. É a leitura estratégica do
-              que muda quando a descoberta, a decisão e a confiança passam a ser mediadas por
-              máquinas.
+              Em paralelo, escrevo sobre inteligência artificial, GEO, SEO, arquitetura digital e
+              comportamento desde {anoPrimeiroTexto}. São {totalArtigos} artigos publicados que viram
+              matéria-prima das palestras.
+            </p>
+            <p>
+              O que levo para o palco não é uma lista de ferramentas. É o que estou testando, errando
+              e ajustando com marcas reais enquanto o mercado ainda decide se acredita.
             </p>
             <a href="/sobre" class="lp-link lp-link-dark">Conhecer a trajetória completa</a>
           </div>
         </div>
       </section>
 
-      <!-- ================= VÍDEOS ================= -->
+      <!-- ===================== 11. TERRITÓRIOS ===================== -->
+      <section class="lp-secao lp-secao-alt">
+        <div class="lp-wrap">
+          <p class="lp-eyebrow lp-eyebrow-dark">Territórios de domínio</p>
+          <h2 class="lp-h2">Onde a conversa tem lastro</h2>
+          <div class="lp-territorios">
+            {territorios.map((t) => (
+              <div class="lp-territorio">
+                <h3 class="lp-territorio-titulo">{t.grupo}</h3>
+                <ul class="lp-tags">
+                  {t.itens.map((i) => <li>{i}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 12. POSIÇÃO ===================== -->
+      <section class="lp-posicao">
+        <div class="lp-wrap lp-posicao-inner">
+          <h2 class="lp-posicao-titulo">Made by humans.<br />Amplified by AI.</h2>
+          <div class="lp-posicao-corpo">
+            <p>
+              Não acredito em um futuro onde máquinas substituem pessoas. Acredito em um futuro onde
+              organizações inteligentes ampliam o potencial humano.
+            </p>
+            <p>
+              Os melhores resultados continuam nascendo da criatividade, da experiência e da
+              capacidade humana de decidir. A inteligência artificial existe para acelerar esse
+              processo, não para assumir o volante.
+            </p>
+            <p class="lp-posicao-punch">
+              O futuro não será construído por empresas que utilizam IA. Será construído por empresas
+              que operam com IA.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== GALERIA ===================== -->
+      {galeriaPalco.length > 0 && (
+        <section class="lp-secao">
+          <div class="lp-wrap">
+            <p class="lp-eyebrow lp-eyebrow-dark">No palco</p>
+            <h2 class="lp-h2">Registros dos últimos eventos</h2>
+            <div class="lp-galeria">
+              {galeriaPalco.map((f) => (
+                <figure class="lp-galeria-item">
+                  <Image src={f.src} alt={f.alt} widths={[420, 720, 1000]} sizes="(min-width: 900px) 33vw, 50vw" loading="lazy" />
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <!-- ===================== 13. VÍDEO ===================== -->
       {videos.length > 0 && (
         <section class="lp-secao lp-secao-alt">
           <div class="lp-wrap">
-            <p class="lp-eyebrow lp-eyebrow-dark">Em vídeo</p>
+            <p class="lp-eyebrow lp-eyebrow-dark">Prova em vídeo</p>
             <h2 class="lp-h2">Veja o tom antes de contratar</h2>
             <div class="lp-videos">
               {videos.map((v) => (
@@ -315,25 +598,43 @@ const breadcrumbSchema = breadcrumbList([
         </section>
       )}
 
-      <!-- ================= GALERIA DE PALCO ================= -->
-      {galeriaPalco.length > 0 && (
-        <section class="lp-secao">
-          <div class="lp-wrap">
-            <p class="lp-eyebrow lp-eyebrow-dark">No palco</p>
-            <h2 class="lp-h2">Registros dos últimos eventos</h2>
-            <div class="lp-galeria">
-              {galeriaPalco.map((f) => (
-                <figure class="lp-galeria-item">
-                  <img src={f.src} alt={f.alt} width={f.width} height={f.height} loading="lazy" decoding="async" />
-                </figure>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      <!-- ===================== 14. COMO FUNCIONA ===================== -->
+      <section class="lp-secao">
+        <div class="lp-wrap">
+          <p class="lp-eyebrow lp-eyebrow-dark">Como funciona</p>
+          <h2 class="lp-h2">Do primeiro contato ao palco</h2>
+          <ol class="lp-etapas">
+            {etapas.map((e, i) => (
+              <li class="lp-etapa">
+                <span class="lp-etapa-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <h3 class="lp-etapa-titulo">{e.titulo}</h3>
+                <p class="lp-etapa-texto">{e.texto}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
 
-      <!-- ================= CTA ================= -->
-      <section id="solicitar" class="lp-cta">
+      <!-- ===================== 15. FAQ ===================== -->
+      <section class="lp-secao lp-secao-alt">
+        <div class="lp-wrap lp-faq-wrap">
+          <p class="lp-eyebrow lp-eyebrow-dark">Perguntas frequentes</p>
+          <h2 class="lp-h2">O que costumam perguntar antes de fechar</h2>
+          <!-- <details> nativo: acordeão sem JavaScript, e o texto da resposta
+               continua no HTML mesmo fechado — que é o que o rastreador lê. -->
+          <div class="lp-faq">
+            {faq.map((f) => (
+              <details class="lp-faq-item">
+                <summary class="lp-faq-q">{f.q}</summary>
+                <p class="lp-faq-a">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 16. CTA FINAL ===================== -->
+      <section class="lp-cta">
         <div class="lp-wrap lp-cta-inner">
           <h2 class="lp-cta-titulo">Leve essa conversa para o seu evento</h2>
           <p class="lp-cta-texto">
@@ -344,12 +645,13 @@ const breadcrumbSchema = breadcrumbList([
       </section>
     </main>
 
-    <!-- Rodapé curto: o mínimo para a página não ficar órfã. -->
     <footer class="lp-footer">
       <div class="lp-wrap lp-footer-inner">
         <div>
           <p class="lp-footer-marca">Paul Gomes</p>
-          <p class="lp-footer-nota">Palestras sobre inteligência artificial, GEO e o futuro dos negócios.</p>
+          <p class="lp-footer-nota">
+            Palestras sobre inteligência artificial, GEO e transformação AI Native.
+          </p>
         </div>
         <nav class="lp-footer-nav" aria-label="Links do site">
           <a href="/">Início</a>
@@ -368,9 +670,9 @@ const breadcrumbSchema = breadcrumbList([
 </html>
 
 <style>
-  /* Tokens locais. O hero e o CTA são escuros nos dois temas de propósito:
-     numa landing a hierarquia visual precisa ser previsível, e não seguir a
-     preferência de tema do visitante. */
+  /* O hero, as faixas de posição e o CTA são escuros nos dois temas de
+     propósito: numa landing a hierarquia visual precisa ser previsível, e não
+     seguir a preferência de tema do visitante. */
   .lp {
     --lp-azul: #0103f9;
     --lp-azul-claro: #6063ff;
@@ -412,7 +714,7 @@ const breadcrumbSchema = breadcrumbList([
     text-decoration: none;
   }
 
-  /* ---------- botões ---------- */
+  /* ---------- botões e links ---------- */
   .lp-btn {
     display: inline-flex;
     align-items: center;
@@ -448,6 +750,64 @@ const breadcrumbSchema = breadcrumbList([
   }
   .lp-link-dark:hover { border-color: var(--lp-azul); }
 
+  /* ---------- tipografia comum ---------- */
+  .lp-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--lp-azul-claro);
+    margin: 0;
+    max-width: 46ch;
+    line-height: 1.6;
+  }
+  .lp-eyebrow-dark { color: var(--lp-azul); }
+
+  .lp-h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 6.2vw, 4.4rem);
+    font-weight: 800;
+    line-height: 1.03;
+    letter-spacing: -0.035em;
+    margin: 1rem 0 0;
+  }
+  .lp-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.6vw, 2.7rem);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.028em;
+    margin: 0.9rem 0 0;
+    max-width: 24ch;
+  }
+  .lp-h3 {
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .lp-lead {
+    margin: 1.5rem 0 0;
+    max-width: 38rem;
+    font-size: 1.08rem;
+    line-height: 1.65;
+    color: rgb(255 255 255 / 0.72);
+  }
+  .lp-nota {
+    margin-top: 2.25rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    max-width: 60ch;
+  }
+  .lp-nota-italic { font-style: italic; }
+  .lp-nota-forte {
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
   /* ---------- hero ---------- */
   .lp-hero {
     position: relative;
@@ -455,7 +815,7 @@ const breadcrumbSchema = breadcrumbList([
     background: var(--lp-escuro);
     color: #fff;
   }
-  /* Brilho azul atrás da foto — dá profundidade sem precisar de mais um asset. */
+  /* Brilho azul atrás da foto — profundidade sem precisar de mais um asset. */
   .lp-hero::before {
     content: '';
     position: absolute;
@@ -475,37 +835,7 @@ const breadcrumbSchema = breadcrumbList([
     padding-block: 4rem 3rem;
   }
   @media (min-width: 900px) {
-    .lp-hero-grid {
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 4rem;
-      padding-block: 6rem 5rem;
-    }
-  }
-
-  .lp-eyebrow {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.22em;
-    color: var(--lp-azul-claro);
-    margin: 0;
-  }
-  .lp-eyebrow-dark { color: var(--lp-azul); }
-
-  .lp-h1 {
-    font-family: var(--font-display);
-    font-size: clamp(2.4rem, 6.2vw, 4.4rem);
-    font-weight: 800;
-    line-height: 1.03;
-    letter-spacing: -0.035em;
-    margin: 1rem 0 0;
-  }
-  .lp-lead {
-    margin: 1.5rem 0 0;
-    max-width: 34rem;
-    font-size: 1.08rem;
-    line-height: 1.65;
-    color: rgb(255 255 255 / 0.72);
+    .lp-hero-grid { grid-template-columns: 1.15fr 0.85fr; gap: 4rem; padding-block: 6rem 5rem; }
   }
   .lp-hero-actions {
     display: flex;
@@ -514,76 +844,104 @@ const breadcrumbSchema = breadcrumbList([
     gap: 1.5rem;
     margin-top: 2.25rem;
   }
-
-  .lp-hero-foto { position: relative; }
   .lp-hero-img {
     width: 100%;
     height: auto;
     border-radius: 1.5rem;
-    /* A foto original tem fundo cinza claro; o leve escurecimento evita que ela
-       brigue com o fundo preto do hero. */
     filter: saturate(1.05) brightness(0.97);
   }
 
-  /* ---------- números ---------- */
-  .lp-numeros {
-    background: var(--lp-azul);
-    color: #fff;
-  }
-  .lp-numeros-grid {
+  /* ---------- evidência ---------- */
+  .lp-evidencia { background: var(--lp-azul); color: #fff; }
+  .lp-evidencia-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem 1.5rem;
     padding-block: 2.75rem;
   }
-  @media (min-width: 860px) {
-    .lp-numeros-grid { grid-template-columns: repeat(4, 1fr); }
-  }
-  .lp-numero-valor {
+  @media (min-width: 860px) { .lp-evidencia-grid { grid-template-columns: repeat(4, 1fr); } }
+  .lp-evidencia-valor {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 4.5vw, 2.9rem);
+    font-size: clamp(1.7rem, 3.6vw, 2.6rem);
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.03em;
     margin: 0;
   }
-  .lp-numero-label {
+  .lp-evidencia-label {
     margin: 0.6rem 0 0;
     font-size: 0.83rem;
     line-height: 1.45;
-    color: rgb(255 255 255 / 0.8);
+    color: rgb(255 255 255 / 0.82);
   }
 
-  /* ---------- seções claras ---------- */
+  /* ---------- seções ---------- */
   .lp-secao { padding-block: 5rem; }
   @media (min-width: 900px) { .lp-secao { padding-block: 7rem; } }
+  .lp-secao-curta { padding-block: 3.5rem; }
+  @media (min-width: 900px) { .lp-secao-curta { padding-block: 4.5rem; } }
   .lp-secao-alt { background: var(--color-subtle); }
 
-  .lp-h2 {
-    font-family: var(--font-display);
-    font-size: clamp(1.75rem, 3.6vw, 2.7rem);
-    font-weight: 800;
-    line-height: 1.12;
-    letter-spacing: -0.028em;
-    margin: 0.9rem 0 0;
-    max-width: 22ch;
+  /* ---------- marcas ---------- */
+  .lp-marcas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 0.5rem;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
   }
-  .lp-nota {
-    margin-top: 2rem;
-    font-size: 0.9rem;
+  .lp-marcas li {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-ink);
+  }
+  .lp-marcas + .lp-nota { margin-top: 1.5rem; }
+
+  /* ---------- diagnóstico ---------- */
+  .lp-diagnostico { display: grid; gap: 2.5rem; }
+  @media (min-width: 960px) {
+    .lp-diagnostico { grid-template-columns: 0.85fr 1fr; gap: 4rem; }
+  }
+  .lp-destaque {
+    margin: 1.5rem 0 0;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--lp-azul);
+    max-width: 26ch;
+  }
+  .lp-diagnostico-corpo p {
+    margin: 0 0 1.25rem;
+    font-size: 1.02rem;
+    line-height: 1.75;
     color: var(--color-muted);
+  }
+  .lp-diagnostico-corpo p:last-child { margin-bottom: 0; }
+  .lp-punch {
+    border-left: 3px solid var(--lp-azul);
+    padding-left: 1.25rem;
+    font-weight: 600;
+    color: var(--color-ink) !important;
   }
 
   /* ---------- temas ---------- */
-  .lp-temas {
-    display: grid;
-    gap: 1.25rem;
-    margin-top: 3rem;
-  }
+  .lp-temas { display: grid; gap: 1.25rem; margin-top: 3rem; }
   @media (min-width: 760px) { .lp-temas { grid-template-columns: repeat(2, 1fr); } }
-
+  @media (min-width: 1060px) {
+    .lp-temas { grid-template-columns: repeat(6, 1fr); }
+    /* Cinco cards em duas fileiras: 3 em cima, 2 embaixo ocupando metade cada.
+       Sem isso o quinto card fica sozinho e a fileira parece quebrada. */
+    .lp-tema:nth-child(-n + 3) { grid-column: span 2; }
+    .lp-tema:nth-child(n + 4) { grid-column: span 3; }
+  }
   .lp-tema {
-    position: relative;
     border: 1px solid var(--color-border);
     border-radius: 1.25rem;
     padding: 2rem 1.75rem 1.75rem;
@@ -615,23 +973,18 @@ const breadcrumbSchema = breadcrumbList([
     color: var(--color-muted);
   }
 
-  /* ---------- frase sobre foto ---------- */
-  .lp-quote {
-    position: relative;
-    background: var(--lp-escuro);
-    isolation: isolate;
-  }
-  .lp-quote-img {
+  /* ---------- citação ---------- */
+  .lp-citacao { position: relative; background: var(--lp-escuro); isolation: isolate; }
+  .lp-citacao-img {
     width: 100%;
     height: 100%;
     min-height: 340px;
     max-height: 620px;
     object-fit: cover;
-    /* O rosto está à esquerda na foto; o crop preserva esse lado. */
     object-position: 30% 40%;
     display: block;
   }
-  .lp-quote-overlay {
+  .lp-citacao-overlay {
     position: absolute;
     inset: 0;
     display: flex;
@@ -639,7 +992,7 @@ const breadcrumbSchema = breadcrumbList([
     padding-block: 3rem;
     background: linear-gradient(to top, rgb(7 7 12 / 0.92) 12%, rgb(7 7 12 / 0.25) 55%, transparent);
   }
-  .lp-quote-texto {
+  .lp-citacao-texto {
     font-family: var(--font-display);
     font-size: clamp(1.3rem, 3.2vw, 2.25rem);
     font-weight: 700;
@@ -651,7 +1004,7 @@ const breadcrumbSchema = breadcrumbList([
     border: 0;
     padding: 0;
   }
-  .lp-quote-autor {
+  .lp-citacao-autor {
     margin: 1rem 0 0;
     font-size: 0.78rem;
     font-weight: 700;
@@ -660,18 +1013,32 @@ const breadcrumbSchema = breadcrumbList([
     color: var(--lp-azul-claro);
   }
 
-  /* ---------- formatos ---------- */
-  .lp-formatos {
-    display: grid;
-    gap: 1.25rem;
-    margin-top: 3rem;
+  /* ---------- entregas ---------- */
+  .lp-entregas { display: grid; gap: 1.25rem; margin-top: 3rem; }
+  @media (min-width: 820px) { .lp-entregas { grid-template-columns: repeat(3, 1fr); } }
+  .lp-entrega {
+    background: var(--color-paper);
+    border-radius: 1.25rem;
+    padding: 1.9rem 1.6rem;
   }
-  @media (min-width: 820px) { .lp-formatos { grid-template-columns: repeat(3, 1fr); } }
+  .lp-entrega-titulo {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+  }
+  .lp-entrega-texto {
+    margin: 0.8rem 0 0;
+    font-size: 0.96rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
 
-  .lp-formato {
-    border-top: 3px solid var(--lp-azul);
-    padding-top: 1.4rem;
-  }
+  /* ---------- formatos ---------- */
+  .lp-formatos { display: grid; gap: 1.25rem; margin-top: 3rem; }
+  @media (min-width: 820px) { .lp-formatos { grid-template-columns: repeat(3, 1fr); } }
+  .lp-formato { border-top: 3px solid var(--lp-azul); padding-top: 1.4rem; }
   .lp-formato-nome {
     font-family: var(--font-display);
     font-size: 1.2rem;
@@ -693,15 +1060,34 @@ const breadcrumbSchema = breadcrumbList([
     color: var(--lp-azul);
   }
 
-  /* ---------- sobre ---------- */
-  .lp-sobre {
+  /* ---------- filtro de intenção ---------- */
+  .lp-filtro {
+    background: var(--lp-escuro);
+    color: rgb(255 255 255 / 0.75);
+  }
+  .lp-filtro-grid {
     display: grid;
     gap: 2.5rem;
-    align-items: center;
+    padding-block: 4.5rem;
   }
-  @media (min-width: 900px) {
-    .lp-sobre { grid-template-columns: 420px 1fr; gap: 4rem; }
+  @media (min-width: 860px) {
+    .lp-filtro-grid { grid-template-columns: repeat(2, 1fr); gap: 4rem; padding-block: 6rem; }
   }
+  .lp-filtro-titulo {
+    color: #fff;
+    padding-left: 1rem;
+    border-left: 3px solid var(--lp-azul-claro);
+  }
+  .lp-filtro-titulo-nao { border-left-color: rgb(255 255 255 / 0.25); }
+  .lp-filtro p {
+    margin: 1.1rem 0 0;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  /* ---------- sobre ---------- */
+  .lp-sobre { display: grid; gap: 2.5rem; align-items: center; }
+  @media (min-width: 900px) { .lp-sobre { grid-template-columns: 420px 1fr; gap: 4rem; } }
   .lp-sobre-foto {
     position: relative;
     display: flex;
@@ -733,14 +1119,83 @@ const breadcrumbSchema = breadcrumbList([
   .lp-sobre-copy p:first-of-type { margin-top: 1.5rem; }
   .lp-sobre-copy a { color: var(--lp-azul); }
 
-  /* ---------- vídeos ---------- */
-  .lp-videos {
-    display: grid;
-    gap: 1.75rem;
-    margin-top: 3rem;
+  /* ---------- territórios ---------- */
+  .lp-territorios { display: grid; gap: 2rem; margin-top: 3rem; }
+  @media (min-width: 860px) { .lp-territorios { grid-template-columns: repeat(3, 1fr); } }
+  .lp-territorio-titulo {
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--color-border);
   }
-  @media (min-width: 760px) { .lp-videos { grid-template-columns: repeat(3, 1fr); } }
+  .lp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .lp-tags li {
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--lp-azul) 10%, transparent);
+    color: var(--lp-azul);
+  }
 
+  /* ---------- posição ---------- */
+  .lp-posicao { background: var(--lp-azul); color: #fff; }
+  .lp-posicao-inner { display: grid; gap: 2rem; padding-block: 4.5rem; }
+  @media (min-width: 900px) {
+    .lp-posicao-inner { grid-template-columns: 0.9fr 1fr; gap: 4rem; padding-block: 6rem; }
+  }
+  .lp-posicao-titulo {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 4.4vw, 3rem);
+    font-weight: 800;
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+  .lp-posicao-corpo p {
+    margin: 0 0 1.1rem;
+    font-size: 1.02rem;
+    line-height: 1.7;
+    color: rgb(255 255 255 / 0.82);
+  }
+  .lp-posicao-punch {
+    font-family: var(--font-display);
+    font-size: 1.15rem !important;
+    font-weight: 700;
+    color: #fff !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* ---------- galeria ---------- */
+  .lp-galeria {
+    display: grid;
+    gap: 1rem;
+    margin-top: 3rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 900px) { .lp-galeria { grid-template-columns: repeat(3, 1fr); } }
+  .lp-galeria-item { margin: 0; }
+  .lp-galeria-item :global(img) {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 0.9rem;
+    display: block;
+  }
+
+  /* ---------- vídeos ---------- */
+  .lp-videos { display: grid; gap: 1.75rem; margin-top: 3rem; }
+  @media (min-width: 760px) { .lp-videos { grid-template-columns: repeat(3, 1fr); } }
   .lp-video { display: block; text-decoration: none; color: inherit; }
   .lp-video-thumb {
     position: relative;
@@ -783,33 +1238,83 @@ const breadcrumbSchema = breadcrumbList([
     line-height: 1.35;
   }
 
-  /* ---------- galeria ---------- */
-  .lp-galeria {
+  /* ---------- etapas ---------- */
+  .lp-etapas {
     display: grid;
-    gap: 1rem;
-    margin-top: 3rem;
-    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin: 3rem 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: etapa;
   }
-  @media (min-width: 900px) { .lp-galeria { grid-template-columns: repeat(3, 1fr); } }
-  .lp-galeria-item { margin: 0; }
-  .lp-galeria-item img {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: 0.9rem;
-    display: block;
+  @media (min-width: 860px) { .lp-etapas { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
+  .lp-etapa { position: relative; padding-top: 1.4rem; border-top: 1px solid var(--color-border); }
+  .lp-etapa-num {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: color-mix(in srgb, var(--lp-azul) 28%, transparent);
+  }
+  .lp-etapa-titulo {
+    font-family: var(--font-display);
+    font-size: 1.12rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0.7rem 0 0;
+  }
+  .lp-etapa-texto {
+    margin: 0.7rem 0 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+
+  /* ---------- FAQ ---------- */
+  .lp-faq-wrap { max-width: 860px; }
+  .lp-faq { margin-top: 2.75rem; border-top: 1px solid var(--color-border); }
+  .lp-faq-item { border-bottom: 1px solid var(--color-border); }
+  .lp-faq-q {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    cursor: pointer;
+    list-style: none;
+    padding: 1.35rem 0;
+    font-family: var(--font-display);
+    font-size: 1.03rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .lp-faq-q::-webkit-details-marker { display: none; }
+  /* Sinal de abre/fecha desenhado em CSS: um ícone a mais no HTML por pergunta
+     seria só ruído para leitor de tela, que já anuncia o estado do <details>. */
+  .lp-faq-q::after {
+    content: '';
+    flex: none;
+    width: 11px;
+    height: 11px;
+    margin-top: 0.4rem;
+    border-right: 2px solid var(--lp-azul);
+    border-bottom: 2px solid var(--lp-azul);
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+  }
+  .lp-faq-item[open] .lp-faq-q::after { transform: rotate(-135deg); margin-top: 0.75rem; }
+  .lp-faq-a {
+    margin: 0;
+    padding: 0 0 1.5rem;
+    max-width: 68ch;
+    font-size: 0.98rem;
+    line-height: 1.7;
+    color: var(--color-muted);
   }
 
   /* ---------- CTA ---------- */
-  .lp-cta {
-    background: var(--lp-escuro);
-    color: #fff;
-  }
-  .lp-cta-inner {
-    padding-block: 5rem;
-    text-align: center;
-  }
+  .lp-cta { background: var(--lp-escuro); color: #fff; }
+  .lp-cta-inner { padding-block: 5rem; text-align: center; }
   @media (min-width: 900px) { .lp-cta-inner { padding-block: 7rem; } }
   .lp-cta-titulo {
     font-family: var(--font-display);
@@ -835,17 +1340,9 @@ const breadcrumbSchema = breadcrumbList([
     color: rgb(255 255 255 / 0.72);
     border-top: 1px solid rgb(255 255 255 / 0.08);
   }
-  .lp-footer-inner {
-    display: grid;
-    gap: 2rem;
-    padding-block: 3rem 2rem;
-  }
+  .lp-footer-inner { display: grid; gap: 2rem; padding-block: 3rem 2rem; }
   @media (min-width: 820px) {
-    .lp-footer-inner {
-      grid-template-columns: 1fr auto auto;
-      align-items: center;
-      gap: 3rem;
-    }
+    .lp-footer-inner { grid-template-columns: 1fr auto auto; align-items: center; gap: 3rem; }
   }
   .lp-footer-marca {
     font-family: var(--font-display);
@@ -854,13 +1351,8 @@ const breadcrumbSchema = breadcrumbList([
     color: #fff;
     margin: 0;
   }
-  .lp-footer-nota { margin: 0.45rem 0 0; font-size: 0.88rem; max-width: 34ch; }
-  .lp-footer-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    font-size: 0.9rem;
-  }
+  .lp-footer-nota { margin: 0.45rem 0 0; font-size: 0.88rem; max-width: 36ch; }
+  .lp-footer-nav { display: flex; flex-wrap: wrap; gap: 1.5rem; font-size: 0.9rem; }
   .lp-footer-nav a { color: rgb(255 255 255 / 0.8); text-decoration: none; }
   .lp-footer-nav a:hover { color: #fff; }
   .lp-footer :global(.lp-footer-social) { color: rgb(255 255 255 / 0.8); }
@@ -880,12 +1372,8 @@ const breadcrumbSchema = breadcrumbList([
   .lp-footer-base a:hover { color: #fff; }
 
   @media (prefers-reduced-motion: reduce) {
-    .lp-btn,
-    .lp-tema,
-    .lp-video-thumb img,
-    .lp-video-play { transition: none; }
-    .lp-btn:hover,
-    .lp-tema:hover { transform: none; }
+    .lp-btn, .lp-tema, .lp-video-thumb img, .lp-video-play, .lp-faq-q::after { transition: none; }
+    .lp-btn:hover, .lp-tema:hover { transform: none; }
     .lp-video:hover .lp-video-thumb img { transform: none; }
   }
 </style>
