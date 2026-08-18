@@ -33,19 +33,40 @@ imagem. As de ambiente vão com `alt` vazio e `aria-hidden`, porque são
 decorativas — entram dessaturadas e recoloridas no azul da marca, atrás de
 texto, como textura.
 
-Use o prefixo quando a foto for de ambiente, e nomeie pelo lugar:
+Use o prefixo quando a foto for de ambiente, e nomeie pelo lugar. Dois papéis
+têm nome próprio; o resto forma o mosaico:
 
-    ambiente-plateia-em-convencao.jpg      ->  faixa larga "Onde isso acontece"
-    ambiente-auditorio-antes-da-abertura.jpg
-    ambiente-sala-de-reuniao.jpg           ->  fundo do bloco final de CTA
+    ambiente-faixa-auditorio-antes-da-abertura.jpg  ->  peça grande do mosaico,
+                                                        a que leva o texto
+    ambiente-fecho-plateia-em-convencao.jpg         ->  fundo do CTA final
+    ambiente-sala-de-reuniao.jpg                    ->  mosaico
+    ambiente-plateia-atenta.jpg                     ->  mosaico
+    ambiente-parede-do-estudio.jpg                  ->  mosaico
 
-A primeira em ordem alfabética vai para a faixa larga; a segunda, para o fundo
-do CTA. Com uma só, ela serve as duas. Sem nenhuma, os dois blocos continuam
-funcionando — a faixa não é renderizada e o CTA fica só com o gradiente.
+O papel vem do nome, e não da ordem alfabética: com a ordem, acrescentar um
+arquivo remanejava em silêncio o que já estava posto em outro bloco.
 
-**Não use `ambiente-` para foto em que alguém apareça em destaque.** O
-tratamento escurece e recolore, mas não descaracteriza: rosto reconhecível numa
-página assinada por uma pessoa é lido como sendo ela.
+Sem `ambiente-faixa-*` ou `ambiente-fecho-*`, cada um empresta a primeira do
+mosaico. Sem nenhuma foto de ambiente, os dois blocos somem sem quebrar nada —
+o mosaico não é renderizado e o CTA fica só com o gradiente.
+
+O mosaico fecha reto com qualquer quantidade: a peça grande ocupa metade, as
+menores preenchem o resto e a última estica quando sobraria buraco. Três ou
+quatro fotos pequenas é o que cabe sem virar grade de portfólio.
+
+As imagens ficam dessaturadas em repouso e **acendem na cor original quando o
+ponteiro passa** — em aparelho de toque não, porque ali o `:hover` gruda depois
+do toque e a imagem ficaria colorida sem ninguém ter pedido.
+
+**O que o prefixo não resolve.** O tratamento escurece e recolore, mas não
+descaracteriza ninguém. Duas coisas continuam valendo:
+
+- **Nenhuma foto de palestrante aqui.** Numa página assinada por uma pessoa,
+  quem estiver no palco é lido como sendo ela — e o `alt` vazio não desfaz o
+  que a imagem diz. Foto de quem palestra entra pelos nomes reservados
+  (`hero`, `retrato`) ou pela galeria, que credita.
+- **Plateia pode.** Público de costas ou de frente se lê como público, não
+  como o autor da página. É esse o caso das fotos de auditório e de sala.
 
 Pode subir o arquivo grande, direto da câmera: o Astro gera as versões
 redimensionadas em WebP no build. O que vai para o repositório é o original, e é

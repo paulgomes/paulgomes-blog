@@ -74,18 +74,30 @@ const RESERVADOS = new Set(['hero', 'retrato', 'citacao']);
  * o que mantém a pasta legível para quem for trocar a imagem depois.
  */
 const PREFIXO_AMBIENTE = 'ambiente-';
-const ambientes = fotos
-  .filter((f) => f.chave.startsWith(PREFIXO_AMBIENTE))
-  .map((f) => f.src);
+const ambientes = fotos.filter((f) => f.chave.startsWith(PREFIXO_AMBIENTE));
 
 const galeriaPalco = fotos
   .filter((f) => !RESERVADOS.has(f.chave) && !f.chave.startsWith(PREFIXO_AMBIENTE))
   .map((f) => ({ src: f.src, alt: `Paul Gomes — ${f.chave.replace(/[-_]+/g, ' ')}` }));
 
-// A primeira vai para a faixa larga; a segunda, para o fecho. Com uma só, ela
-// serve as duas — repetir é melhor do que deixar um dos blocos sem textura.
-const ambienteFaixa = ambientes[0] ?? null;
-const ambienteFecho = ambientes[1] ?? ambientes[0] ?? null;
+/*
+ * O papel vem do nome, como nos reservados do topo — e não da posição na
+ * ordem alfabética. Com poucos arquivos a ordem parecia bastar; ao chegar o
+ * quinto, trocar uma foto passava a remanejar em silêncio o que estava em
+ * outro bloco. `ambiente-faixa-*` e `ambiente-fecho-*` dizem para onde vão, e
+ * o resto do nome segue descrevendo o lugar.
+ */
+const achaAmbiente = (papel: string) =>
+  ambientes.find((f) => f.chave.startsWith(`${PREFIXO_AMBIENTE}${papel}-`))?.src ?? null;
+
+const ambienteMosaico = ambientes
+  .filter((f) => !/^ambiente-(faixa|fecho)-/.test(f.chave))
+  .map((f) => f.src);
+
+// Sem arquivo com o papel explícito, empresta do mosaico: um bloco sem textura
+// é pior do que uma imagem repetida.
+const ambienteFaixa = achaAmbiente('faixa') ?? ambienteMosaico[0] ?? null;
+const ambienteFecho = achaAmbiente('fecho') ?? ambienteMosaico[1] ?? ambienteMosaico[0] ?? null;
 
 /**
  * Vídeo de fundo da faixa de citação.
@@ -671,29 +683,54 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
         </div>
       </section>
 
-      <!-- ===================== FAIXA DE AMBIENTE ===================== -->
+      <!-- ===================== MOSAICO DE AMBIENTE ===================== -->
       {/* Respiro entre a posição e o "como funciona": dois blocos densos
-          seguidos cansam. A imagem entra tratada no azul da marca e o texto
-          fala do lugar, não de quem esteve nele. */}
+          seguidos cansam. Um mosaico em vez de uma faixa larga porque cabe
+          mais lugar no mesmo espaço vertical, e porque a peça grande com o
+          texto já faz o papel que a faixa fazia sozinha.
+
+          As imagens entram tratadas no azul da marca e acendem no ponteiro —
+          o cinza é o estado de repouso, a cor é a resposta. Não há parada de
+          teclado aqui de propósito: são decorativas (`aria-hidden`), e dar
+          foco a elas seria acrescentar passos numa página cujo caminho é
+          chegar ao formulário. */}
       {ambienteFaixa && (
-        <section class="lp-ambiente">
-          <Image
-            src={ambienteFaixa}
-            alt=""
-            aria-hidden="true"
-            widths={[900, 1400, 1900]}
-            sizes="100vw"
-            loading="lazy"
-            class="lp-ambiente-img"
-          />
-          <div class="lp-ambiente-cor" aria-hidden="true"></div>
-          <div class="lp-ambiente-overlay">
-            <div class="lp-wrap">
-              <p class="lp-rotulo lp-rotulo-claro">Onde isso acontece</p>
-              <p class="lp-ambiente-texto">
-                Convenção, comitê executivo, time reunido numa sala. O formato muda —
-                a conversa que interessa é a mesma.
-              </p>
+        <section class="lp-secao lp-secao-alt">
+          <div class="lp-wrap">
+            <div class="lp-mosaico reveal">
+              <figure class="lp-mosaico-item lp-mosaico-destaque">
+                <Image
+                  src={ambienteFaixa}
+                  alt=""
+                  aria-hidden="true"
+                  widths={[600, 900, 1400]}
+                  sizes="(min-width: 900px) 50vw, 100vw"
+                  loading="lazy"
+                  class="lp-mosaico-img"
+                />
+                <div class="lp-mosaico-trama" aria-hidden="true"></div>
+                <figcaption class="lp-mosaico-legenda">
+                  <p class="lp-rotulo lp-rotulo-claro">Onde isso acontece</p>
+                  <p class="lp-mosaico-texto">
+                    Convenção, comitê executivo, time reunido numa sala. O formato muda —
+                    a conversa que interessa é a mesma.
+                  </p>
+                </figcaption>
+              </figure>
+              {ambienteMosaico.map((src) => (
+                <figure class="lp-mosaico-item">
+                  <Image
+                    src={src}
+                    alt=""
+                    aria-hidden="true"
+                    widths={[380, 620, 900]}
+                    sizes="(min-width: 900px) 25vw, 50vw"
+                    loading="lazy"
+                    class="lp-mosaico-img"
+                  />
+                  <div class="lp-mosaico-trama" aria-hidden="true"></div>
+                </figure>
+              ))}
             </div>
           </div>
         </section>
@@ -1730,21 +1767,44 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     color: #fff !important;
   }
 
-  /* ---------- ambiente ---------- */
-  /* Duotone da marca. A foto entra em cinza e recebe o azul por cima: o
-     resultado pertence à página em vez de parecer imagem avulsa colada nela.
-     O tratamento é forte de propósito — assim a imagem se lê como textura do
-     lugar, não como retrato de alguém. */
-  .lp-ambiente {
+  /* ---------- mosaico de ambiente ---------- */
+  /* Bento: uma peça grande que carrega o texto e outras menores ao lado.
+     Cabe mais lugar no mesmo espaço vertical do que uma faixa corrida, e a
+     assimetria evita a leitura de "grade de portfólio". */
+  .lp-mosaico {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 900px) {
+    .lp-mosaico { grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .lp-mosaico-destaque { grid-column: span 2; grid-row: span 2; }
+    /* Com três imagens pequenas sobraria meia coluna na segunda linha: a
+       última estica e o bloco fecha reto, seja qual for o número de fotos. */
+    .lp-mosaico > :last-child:nth-child(4) { grid-column: span 2; }
+  }
+
+  .lp-mosaico-item {
     position: relative;
     isolation: isolate;
     overflow: hidden;
+    margin: 0;
+    border-radius: 1rem;
     background: var(--tinta);
-    height: clamp(300px, 33vw, 440px);
+    aspect-ratio: 4 / 3;
+    /* Fio quase invisível em repouso: é o que acende no ponteiro. Por dentro
+       da borda (`offset: -1px`) para não somar largura ao grid. */
+    outline: 1px solid rgb(255 255 255 / 0.07);
+    outline-offset: -1px;
+    transition: outline-color 0.35s ease;
+  }
+  .lp-mosaico-destaque {
+    aspect-ratio: auto;
+    min-height: clamp(300px, 32vw, 430px);
     display: flex;
     align-items: flex-end;
   }
-  .lp-ambiente-img {
+  .lp-mosaico-img {
     position: absolute;
     inset: 0;
     z-index: 0;
@@ -1754,11 +1814,12 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     /* Cinza antes de tudo: com a cor original no lugar, o azul aplicado por
        cima brigaria com o que já existe na foto em vez de reger a imagem. */
     filter: grayscale(1) contrast(1.08) brightness(0.62);
+    transition: filter 0.5s ease, transform 0.5s ease;
   }
   /* `screen` age nas luzes e deixa as sombras onde estão — é o que faz o azul
      virar tom da imagem em vez de véu por cima dela. Camada própria, e não
      pseudo-elemento: a ordem de empilhamento fica explícita. */
-  .lp-ambiente-cor {
+  .lp-mosaico-trama {
     position: absolute;
     inset: 0;
     z-index: 1;
@@ -1766,24 +1827,57 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     mix-blend-mode: screen;
     opacity: 0.3;
     pointer-events: none;
+    transition: opacity 0.5s ease;
   }
-  .lp-ambiente-overlay {
-    position: relative;
+  /* Trama fina por cima do azul. Sozinha ela seria enfeite; aqui faz um
+     trabalho: dá superfície à imagem tratada, que sem isso fica com cara de
+     foto escurecida. Fica em 1px a cada 4 para não virar textura de tela
+     quebrada em densidade alta. */
+  .lp-mosaico-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
     z-index: 2;
-    width: 100%;
-    padding-block: clamp(2rem, 4vw, 3.25rem);
-    background: linear-gradient(to top, rgb(8 8 13 / 0.9) 12%, rgb(8 8 13 / 0.25) 62%, transparent);
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0 3px,
+      rgb(255 255 255 / 0.045) 3px 4px
+    );
+    transition: opacity 0.5s ease;
   }
-  .lp-ambiente-texto {
-    margin: 0.75rem 0 0;
-    max-width: 30ch;
-    font-size: clamp(1.15rem, 2.3vw, 1.75rem);
+
+  /* O tratamento é o repouso; a cor é a resposta ao ponteiro. Só em aparelho
+     que de fato aponta: no toque, `:hover` gruda depois do toque e a imagem
+     ficaria colorida para sempre, sem que ninguém tenha pedido. */
+  @media (hover: hover) {
+    .lp-mosaico-item:hover .lp-mosaico-img {
+      filter: grayscale(0) contrast(1.02) brightness(0.94);
+      transform: scale(1.035);
+    }
+    .lp-mosaico-item:hover .lp-mosaico-trama { opacity: 0.07; }
+    .lp-mosaico-item:hover::after { opacity: 0.35; }
+    .lp-mosaico-item:hover { outline-color: color-mix(in srgb, var(--az-claro) 60%, transparent); }
+  }
+
+  .lp-mosaico-legenda {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    margin: 0;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    background: linear-gradient(to top, rgb(8 8 13 / 0.92) 15%, rgb(8 8 13 / 0.32) 62%, transparent);
+  }
+  .lp-mosaico-texto {
+    margin: 0.6rem 0 0;
+    max-width: 26ch;
+    font-size: clamp(1.05rem, 1.9vw, 1.5rem);
     font-weight: 600;
-    line-height: 1.25;
+    line-height: 1.28;
     letter-spacing: -0.02em;
     color: #fff;
     text-wrap: balance;
-    text-shadow: 0 2px 22px rgb(0 0 0 / 0.5);
+    text-shadow: 0 2px 20px rgb(0 0 0 / 0.5);
   }
 
   /* ---------- galeria ---------- */
@@ -1988,9 +2082,16 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     .lp-faq-q,
     .lp-faq-q::after,
     .lp-galeria-item :global(img) { transition: none; }
+    .lp-mosaico-item,
+    .lp-mosaico-item::after,
+    .lp-mosaico-trama,
+    .lp-mosaico-img { transition: none; }
     .lp-btn:hover,
     .lp-formato:hover { transform: none; }
     .lp-btn:hover span { transform: none; }
     .lp-galeria-item:hover :global(img) { transform: none; }
+    /* A cor ainda responde ao ponteiro — é informação, não movimento. O que
+       sai é o deslocamento da imagem, que é o que incomoda. */
+    .lp-mosaico-item:hover .lp-mosaico-img { transform: none; }
   }
 </style>
