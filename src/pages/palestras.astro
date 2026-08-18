@@ -1150,10 +1150,22 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     border-radius: 1.5rem;
     pointer-events: none;
   }
+  /* Proporcao fixa em vez de herdada do arquivo. A foto do hero e trocavel (basta
+     commitar `hero.*` em src/assets/palestrante), e sem isto o tamanho do bloco
+     inteiro passaria a depender do formato do arquivo que alguem subiu: um
+     retrato em pe deixa a coluna gigante, uma foto deitada deixa o hero raso e
+     desequilibrado ao lado do texto. Com `cover`, qualquer formato serve.
+
+     `object-position` puxa o corte para a metade de cima, que e onde o rosto
+     fica na maioria dos enquadramentos. Se a foto nova ficar cortada errada, e
+     este numero que se ajusta. */
   .lp-hero-img {
     position: relative;
     width: 100%;
     height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 28%;
     border-radius: 1.5rem;
     filter: saturate(1.04) contrast(1.03);
   }
