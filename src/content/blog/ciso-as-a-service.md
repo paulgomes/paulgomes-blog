@@ -1,13 +1,13 @@
 ---
 title: "CISO as a Service"
-description: ""
+description: "CISO as a Service é a contratação de liderança executiva em segurança da informação em regime terceirizado. Como o modelo funciona e quando faz sentido."
 pubDate: 2026-08-17
 focusKeyword: "ciso"
 metaTitle: "CISO as a Service"
 metaDescription: "CISO as a Service: quando a liderança em segurança deixa de ser um cargo e vira uma decisão de arquitetura CISO as a Service, ou CISO virtual, é a..."
 ---
 
-# CISO as a Service: quando a liderança em segurança deixa de ser um cargo e vira uma decisão de arquitetura
+## CISO as a Service: quando a liderança em segurança deixa de ser um cargo e vira uma decisão de arquitetura
 
 CISO as a Service, ou CISO virtual, é a contratação de liderança executiva em segurança da informação em regime terceirizado. A empresa passa a ter estratégia, gestão de riscos, governança e conformidade conduzidas por um executivo sênior, sem carregar o custo fixo de um C-level em tempo integral. O modelo funciona por escopo, por horas ou por período determinado.
 
