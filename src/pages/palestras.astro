@@ -21,7 +21,7 @@
  */
 import type { ImageMetadata } from 'astro';
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import SocialIcons from '../components/SocialIcons.astro';
 import { SCHEMA_ID, breadcrumbList, faqPage } from '../lib/schema';
@@ -62,6 +62,37 @@ const RESERVADOS = new Set(['hero', 'retrato', 'citacao']);
 const galeriaPalco = fotos
   .filter((f) => !RESERVADOS.has(f.chave))
   .map((f) => ({ src: f.src, alt: `Paul Gomes — ${f.chave.replace(/[-_]+/g, ' ')}` }));
+
+/**
+ * Vídeo de fundo da faixa de citação.
+ *
+ * Mesma pasta das fotos. `?url` porque o Astro não processa vídeo como
+ * processa imagem: aqui ele só copia o arquivo para o build e devolve o
+ * endereço final, com hash.
+ *
+ * `citacao.mp4` é o nome canônico, mas qualquer vídeo na pasta serve — só
+ * existe um lugar para ele na página, e exigir o nome exato seria transformar
+ * um detalhe de convenção em erro silencioso.
+ */
+const videosGlob = import.meta.glob<string>(
+  '../assets/palestrante/*.{mp4,webm}',
+  { eager: true, query: '?url', import: 'default' }
+);
+const videosPorNome = Object.entries(videosGlob)
+  .map(([caminho, url]) => ({ arquivo: caminho.split('/').pop() ?? '', url }))
+  .sort((a, b) => a.arquivo.localeCompare(b.arquivo, 'pt-BR'));
+
+const videoCitacao =
+  videosPorNome.find((v) => v.arquivo.toLowerCase().startsWith('citacao.'))?.url ??
+  videosPorNome[0]?.url ??
+  null;
+
+// O `poster` recebe uma URL crua, entao nao passa pelo <Image> e nao seria
+// otimizado: o arquivo original iria inteiro para o navegador. getImage gera a
+// versao comprimida na mao.
+const posterCitacao = videoCitacao
+  ? (await getImage({ src: fotoCitacao, width: 1400, format: 'webp' })).src
+  : null;
 
 /* ========================================================================== *
  * NÚMEROS
@@ -410,14 +441,44 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
 
       <!-- ===================== 5. CITAÇÃO ===================== -->
       <section class="lp-citacao">
-        <Image
-          src={fotoCitacao}
-          alt="Paul Gomes em retrato conceitual sobre inteligência artificial"
-          widths={[900, 1400, 1900]}
-          sizes="100vw"
-          loading="lazy"
-          class="lp-citacao-img"
-        />
+        {videoCitacao ? (
+          <>
+            {/* O poster é a mesma imagem que a faixa usava antes: ela aparece
+                enquanto o vídeo não começou e é o que fica para quem tem
+                JavaScript desligado, dados limitados ou pediu menos movimento.
+                Sem `autoplay` no HTML de propósito — quem manda tocar é o
+                script, e só quando a faixa chega perto da tela. */}
+            <video
+              id="videoCitacao"
+              class="lp-citacao-midia"
+              data-src={videoCitacao}
+              poster={posterCitacao}
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-hidden="true"
+            ></video>
+            {/* Vídeo que se move sozinho por mais de cinco segundos atrás de
+                texto precisa ter como parar (WCAG 2.2.2). */}
+            <button type="button" id="videoCitacaoBotao" class="lp-citacao-botao" aria-label="Pausar vídeo de fundo" hidden>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
+                <rect class="lp-icone-pausa" x="7" y="5" width="3.5" height="14" rx="1" />
+                <rect class="lp-icone-pausa" x="13.5" y="5" width="3.5" height="14" rx="1" />
+                <path class="lp-icone-play" d="M8 5v14l11-7z" />
+              </svg>
+            </button>
+          </>
+        ) : (
+          <Image
+            src={fotoCitacao}
+            alt="Paul Gomes em retrato conceitual sobre inteligência artificial"
+            widths={[900, 1400, 1900]}
+            sizes="100vw"
+            loading="lazy"
+            class="lp-citacao-midia"
+          />
+        )}
         <div class="lp-citacao-overlay">
           <div class="lp-wrap">
             <blockquote class="lp-citacao-texto">
@@ -751,6 +812,68 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
         addEventListener('scroll', agendar, { passive: true });
         addEventListener('resize', agendar, { passive: true });
         atualizar();
+
+        /* ---- video de fundo da citacao ----
+           Sem `autoplay` no HTML: o arquivo so comeca a baixar quando a faixa
+           chega perto da tela. Numa pagina com 11 mil pixels de altura, baixar
+           o video no carregamento e gastar banda de gente que talvez nunca
+           role ate la. */
+        const video = document.getElementById('videoCitacao');
+        const botao = document.getElementById('videoCitacaoBotao');
+        if (video && botao) {
+          let pausadoPelaPessoa = semMovimento; // quem pediu menos movimento comeca parado
+          let carregado = false;
+
+          const marcarEstado = () => {
+            const parado = video.paused;
+            botao.toggleAttribute('data-parado', parado);
+            botao.setAttribute('aria-label', parado ? 'Reproduzir vídeo de fundo' : 'Pausar vídeo de fundo');
+          };
+
+          const carregar = () => {
+            if (carregado) return;
+            carregado = true;
+            video.src = video.dataset.src;
+          };
+
+          const tocar = () => {
+            carregar();
+            // play() devolve promessa e pode ser recusado (economia de bateria,
+            // politica de midia). Se for, fica o poster e o botao mostra play.
+            const p = video.play();
+            if (p && p.catch) p.catch(marcarEstado);
+          };
+
+          botao.hidden = false;
+          marcarEstado();
+
+          botao.addEventListener('click', () => {
+            if (video.paused) {
+              pausadoPelaPessoa = false;
+              tocar();
+            } else {
+              pausadoPelaPessoa = true;
+              video.pause();
+            }
+            marcarEstado();
+          });
+
+          video.addEventListener('play', marcarEstado);
+          video.addEventListener('pause', marcarEstado);
+
+          if ('IntersectionObserver' in window) {
+            new IntersectionObserver(
+              ([e]) => {
+                if (pausadoPelaPessoa) return;
+                if (e.isIntersecting) tocar();
+                else if (carregado) video.pause(); // fora da tela nao precisa gastar CPU
+              },
+              { rootMargin: '200px 0px' }
+            ).observe(video);
+          } else if (!semMovimento) {
+            tocar();
+          }
+        }
 
         /* ---- acao fixa no celular ---- */
         const acao = document.getElementById('acaoMovel');
@@ -1200,18 +1323,51 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
 
   /* ---------- citação ---------- */
   .lp-citacao { position: relative; background: var(--tinta); isolation: isolate; }
-  .lp-citacao-img {
+  /* Altura fixa em vez de derivada da proporcao do arquivo: assim a faixa nao
+     muda de tamanho quando a midia troca de imagem para video, e nao ha salto
+     de layout enquanto ela carrega. */
+  .lp-citacao-midia {
     width: 100%;
-    height: 100%;
-    min-height: 380px;
-    max-height: 660px;
+    height: clamp(380px, 52vw, 660px);
     object-fit: cover;
     object-position: 30% 40%;
     display: block;
+    background: var(--tinta);
   }
+
+  .lp-citacao-botao {
+    position: absolute;
+    right: clamp(1.25rem, 4vw, 3rem);
+    bottom: clamp(1.5rem, 4vw, 3rem);
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid rgb(255 255 255 / 0.28);
+    border-radius: 999px;
+    background: rgb(8 8 13 / 0.5);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+  }
+  .lp-citacao-botao:hover,
+  .lp-citacao-botao:focus-visible { opacity: 1; border-color: rgb(255 255 255 / 0.6); }
+  .lp-citacao-botao[hidden] { display: none; }
+  /* Um icone so no SVG: mostra as duas barras quando esta tocando e o
+     triangulo quando esta parado. */
+  .lp-icone-play { display: none; }
+  .lp-citacao-botao[data-parado] .lp-icone-play { display: block; }
+  .lp-citacao-botao[data-parado] .lp-icone-pausa { display: none; }
   .lp-citacao-overlay {
     position: absolute;
     inset: 0;
+    /* O overlay cobre a faixa inteira; sem isto ele engoliria o clique do
+       botao de pausa que fica embaixo dele. */
+    pointer-events: none;
     display: flex;
     align-items: flex-end;
     padding-block: clamp(2.5rem, 5vw, 4.5rem);
