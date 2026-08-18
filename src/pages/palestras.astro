@@ -118,9 +118,19 @@ const videosPorNome = Object.entries(videosGlob)
   .map(([caminho, url]) => ({ arquivo: caminho.split('/').pop() ?? '', url }))
   .sort((a, b) => a.arquivo.localeCompare(b.arquivo, 'pt-BR'));
 
+const achaVideo = (papel: string) =>
+  videosPorNome.find((v) => v.arquivo.toLowerCase().startsWith(`${papel}.`))?.url ?? null;
+
+// Fundo do hero. Existindo, o vídeo entra atrás do texto e o gradiente que já
+// estava ali passa a ser a camada que garante a leitura por cima dele.
+const videoHeroFundo = achaVideo('hero-fundo');
+
 const videoCitacao =
-  videosPorNome.find((v) => v.arquivo.toLowerCase().startsWith('citacao.'))?.url ??
-  videosPorNome[0]?.url ??
+  achaVideo('citacao') ??
+  // Qualquer outro vídeo da pasta serve para a citação — menos o do hero, que
+  // já tem lugar. Sem esta ressalva, apagar `citacao.mp4` faria o fundo do
+  // hero reaparecer no meio da página sem ninguém ter pedido.
+  videosPorNome.find((v) => v.url !== videoHeroFundo)?.url ??
   null;
 
 // O `poster` recebe uma URL crua, entao nao passa pelo <Image> e nao seria
@@ -352,6 +362,36 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     <main id="conteudo">
       <!-- ===================== 1. HERO ===================== -->
       <section class="lp-hero">
+        {videoHeroFundo && (
+          <div class="lp-hero-fundo" aria-hidden="true">
+            {/* Sem `autoplay` no HTML: é o script que manda tocar, e só depois
+                da primeira pintura. O hero é a primeira coisa que carrega —
+                disputar banda com ele atrasaria o texto, que é o que a pessoa
+                veio ler. */}
+            <video
+              id="videoHero"
+              class="lp-hero-video"
+              data-src={videoHeroFundo}
+              muted
+              loop
+              playsinline
+              preload="none"
+            ></video>
+            <div class="lp-hero-trama"></div>
+            <div class="lp-hero-veu"></div>
+          </div>
+        )}
+        {videoHeroFundo && (
+          /* Movimento por mais de cinco segundos atrás de texto precisa ter
+             como parar (WCAG 2.2.2). */
+          <button type="button" id="videoHeroBotao" class="lp-hero-botao" aria-label="Pausar vídeo de fundo" hidden>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
+              <rect class="lp-icone-pausa" x="7" y="5" width="3.5" height="14" rx="1" />
+              <rect class="lp-icone-pausa" x="13.5" y="5" width="3.5" height="14" rx="1" />
+              <path class="lp-icone-play" d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+        )}
         <div class="lp-wrap lp-hero-grid">
           <div class="lp-hero-copy">
             <p class="lp-rotulo lp-rotulo-claro">
@@ -946,14 +986,14 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
         addEventListener('resize', agendar, { passive: true });
         atualizar();
 
-        /* ---- video de fundo da citacao ----
-           Sem `autoplay` no HTML: o arquivo so comeca a baixar quando a faixa
-           chega perto da tela. Numa pagina com 11 mil pixels de altura, baixar
-           o video no carregamento e gastar banda de gente que talvez nunca
-           role ate la. */
-        const video = document.getElementById('videoCitacao');
-        const botao = document.getElementById('videoCitacaoBotao');
-        if (video && botao) {
+        /* ---- videos de fundo ----
+           Mesma mecanica no hero e na citacao, entao uma funcao so. Sem
+           `autoplay` no HTML: o arquivo so comeca a baixar quando o bloco
+           chega perto da tela. Numa pagina com 11 mil pixels de altura,
+           baixar tudo no carregamento e gastar banda de gente que talvez
+           nunca role ate la. */
+        const montarVideoDeFundo = (video, botao) => {
+          if (!video || !botao) return;
           let pausadoPelaPessoa = semMovimento; // quem pediu menos movimento comeca parado
           let carregado = false;
 
@@ -1006,7 +1046,16 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
           } else if (!semMovimento) {
             tocar();
           }
-        }
+        };
+
+        montarVideoDeFundo(
+          document.getElementById('videoCitacao'),
+          document.getElementById('videoCitacaoBotao')
+        );
+        montarVideoDeFundo(
+          document.getElementById('videoHero'),
+          document.getElementById('videoHeroBotao')
+        );
 
         /* ---- acao fixa no celular ---- */
         const acao = document.getElementById('acaoMovel');
@@ -1194,10 +1243,16 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
   .lp-h1 {
     font-size: clamp(2.6rem, 6.6vw, 5.1rem);
     font-weight: 800;
-    line-height: 0.98;
-    letter-spacing: -0.042em;
-    margin: 1.5rem 0 0;
+    /* Abaixo de 1 as linhas quase se tocam, que é o ponto: em título de
+       display o bloco tem de se ler como uma massa, não como frases
+       empilhadas. */
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+    margin: 1.35rem 0 0;
     text-wrap: balance;
+    /* Fundo em movimento: o texto precisa de chão próprio. Halo largo e fraco
+       em vez de sombra desenhada, que engrossaria a letra. */
+    text-shadow: 0 2px 34px rgb(8 8 13 / 0.7);
   }
   .lp-h2 {
     font-size: clamp(1.85rem, 3.9vw, 3rem);
@@ -1217,10 +1272,15 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
   }
   .lp-lead {
     margin: 1.75rem 0 0;
-    max-width: 40rem;
-    font-size: clamp(1rem, 1.25vw, 1.12rem);
-    line-height: 1.68;
-    color: rgb(255 255 255 / 0.7);
+    /* Medida em `ch` e não em `rem`: o que cansa o olho é o número de
+       caracteres por linha, não a largura em pixels. 54 mantém quatro linhas
+       curtas em vez de três longas. */
+    max-width: 54ch;
+    font-size: clamp(1.02rem, 1.3vw, 1.16rem);
+    line-height: 1.62;
+    /* Subiu de 0.7: o vídeo atrás rouba contraste que o fundo chapado não
+       roubava. */
+    color: rgb(255 255 255 / 0.78);
   }
   .lp-cabecalho { margin-bottom: var(--s-bloco); }
   .lp-nota {
@@ -1254,15 +1314,79 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     opacity: 0.42;
     pointer-events: none;
   }
+  /* ---- fundo em vídeo ----
+     Três camadas, cada uma com uma função. O vídeo dá o movimento; a trama
+     dá superfície e disfarça a compressão nas áreas escuras; o véu garante a
+     leitura. Sem o véu, o texto branco cairia em cima de um wireframe claro
+     em metade dos quadros. */
+  .lp-hero-fundo {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .lp-hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 42%;
+    display: block;
+    /* O vídeo é azul-ciano; puxar para o azul da marca e recolher o brilho
+       impede que ele vire o assunto da tela. */
+    filter: saturate(0.85) brightness(0.62) hue-rotate(-12deg);
+  }
+  .lp-hero-trama {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0 3px,
+      rgb(255 255 255 / 0.035) 3px 4px
+    );
+  }
+  /* Escuro onde mora o texto e aberto do outro lado: a coluna da esquerda
+     precisa de contraste, a direita é onde o vídeo tem licença para aparecer. */
+  .lp-hero-veu {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, var(--tinta) 0%, color-mix(in srgb, var(--tinta) 82%, transparent) 34%, color-mix(in srgb, var(--tinta) 30%, transparent) 68%, transparent 100%),
+      linear-gradient(to top, var(--tinta) 2%, transparent 38%);
+  }
+  .lp-hero-botao {
+    position: absolute;
+    right: clamp(1rem, 3vw, 2rem);
+    bottom: clamp(1rem, 3vw, 2rem);
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid rgb(255 255 255 / 0.24);
+    border-radius: 999px;
+    background: rgb(8 8 13 / 0.5);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    cursor: pointer;
+    opacity: 0.45;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+  }
+  .lp-hero-botao:hover,
+  .lp-hero-botao:focus-visible { opacity: 1; border-color: rgb(255 255 255 / 0.6); }
+  .lp-hero-botao[hidden] { display: none; }
+
   .lp-hero-grid {
     position: relative;
+    z-index: 1;
     display: grid;
     gap: clamp(2.5rem, 5vw, 4.5rem);
     align-items: center;
     padding-block: clamp(3.5rem, 7vw, 6.5rem) clamp(3rem, 5vw, 5rem);
   }
   @media (min-width: 1000px) {
-    .lp-hero-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); }
+    .lp-hero-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); }
   }
   .lp-hero-acoes {
     display: flex;
@@ -1283,6 +1407,18 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     border-radius: 1.5rem;
     pointer-events: none;
   }
+  /* Halo azul atrás do retrato. Com o vídeo rodando, a foto encostava no fundo
+     e as duas viravam a mesma mancha; o halo abre uma casa para ela. Fica
+     atrás de tudo (`z-index: -1`) para não lavar a imagem. */
+  .lp-hero-figura::after {
+    content: '';
+    position: absolute;
+    inset: -12% -8% -6% -8%;
+    z-index: -1;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--az) 55%, transparent), transparent 78%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
   /* Proporcao fixa em vez de herdada do arquivo. A foto do hero e trocavel (basta
      commitar `hero.*` em src/assets/palestrante), e sem isto o tamanho do bloco
      inteiro passaria a depender do formato do arquivo que alguem subiu: um
@@ -1296,16 +1432,28 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     position: relative;
     width: 100%;
     height: auto;
-    aspect-ratio: 4 / 5;
+    /* Era 4/5. A foto do topo é horizontal, e um recorte tão vertical comia as
+       laterais até sobrar cabeça e ombros — enquadramento de foto de perfil,
+       não de hero. Em 5/6 o corte cede e o retrato volta a respirar. */
+    aspect-ratio: 5 / 6;
     object-fit: cover;
-    object-position: 50% 28%;
+    object-position: 50% 30%;
     border-radius: 1.5rem;
     filter: saturate(1.04) contrast(1.03);
+  }
+  /* Quando o layout vira uma coluna, a foto passa a ocupar a largura toda: em
+     5/6 ela viraria quase uma tela inteira só de retrato, e empurraria o botão
+     para longe. Deitada, mostra o mesmo enquadramento em metade da altura. */
+  @media (max-width: 999px) {
+    .lp-hero-img { aspect-ratio: 4 / 3; object-position: 50% 26%; }
   }
 
   /* ---------- evidência ---------- */
   .lp-evidencias {
     position: relative;
+    /* Ainda dentro do bloco do hero: sem isto, o vídeo de fundo passaria por
+       cima dos números. */
+    z-index: 1;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2.25rem 1.5rem;
@@ -1522,8 +1670,10 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
   /* Um icone so no SVG: mostra as duas barras quando esta tocando e o
      triangulo quando esta parado. */
   .lp-icone-play { display: none; }
-  .lp-citacao-botao[data-parado] .lp-icone-play { display: block; }
-  .lp-citacao-botao[data-parado] .lp-icone-pausa { display: none; }
+  .lp-citacao-botao[data-parado] .lp-icone-play,
+  .lp-hero-botao[data-parado] .lp-icone-play { display: block; }
+  .lp-citacao-botao[data-parado] .lp-icone-pausa,
+  .lp-hero-botao[data-parado] .lp-icone-pausa { display: none; }
   .lp-citacao-overlay {
     position: absolute;
     inset: 0;
