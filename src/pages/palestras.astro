@@ -443,9 +443,41 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
           <h2 class="lp-rotulo lp-rotulo-escuro">
             Marcas que já passaram por projetos conduzidos pelo Grupo WYS
           </h2>
-          <ul class="lp-marcas">
-            {marcas.map((m) => <li>{m}</li>)}
-          </ul>
+        </div>
+
+        {/* Fita contínua, fora do `lp-wrap` para correr de ponta a ponta da
+            tela — cortada na margem do texto ela pareceria uma lista que não
+            coube, e não um movimento intencional.
+
+            Quatro cópias do mesmo grupo, e o trilho anda exatamente 25%: ao
+            fim do ciclo a segunda cópia está onde a primeira começou, então a
+            volta não tem emenda. Quatro, e não duas, porque o que evita
+            buraco é uma cópia sobrando além da largura da tela — com duas, um
+            monitor largo alcança o fim da fita antes de ela reiniciar.
+
+            Só a primeira é lida: as outras são a mesma informação repetida, e
+            um leitor de tela anunciaria "Disney" quatro vezes. */}
+        <div class="lp-fita" id="fitaMarcas">
+          <div class="lp-fita-trilho">
+            {[0, 1, 2, 3].map((copia) => (
+              <ul class="lp-marcas" aria-hidden={copia > 0 ? 'true' : undefined}>
+                {marcas.map((m) => <li>{m}</li>)}
+              </ul>
+            ))}
+          </div>
+          {/* Movimento que começa sozinho e não para precisa ter como parar
+              (WCAG 2.2.2). O ponteiro parado sobre a fita também pausa, mas
+              isso é conveniência — não serve para quem usa teclado. */}
+          <button type="button" id="fitaMarcasBotao" class="lp-fita-botao" aria-label="Pausar a lista de marcas" hidden>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true">
+              <rect class="lp-icone-pausa" x="7" y="5" width="3.5" height="14" rx="1" />
+              <rect class="lp-icone-pausa" x="13.5" y="5" width="3.5" height="14" rx="1" />
+              <path class="lp-icone-play" d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="lp-wrap">
           <p class="lp-marcas-nota">
             O que levo ao palco vem de projeto entregue, não de leitura de relatório.
           </p>
@@ -1057,6 +1089,33 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
           document.getElementById('videoHeroBotao')
         );
 
+        /* ---- fita de marcas ----
+           A animacao e do CSS; o script so liga e desliga. Assim a fita anda
+           mesmo se este bloco falhar, e quem pediu menos movimento ja recebe
+           a lista parada pela media query, sem depender de JavaScript. */
+        const fita = document.getElementById('fitaMarcas');
+        const fitaBotao = document.getElementById('fitaMarcasBotao');
+        if (fita && fitaBotao && !semMovimento) {
+          let fitaParada = false;
+
+          const marcarFita = () => {
+            fita.toggleAttribute('data-parado', fitaParada);
+            fitaBotao.toggleAttribute('data-parado', fitaParada);
+            fitaBotao.setAttribute(
+              'aria-label',
+              fitaParada ? 'Retomar a lista de marcas' : 'Pausar a lista de marcas'
+            );
+          };
+
+          fitaBotao.hidden = false;
+          marcarFita();
+
+          fitaBotao.addEventListener('click', () => {
+            fitaParada = !fitaParada;
+            marcarFita();
+          });
+        }
+
         /* ---- acao fixa no celular ---- */
         const acao = document.getElementById('acaoMovel');
         const hero = document.querySelector('.lp-hero');
@@ -1509,8 +1568,16 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
 
   /* ---------- marcas ---------- */
   .lp-marcas-secao { padding-block: clamp(3rem, 5vw, 4.5rem); }
-  /* Rotulo longo: com 0.26em de tracking, 44ch quebra em tres linhas. */
-  .lp-marcas-secao .lp-rotulo { max-width: 68ch; }
+  /* Rotulo longo: com 0.26em de tracking, 44ch quebra em tres linhas.
+     Centralizado porque a fita corre de ponta a ponta e dissolve igual dos
+     dois lados: rotulo encostado na margem esquerda desalinharia o bloco do
+     eixo em que a fita se apoia. */
+  .lp-marcas-secao .lp-rotulo {
+    max-width: 68ch;
+    margin-inline: auto;
+    text-align: center;
+  }
+  .lp-marcas-secao .lp-marcas-nota { text-align: center; }
   .lp-marcas {
     display: flex;
     flex-wrap: wrap;
@@ -1520,6 +1587,74 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     padding: 0;
     list-style: none;
   }
+
+  /* ---- fita contínua ---- */
+  .lp-fita {
+    position: relative;
+    overflow: hidden;
+    margin-top: 2rem;
+    /* As pontas se dissolvem em vez de cortar seco. A faixa de dissolução é
+       larga de propósito — com uma nesga estreita o nome ainda aparece
+       inteiro e depois some de uma vez, que é o corte seco de novo, só que
+       borrado. Em 18% de cada lado ele entra e sai enquanto é lido, e o peso
+       da fita fica no meio.
+
+       `no-repeat` e `100% 100%` explícitos: o padrão de `mask-repeat` é
+       repetir, e basta um arredondamento de subpixel para a máscara ladrilhar
+       e reacender a borda que ela deveria estar apagando. */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+  }
+  .lp-fita-trilho {
+    display: flex;
+    width: max-content;
+    animation: lp-desliza 34s linear infinite;
+  }
+  /* Anda a largura de exatamente uma cópia — daí a volta ser invisível. */
+  @keyframes lp-desliza {
+    from { transform: translateX(0); }
+    to { transform: translateX(-25%); }
+  }
+  .lp-fita:hover .lp-fita-trilho,
+  .lp-fita[data-parado] .lp-fita-trilho { animation-play-state: paused; }
+
+  .lp-fita .lp-marcas {
+    flex-wrap: nowrap;
+    margin: 0;
+    /* O vão entre uma cópia e a seguinte precisa ser igual ao vão entre dois
+       nomes; se fosse `gap` no trilho, a conta dos 25% deixaria de fechar e a
+       fita iria acumulando deslocamento a cada volta. */
+    padding-inline-end: 2.25rem;
+  }
+  .lp-fita .lp-marcas li { white-space: nowrap; }
+
+  .lp-fita-botao {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-bg) 82%, transparent);
+    backdrop-filter: blur(6px);
+    color: var(--color-ink);
+    cursor: pointer;
+    opacity: 0.35;
+    transition: opacity 0.2s ease;
+  }
+  .lp-fita:hover .lp-fita-botao,
+  .lp-fita-botao:focus-visible { opacity: 1; }
+  .lp-fita-botao[hidden] { display: none; }
   /* Nomes soltos e espaçados leem como lista de clientes; dentro de pílulas,
      leem como filtro de e-commerce. */
   .lp-marcas li {
@@ -1671,9 +1806,11 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
      triangulo quando esta parado. */
   .lp-icone-play { display: none; }
   .lp-citacao-botao[data-parado] .lp-icone-play,
-  .lp-hero-botao[data-parado] .lp-icone-play { display: block; }
+  .lp-hero-botao[data-parado] .lp-icone-play,
+  .lp-fita-botao[data-parado] .lp-icone-play { display: block; }
   .lp-citacao-botao[data-parado] .lp-icone-pausa,
-  .lp-hero-botao[data-parado] .lp-icone-pausa { display: none; }
+  .lp-hero-botao[data-parado] .lp-icone-pausa,
+  .lp-fita-botao[data-parado] .lp-icone-pausa { display: none; }
   .lp-citacao-overlay {
     position: absolute;
     inset: 0;
@@ -2236,6 +2373,14 @@ const faqSchema = faqPage(faq.map((f) => ({ q: f.q, a: f.a })));
     .lp-mosaico-item::after,
     .lp-mosaico-trama,
     .lp-mosaico-img { transition: none; }
+    /* Parar a fita no lugar esconderia as marcas que ficaram fora da tela —
+       o movimento era o que dava acesso a elas. Sem movimento, ela volta a
+       ser a lista que quebra linha, e as cópias saem de cena. */
+    .lp-fita-trilho { animation: none; width: auto; }
+    .lp-fita { -webkit-mask-image: none; mask-image: none; }
+    .lp-fita .lp-marcas { flex-wrap: wrap; padding-inline-end: 0; }
+    .lp-fita .lp-marcas[aria-hidden] { display: none; }
+    .lp-fita-botao { display: none; }
     .lp-btn:hover,
     .lp-formato:hover { transform: none; }
     .lp-btn:hover span { transform: none; }
