@@ -1,0 +1,343 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SOCIAL } from '../consts';
+import { faqPage } from '../lib/schema';
+import '../styles/lp-regional.css';
+
+const PAGE_TITLE = 'Agência de Marketing em Biguaçu | Agência WYS';
+const PAGE_DESC =
+  'Agência de marketing para empresas de Biguaçu e da Grande Florianópolis: tráfego pago, sites, branding, redes sociais, SEO e sistemas. Operação remota, com 15 anos de estrada e mais de 2.000 clientes atendidos.';
+
+// CTA aponta para o site da WYS (destino confirmado). Trocar por link wa.me
+// quando houver um número comercial validado para a região.
+const CTA_URL = 'https://agenciawys.com.br';
+const PHONE_DISPLAY = '+55 (11) 3198-9073';
+const PHONE_TEL = 'tel:+551131989073';
+
+/*
+ * A WYS atende Biguaçu remotamente — a sede fica em Sorocaba/SP, e não há
+ * escritório em Santa Catarina.
+ *
+ * Isso está dito na página, e não escondido, por dois motivos. O primeiro é
+ * que endereço inventado em página de busca local é o tipo de coisa que o
+ * Google trata como dado falso quando não bate com o Perfil da Empresa. O
+ * segundo é comercial: quem procura fornecedor na região vai descobrir de
+ * qualquer forma na primeira conversa, e descobrir depois de ter sido levado
+ * a achar outra coisa custa a reunião inteira.
+ */
+const SEDE = 'Rua Oronário Domingos dos Santos, 15 - Parque Campolim, Sorocaba / SP';
+
+const solutions = [
+  { icon: 'traffic', title: 'Gestão de Tráfego Pago', desc: 'Campanhas em Google e Meta com verba acompanhada de perto, para gerar demanda qualificada em vez de alcance que não vira conversa.' },
+  { icon: 'site', title: 'Criação de Sites', desc: 'Sites rápidos e preparados para converter, com estrutura que o Google entende e que sustenta busca local.' },
+  { icon: 'brand', title: 'Criação de Marca', desc: 'Identidade visual e discurso para empresas que precisam ser reconhecidas num mercado onde a concorrência chegou junto.' },
+  { icon: 'social', title: 'Redes Sociais', desc: 'Conteúdo com linha editorial e ritmo de publicação, pensado para o público que a sua empresa realmente atende.' },
+  { icon: 'seo', title: 'SEO, GEO e busca local', desc: 'Aparecer em "perto de mim", no mapa e também nas respostas das IAs, que é onde parte das buscas já termina.' },
+  { icon: 'apps', title: 'Apps e Sistemas', desc: 'Software house própria: integrações, automações e sistemas sob medida para quando a planilha parou de dar conta.' },
+];
+
+const stats = [
+  { value: '+15', label: 'Anos de história' },
+  { value: '+2.000', label: 'Clientes atendidos' },
+  { value: '+9 mi', label: 'Em mídia gerenciada' },
+  { value: '+17', label: 'Países atendidos' },
+];
+
+const clients = ['Disney', 'Heliar', 'Ihara', 'Toyo Tires', '99', 'Smoov'];
+
+/*
+ * Números de Biguaçu com fonte declarada no texto. Página comercial que cita
+ * dado de cidade sem dizer de onde veio é a primeira coisa que um cliente
+ * confere — e a única que ele lembra se estiver errada.
+ */
+const cidade = [
+  { valor: '~76 mil', label: 'Habitantes (Censo 2022, IBGE)' },
+  { valor: '+31,9%', label: 'Crescimento populacional de 2010 a 2022' },
+  { valor: '15 km', label: 'De distância de Florianópolis' },
+  { valor: '4º', label: 'Município mais empreendedor de SC' },
+];
+
+const steps = [
+  { n: '01', title: 'Diagnóstico da operação', desc: 'Uma conversa para entender o que já foi tentado, o que trouxe cliente e o que só consumiu verba.' },
+  { n: '02', title: 'Proposta com escopo claro', desc: 'O que será feito, em que ordem e como o resultado será medido — antes de qualquer contrato.' },
+  { n: '03', title: 'Execução acompanhada', desc: 'Rotina de acompanhamento com número na mesa, e ajuste de rota quando o dado pede.' },
+];
+
+const faqs = [
+  {
+    q: 'A WYS tem escritório em Biguaçu?',
+    a: 'Não. A sede fica em Sorocaba, no interior de São Paulo, e o atendimento a Biguaçu e à Grande Florianópolis é remoto. Na prática, isso muda pouco no dia a dia: reuniões acontecem por vídeo, relatórios e campanhas são acompanhados à distância e a operação já roda assim para clientes em 17 países. Quando o projeto pede presença física — gravação, evento, visita técnica —, isso entra combinado no escopo.',
+  },
+  {
+    q: 'Por que contratar uma agência de fora da região?',
+    a: 'O critério que importa não é o CEP, é o repertório. Uma agência que já operou em setores e mercados diferentes chega com padrão de comparação que uma operação restrita a uma praça não tem. Por outro lado, conhecimento local é real e não se improvisa: quem conhece a rua, o concorrente e o hábito de compra do bairro tem vantagem. A pergunta certa é qual dos dois pesa mais no seu caso.',
+  },
+  {
+    q: 'Quanto custa contratar uma agência de marketing?',
+    a: 'Depende do escopo e do estágio da empresa. Não trabalhamos com tabela fechada porque o mesmo serviço tem custo diferente para quem está começando do zero e para quem já tem operação rodando e quer escalar. A proposta sai depois do diagnóstico, com escopo e forma de medição definidos.',
+  },
+  {
+    q: 'Como funciona o marketing para empresas de Biguaçu?',
+    a: 'O ponto de partida costuma ser busca local: aparecer quando alguém da região procura pelo seu serviço no Google e no mapa. A partir daí, entram tráfego pago para gerar demanda no curto prazo e conteúdo para sustentar a presença no médio. A ordem muda conforme o setor — comércio, indústria e serviço têm ciclos de decisão diferentes.',
+  },
+  {
+    q: 'Em quanto tempo aparecem resultados?',
+    a: 'Tráfego pago mostra número em dias, mas o número inicial serve para calibrar, não para comemorar. Busca orgânica e presença local levam meses e dependem de consistência. Quem promete prazo fechado antes de olhar a operação está vendendo expectativa, não trabalho.',
+  },
+];
+
+const ICONS: Record<string, string> = {
+  traffic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>',
+  site: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M9 21h6M12 18v3"/></svg>',
+  brand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.3 5.7L20 11l-5.7 2.3L12 19l-2.3-5.7L4 11l5.7-2.3z"/></svg>',
+  social: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.7A8.5 8.5 0 1 1 21 11.5z"/></svg>',
+  seo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+  apps: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+};
+
+/*
+ * `areaServed` é Biguaçu; `address` é a sede em Sorocaba. Os dois campos
+ * respondem perguntas diferentes — onde atende e onde fica —, e preenchê-los
+ * com a mesma cidade seria declarar um endereço que não existe.
+ */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: 'Agência WYS · Marketing para Biguaçu',
+  description: PAGE_DESC,
+  url: 'https://paulgomes.com.br/agencia-de-marketing-em-biguacu/',
+  telephone: '+551131989073',
+  areaServed: [
+    { '@type': 'City', name: 'Biguaçu', address: { '@type': 'PostalAddress', addressRegion: 'SC', addressCountry: 'BR' } },
+    { '@type': 'AdministrativeArea', name: 'Grande Florianópolis' },
+  ],
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Rua Oronário Domingos dos Santos, 15 - Parque Campolim',
+    addressLocality: 'Sorocaba',
+    addressRegion: 'SP',
+    addressCountry: 'BR',
+  },
+  founder: { '@type': 'Person', name: 'Paul Gomes', url: 'https://paulgomes.com.br/sobre' },
+  sameAs: ['https://agenciawys.com.br', SOCIAL.linkedin, SOCIAL.instagram],
+};
+
+const faqSchema = faqPage(faqs);
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <BaseHead title={PAGE_TITLE} description={PAGE_DESC} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
+  </head>
+  <body>
+    <Header />
+
+    <main class="lp">
+      <!-- HERO -->
+      <section class="lp-hero">
+        <div class="container-wide lp-hero-inner">
+          <p class="lp-eyebrow">Agência WYS · Biguaçu e Grande Florianópolis</p>
+          <h1 class="lp-hero-title font-display">
+            Agência de Marketing<br />em <span class="lp-accent">Biguaçu</span>
+          </h1>
+          <p class="lp-hero-sub">
+            Marketing para empresas que estão crescendo junto com a cidade — e que precisam ser
+            encontradas antes do concorrente que chegou no mesmo ano.
+          </p>
+          <div class="lp-cta-row">
+            <a class="lp-btn lp-btn-primary" href={CTA_URL} target="_blank" rel="noopener">Falar com especialista</a>
+            <a class="lp-btn lp-btn-ghost" href="#solucoes">Conheça as soluções</a>
+          </div>
+          <p class="lp-made">Made by humans · Powered by AI</p>
+        </div>
+      </section>
+
+      <!-- CONTEXTO DA CIDADE -->
+      <section class="lp-section">
+        <div class="container-wide lp-narrow">
+          <h2 class="lp-h2 font-display">
+            Uma cidade que cresceu rápido demais para o marketing de boca a boca dar conta sozinho
+          </h2>
+          <p class="lp-lead">
+            Biguaçu ganhou quase um terço de população entre os dois últimos censos e virou uma das
+            praças mais empreendedoras de Santa Catarina. Isso tem um efeito prático em quem já
+            estava aqui: o cliente que antes chegava por indicação de vizinho agora pesquisa, compara
+            e decide no celular, muitas vezes sem nunca ter ouvido falar da sua empresa.
+          </p>
+          <p class="lp-lead">
+            A distância de quinze quilômetros até Florianópolis também mudou a régua. A concorrência
+            deixou de ser só a loja da esquina e passou a incluir quem anuncia da capital e entrega
+            na região. Quando isso acontece, aparecer na busca e ter uma presença que sustente a
+            comparação deixa de ser diferencial e vira condição para disputar.
+          </p>
+        </div>
+      </section>
+
+      <!-- NÚMEROS DA CIDADE -->
+      <section class="lp-stats">
+        <div class="container-wide">
+          <p class="lp-stats-intro">Biguaçu em quatro números</p>
+          <div class="lp-grid lp-grid-4">
+            {cidade.map((c) => (
+              <div class="lp-stat">
+                <span class="lp-stat-value font-display">{c.valor}</span>
+                <span class="lp-stat-label">{c.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- SOLUÇÕES -->
+      <section id="solucoes" class="lp-section lp-section-subtle">
+        <div class="container-wide">
+          <header class="lp-head">
+            <p class="lp-eyebrow">Soluções Agência WYS</p>
+            <h2 class="lp-h2 font-display">O que fazemos por uma empresa de Biguaçu</h2>
+            <p class="lp-head-sub">
+              Não é um pacote fechado. O que entra depende do que a sua operação já tem de pé e do
+              que está travando a próxima venda.
+            </p>
+          </header>
+          <div class="lp-grid lp-grid-3">
+            {solutions.map((s) => (
+              <article class="lp-card">
+                <span class="lp-card-ic" aria-hidden="true" set:html={ICONS[s.icon]} />
+                <h3 class="lp-card-title font-display">{s.title}</h3>
+                <p class="lp-card-desc">{s.desc}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- COMO ATENDEMOS, COM A RESSALVA NA FRENTE -->
+      <section class="lp-section">
+        <div class="container-wide lp-narrow">
+          <header class="lp-head">
+            <p class="lp-eyebrow">Transparência</p>
+            <h2 class="lp-h2 font-display">A WYS não fica em Biguaçu, e é melhor dizer isso agora</h2>
+          </header>
+          <p class="lp-lead">
+            A sede é em Sorocaba, no interior de São Paulo. O atendimento à Grande Florianópolis é
+            remoto, do mesmo jeito que já funciona para clientes em outros dezessete países. Reunião
+            por vídeo, campanha acompanhada à distância, relatório aberto. Quando o projeto exige
+            presença física — uma gravação, um evento, uma visita —, isso entra combinado no escopo,
+            e não como surpresa no meio do caminho.
+          </p>
+          <p class="lp-lead">
+            Dizemos isso na página porque é o que você descobriria na primeira conversa de qualquer
+            forma. Agência que se apresenta como local sem ser costuma perder a reunião exatamente no
+            momento em que a pergunta aparece. Se para o seu caso a presença na cidade for decisiva,
+            é um critério legítimo — e vale procurar quem tenha operação instalada aí.
+          </p>
+        </div>
+      </section>
+
+      <!-- NÚMEROS DA AGÊNCIA -->
+      <section class="lp-stats">
+        <div class="container-wide">
+          <p class="lp-stats-intro">Quinze anos de operação, e o que veio deles</p>
+          <div class="lp-grid lp-grid-4">
+            {stats.map((st) => (
+              <div class="lp-stat">
+                <span class="lp-stat-value font-display">{st.value}</span>
+                <span class="lp-stat-label">{st.label}</span>
+              </div>
+            ))}
+          </div>
+          <ul class="lp-clients" aria-label="Marcas atendidas">
+            {clients.map((c) => <li>{c}</li>)}
+          </ul>
+        </div>
+      </section>
+
+      <!-- PASSOS -->
+      <section class="lp-section">
+        <div class="container-wide">
+          <header class="lp-head">
+            <p class="lp-eyebrow">Processo</p>
+            <h2 class="lp-h2 font-display">Como começa</h2>
+            <p class="lp-head-sub">Três passos, e o primeiro não custa nada além de uma conversa.</p>
+          </header>
+          <div class="lp-grid lp-grid-3 lp-steps">
+            {steps.map((step) => (
+              <article class="lp-step">
+                <span class="lp-step-n font-display">{step.n}</span>
+                <h3 class="lp-card-title font-display">{step.title}</h3>
+                <p class="lp-card-desc">{step.desc}</p>
+              </article>
+            ))}
+          </div>
+          <div class="lp-center">
+            <a class="lp-btn lp-btn-primary" href={CTA_URL} target="_blank" rel="noopener">Falar com especialista</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="lp-section lp-section-subtle">
+        <div class="container-wide lp-narrow">
+          <header class="lp-head">
+            <p class="lp-eyebrow">Perguntas frequentes</p>
+            <h2 class="lp-h2 font-display">O que perguntam antes de contratar</h2>
+          </header>
+          <div class="lp-faq">
+            {faqs.map((f) => (
+              <details class="lp-faq-item">
+                <summary>
+                  <span>{f.q}</span>
+                  <svg class="lp-faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTATO -->
+      <section class="lp-section">
+        <div class="container-wide lp-contact">
+          <div class="lp-contact-copy">
+            <p class="lp-eyebrow">Vamos conversar</p>
+            <h2 class="lp-h2 font-display">Comece pelo diagnóstico, não pela proposta</h2>
+            <p class="lp-lead">
+              A primeira conversa serve para entender o que já foi tentado na sua empresa e o que
+              deu ou não deu certo. Proposta só faz sentido depois disso — antes, seria chute com
+              formatação bonita.
+            </p>
+            <div class="lp-cta-row">
+              <a class="lp-btn lp-btn-primary" href={CTA_URL} target="_blank" rel="noopener">Falar com especialista</a>
+            </div>
+          </div>
+          <ul class="lp-contact-info">
+            <li>
+              <span class="lp-contact-label">Atendimento</span>
+              <span class="lp-contact-value">Biguaçu e Grande Florianópolis, de forma remota</span>
+            </li>
+            <li>
+              <span class="lp-contact-label">Sede</span>
+              <span class="lp-contact-value">{SEDE}</span>
+            </li>
+            <li>
+              <span class="lp-contact-label">Telefone</span>
+              <a class="lp-contact-value" href={PHONE_TEL}>{PHONE_DISPLAY}</a>
+            </li>
+            <li>
+              <span class="lp-contact-label">Site</span>
+              <a class="lp-contact-value" href={CTA_URL} target="_blank" rel="noopener">agenciawys.com.br</a>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </body>
+</html>

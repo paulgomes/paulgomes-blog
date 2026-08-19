@@ -1,0 +1,305 @@
+/*
+ * Estilo das landing pages regionais (uma por cidade).
+ *
+ * Nasceu dentro de `agencia-de-marketing-em-sorocaba.astro`, onde havia uma
+ * cidade só e o CSS podia morar na página. Com a segunda cidade, manter duas
+ * cópias significaria corrigir tudo duas vezes — e a terceira, três.
+ *
+ * A página de Sorocaba segue com o `<style>` dela por enquanto: ela está em
+ * produção e mexer no CSS de uma landing que já ranqueia é risco sem retorno
+ * imediato. Migrá-la para cá é trabalho de uma sessão tranquila, comparando o
+ * `dist/` antes e depois.
+ *
+ * Depende de `global.css` para `.container-wide` e `.font-display`.
+ */
+
+.lp {
+  color: var(--color-ink);
+  background: var(--color-paper);
+}
+
+.lp-eyebrow {
+  margin: 0 0 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.lp-accent { color: var(--color-accent); }
+
+.lp-h2 {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  color: var(--color-ink);
+}
+
+.lp-lead {
+  margin: 1.25rem 0 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--color-muted);
+}
+.lp-lead a {
+  color: var(--color-accent);
+  border-bottom: 1px solid currentColor;
+  text-decoration: none;
+}
+
+/* === SECTIONS === */
+.lp-section { padding: clamp(3.5rem, 7vw, 6rem) 0; }
+.lp-section-subtle { background: var(--color-subtle); }
+.lp-narrow { max-width: 760px; }
+.lp-center { margin-top: 3rem; text-align: center; }
+
+.lp-head { max-width: 680px; margin: 0 auto clamp(2.5rem, 5vw, 3.5rem); text-align: center; }
+.lp-head-sub { margin: 1rem 0 0; font-size: 1.05rem; line-height: 1.65; color: var(--color-muted); }
+
+/* === HERO === */
+.lp-hero {
+  position: relative;
+  padding: clamp(4rem, 9vw, 7rem) 0 clamp(3.5rem, 7vw, 5.5rem);
+  text-align: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+.lp-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(60% 60% at 50% 0%, rgba(var(--color-accent-rgb), 0.1), transparent 70%);
+}
+.lp-hero-inner { max-width: 820px; }
+.lp-hero-title {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+  font-size: clamp(2.4rem, 7vw, 4.4rem);
+  color: var(--color-ink);
+}
+.lp-hero-sub {
+  margin: 1.5rem auto 0;
+  max-width: 620px;
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  line-height: 1.65;
+  color: var(--color-muted);
+}
+
+.lp-cta-row {
+  margin-top: 2.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  justify-content: center;
+}
+.lp-made {
+  margin: 1.75rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  opacity: 0.7;
+}
+
+/* === BOTÕES === */
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.95rem 1.75rem;
+  border-radius: 9999px;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  border: 1.5px solid transparent;
+}
+.lp-btn-primary {
+  background: var(--color-accent);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(var(--color-accent-rgb), 0.28);
+}
+.lp-btn-primary:hover {
+  transform: translateY(-2px);
+  background: var(--color-accent-2);
+  box-shadow: 0 14px 30px rgba(var(--color-accent-rgb), 0.38);
+}
+.lp-btn-ghost {
+  background: transparent;
+  color: var(--color-ink);
+  border-color: var(--color-border);
+}
+.lp-btn-ghost:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* === GRIDS === */
+.lp-grid { display: grid; gap: 1.25rem; }
+.lp-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.lp-grid-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .lp-grid-3 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) {
+  .lp-grid-3, .lp-grid-4 { grid-template-columns: 1fr; }
+}
+
+/* === CARDS DE SOLUÇÃO === */
+.lp-card {
+  padding: 1.75rem;
+  border-radius: 18px;
+  border: 1px solid var(--color-border);
+  background: var(--color-paper);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.lp-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(var(--color-accent-rgb), 0.5);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06);
+}
+.lp-card-ic {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(var(--color-accent-rgb), 0.08);
+  color: var(--color-accent);
+  margin-bottom: 1.25rem;
+}
+.lp-card-ic :global(svg) { width: 26px; height: 26px; }
+.lp-card-title { margin: 0 0 0.6rem; font-size: 1.2rem; font-weight: 700; color: var(--color-ink); }
+.lp-card-desc { margin: 0; font-size: 0.95rem; line-height: 1.6; color: var(--color-muted); }
+
+/* === NÚMEROS === */
+.lp-stats {
+  padding: clamp(3.5rem, 7vw, 5.5rem) 0;
+  background: var(--color-accent);
+  color: #fff;
+}
+.lp-stats-intro {
+  margin: 0 auto clamp(2.5rem, 5vw, 3.5rem);
+  max-width: 640px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.2rem, 2.6vw, 1.6rem);
+  line-height: 1.3;
+}
+.lp-stat { text-align: center; }
+.lp-stat-value { display: block; font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+.lp-stat-label { display: block; margin-top: 0.5rem; font-size: 0.85rem; font-weight: 500; opacity: 0.85; }
+
+.lp-clients {
+  list-style: none;
+  margin: clamp(2.5rem, 5vw, 3.5rem) 0 0;
+  padding: clamp(1.75rem, 3vw, 2.25rem) 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+.lp-clients li {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  letter-spacing: 0.01em;
+  opacity: 0.9;
+}
+
+/* === PASSOS === */
+.lp-step {
+  padding: 2rem 1.75rem;
+  border-radius: 18px;
+  border: 1px solid var(--color-border);
+  background: var(--color-paper);
+}
+.lp-step-n {
+  display: block;
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(var(--color-accent-rgb), 0.25);
+  margin-bottom: 1rem;
+}
+
+/* === FAQ === */
+.lp-faq {
+  max-width: 720px;
+  margin: 0 auto;
+  border-top: 1px solid var(--color-border);
+}
+.lp-faq-item { border-bottom: 1px solid var(--color-border); }
+.lp-faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 0.25rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--color-ink);
+}
+.lp-faq-item summary::-webkit-details-marker { display: none; }
+.lp-faq-chev { width: 20px; height: 20px; flex-shrink: 0; color: var(--color-accent); transition: transform 0.25s ease; }
+.lp-faq-item[open] .lp-faq-chev { transform: rotate(180deg); }
+.lp-faq-item p {
+  margin: 0;
+  padding: 0 0.25rem 1.4rem;
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--color-muted);
+}
+
+/* === CONTATO === */
+.lp-contact {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  align-items: center;
+}
+@media (max-width: 800px) { .lp-contact { grid-template-columns: 1fr; } }
+.lp-contact-info {
+  list-style: none;
+  margin: 0;
+  padding: clamp(1.75rem, 3vw, 2.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  border-radius: 18px;
+  border: 1px solid var(--color-border);
+  background: var(--color-subtle);
+}
+.lp-contact-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 0.3rem;
+}
+.lp-contact-value {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+a.lp-contact-value:hover { color: var(--color-accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-btn, .lp-card, .lp-faq-chev { transition: none; }
+  .lp-btn:hover, .lp-card:hover { transform: none; }
+}
