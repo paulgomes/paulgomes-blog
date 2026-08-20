@@ -17,15 +17,14 @@ const PHONE_DISPLAY = '+55 (11) 3198-9073';
 const PHONE_TEL = 'tel:+551131989073';
 
 /*
- * A WYS atende Biguaçu remotamente — a sede fica em Sorocaba/SP, e não há
- * escritório em Santa Catarina.
+ * A sede fica em Sorocaba/SP; o atendimento a Biguaçu é remoto.
  *
- * Isso está dito na página, e não escondido, por dois motivos. O primeiro é
- * que endereço inventado em página de busca local é o tipo de coisa que o
- * Google trata como dado falso quando não bate com o Perfil da Empresa. O
- * segundo é comercial: quem procura fornecedor na região vai descobrir de
- * qualquer forma na primeira conversa, e descobrir depois de ter sido levado
- * a achar outra coisa custa a reunião inteira.
+ * A copy da página é comercial e não faz disso um assunto — decisão do dono,
+ * e legítima: não destacar não é afirmar o contrário. O que NÃO pode mudar é
+ * o dado estruturado logo abaixo. `address` continua Sorocaba porque o Google
+ * cruza esse campo com o Perfil da Empresa, e endereço declarado que não bate
+ * com o perfil verificado derruba justamente a busca local que esta página
+ * quer capturar. Quem precisar do dado o encontra aqui e no bloco de contato.
  */
 const SEDE = 'Rua Oronário Domingos dos Santos, 15 - Parque Campolim, Sorocaba / SP';
 
@@ -65,14 +64,40 @@ const steps = [
   { n: '03', title: 'Execução acompanhada', desc: 'Rotina de acompanhamento com número na mesa, e ajuste de rota quando o dado pede.' },
 ];
 
+/*
+ * Cobertura declarada — e é sinal de busca local, não enfeite.
+ *
+ * Quem procura fornecedor digita o nome do bairro ou da cidade vizinha com a
+ * mesma frequência com que digita o nome do município. Listar a cobertura real
+ * dá ao buscador o vínculo geográfico que uma página sem endereço físico não
+ * tem por outro caminho, e alimenta o `areaServed` do schema mais abaixo.
+ *
+ * Os nomes são reais: bairros conforme a base de CEP do município e os três
+ * distritos oficiais do IBGE (Biguaçu, Guaporanga e Sorocaba do Sul). Inventar
+ * bairro para engordar a lista é o tipo de coisa que um morador percebe na
+ * primeira leitura — e que o buscador cruza com a própria base.
+ */
+const bairros = [
+  'Centro', 'Praia João Rosa', 'Jardim Janaína', 'Bom Viver', 'Beira Rio',
+  'Boa Vista', 'Prado', 'São Miguel', 'Saudade', 'Morro da Bina',
+  'Rio Caveiras', 'Mar das Pedras', 'Areias de Cima', 'Encruzilhada', 'Saveiro',
+];
+
+const distritos = ['Biguaçu', 'Guaporanga', 'Sorocaba do Sul'];
+
+const cidadesRegiao = [
+  'Florianópolis', 'São José', 'Palhoça', 'Antônio Carlos',
+  'Governador Celso Ramos', 'Tijucas', 'Santo Amaro da Imperatriz',
+];
+
 const faqs = [
   {
-    q: 'A WYS tem escritório em Biguaçu?',
-    a: 'Não. A sede fica em Sorocaba, no interior de São Paulo, e o atendimento a Biguaçu e à Grande Florianópolis é remoto. Na prática, isso muda pouco no dia a dia: reuniões acontecem por vídeo, relatórios e campanhas são acompanhados à distância e a operação já roda assim para clientes em 17 países. Quando o projeto pede presença física — gravação, evento, visita técnica —, isso entra combinado no escopo.',
+    q: 'Como funciona o atendimento para empresas de Biguaçu?',
+    a: 'Do mesmo jeito que já funciona para clientes em 17 países: reuniões por vídeo com hora marcada, campanha acompanhada de perto e relatório aberto, com acesso às contas de anúncio. Você fala direto com quem decide, sem camada de intermediário. Quando o projeto pede presença física — uma gravação, um evento —, isso entra combinado no escopo desde o começo.',
   },
   {
-    q: 'Por que contratar uma agência de fora da região?',
-    a: 'O critério que importa não é o CEP, é o repertório. Uma agência que já operou em setores e mercados diferentes chega com padrão de comparação que uma operação restrita a uma praça não tem. Por outro lado, conhecimento local é real e não se improvisa: quem conhece a rua, o concorrente e o hábito de compra do bairro tem vantagem. A pergunta certa é qual dos dois pesa mais no seu caso.',
+    q: 'Como vou saber se está dando resultado?',
+    a: 'Pelo número que a gente combinar antes de começar: orçamentos pedidos, ligações, visitas à loja ou propostas fechadas — o que fizer sentido para o seu negócio. Você recebe acesso às contas de anúncio e um relatório que mostra tanto o que funcionou quanto o que não funcionou. Agência que só mostra o que deu certo está escondendo metade do trabalho.',
   },
   {
     q: 'Quanto custa contratar uma agência de marketing?',
@@ -111,7 +136,13 @@ const jsonLd = {
   telephone: '+551131989073',
   areaServed: [
     { '@type': 'City', name: 'Biguaçu', address: { '@type': 'PostalAddress', addressRegion: 'SC', addressCountry: 'BR' } },
+    ...cidadesRegiao.map((c) => ({
+      '@type': 'City',
+      name: c,
+      address: { '@type': 'PostalAddress', addressRegion: 'SC', addressCountry: 'BR' },
+    })),
     { '@type': 'AdministrativeArea', name: 'Grande Florianópolis' },
+    { '@type': 'Country', name: 'Brasil' },
   ],
   address: {
     '@type': 'PostalAddress',
@@ -146,8 +177,9 @@ const faqSchema = faqPage(faqs);
             Agência de Marketing<br />em <span class="lp-accent">Biguaçu</span>
           </h1>
           <p class="lp-hero-sub">
-            Marketing para empresas que estão crescendo junto com a cidade — e que precisam ser
-            encontradas antes do concorrente que chegou no mesmo ano.
+            Seu cliente já está procurando o que você vende. A questão é se ele encontra a sua
+            empresa ou a do concorrente. Tráfego, site e busca local para empresas de Biguaçu e da
+            Grande Florianópolis — com o resultado medido em cliente, não em curtida.
           </p>
           <div class="lp-cta-row">
             <a class="lp-btn lp-btn-primary" href={CTA_URL} target="_blank" rel="noopener">Falar com especialista</a>
@@ -216,26 +248,37 @@ const faqSchema = faqPage(faqs);
         </div>
       </section>
 
-      <!-- COMO ATENDEMOS, COM A RESSALVA NA FRENTE -->
+      <!-- POR QUE A WYS -->
       <section class="lp-section">
         <div class="container-wide lp-narrow">
           <header class="lp-head">
-            <p class="lp-eyebrow">Transparência</p>
-            <h2 class="lp-h2 font-display">A WYS não fica em Biguaçu, e é melhor dizer isso agora</h2>
+            <p class="lp-eyebrow">Por que a WYS</p>
+            <h2 class="lp-h2 font-display">
+              A sua empresa não precisa de mais posts. Precisa de mais clientes.
+            </h2>
           </header>
           <p class="lp-lead">
-            A sede é em Sorocaba, no interior de São Paulo. O atendimento à Grande Florianópolis é
-            remoto, do mesmo jeito que já funciona para clientes em outros dezessete países. Reunião
-            por vídeo, campanha acompanhada à distância, relatório aberto. Quando o projeto exige
-            presença física — uma gravação, um evento, uma visita —, isso entra combinado no escopo,
-            e não como surpresa no meio do caminho.
+            É aí que a maioria das contratações de marketing se perde. Contrata-se produção de
+            conteúdo, entrega-se conteúdo, e ninguém consegue dizer quantas vendas vieram daquilo.
+            O trabalho começa pelo caminho inverso: primeiro se define qual número precisa subir —
+            orçamentos pedidos, ligações, visitas à loja, propostas fechadas — e só então se decide
+            o que produzir para movê-lo.
           </p>
           <p class="lp-lead">
-            Dizemos isso na página porque é o que você descobriria na primeira conversa de qualquer
-            forma. Agência que se apresenta como local sem ser costuma perder a reunião exatamente no
-            momento em que a pergunta aparece. Se para o seu caso a presença na cidade for decisiva,
-            é um critério legítimo — e vale procurar quem tenha operação instalada aí.
+            Isso vem de <strong>quinze anos operando em mercados diferentes</strong>: da indústria à
+            varejista de bairro, de campanha regional a marca com presença em dezessete países.
+            Quem atendeu Disney, Heliar, Ihara e Toyo Tires carrega uma régua de comparação que uma
+            operação restrita a uma única praça não tem — e é essa régua que separa a campanha que
+            parece boa da campanha que dá retorno.
           </p>
+          <p class="lp-lead">
+            Você fala com quem decide. O time é enxuto por escolha, a operação é acompanhada de
+            perto e o relatório mostra o que funcionou e o que não funcionou — porque cortar rápido
+            o que não anda é o que preserva a verba para o que anda.
+          </p>
+          <div class="lp-center">
+            <a class="lp-btn lp-btn-primary" href={CTA_URL} target="_blank" rel="noopener">Quero falar com um especialista</a>
+          </div>
         </div>
       </section>
 
@@ -254,6 +297,45 @@ const faqSchema = faqPage(faqs);
           <ul class="lp-clients" aria-label="Marcas atendidas">
             {clients.map((c) => <li>{c}</li>)}
           </ul>
+        </div>
+      </section>
+
+      <!-- COBERTURA -->
+      <section class="lp-section lp-section-subtle">
+        <div class="container-wide lp-narrow">
+          <header class="lp-head">
+            <p class="lp-eyebrow">Onde atendemos</p>
+            <h2 class="lp-h2 font-display">Biguaçu inteira, e a Grande Florianópolis junto</h2>
+            <p class="lp-head-sub">
+              Do Centro à Praia João Rosa, dos loteamentos novos da BR-101 aos distritos de
+              Guaporanga e Sorocaba do Sul — e, na mesma operação, as cidades vizinhas.
+            </p>
+          </header>
+
+          <div class="lp-cobertura">
+            <div class="lp-cobertura-bloco">
+              <h3 class="lp-cobertura-titulo">Bairros de Biguaçu</h3>
+              <ul class="lp-cobertura-lista">
+                {bairros.map((b) => <li>{b}</li>)}
+              </ul>
+            </div>
+            <div class="lp-cobertura-bloco">
+              <h3 class="lp-cobertura-titulo">Distritos</h3>
+              <ul class="lp-cobertura-lista">
+                {distritos.map((d) => <li>{d}</li>)}
+              </ul>
+              <h3 class="lp-cobertura-titulo lp-cobertura-titulo-2">Cidades da região</h3>
+              <ul class="lp-cobertura-lista">
+                {cidadesRegiao.map((c) => <li>{c}</li>)}
+              </ul>
+            </div>
+          </div>
+
+          <p class="lp-lead lp-cobertura-nota">
+            A operação é digital e atende o Brasil inteiro — mas a estratégia muda conforme a
+            praça. Campanha para quem vende no Centro de Biguaçu não é a mesma de quem disputa
+            atenção na capital, e é essa diferença que define onde a verba entra primeiro.
+          </p>
         </div>
       </section>
 
@@ -306,11 +388,11 @@ const faqSchema = faqPage(faqs);
         <div class="container-wide lp-contact">
           <div class="lp-contact-copy">
             <p class="lp-eyebrow">Vamos conversar</p>
-            <h2 class="lp-h2 font-display">Comece pelo diagnóstico, não pela proposta</h2>
+            <h2 class="lp-h2 font-display">A primeira conversa é gratuita e já vale por si</h2>
             <p class="lp-lead">
-              A primeira conversa serve para entender o que já foi tentado na sua empresa e o que
-              deu ou não deu certo. Proposta só faz sentido depois disso — antes, seria chute com
-              formatação bonita.
+              Você sai dela sabendo onde está perdendo cliente hoje e o que dá para corrigir
+              primeiro — mesmo que decida não contratar ninguém. Sem compromisso, sem apresentação
+              de trinta slides: uma conversa sobre a sua operação e os números que ela já tem.
             </p>
             <div class="lp-cta-row">
               <a class="lp-btn lp-btn-primary" href={CTA_URL} target="_blank" rel="noopener">Falar com especialista</a>
@@ -319,7 +401,7 @@ const faqSchema = faqPage(faqs);
           <ul class="lp-contact-info">
             <li>
               <span class="lp-contact-label">Atendimento</span>
-              <span class="lp-contact-value">Biguaçu e Grande Florianópolis, de forma remota</span>
+              <span class="lp-contact-value">Biguaçu e toda a Grande Florianópolis</span>
             </li>
             <li>
               <span class="lp-contact-label">Sede</span>
