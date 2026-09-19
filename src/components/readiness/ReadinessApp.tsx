@@ -281,8 +281,13 @@ function Landing({ onStart }: { onStart: () => void }) {
               d: 'Se você consegue distinguir o que gerou receita do que apenas gastou verba.',
             },
           ].map((c) => (
+            // h2, e nao h3: as tres dimensoes sao filhas diretas do h1 da
+            // landing, sem nivel intermediario entre elas. Como h3, a pagina
+            // pulava de h1 para h3 — o leitor de tela anuncia um nivel que nao
+            // existe, e o buscador le a estrutura como incompleta. A classe
+            // continua a mesma, entao nada muda visualmente.
             <div className="rd-card" key={c.t}>
-              <h3 className="rd-card-title">{c.t}</h3>
+              <h2 className="rd-card-title">{c.t}</h2>
               <p className="rd-card-text">{c.d}</p>
             </div>
           ))}

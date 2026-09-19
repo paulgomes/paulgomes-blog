@@ -3,12 +3,12 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SOCIAL } from '../consts';
-import { faqPage } from '../lib/schema';
+import { breadcrumbList, faqPage } from '../lib/schema';
 import '../styles/lp-regional.css';
 
 const PAGE_TITLE = 'Agência de Marketing em Biguaçu | Agência WYS';
 const PAGE_DESC =
-  'Agência de marketing para empresas de Biguaçu e da Grande Florianópolis: tráfego pago, sites, branding, redes sociais, SEO e sistemas. Operação remota, com 15 anos de estrada e mais de 2.000 clientes atendidos.';
+  'Agência de marketing para Biguaçu e a Grande Florianópolis: tráfego pago, sites, branding, redes sociais e SEO. 15 anos e mais de 2.000 clientes atendidos.';
 
 // CTA aponta para o site da WYS (destino confirmado). Trocar por link wa.me
 // quando houver um número comercial validado para a região.
@@ -155,6 +155,13 @@ const jsonLd = {
   sameAs: ['https://agenciawys.com.br', SOCIAL.linkedin, SOCIAL.instagram],
 };
 
+// Mesma razao da LP de Sorocaba: sem menu completo, o breadcrumb e o unico
+// sinal de hierarquia que sobra para buscador e modelo.
+const breadcrumbSchema = breadcrumbList([
+  { name: 'Início', item: 'https://paulgomes.com.br/' },
+  { name: 'Agência de Marketing em Biguaçu', item: 'https://paulgomes.com.br/agencia-de-marketing-em-biguacu/' },
+]);
+
 const faqSchema = faqPage(faqs);
 ---
 
@@ -163,6 +170,7 @@ const faqSchema = faqPage(faqs);
   <head>
     <BaseHead title={PAGE_TITLE} description={PAGE_DESC} />
     <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
     <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
   </head>
   <body>

@@ -3,11 +3,11 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SOCIAL } from '../consts';
-import { faqPage } from '../lib/schema';
+import { breadcrumbList, faqPage } from '../lib/schema';
 
 const PAGE_TITLE = 'Agência de Marketing em Sorocaba | Agência WYS';
 const PAGE_DESC =
-  'A Agência de Marketing WYS é um ecossistema de inovação criativa em Sorocaba: tráfego pago, criação de sites, branding, redes sociais, SEO e sistemas. Marca com propósito, comunicação com resultado.';
+  'Agência de marketing em Sorocaba: tráfego pago, criação de sites, branding, redes sociais, SEO e sistemas. Marca com propósito, comunicação com resultado.';
 
 // CTAs apontam pra agenciawys.com.br (destino seguro). Trocar por WhatsApp se houver número confirmado.
 const CTA_URL = 'https://agenciawys.com.br';
@@ -90,6 +90,14 @@ const jsonLd = {
   sameAs: ['https://agenciawys.com.br', SOCIAL.linkedin, SOCIAL.instagram],
 };
 
+// Landing sem menu completo: o breadcrumb e o unico sinal de onde a pagina
+// mora dentro do site. Vale para o rich result do Google e para o modelo, que
+// usa a hierarquia para decidir se a pagina e do dominio ou avulsa.
+const breadcrumbSchema = breadcrumbList([
+  { name: 'Início', item: 'https://paulgomes.com.br/' },
+  { name: 'Agência de Marketing em Sorocaba', item: 'https://paulgomes.com.br/agencia-de-marketing-em-sorocaba/' },
+]);
+
 const faqSchema = faqPage(faqs);
 ---
 
@@ -98,6 +106,7 @@ const faqSchema = faqPage(faqs);
   <head>
     <BaseHead title={PAGE_TITLE} description={PAGE_DESC} />
     <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
     <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
   </head>
   <body>
