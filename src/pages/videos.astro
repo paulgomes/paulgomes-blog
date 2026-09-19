@@ -9,7 +9,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SectionHeader from '../components/SectionHeader.astro';
-import { SCHEMA_ID, breadcrumbList } from '../lib/schema';
+import { SCHEMA_ID, breadcrumbList, faqPage } from '../lib/schema';
 import { SITE_CONFIG } from '../config/site';
 import data from '../data/videos.json';
 
@@ -56,6 +56,24 @@ const videoSchema = {
   })),
 };
 
+/*
+ * Pagina de listagem: o texto e uma linha de apresentacao e o resto sao os
+ * cards dos videos. Os pares abaixo dizem o que a pagina e e onde assistir,
+ * que e o que um modelo precisa para cita-la.
+ */
+const faqs = [
+  {
+    q: 'Onde assistir aos vídeos de Paul Gomes?',
+    a: 'No canal do YouTube @paulgomesx, e também nesta página, que lista os vídeos publicados com data e assunto. Os temas acompanham os do blog: inteligência artificial, marcas, algoritmos e o futuro dos negócios.',
+  },
+  {
+    q: 'Sobre o que são os vídeos?',
+    a: 'Análises de inteligência artificial, comportamento algorítmico, marcas e negócios — geralmente partindo de um caso concreto do noticiário ou de um tema que também foi tratado em texto no blog. O formato é de análise, não de tutorial de ferramenta.',
+  },
+];
+
+const faqSchema = faqPage(faqs);
+
 // Breadcrumb: sinal de hierarquia para o buscador e para o modelo, que
 // usa a posicao da pagina no site ao decidir o peso do que cita.
 const breadcrumbSchema = breadcrumbList([
@@ -70,6 +88,7 @@ const breadcrumbSchema = breadcrumbList([
   <head>
     <BaseHead title={title} description={description} />
     <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(videoSchema)} />
   </head>
   <body>

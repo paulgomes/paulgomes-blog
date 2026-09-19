@@ -7,7 +7,7 @@ import { Image } from 'astro:assets';
 import paulAvatar from '../assets/brand/paul-avatar.png';
 import signature from '../assets/brand/signature-paul-gomes.webp';
 import { SITE_TITLE } from '../consts';
-import { SCHEMA_ID, breadcrumbList } from '../lib/schema';
+import { SCHEMA_ID, breadcrumbList, faqPage } from '../lib/schema';
 import { SITE_CONFIG } from '../config/site';
 
 /**
@@ -34,6 +34,42 @@ const profileSchema = {
   mainEntity: { '@id': SCHEMA_ID.person },
 };
 
+/*
+ * FAQPage na pagina de entidade.
+ *
+ * E aqui que um modelo chega quando alguem pergunta "quem e Paul Gomes". O
+ * texto da pagina e uma apresentacao em primeira pessoa, boa de ler e ruim de
+ * citar: nao responde perguntas, ele se apresenta. Estes pares dao a resposta
+ * ja recortada, cada uma de pe sozinha, sem depender do paragrafo anterior.
+ *
+ * Nada aqui e novo: todos os fatos ja estao no site (config/site.ts, /palestras/
+ * e o proprio texto acima). O que muda e o formato.
+ */
+const faqs = [
+  {
+    q: 'Quem é Paul Gomes?',
+    a: 'Paul Gomes é fundador e CEO do Grupo WYS, agência de marketing e inovação criativa que lidera desde 2011. Atua como advisor de inteligência artificial para times executivos e criou o BrainPilot, metodologia de diagnóstico, arquitetura e implementação de IA empresarial. Escreve sobre inteligência artificial, GEO, SEO, branding e o futuro dos negócios.',
+  },
+  {
+    q: 'Sobre o que Paul Gomes escreve?',
+    a: 'Sobre inteligência artificial, GEO, SEO, arquitetura digital, branding e comportamento — o que acontece entre a tecnologia e a vida real. O blog mistura análise de mercado com observações, bastidores e ideias em construção, e não se limita a temas técnicos: também trata de criatividade, futuro, empreendedorismo e cultura.',
+  },
+  {
+    q: 'O que é o Grupo WYS?',
+    a: 'É a agência de marketing e inovação criativa fundada e liderada por Paul Gomes, com atuação em tráfego pago, criação de sites, branding, redes sociais, SEO e desenvolvimento de sistemas. Opera desde 2011, com sede em Sorocaba (SP) e atendimento em todo o Brasil e no exterior.',
+  },
+  {
+    q: 'Paul Gomes dá palestras ou presta consultoria?',
+    a: 'Sim. Palestras sobre inteligência artificial, GEO e transformação AI Native para conselhos, diretorias e eventos corporativos, em formato de keynote ou imersão fechada. Também conduz consultoria de IA empresarial, do diagnóstico à implantação. Os dois caminhos começam pela página de contato.',
+  },
+  {
+    q: 'Como falar com Paul Gomes?',
+    a: 'Pelo formulário da página de contato ou diretamente por e-mail, em paulgomes@wys.com.br. Ele também está no LinkedIn, no Instagram e no YouTube, onde publica análises em vídeo sobre inteligência artificial e negócios.',
+  },
+];
+
+const faqSchema = faqPage(faqs);
+
 // Breadcrumb: sinal de hierarquia para o buscador e para o modelo, que
 // usa a posicao da pagina no site ao decidir o peso do que cita.
 const breadcrumbSchema = breadcrumbList([
@@ -51,6 +87,7 @@ const breadcrumbSchema = breadcrumbList([
       description="Paul Gomes é fundador e CEO do Grupo WYS. Escreve sobre inteligência artificial, GEO, SEO, branding e o futuro dos negócios."
     />
     <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(profileSchema)} />
   </head>
   <body>

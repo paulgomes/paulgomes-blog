@@ -1,6 +1,6 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
-import { breadcrumbList } from '../lib/schema';
+import { breadcrumbList, faqPage } from '../lib/schema';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE } from '../consts';
@@ -14,6 +14,28 @@ const ferramentas = [
   { nome: 'Templates', desc: 'Estruturas prontas para acelerar execução.', href: '/templates-de-conteudo-e-marketing/' },
   { nome: 'Calculadoras', desc: 'Estimativas rápidas para decisões de marketing e conteúdo.', href: '/calculadoras-de-marketing-as-contas-essenciais/' },
 ];
+
+/*
+ * Pagina de indice: o texto proprio dela sao duas frases, e o resto sao cards.
+ * Os pares abaixo respondem o que alguem pergunta antes de clicar em qualquer
+ * um deles — o que existe, se custa, se precisa cadastro.
+ */
+const faqs = [
+  {
+    q: 'Quais ferramentas estão disponíveis?',
+    a: 'Glossário de IA e glossário de SEO e GEO, uma biblioteca de prompts para trabalho real, checklists de SEO, GEO e publicação, templates e um conjunto de calculadoras de marketing. Há também o ChatGPT Ads Readiness, diagnóstico de prontidão para aquisição via inteligência artificial.',
+  },
+  {
+    q: 'As ferramentas são gratuitas?',
+    a: 'Sim. Todas são de uso livre e abrem direto no navegador, sem cadastro e sem instalação. O ChatGPT Ads Readiness pede apenas os dados de contato ao final, para enviar o diagnóstico — o uso da ferramenta em si não tem custo.',
+  },
+  {
+    q: 'Para quem essas ferramentas servem?',
+    a: 'Para quem trabalha com marketing, conteúdo, SEO ou implantação de IA e precisa sair do conceito e chegar na execução. Os glossários servem a quem está começando ou precisa alinhar vocabulário com o time; checklists e calculadoras servem a quem já opera e quer conferir ou dimensionar o próprio trabalho.',
+  },
+];
+
+const faqSchema = faqPage(faqs);
 
 // Breadcrumb: sinal de hierarquia para o buscador e para o modelo, que
 // usa a posicao da pagina no site ao decidir o peso do que cita.
@@ -32,6 +54,7 @@ const breadcrumbSchema = breadcrumbList([
       description="Ferramentas práticas para trabalhar com IA, SEO e conteúdo: prompts, checklists, glossários, templates e calculadoras. Por Paul Gomes."
     />
     <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
   </head>
   <body>
     <Header />
