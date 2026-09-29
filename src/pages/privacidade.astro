@@ -8,7 +8,7 @@ import { SITE_TITLE } from '../consts';
 <!doctype html>
 <html lang="pt-BR">
   <head>
-    <BaseHead title={`Política de Privacidade — ${SITE_TITLE}`} description="Política de privacidade do site de Paul Gomes." />
+    <BaseHead title={`Política de Privacidade — ${SITE_TITLE}`} description="Política de privacidade do site e do aplicativo Paul Gomes." />
   </head>
   <body>
     <Header />
@@ -18,38 +18,100 @@ import { SITE_TITLE } from '../consts';
 
         <div class="mt-10 space-y-6 text-base leading-relaxed" style="color: var(--color-muted)">
           <p>
-            Este documento descreve como o site <strong>paulgomes.com.br</strong> trata informações de seus visitantes. Última atualização: {new Date().getFullYear()}.
+            Este documento descreve como o site <strong>paulgomes.com.br</strong> e o aplicativo
+            <strong>Paul Gomes</strong> (Android e iOS, pacote <code>br.com.paulgomes.app</code>)
+            tratam informações de seus usuários. Última atualização: {new Date().getFullYear()}.
           </p>
 
-          <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Coleta de dados</h2>
+          <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Resumo</h2>
           <p>
-            Este site é uma publicação editorial estática. Não coletamos nem armazenamos dados pessoais identificáveis dos visitantes diretamente. Não utilizamos cookies de rastreamento próprios.
+            Não pedimos cadastro, não exigimos login e não coletamos dados pessoais identificáveis.
+            O aplicativo não coleta, não transmite e não compartilha nenhum dado pessoal.
+          </p>
+
+          <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">O aplicativo Paul Gomes</h2>
+          <p>
+            O app é um leitor dos artigos publicados neste site. Ele não solicita cadastro, login,
+            localização, contatos, câmera, microfone ou armazenamento externo. A única permissão
+            utilizada é o acesso à internet, para baixar os artigos.
+          </p>
+          <p>
+            Informações como <strong>artigos favoritados</strong>, <strong>progresso de leitura</strong>,
+            <strong>tamanho de fonte</strong> e <strong>artigos já lidos</strong> ficam gravadas apenas
+            no seu próprio aparelho e nunca são enviadas para nós nem para terceiros. Desinstalar o
+            app apaga essas informações. O app também inclui uma cópia de artigos para leitura offline.
+          </p>
+          <p>
+            O recurso de ouvir artigos usa o sintetizador de voz do próprio sistema operacional do
+            aparelho; o texto não é enviado a nenhum servidor externo.
+          </p>
+
+          <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Publicidade no site</h2>
+          <p>
+            O site exibe anúncios fornecidos pelo <strong>Google AdSense</strong>. O Google e seus
+            parceiros podem usar cookies para exibir anúncios com base em visitas anteriores a este
+            ou a outros sites. O uso de cookies de publicidade permite ao Google e a seus parceiros
+            veicular anúncios para você.
+          </p>
+          <p>
+            Você pode desativar a publicidade personalizada nas
+            <a href="https://adssettings.google.com/" rel="noopener" class="underline underline-offset-4">Configurações de anúncios do Google</a>,
+            ou desativar cookies de terceiros em
+            <a href="https://www.aboutads.info/choices/" rel="noopener" class="underline underline-offset-4">aboutads.info/choices</a>.
+            Saiba mais em
+            <a href="https://policies.google.com/technologies/ads" rel="noopener" class="underline underline-offset-4">políticas de anúncios do Google</a>.
+            <strong>O aplicativo não exibe anúncios.</strong>
           </p>
 
           <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Análise de tráfego</h2>
           <p>
-            Podemos utilizar ferramentas de análise (como Cloudflare Web Analytics ou similares) que coletam métricas agregadas e anônimas sobre o uso do site — número de visitas, páginas mais lidas, origem geográfica genérica — sem identificar visitantes individualmente.
+            No site, utilizamos o Google Analytics e o Cloudflare Web Analytics para entender de forma
+            agregada como as páginas são lidas — número de visitas, páginas mais acessadas e origem
+            geográfica genérica. O Google Analytics utiliza cookies. Esses dados não identificam
+            visitantes individualmente e não são usados para criar perfis pessoais.
           </p>
 
           <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Newsletter</h2>
           <p>
-            Caso você se inscreva voluntariamente em nossa newsletter, seu endereço de e-mail será utilizado exclusivamente para envio dos próximos ensaios. Você pode cancelar a inscrição a qualquer momento. Não compartilhamos seu e-mail com terceiros.
+            Caso você se inscreva voluntariamente em nossa newsletter, seu endereço de e-mail será
+            utilizado exclusivamente para envio dos próximos ensaios. Você pode cancelar a inscrição a
+            qualquer momento. Não compartilhamos seu e-mail com terceiros.
           </p>
 
           <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Links externos</h2>
           <p>
-            Este site contém links para serviços de terceiros (LinkedIn, Instagram, YouTube, ChatGPT, Claude, Perplexity, etc). Ao clicar nesses links, você passa a estar sujeito às políticas de privacidade desses serviços.
+            Este site contém links para serviços de terceiros (LinkedIn, Instagram, YouTube, ChatGPT,
+            Claude, Perplexity, etc). Ao clicar nesses links, você passa a estar sujeito às políticas
+            de privacidade desses serviços.
+          </p>
+
+          <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Crianças</h2>
+          <p>
+            Nem o site nem o aplicativo são direcionados a crianças e não coletamos intencionalmente
+            informações de menores de 13 anos.
           </p>
 
           <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Seus direitos</h2>
           <p>
-            Em conformidade com a LGPD (Lei nº 13.709/2018), você tem o direito de solicitar informações sobre quaisquer dados eventualmente associados a você, bem como solicitar correção ou remoção.
+            Em conformidade com a LGPD (Lei nº 13.709/2018), você tem o direito de solicitar
+            informações sobre quaisquer dados eventualmente associados a você, bem como solicitar
+            correção ou remoção.
+          </p>
+
+          <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Alterações</h2>
+          <p>
+            Podemos atualizar esta política. Mudanças relevantes serão publicadas nesta mesma página,
+            com a data de atualização revista.
           </p>
 
           <h2 class="font-display text-2xl font-bold mt-10" style="color: var(--color-ink)">Contato</h2>
           <p>
-            Para dúvidas sobre esta política ou solicitações relacionadas aos seus dados:
-            <a href="mailto:paulgomes@wys.com.br" class="underline underline-offset-4">paulgomes@wys.com.br</a>.
+            Para dúvidas sobre esta política, sobre o site ou sobre o aplicativo, ou para solicitações
+            relacionadas aos seus dados:
+            <!--email_off--><a href="mailto:paulgomes@wys.com.br" class="underline underline-offset-4">paulgomes@wys.com.br</a><!--/email_off-->.
+          </p>
+          <p>
+            Responsável: Experience Marketing Business e Tecnologia Ltda. (XMB), Brasil.
           </p>
         </div>
       </section>
