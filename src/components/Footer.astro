@@ -2,8 +2,21 @@
 import { Image } from 'astro:assets';
 import SocialIcons from './SocialIcons.astro';
 import signature from '../assets/brand/signature-paul-gomes.webp';
+import appIcon from '../assets/brand/app-icon.jpg';
 import menuFooter from '../data/menu-footer.json';
 import { getTopicGroups } from '../lib/topics';
+
+/*
+ * App do blog na App Store.
+ *
+ * O icone e servido daqui, e nao da URL da Apple: imagem de terceiro no rodape
+ * de todas as paginas significa uma requisicao externa em cada visita, e um
+ * link que quebra calado no dia em que a Apple trocar o caminho do artwork.
+ *
+ * Dito que e iPhone e iPad de proposito. Quem usa Android descobriria no toque,
+ * depois de sair do site — e um clique perdido que nao volta.
+ */
+const APP_URL = 'https://apps.apple.com/us/app/paul-gomes/id6790929921';
 
 const year = new Date().getFullYear();
 // Defesa em profundidade: filtra /privacidade aqui tambem (ja filtrado no sync)
@@ -24,6 +37,24 @@ const { groups: topicGroups } = await getTopicGroups();
         <div class="mt-5">
           <SocialIcons size={22} />
         </div>
+
+        <a class="footer-app" href={APP_URL} target="_blank" rel="noopener">
+          <Image
+            src={appIcon}
+            alt="Ícone do app Paul Gomes"
+            width={56}
+            height={56}
+            loading="lazy"
+            class="footer-app-icon"
+          />
+          <span class="footer-app-texto">
+            <span class="footer-app-titulo">Leia no app</span>
+            <span class="footer-app-sub">Os ensaios do blog num leitor feito para ler. Grátis, para iPhone e iPad.</span>
+          </span>
+          <svg class="footer-app-seta" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </a>
       </div>
 
       <div class="hidden md:block">
@@ -95,6 +126,54 @@ const { groups: topicGroups } = await getTopicGroups();
 <style>
   :global(.dark) .signature-img {
     filter: invert(1);
+  }
+
+  /* Cartão do app. Discreto no repouso e com a borda acendendo no ponteiro:
+     ele divide a coluna com a marca e os ícones sociais, e competir com eles
+     num rodapé custaria a hierarquia que o bloco já tem. */
+  .footer-app {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    max-width: 30rem;
+    margin-top: 1.75rem;
+    padding: 0.8rem 1.1rem 0.8rem 0.8rem;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--color-ink);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
+  .footer-app:hover {
+    border-color: #0103F9;
+    background: color-mix(in srgb, #0103F9 4%, transparent);
+  }
+  :global(.dark) .footer-app:hover { border-color: #3D40FF; }
+  .footer-app:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+  /* 22% é o raio que a Apple usa no ícone do iOS; com o quadrado reto o
+     cartão parece um banner, e não o app. */
+  .footer-app-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 22%;
+    flex-shrink: 0;
+  }
+  .footer-app-texto { display: flex; flex-direction: column; gap: 0.15rem; }
+  .footer-app-titulo { font-weight: 700; font-size: 0.95rem; }
+  .footer-app-sub { font-size: 0.8rem; line-height: 1.4; color: var(--color-muted); }
+  .footer-app-seta {
+    flex-shrink: 0;
+    color: var(--color-muted);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  .footer-app:hover .footer-app-seta { transform: translateX(3px); color: #0103F9; }
+  :global(.dark) .footer-app:hover .footer-app-seta { color: #3D40FF; }
+  @media (prefers-reduced-motion: reduce) {
+    .footer-app, .footer-app-seta { transition: none; }
+    .footer-app:hover .footer-app-seta { transform: none; }
   }
 
   /* Índice temático (links internos) */

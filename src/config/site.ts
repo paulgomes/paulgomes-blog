@@ -58,11 +58,10 @@ export const SITE_CONFIG: TenantConfig = {
       'https://www.instagram.com/paulgomes/',
       'https://www.youtube.com/@paulgomesx',
       'https://x.com/paullgomes',
-      // TODO: incluir a URL real do app na App Store. Ela aparece na busca por
-      // "paul gomes", mas o endereço da App Store carrega um ID numérico
-      // (…/app/paul-gomes/id000000000) que precisa ser copiado da loja. Um
-      // sameAs que aponta para o lugar errado enfraquece a entidade em vez de
-      // reforçá-la, então fica de fora até termos o endereço correto.
+      // App do blog na App Store. O ID numérico foi confirmado na própria loja
+      // (lookup da API da Apple devolve trackName "Paul Gomes" para este id),
+      // que era o que faltava para o endereço entrar aqui com segurança.
+      'https://apps.apple.com/us/app/paul-gomes/id6790929921',
     ],
   },
   organization: {
