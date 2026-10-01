@@ -3,6 +3,15 @@ import { Image } from 'astro:assets';
 import SocialIcons from './SocialIcons.astro';
 import signature from '../assets/brand/signature-paul-gomes.webp';
 import appIcon from '../assets/brand/app-icon.jpg';
+/*
+ * Badge oficial da App Store, versao pt-BR, baixada do Marketing Tools da
+ * Apple. E o asset que as diretrizes exigem: a Apple nao aceita botao
+ * desenhado por terceiro no lugar dele, nem alteracao de cor, proporcao ou
+ * texto. Fica aqui como arquivo do projeto, e nao como `hotlink` para o
+ * servidor deles, pelo mesmo motivo do icone — requisicao externa em todas as
+ * paginas e link que quebra calado se o endereco mudar.
+ */
+import badgeAppStore from '../assets/brand/badge-app-store-ptbr.svg';
 import menuFooter from '../data/menu-footer.json';
 import { getTopicGroups } from '../lib/topics';
 
@@ -38,7 +47,7 @@ const { groups: topicGroups } = await getTopicGroups();
           <SocialIcons size={22} />
         </div>
 
-        <a class="footer-app" href={APP_URL} target="_blank" rel="noopener">
+        <div class="footer-app">
           <Image
             src={appIcon}
             alt="Ícone do app Paul Gomes"
@@ -47,14 +56,17 @@ const { groups: topicGroups } = await getTopicGroups();
             loading="lazy"
             class="footer-app-icon"
           />
-          <span class="footer-app-texto">
-            <span class="footer-app-titulo">Leia no app</span>
-            <span class="footer-app-sub">Os ensaios do blog num leitor feito para ler. Grátis, para iPhone e iPad.</span>
-          </span>
-          <svg class="footer-app-seta" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
-        </a>
+          <div class="footer-app-texto">
+            <p class="footer-app-titulo">Leia no app</p>
+            <p class="footer-app-sub">Os ensaios do blog num leitor feito para ler. Grátis, para iPhone e iPad.</p>
+            {/* O badge e o link: a Apple pede que a loja seja acessada por ele,
+                e nao por um botao proprio. Quem usa leitor de tela recebe o
+                texto pelo alt, entao o elemento nao precisa de rotulo extra. */}
+            <a class="footer-app-badge" href={APP_URL} target="_blank" rel="noopener">
+              <img src={badgeAppStore.src} alt="Baixar na App Store" width="120" height="40" loading="lazy" />
+            </a>
+          </div>
+        </div>
       </div>
 
       <div class="hidden md:block">
@@ -132,26 +144,15 @@ const { groups: topicGroups } = await getTopicGroups();
      ele divide a coluna com a marca e os ícones sociais, e competir com eles
      num rodapé custaria a hierarquia que o bloco já tem. */
   .footer-app {
-    display: inline-flex;
-    align-items: center;
+    display: flex;
+    align-items: flex-start;
     gap: 0.9rem;
     max-width: 30rem;
     margin-top: 1.75rem;
-    padding: 0.8rem 1.1rem 0.8rem 0.8rem;
+    padding: 1rem 1.1rem 1.1rem 0.9rem;
     border: 1px solid var(--color-border);
     border-radius: 14px;
-    text-decoration: none;
     color: var(--color-ink);
-    transition: border-color 0.2s ease, background-color 0.2s ease;
-  }
-  .footer-app:hover {
-    border-color: #0103F9;
-    background: color-mix(in srgb, #0103F9 4%, transparent);
-  }
-  :global(.dark) .footer-app:hover { border-color: #3D40FF; }
-  .footer-app:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
   }
   /* 22% é o raio que a Apple usa no ícone do iOS; com o quadrado reto o
      cartão parece um banner, e não o app. */
@@ -162,18 +163,45 @@ const { groups: topicGroups } = await getTopicGroups();
     flex-shrink: 0;
   }
   .footer-app-texto { display: flex; flex-direction: column; gap: 0.15rem; }
-  .footer-app-titulo { font-weight: 700; font-size: 0.95rem; }
-  .footer-app-sub { font-size: 0.8rem; line-height: 1.4; color: var(--color-muted); }
-  .footer-app-seta {
-    flex-shrink: 0;
-    color: var(--color-muted);
-    transition: transform 0.2s ease, color 0.2s ease;
+  .footer-app-titulo { font-weight: 700; font-size: 0.95rem; margin: 0; }
+  .footer-app-sub { font-size: 0.8rem; line-height: 1.4; color: var(--color-muted); margin: 0; }
+
+  /* As diretrizes da Apple pedem 40px de altura minima na web e uma margem
+     livre de 1/10 da altura em volta — daí os 4px. O badge nao muda de cor
+     nem de proporcao: o unico efeito no ponteiro e a opacidade. */
+  .footer-app-badge {
+    display: inline-block;
+    margin-top: 0.7rem;
+    padding: 4px;
+    margin-left: -4px;
+    border-radius: 8px;
+    line-height: 0;
+    transition: opacity 0.2s ease;
   }
-  .footer-app:hover .footer-app-seta { transform: translateX(3px); color: #0103F9; }
-  :global(.dark) .footer-app:hover .footer-app-seta { color: #3D40FF; }
+  .footer-app-badge:hover { opacity: 0.78; }
+  .footer-app-badge:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  /* O `aspect-ratio` precisa ser declarado porque os atributos width/height do
+     <img> — que existem para reservar o espaço e evitar salto de layout —
+     geram sozinhos uma proporção de 3:1, e o arquivo da Apple é 119,66x40.
+     Sem esta linha o badge sai 0,28% esticado, e a Apple não permite alterar
+     a proporção do asset. */
+  .footer-app-badge img {
+    height: 40px;
+    width: auto;
+    aspect-ratio: 119.66407 / 40;
+    display: block;
+  }
+  /* O badge preto some no tema escuro: a borda clara devolve o contorno sem
+     tocar nas cores do asset, que a Apple nao deixa alterar. */
+  :global(.dark) .footer-app-badge img {
+    border-radius: 7px;
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.22);
+  }
   @media (prefers-reduced-motion: reduce) {
-    .footer-app, .footer-app-seta { transition: none; }
-    .footer-app:hover .footer-app-seta { transform: none; }
+    .footer-app-badge { transition: none; }
   }
 
   /* Índice temático (links internos) */
