@@ -37,7 +37,7 @@ const { groups: topicGroups } = await getTopicGroups();
 
 <footer class="mt-24 border-t" style="border-color: var(--color-border)">
   <div class="container-wide py-16">
-    <div class="grid gap-12 md:grid-cols-[1fr_auto] md:items-start">
+    <div class="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-start">
       <div>
         <p class="font-display text-2xl font-bold leading-tight">Paul Gomes - Thinking Forward</p>
         <p class="mt-3 max-w-xl text-base" style="color: var(--color-muted)">
@@ -46,6 +46,23 @@ const { groups: topicGroups } = await getTopicGroups();
         <div class="mt-5">
           <SocialIcons size={22} />
         </div>
+
+      </div>
+
+      {/* Coluna da direita: assinatura e cartão do app.
+          O cartão morava na coluna da esquerda, que então crescia para uns
+          350px enquanto esta ficava com os 60px da assinatura — e `items-start`
+          empurrava a sobra toda para baixo, abrindo um vazio do tamanho da
+          diferença. Com o cartão aqui, as duas colunas têm altura parecida e o
+          vazio deixa de existir. */}
+      <div class="footer-aside">
+        <Image
+          src={signature}
+          alt="Assinatura de Paul Gomes"
+          width={180}
+          height={60}
+          class="signature-img hidden h-auto w-44 opacity-80 lg:block"
+        />
 
         <div class="footer-app">
           <Image
@@ -67,16 +84,6 @@ const { groups: topicGroups } = await getTopicGroups();
             </a>
           </div>
         </div>
-      </div>
-
-      <div class="hidden md:block">
-        <Image
-          src={signature}
-          alt="Assinatura de Paul Gomes"
-          width={180}
-          height={60}
-          class="signature-img h-auto w-44 opacity-80"
-        />
       </div>
     </div>
 
@@ -143,12 +150,30 @@ const { groups: topicGroups } = await getTopicGroups();
   /* Cartão do app. Discreto no repouso e com a borda acendendo no ponteiro:
      ele divide a coluna com a marca e os ícones sociais, e competir com eles
      num rodapé custaria a hierarquia que o bloco já tem. */
+  /* Alinhada à direita no desktop, para o bloco fechar com a margem da página
+     em vez de ficar boiando no meio da coluna. No mobile vira uma pilha normal:
+     a assinatura some e sobra só o cartão. */
+  .footer-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  /* 1024px, e nao 768px: entre os dois o cartão forçaria a coluna a 384px e
+     espremeria o texto da esquerda em 281px. Até lá o rodapé fica empilhado,
+     que é o que cabe. */
+  @media (min-width: 1024px) {
+    .footer-aside { align-items: flex-end; }
+  }
+
   .footer-app {
     display: flex;
     align-items: flex-start;
     gap: 0.9rem;
-    max-width: 30rem;
-    margin-top: 1.75rem;
+    /* `min-width` junto com `max-width`: a coluna é dimensionada pelo conteúdo
+       (`grid-cols-[1fr_auto]`), e sem o piso ela encolheria até espremer o
+       cartão numa tira estreita quando a tela aperta. */
+    min-width: 19rem;
+    max-width: 24rem;
     padding: 1rem 1.1rem 1.1rem 0.9rem;
     border: 1px solid var(--color-border);
     border-radius: 14px;
