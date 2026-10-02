@@ -2,30 +2,24 @@
 import { Image } from 'astro:assets';
 import SocialIcons from './SocialIcons.astro';
 import signature from '../assets/brand/signature-paul-gomes.webp';
-import appIcon from '../assets/brand/app-icon.jpg';
 /*
- * Badge oficial da App Store, versao pt-BR, baixada do Marketing Tools da
- * Apple. E o asset que as diretrizes exigem: a Apple nao aceita botao
- * desenhado por terceiro no lugar dele, nem alteracao de cor, proporcao ou
- * texto. Fica aqui como arquivo do projeto, e nao como `hotlink` para o
- * servidor deles, pelo mesmo motivo do icone — requisicao externa em todas as
- * paginas e link que quebra calado se o endereco mudar.
+ * Badges oficiais das duas lojas, em pt-BR, baixados das paginas de marketing
+ * da Apple e do Google. Sao os assets que as diretrizes exigem: nenhuma das
+ * duas aceita botao desenhado por terceiro no lugar, nem alteracao de cor,
+ * proporcao ou texto.
+ *
+ * Ficam como arquivo do projeto, e nao como `hotlink` para os servidores
+ * deles: imagem de terceiro num rodape global significa requisicao externa em
+ * toda visita do site, e um link que quebra calado se o endereco mudar.
  */
 import badgeAppStore from '../assets/brand/badge-app-store-ptbr.svg';
+import badgeGooglePlay from '../assets/brand/badge-google-play-ptbr.png';
 import menuFooter from '../data/menu-footer.json';
 import { getTopicGroups } from '../lib/topics';
 
-/*
- * App do blog na App Store.
- *
- * O icone e servido daqui, e nao da URL da Apple: imagem de terceiro no rodape
- * de todas as paginas significa uma requisicao externa em cada visita, e um
- * link que quebra calado no dia em que a Apple trocar o caminho do artwork.
- *
- * Dito que e iPhone e iPad de proposito. Quem usa Android descobriria no toque,
- * depois de sair do site — e um clique perdido que nao volta.
- */
-const APP_URL = 'https://apps.apple.com/us/app/paul-gomes/id6790929921';
+// O app existe nas duas lojas.
+const APP_URL_IOS = 'https://apps.apple.com/us/app/paul-gomes/id6790929921';
+const APP_URL_ANDROID = 'https://play.google.com/store/apps/details?id=br.com.paulgomes.app';
 
 const year = new Date().getFullYear();
 // Defesa em profundidade: filtra /privacidade aqui tambem (ja filtrado no sync)
@@ -64,25 +58,30 @@ const { groups: topicGroups } = await getTopicGroups();
           class="signature-img hidden h-auto w-44 opacity-80 lg:block"
         />
 
-        <div class="footer-app">
-          <Image
-            src={appIcon}
-            alt="Ícone do app Paul Gomes"
-            width={56}
-            height={56}
-            loading="lazy"
-            class="footer-app-icon"
-          />
-          <div class="footer-app-texto">
-            <p class="footer-app-titulo">Leia no app</p>
-            <p class="footer-app-sub">Os ensaios do blog num leitor feito para ler. Grátis, para iPhone e iPad.</p>
-            {/* O badge e o link: a Apple pede que a loja seja acessada por ele,
-                e nao por um botao proprio. Quem usa leitor de tela recebe o
-                texto pelo alt, entao o elemento nao precisa de rotulo extra. */}
-            <a class="footer-app-badge" href={APP_URL} target="_blank" rel="noopener">
-              <img src={badgeAppStore.src} alt="Baixar na App Store" width="120" height="40" loading="lazy" />
-            </a>
-          </div>
+        {/* Só os badges. Cada loja pede que o acesso seja feito pelo badge
+            dela, e os dois já dizem o que são — o cartão com ícone e texto
+            em volta repetia isso e ocupava quatro vezes o espaço. */}
+        <div class="footer-lojas">
+          <a class="footer-loja" href={APP_URL_IOS} target="_blank" rel="noopener">
+            <img
+              class="footer-loja-apple"
+              src={badgeAppStore.src}
+              alt="Baixar na App Store"
+              width="120"
+              height="40"
+              loading="lazy"
+            />
+          </a>
+          <a class="footer-loja" href={APP_URL_ANDROID} target="_blank" rel="noopener">
+            <img
+              class="footer-loja-google"
+              src={badgeGooglePlay.src}
+              alt="Disponível no Google Play"
+              width="135"
+              height="52"
+              loading="lazy"
+            />
+          </a>
         </div>
       </div>
     </div>
@@ -147,86 +146,75 @@ const { groups: topicGroups } = await getTopicGroups();
     filter: invert(1);
   }
 
-  /* Cartão do app. Discreto no repouso e com a borda acendendo no ponteiro:
-     ele divide a coluna com a marca e os ícones sociais, e competir com eles
-     num rodapé custaria a hierarquia que o bloco já tem. */
-  /* Alinhada à direita no desktop, para o bloco fechar com a margem da página
-     em vez de ficar boiando no meio da coluna. No mobile vira uma pilha normal:
-     a assinatura some e sobra só o cartão. */
+  /* Coluna da direita: assinatura e os badges das lojas. */
   .footer-aside {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
   }
-  /* 1024px, e nao 768px: entre os dois o cartão forçaria a coluna a 384px e
-     espremeria o texto da esquerda em 281px. Até lá o rodapé fica empilhado,
-     que é o que cabe. */
   @media (min-width: 1024px) {
     .footer-aside { align-items: flex-end; }
   }
 
-  .footer-app {
+  .footer-lojas {
     display: flex;
-    align-items: flex-start;
-    gap: 0.9rem;
-    /* `min-width` junto com `max-width`: a coluna é dimensionada pelo conteúdo
-       (`grid-cols-[1fr_auto]`), e sem o piso ela encolheria até espremer o
-       cartão numa tira estreita quando a tela aperta. */
-    min-width: 19rem;
-    max-width: 24rem;
-    padding: 1rem 1.1rem 1.1rem 0.9rem;
-    border: 1px solid var(--color-border);
-    border-radius: 14px;
-    color: var(--color-ink);
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
   }
-  /* 22% é o raio que a Apple usa no ícone do iOS; com o quadrado reto o
-     cartão parece um banner, e não o app. */
-  .footer-app-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 22%;
-    flex-shrink: 0;
-  }
-  .footer-app-texto { display: flex; flex-direction: column; gap: 0.15rem; }
-  .footer-app-titulo { font-weight: 700; font-size: 0.95rem; margin: 0; }
-  .footer-app-sub { font-size: 0.8rem; line-height: 1.4; color: var(--color-muted); margin: 0; }
-
-  /* As diretrizes da Apple pedem 40px de altura minima na web e uma margem
-     livre de 1/10 da altura em volta — daí os 4px. O badge nao muda de cor
-     nem de proporcao: o unico efeito no ponteiro e a opacidade. */
-  .footer-app-badge {
+  .footer-loja {
     display: inline-block;
-    margin-top: 0.7rem;
-    padding: 4px;
-    margin-left: -4px;
-    border-radius: 8px;
     line-height: 0;
+    border-radius: 8px;
     transition: opacity 0.2s ease;
   }
-  .footer-app-badge:hover { opacity: 0.78; }
-  .footer-app-badge:focus-visible {
+  .footer-loja:hover { opacity: 0.78; }
+  .footer-loja:focus-visible {
     outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
-  /* O `aspect-ratio` precisa ser declarado porque os atributos width/height do
-     <img> — que existem para reservar o espaço e evitar salto de layout —
-     geram sozinhos uma proporção de 3:1, e o arquivo da Apple é 119,66x40.
-     Sem esta linha o badge sai 0,28% esticado, e a Apple não permite alterar
-     a proporção do asset. */
-  .footer-app-badge img {
+
+  /* Os dois badges precisam de alturas DIFERENTES para parecerem do mesmo
+     tamanho, e isso não é ajuste de gosto — é o que os arquivos são.
+     O da Apple tem 119,66x40 e nenhuma margem embutida: o desenho ocupa o
+     arquivo inteiro. O do Google tem 646x250 com 29px transparentes em cima e
+     embaixo, então o desenho ocupa só 192 dos 250. Com os dois em 40px, o do
+     Google apareceria com 30,7px de arte contra os 40px do outro.
+     52px no arquivo do Google = 40px de arte visível, igualando os dois. */
+  .footer-loja-apple {
     height: 40px;
     width: auto;
+    /* Declarado porque os atributos width/height do <img> — que existem para
+       reservar espaço e evitar salto de layout — gerariam sozinhos 3:1, e o
+       arquivo é 119,66x40. Sem isto o badge sai 0,28% esticado, e a Apple não
+       permite alterar a proporção. */
     aspect-ratio: 119.66407 / 40;
     display: block;
   }
-  /* O badge preto some no tema escuro: a borda clara devolve o contorno sem
-     tocar nas cores do asset, que a Apple nao deixa alterar. */
-  :global(.dark) .footer-app-badge img {
+  .footer-loja-google {
+    height: 52px;
+    width: auto;
+    aspect-ratio: 646 / 250;
+    display: block;
+    /* A margem transparente do arquivo vira espaço ocupado na linha: os 6px
+       negativos devolvem a altura da caixa para os mesmos 40px do outro badge,
+       senão o bloco cresce e os dois deixam de alinhar pelo centro. */
+    margin-block: -6px;
+  }
+
+  /* Os dois badges são pretos e sumiriam no tema escuro. O contorno vai no
+     link, e não na imagem: a caixa do <a> já tem a altura da ARTE nos dois
+     casos — 40px — porque a margem negativa do Google desconta justamente o
+     transparente do arquivo. Posto na imagem, o do Google desenharia um
+     retângulo de 52px, maior que o badge. A arte em si não é tocada, que é o
+     que as duas lojas exigem. */
+  :global(.dark) .footer-loja {
+    outline: 1px solid rgb(255 255 255 / 0.22);
+    outline-offset: 0;
     border-radius: 7px;
-    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.22);
   }
   @media (prefers-reduced-motion: reduce) {
-    .footer-app-badge { transition: none; }
+    .footer-loja { transition: none; }
   }
 
   /* Índice temático (links internos) */

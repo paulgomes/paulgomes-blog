@@ -58,10 +58,13 @@ export const SITE_CONFIG: TenantConfig = {
       'https://www.instagram.com/paulgomes/',
       'https://www.youtube.com/@paulgomesx',
       'https://x.com/paullgomes',
-      // App do blog na App Store. O ID numérico foi confirmado na própria loja
-      // (lookup da API da Apple devolve trackName "Paul Gomes" para este id),
-      // que era o que faltava para o endereço entrar aqui com segurança.
+      // App do blog nas duas lojas. Os endereços foram confirmados em cada uma
+      // antes de entrar: o lookup da API da Apple devolve trackName "Paul
+      // Gomes" para este id, e a página do Google Play responde 200 com
+      // og:title "Paul Gomes – Apps no Google Play". Um sameAs apontando para
+      // o lugar errado enfraquece a entidade em vez de reforçá-la.
       'https://apps.apple.com/us/app/paul-gomes/id6790929921',
+      'https://play.google.com/store/apps/details?id=br.com.paulgomes.app',
     ],
   },
   organization: {
